@@ -1,0 +1,8 @@
+-cp src
+-lib heaps
+-lib uuid
+-lib tweenxcore
+-lib hxsocketio
+-js navy.js
+-main Main
+-debug
