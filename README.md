@@ -1,1 +1,9 @@
-# NavyOnlineMvp
+Client 
+
+Contracts
+
+Engine
+
+Moralis
+
+Server

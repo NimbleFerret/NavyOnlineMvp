@@ -2,18 +2,11 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 
-// import * as x from './tools';
-
-import * as GameEngine from '../../GameEngine.js';
-
-// const GameEngine = require('tools.js');
 
 @Injectable()
 export class GameService implements OnModuleInit {
 
     async onModuleInit() {
-        // TODO start game instance
-        console.log(GameEngine);
     }
 
     // -------------------------------------
