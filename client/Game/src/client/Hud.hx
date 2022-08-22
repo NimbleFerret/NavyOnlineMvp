@@ -1,8 +1,8 @@
 package client;
 
-import client.entity.ClientShip;
 import h2d.Object;
 import h2d.SpriteBatch.BatchElement;
+import client.entity.ClientShip;
 
 class HorizontalStatsBar {
 	final borderRect:h2d.Graphics;
@@ -123,6 +123,8 @@ class Hud extends h2d.Scene {
 		systemText = addText();
 		movementText = addText();
 	}
+
+	// TODO reuse GUI class
 
 	public function getFont() {
 		return hxd.res.DefaultFont.get();

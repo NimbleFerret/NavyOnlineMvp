@@ -6,7 +6,7 @@ class SceneMain extends Scene {
 	private final fui:h2d.Flow;
 	private final gui:Gui;
 
-	public function new() {
+	public function new(level1Callback:Void->Void, level2Callback:Void->Void) {
 		super();
 
 		fui = new h2d.Flow(this);
@@ -18,11 +18,11 @@ class SceneMain extends Scene {
 		gui = new Gui(fui);
 
 		gui.addButton("Load level 1", function() {
-			trace("Load level 1");
+			level1Callback();
 		});
 
 		gui.addButton("Load level 2", function() {
-			trace("Load level 2");
+			level2Callback();
 		});
 	}
 }
