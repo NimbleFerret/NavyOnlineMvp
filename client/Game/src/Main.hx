@@ -1,17 +1,22 @@
 import client.GuiApp;
 import client.scene.SceneDemo1;
 import client.scene.SceneMain;
-import h3d.Engine;
-
-// import hxd.Math;
 
 interface Updatable {
 	public function update(dt:Float):Void;
 }
 
+enum Scene {
+	SceneMain;
+	SceneDemo1;
+}
+
 class Main extends GuiApp {
 	private var sceneMain:SceneMain;
 	private var sceneDemo1:SceneDemo1;
+
+	private final defaultScene = Scene.SceneDemo1;
+	private var currentScene:Scene;
 
 	override function init() {
 		super.init();
@@ -23,42 +28,23 @@ class Main extends GuiApp {
 		}, function loadLevel2() {});
 
 		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
+		sevents.addScene(sceneDemo1.hud);
 
-		setScene2D(sceneMain);
+		switch (defaultScene) {
+			case SceneMain:
+				setScene2D(sceneMain);
+			case SceneDemo1:
+				setScene2D(sceneDemo1);
+		}
 
-		// s2d.camera.setViewport(engine.width / 2, engine.height / 2, 0, 0);
-
-		// hud = new Hud();
-		// sevents.addScene(hud);
-
-		// hud.addChoice("Debug1211", ["Off", "On"], function(i) {
-		// 	switch (i) {
-		// 		case 0:
-		// 			Main.DebugDraw = false;
-		// 		case 1:
-		// 			Main.DebugDraw = true;
-		// 	}
-		// });
-
-		// hud.addChoice("Input", ["Game", "Camera", "Player"], function(i) {
-		// 	switch (i) {
-		// 		case 0:
-		// 			inputType = InputType.Game;
-		// 		case 1:
-		// 			inputType = InputType.DebugCamera;
-		// 		case 2:
-		// 			inputType = InputType.DebugPlayerShip;
-		// 	}
-		// });
+		currentScene = defaultScene;
 	}
 
-	// override function render(e:Engine) {
-	// 	// hud.render(e);
-	// 	// s2d.render(e);
-	// 	// debugDraw();
-	// }
-
-	override function update(dt:Float) {}
+	override function update(dt:Float) {
+		if (currentScene == SceneDemo1) {
+			sceneDemo1.update(dt, engine.fps);
+		}
+	}
 
 	static function main() {
 		hxd.Res.initEmbed();

@@ -30,8 +30,9 @@ class SceneDemo1 extends Scene {
 
 	private var effectsManager:EffectsManager;
 	private var islandsManager:IslandsManager;
-	private var hud:Hud;
 	private var inputType = InputType.Game;
+
+	public var hud:Hud;
 
 	// Player input
 	private var timeSinceLastShipsPosUpdate = 0.0;
@@ -82,8 +83,10 @@ class SceneDemo1 extends Scene {
 
 		hud = new Hud();
 		// events.addScene(hud);
+		// events.addScene(hud);
 
-		hud.addChoice("Debug1211", ["Off", "On"], function(i) {
+		hud.addChoice("Debug draw", ["Off", "On"], function(i) {
+			trace("CLICK &");
 			switch (i) {
 				case 0:
 					SceneDemo1.DebugDraw = false;
