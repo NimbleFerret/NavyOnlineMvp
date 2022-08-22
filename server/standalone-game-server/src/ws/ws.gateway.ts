@@ -4,13 +4,14 @@ import { Server } from 'socket.io';
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { AppEvents, NotifyPlayerEvent } from "../app.events";
 import { DtoJoinGame } from "./dto/dto.joinGame";
+import { OnModuleInit } from "@nestjs/common";
 
 @WebSocketGateway({
     cors: {
         origin: '*',
     },
 })
-export class WsGateway {
+export class WsGateway implements OnModuleInit {
 
     @WebSocketServer()
     server: Server;
@@ -19,7 +20,10 @@ export class WsGateway {
 
     constructor(private eventEmitter: EventEmitter2) {
         // TODO handle ws disconnected event
+        // TODO iterate sockets
+    }
 
+    onModuleInit() {
         this.server.on("connection", (socket) => {
             console.log('Got connection!');
         });
@@ -27,9 +31,6 @@ export class WsGateway {
         this.server.on('disconnect', function (socket) {
             console.log('Got disconnect!');
         });
-
-
-        // TODO iterate sockets
     }
 
     @SubscribeMessage('joinGame')
@@ -55,7 +56,7 @@ export class WsGateway {
 
     @OnEvent(AppEvents.NotifyPlayerEvent, { async: true })
     async handleNotifyPlayerEvent(event: NotifyPlayerEvent) {
-        this.server.of()
+        // this.server.of()
     }
 
     @OnEvent(AppEvents.NotifyEachPlayerEvent, { async: true })

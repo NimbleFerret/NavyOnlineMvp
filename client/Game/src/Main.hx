@@ -1,6 +1,7 @@
 import client.GuiApp;
-import client.scene.SceneDemo1;
 import client.scene.SceneMain;
+import client.scene.SceneDemo1;
+import client.scene.SceneOnlineDemo1;
 
 interface Updatable {
 	public function update(dt:Float):Void;
@@ -9,13 +10,15 @@ interface Updatable {
 enum Scene {
 	SceneMain;
 	SceneDemo1;
+	SceneOnlineDemo1;
 }
 
 class Main extends GuiApp {
 	private var sceneMain:SceneMain;
 	private var sceneDemo1:SceneDemo1;
+	private var sceneOnlineDemo1:SceneOnlineDemo1;
 
-	private final defaultScene = Scene.SceneDemo1;
+	private final defaultScene = Scene.SceneOnlineDemo1;
 	private var currentScene:Scene;
 
 	override function init() {
@@ -25,16 +28,22 @@ class Main extends GuiApp {
 
 		sceneMain = new SceneMain(function loadLevel1() {
 			setScene2D(sceneDemo1);
-		}, function loadLevel2() {});
+		}, function loadLevel2() {
+			setScene2D(sceneOnlineDemo1);
+		});
 
 		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
 		sevents.addScene(sceneDemo1.hud);
+
+		sceneOnlineDemo1 = new SceneOnlineDemo1();
 
 		switch (defaultScene) {
 			case SceneMain:
 				setScene2D(sceneMain);
 			case SceneDemo1:
 				setScene2D(sceneDemo1);
+			case SceneOnlineDemo1:
+				setScene2D(sceneOnlineDemo1);
 		}
 
 		currentScene = defaultScene;

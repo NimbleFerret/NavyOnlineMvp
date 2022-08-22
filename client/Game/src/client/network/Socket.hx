@@ -1,4 +1,4 @@
-package client;
+package client.network;
 
 import js.node.socketio.Client;
 
