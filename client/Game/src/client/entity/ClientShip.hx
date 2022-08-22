@@ -1,11 +1,9 @@
 package client.entity;
 
 import client.scene.SceneDemo1;
-import engine.MathUtils;
+import engine.entity.EngineBaseGameEntity;
 import engine.entity.EngineShipEntity;
-import engine.entity.EngineBaseGameEntity.GameEntityDirection;
-import engine.entity.EngineBaseGameEntity.PosOffset;
-import engine.entity.EngineBaseGameEntity.Side;
+import engine.MathUtils;
 
 final RippleOffsetByDir:Map<GameEntityDirection, PosOffset> = [
 	GameEntityDirection.East => new PosOffset(90, -40, 20),

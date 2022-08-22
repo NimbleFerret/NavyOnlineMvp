@@ -35,7 +35,9 @@ export class WsGateway implements OnModuleInit {
 
     @SubscribeMessage('joinGame')
     async joinGame(@MessageBody() data: DtoJoinGame): Promise<number> {
-        console.log(data.ethAddress);
+        console.log('WS. joinGame: ' + data.ethAddress);
+
+        this.eventEmitter.emit(AppEvents.PlayerJoinedEvent, data);
 
         return 1;
     }

@@ -1,7 +1,14 @@
 /* eslint-disable prettier/prettier */
 export enum AppEvents {
-    NotifyPlayerEvent = "NotifyPlayerEvent",
-    NotifyEachPlayerEvent = "NotifyEachPlayerEvent"
+    PlayerJoinedEvent = 'PlayerJoinedEvent',
+
+    NotifyPlayerEvent = 'NotifyPlayerEvent',
+    NotifyEachPlayerEvent = 'NotifyEachPlayerEvent'
+}
+
+export interface PlayerJoinedEvent {
+    // TODO json or bytes here ?
+    message: string;
 }
 
 export interface NotifyPlayerEvent {

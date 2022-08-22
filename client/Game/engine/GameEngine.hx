@@ -5,6 +5,8 @@ import engine.entity.EngineShipEntity;
 import engine.entity.EngineShellEntity;
 import engine.entity.manager.ShipManager;
 import engine.entity.manager.ShellManager;
+import engine.GameLoop;
+import engine.MathUtils;
 import uuid.Uuid;
 
 typedef ShipShitByShellCallbackParams = {ship:EngineShipEntity, damage:Int}
@@ -17,14 +19,15 @@ class GameEngine {
 
 	public final shipManager:ShipManager;
 	public final shellManager:ShellManager;
+
 	// TODO use setter ?
+	// TODO add more tick params
+	public var tickCallback:Void->Void;
+	public var createShipCallback:EngineShipEntity->Void;
 	public var createShellCallback:Array<EngineShellEntity>->Void;
 	public var deleteShellCallback:EngineShellEntity->Void;
 	public var deleteShipCallback:EngineShipEntity->Void;
 	public var shipHitByShellCallback:ShipShitByShellCallbackParams->Void;
-
-	// TODO add more callbacks here
-	public static final instance:GameEngine = new GameEngine();
 
 	public static function main() {}
 
@@ -38,6 +41,7 @@ class GameEngine {
 	public function new() {
 		shipManager = new ShipManager();
 		shellManager = new ShellManager();
+
 		gameLoop = new GameLoop(function loop(dt:Float, tick:Int) {
 			framesPassed++;
 			if (framesPassed == 50) {
@@ -62,8 +66,10 @@ class GameEngine {
 					}
 				}
 			}
+
 			final shipsToDelete:Array<String> = [];
 			final shellsToDelete:Array<String> = [];
+
 			for (shell in shellManager.entities) {
 				shell.update(dt);
 				for (ship in shipManager.entities) {
@@ -87,6 +93,7 @@ class GameEngine {
 					shellsToDelete.push(shell.id);
 				}
 			}
+
 			for (i in 0...shellsToDelete.length) {
 				var shell = cast(shellManager.getEntityById(shellsToDelete[i]), EngineShellEntity);
 				if (shell != null) {
@@ -96,6 +103,7 @@ class GameEngine {
 					shellManager.remove(shell.id);
 				}
 			}
+
 			for (i in 0...shipsToDelete.length) {
 				var ship = cast(shipManager.getEntityById(shipsToDelete[i]), EngineShipEntity);
 				if (ship != null) {
@@ -105,15 +113,24 @@ class GameEngine {
 					shipManager.remove(ship.id);
 				}
 			}
+
+			if (tickCallback != null) {
+				tickCallback();
+			}
 		});
 	}
 
 	// -------------------------------------
 	// Ship game object
 	// --------------------------------------
+
+	@:expose
 	public function addShip(x:Float, y:Float, ?id:String):EngineShipEntity {
 		final newShip = new EngineShipEntity(x, y, id);
 		shipManager.add(newShip);
+		if (createShipCallback != null) {
+			createShipCallback(newShip);
+		}
 		return newShip;
 	}
 

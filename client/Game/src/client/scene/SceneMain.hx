@@ -17,11 +17,12 @@ class SceneMain extends Scene {
 
 		gui = new Gui(fui);
 
-		gui.addButton("Load level 1", function() {
+		// TODO place in center and scale
+		gui.addButton("Demo 1", function() {
 			level1Callback();
 		});
 
-		gui.addButton("Load level 2", function() {
+		gui.addButton("Online 1", function() {
 			level2Callback();
 		});
 	}

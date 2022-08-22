@@ -51,6 +51,7 @@ class SceneDemo1 extends Scene {
 		// --------------------------------------
 
 		gameEngine = new GameEngine();
+		gameEngine.createShipCallback = function callback(engineShipEntity:EngineShipEntity) {}
 		gameEngine.createShellCallback = function callback(engineShellEntities:Array<EngineShellEntity>) {
 			final ownerShip = clientShips.get(engineShellEntities[0].ownerId);
 			if (ownerShip != null) {
@@ -82,11 +83,8 @@ class SceneDemo1 extends Scene {
 		// --------------------------------------
 
 		hud = new Hud();
-		// events.addScene(hud);
-		// events.addScene(hud);
 
 		hud.addChoice("Debug draw", ["Off", "On"], function(i) {
-			trace("CLICK &");
 			switch (i) {
 				case 0:
 					SceneDemo1.DebugDraw = false;

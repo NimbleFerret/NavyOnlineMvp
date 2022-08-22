@@ -1,7 +1,6 @@
 package engine.entity;
 
-import engine.entity.EngineBaseGameEntity.GameEntityType;
-import engine.entity.EngineBaseGameEntity.Side;
+import engine.entity.EngineBaseGameEntity;
 
 enum DieEffect {
 	Splash;

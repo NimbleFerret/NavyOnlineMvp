@@ -1,3 +1,4 @@
+-cp engine
 -cp src
 -lib heaps
 -lib uuid
