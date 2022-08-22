@@ -1,3 +1,4 @@
+import client.scene.SceneMain;
 import engine.entity.EngineShipEntity;
 import client.entity.ClientShip;
 import client.GuiApp;
@@ -14,30 +15,36 @@ class Main extends GuiApp {
 
 	var playerShip:ClientShip;
 
+	var sceneMain:SceneMain;
+
 	override function init() {
 		super.init();
 
 		engine.backgroundColor = 0x6BC2EE;
 
-		s2d.camera.setViewport(engine.width / 2, engine.height / 2, 0, 0);
+		sceneMain = new SceneMain();
 
-		hud = new Hud();
-		sevents.addScene(hud);
+		setScene2D(sceneMain);
 
-		final s = new EngineShipEntity(200, 200, ShipSize.Small);
-		playerShip = new ClientShip(s2d, s);
+		// s2d.camera.setViewport(engine.width / 2, engine.height / 2, 0, 0);
 
-		s2d.addChild(playerShip);
+		// hud = new Hud();
+		// sevents.addScene(hud);
+
+		// final s = new EngineShipEntity(200, 200, ShipSize.Small);
+		// playerShip = new ClientShip(s2d, s);
+
+		// s2d.addChild(playerShip);
 
 		// hud.addButton("Socket connect", function() {
 		// Socket.instance.joinGame("0x0...0");
 		// });
 	}
 
-	override function render(e:Engine) {
-		hud.render(e);
-		s2d.render(e);
-	}
+	// override function render(e:Engine) {
+	// hud.render(e);
+	// s2d.render(e);
+	// }
 
 	override function update(dt:Float) {}
 
