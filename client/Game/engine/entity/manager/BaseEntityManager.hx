@@ -1,9 +1,11 @@
 package engine.entity.manager;
 
 import engine.entity.EngineBaseGameEntity;
+import js.lib.Map;
 
 class BaseEntityManager {
-	public final entities:Map<String, EngineBaseGameEntity> = [];
+	// TODO use common map, not js one
+	public final entities = new js.lib.Map<String, EngineBaseGameEntity>();
 
 	private var updateCallback:Null<EngineBaseGameEntity->Void>;
 
@@ -12,7 +14,7 @@ class BaseEntityManager {
 	}
 
 	public function remove(id:String) {
-		entities.remove(id);
+		entities.delete(id);
 	}
 
 	public function getEntityById(id:String) {

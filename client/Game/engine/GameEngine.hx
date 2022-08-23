@@ -124,9 +124,8 @@ class GameEngine {
 	// Ship game object
 	// --------------------------------------
 
-	@:expose
-	public function addShip(x:Float, y:Float, ?id:String):EngineShipEntity {
-		final newShip = new EngineShipEntity(x, y, id);
+	public function addShip(x:Float, y:Float, ?ownerId:String):EngineShipEntity {
+		final newShip = new EngineShipEntity(x, y, ownerId);
 		shipManager.add(newShip);
 		if (createShipCallback != null) {
 			createShipCallback(newShip);

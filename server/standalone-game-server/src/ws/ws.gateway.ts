@@ -2,7 +2,7 @@
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server } from 'socket.io';
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
-import { AppEvents, NotifyPlayerEvent } from "../app.events";
+import { AppEvents, NotifyPlayerEvent, NotifyWorldStateEvent } from "../app.events";
 import { DtoJoinGame } from "./dto/dto.joinGame";
 import { OnModuleInit } from "@nestjs/common";
 
@@ -12,6 +12,17 @@ import { OnModuleInit } from "@nestjs/common";
     },
 })
 export class WsGateway implements OnModuleInit {
+
+    // Server events
+    private static readonly SocketServerMessageAddShip = 'SocketServerMessageAddShip';
+    private static readonly SocketServerMessageAddShell = 'SocketServerMessageAddShell';
+    private static readonly SocketServerMessageRemoveShip = 'SocketServerMessageRemoveShip';
+    private static readonly SocketServerMessageUpdateWorldState = 'SocketServerMessageUpdateWorldState';
+
+    // Client events
+    private static readonly SocketClientMessageJoinGame = 'SocketClientMessageJoinGame';
+    private static readonly SocketClientMessageMove = 'SocketClientMessageMove';
+    private static readonly SocketClientMessageShoot = 'SocketClientMessageShoot';
 
     @WebSocketServer()
     server: Server;
@@ -33,23 +44,19 @@ export class WsGateway implements OnModuleInit {
         });
     }
 
-    @SubscribeMessage('joinGame')
-    async joinGame(@MessageBody() data: DtoJoinGame): Promise<number> {
-        console.log('WS. joinGame: ' + data.ethAddress);
-
+    @SubscribeMessage(WsGateway.SocketClientMessageJoinGame)
+    async joinGame(@MessageBody() data: DtoJoinGame) {
         this.eventEmitter.emit(AppEvents.PlayerJoinedEvent, data);
-
-        return 1;
     }
 
-    @SubscribeMessage('shoot')
-    async shoot(@MessageBody() data: any): Promise<number> {
-        return 1;
+    @SubscribeMessage(WsGateway.SocketClientMessageMove)
+    async move(@MessageBody() data: number) {
+        console.log();
     }
 
-    @SubscribeMessage('move')
-    async move(@MessageBody() data: number): Promise<number> {
-        return data;
+    @SubscribeMessage(WsGateway.SocketClientMessageShoot)
+    async shoot(@MessageBody() data: any) {
+        console.log();
     }
 
     // -------------------------------------
@@ -61,9 +68,13 @@ export class WsGateway implements OnModuleInit {
         // this.server.of()
     }
 
-    @OnEvent(AppEvents.NotifyEachPlayerEvent, { async: true })
-    async handleNotifyEachPlayerEvent(event: NotifyPlayerEvent) {
-        this.server.sockets.emit('worldUpdate', event);
+    @OnEvent(AppEvents.NotifyEachPlayerEvent)
+    async handleNotifyEachPlayerEvent(event: NotifyWorldStateEvent) {
+        console.log('handleNotifyEachPlayerEvent');
+        console.log(event);
+
+        this.server.sockets.emit(WsGateway.SocketServerMessageUpdateWorldState, event);
     }
+
 
 }

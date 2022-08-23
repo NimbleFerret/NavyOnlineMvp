@@ -1,6 +1,7 @@
 package engine.entity;
 
 import engine.entity.EngineBaseGameEntity;
+import engine.MathUtils;
 
 class EngineShipEntity extends EngineBaseGameEntity {
 	public static final ShapeOffsetByDir:Map<GameEntityDirection, PosOffset> = [
@@ -50,8 +51,8 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	public var currentArmor = 1000;
 
 	// TODO use direction instead of rotation here
-	public function new(x:Float, y:Float, ?id:String) {
-		super(GameEntityType.Ship, x, y, 0, id);
+	public function new(x:Float, y:Float, ?ownerId:String) {
+		super(GameEntityType.Ship, x, y, 0, null, ownerId);
 	}
 
 	// -----------------------
