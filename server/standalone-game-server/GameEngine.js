@@ -237,7 +237,10 @@
 		return uuid_Uuid.short();
 	};
 	engine_GameEngine.prototype = {
-		addShip: function (x, y, ownerId) {
+		addShip: function (ship) {
+			this.shipManager.add(ship);
+		}
+		, createShip: function (x, y, ownerId) {
 			var newShip = new engine_entity_EngineShipEntity(x, y, ownerId);
 			this.shipManager.add(newShip);
 			if (this.createShipCallback != null) {
@@ -251,7 +254,14 @@
 		, getShips: function () {
 			return this.shipManager.entities;
 		}
-		, removeShip: function () {
+		, removeShip: function (shipId) {
+			var ship = js_Boot.__cast(this.shipManager.getEntityById(shipId), engine_entity_EngineShipEntity);
+			if (ship != null) {
+				if (this.deleteShipCallback != null) {
+					this.deleteShipCallback(ship);
+				}
+				this.shipManager.remove(shipId);
+			}
 		}
 		, shipAccelerate: function (shipId) {
 			var ship = js_Boot.__cast(this.shipManager.getEntityById(shipId), engine_entity_EngineShipEntity);
@@ -632,12 +642,12 @@
 		}
 		, __class__: engine_entity_EngineShellEntity
 	});
-	var engine_entity_EngineShipEntity = function (x, y, ownerId) {
+	var engine_entity_EngineShipEntity = function (x, y, id, ownerId) {
 		this.currentArmor = 1000;
 		this.currentHull = 1000;
 		this.baseArmor = 1000;
 		this.baseHull = 1000;
-		engine_entity_EngineBaseGameEntity.call(this, engine_entity_GameEntityType.Ship, x, y, 0, null, ownerId);
+		engine_entity_EngineBaseGameEntity.call(this, engine_entity_GameEntityType.Ship, x, y, 0, id, ownerId);
 	};
 	engine_entity_EngineShipEntity.__name__ = true;
 	engine_entity_EngineShipEntity.__super__ = engine_entity_EngineBaseGameEntity;

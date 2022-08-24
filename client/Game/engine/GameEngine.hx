@@ -124,7 +124,11 @@ class GameEngine {
 	// Ship game object
 	// --------------------------------------
 
-	public function addShip(x:Float, y:Float, ?ownerId:String):EngineShipEntity {
+	public function addShip(ship:EngineShipEntity) {
+		shipManager.add(ship);
+	}
+
+	public function createShip(x:Float, y:Float, ?ownerId:String):EngineShipEntity {
 		final newShip = new EngineShipEntity(x, y, ownerId);
 		shipManager.add(newShip);
 		if (createShipCallback != null) {
@@ -141,7 +145,15 @@ class GameEngine {
 		return shipManager.entities;
 	}
 
-	public function removeShip() {}
+	public function removeShip(shipId:String) {
+		final ship = cast(shipManager.getEntityById(shipId), EngineShipEntity);
+		if (ship != null) {
+			if (deleteShipCallback != null) {
+				deleteShipCallback(ship);
+			}
+			shipManager.remove(shipId);
+		}
+	}
 
 	public function shipAccelerate(shipId:String) {
 		final ship = cast(shipManager.getEntityById(shipId), EngineShipEntity);

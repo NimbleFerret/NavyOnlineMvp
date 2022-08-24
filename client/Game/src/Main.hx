@@ -33,9 +33,10 @@ class Main extends GuiApp {
 		});
 
 		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
-		sevents.addScene(sceneDemo1.hud);
+		sevents.addScene(sceneDemo1.getHud());
 
-		sceneOnlineDemo1 = new SceneOnlineDemo1();
+		sceneOnlineDemo1 = new SceneOnlineDemo1(engine.width, engine.height);
+		sevents.addScene(sceneOnlineDemo1.getHud());
 
 		switch (defaultScene) {
 			case SceneMain:
@@ -52,6 +53,9 @@ class Main extends GuiApp {
 	override function update(dt:Float) {
 		if (currentScene == SceneDemo1) {
 			sceneDemo1.update(dt, engine.fps);
+		}
+		if (currentScene == SceneOnlineDemo1) {
+			sceneOnlineDemo1.update(dt, engine.fps);
 		}
 	}
 

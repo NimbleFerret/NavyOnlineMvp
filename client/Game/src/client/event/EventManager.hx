@@ -1,6 +1,7 @@
 package client.event;
 
 enum EventType {
+	SocketServerGameInit;
 	SocketServerMessageAddShip;
 	SocketServerMessageAddShell;
 	SocketServerMessageRemoveShip;
@@ -8,7 +9,7 @@ enum EventType {
 }
 
 interface EventListener {
-	function update(eventType:EventType, params:Dynamic):Void;
+	function notify(eventType:EventType, params:Dynamic):Void;
 }
 
 class EventManager {
@@ -37,7 +38,7 @@ class EventManager {
 	public function notify(eventType:EventType, params:Dynamic) {
 		final ls = listeners.get(eventType);
 		for (listener in ls) {
-			listener.update(eventType, params);
+			listener.notify(eventType, params);
 		}
 	}
 }

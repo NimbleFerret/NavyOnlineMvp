@@ -51,8 +51,8 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	public var currentArmor = 1000;
 
 	// TODO use direction instead of rotation here
-	public function new(x:Float, y:Float, ?ownerId:String) {
-		super(GameEntityType.Ship, x, y, 0, null, ownerId);
+	public function new(x:Float, y:Float, ?id:String, ?ownerId:String) {
+		super(GameEntityType.Ship, x, y, 0, id, ownerId);
 	}
 
 	// -----------------------

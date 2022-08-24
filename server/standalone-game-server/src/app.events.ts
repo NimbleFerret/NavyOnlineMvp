@@ -2,22 +2,45 @@ import { EntityShip } from './game/entity/entity.ship';
 
 /* eslint-disable prettier/prettier */
 export enum AppEvents {
-    PlayerJoinedEvent = 'PlayerJoinedEvent',
+    PlayerJoined = 'PlayerJoined',
+    PlayerDisconnected = 'PlayerDisconnected',
 
-    NotifyPlayerEvent = 'NotifyPlayerEvent',
-    NotifyEachPlayerEvent = 'NotifyEachPlayerEvent'
+    NotifyPlayer = 'NotifyPlayer',
+    NotifyEachPlayer = 'NotifyEachPlayer',
+    NotifyAddShip = 'NotifyAddShip',
+    NotifyRemoveShip = 'NotifyRemoveShip'
 }
 
+// ---------------------------------
+// Client event msg
+// ---------------------------------
+
 export interface PlayerJoinedEvent {
-    // TODO json or bytes here ?
     message: string;
 }
 
-export interface NotifyPlayerEvent {
-    // TODO json or bytes here ?
-    ships: string;
+export interface PlayerDisconnectedEvent {
+    playerId: string;
 }
 
-export interface NotifyWorldStateEvent {
+// ---------------------------------
+// Server event msg
+// ---------------------------------
+
+export interface NotifyPlayerEventMsg {
+    playerId: string;
+    socketEvent: string;
+    message: object;
+}
+
+export interface NotifyWorldStateEventMsg {
     ships: EntityShip[];
+}
+
+export interface NotifyAddShipEventMsg {
+    ship: EntityShip;
+}
+
+export interface NotifyRemoveShipEventMsg {
+    shipId: string;
 }

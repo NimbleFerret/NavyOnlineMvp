@@ -1,6 +1,5 @@
 package client.entity;
 
-import client.scene.SceneDemo1;
 import engine.entity.EngineBaseGameEntity;
 import engine.entity.EngineShipEntity;
 import engine.MathUtils;
@@ -152,7 +151,7 @@ class ClientShip extends ClientBaseGameEntity {
 	}
 
 	function toggleDebugDraw() {
-		if (SceneDemo1.DebugDraw) {
+		if (Game.DebugDraw) {
 			// leftCanon1.alpha = 1;
 			// leftCanon2.alpha = 1;
 			// leftCanon3.alpha = 1;

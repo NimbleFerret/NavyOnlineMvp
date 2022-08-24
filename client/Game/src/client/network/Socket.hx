@@ -12,6 +12,7 @@ typedef MoveDir = {
 
 class Socket {
 	// Server events
+	private static final SocketServerGameInit = 'SocketServerGameInit';
 	private static final SocketServerMessageAddShip = 'SocketServerMessageAddShip';
 	private static final SocketServerMessageAddShell = 'SocketServerMessageAddShell';
 	private static final SocketServerMessageRemoveShip = 'SocketServerMessageRemoveShip';
@@ -29,6 +30,9 @@ class Socket {
 	private function new() {
 		clientSocket = new Client("http://localhost:3000/");
 
+		clientSocket.on(SocketServerGameInit, function(data) {
+			EventManager.instance.notify(EventType.SocketServerGameInit, data);
+		});
 		clientSocket.on(SocketServerMessageAddShip, function(data) {
 			EventManager.instance.notify(EventType.SocketServerMessageAddShip, data);
 		});
