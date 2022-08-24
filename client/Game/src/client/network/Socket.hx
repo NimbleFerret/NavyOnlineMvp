@@ -4,10 +4,16 @@ import client.event.EventManager;
 import js.node.socketio.Client;
 
 typedef MoveDir = {
+	playerId:String,
 	up:Bool,
 	down:Bool,
 	left:Bool,
 	right:Bool,
+}
+
+typedef ShootDir = {
+	playerId:String,
+	left:Bool
 }
 
 class Socket {
@@ -17,6 +23,8 @@ class Socket {
 	private static final SocketServerMessageAddShell = 'SocketServerMessageAddShell';
 	private static final SocketServerMessageRemoveShip = 'SocketServerMessageRemoveShip';
 	private static final SocketServerMessageUpdateWorldState = "SocketServerMessageUpdateWorldState";
+	private static final SocketServerMessageShipMove = 'SocketServerMessageShipMove';
+	private static final SocketServerMessageShipShoot = 'SocketServerMessageShipShoot';
 
 	// Client events
 	private static final SocketClientMessageJoinGame = 'SocketClientMessageJoinGame';
@@ -45,6 +53,12 @@ class Socket {
 		clientSocket.on(SocketServerMessageUpdateWorldState, function(data) {
 			EventManager.instance.notify(EventType.SocketServerMessageUpdateWorldState, data);
 		});
+		clientSocket.on(SocketServerMessageShipMove, function(data) {
+			EventManager.instance.notify(EventType.SocketServerMessageShipMove, data);
+		});
+		clientSocket.on(SocketServerMessageShipShoot, function(data) {
+			EventManager.instance.notify(EventType.SocketServerMessageShipShoot, data);
+		});
 	}
 
 	public function joinGame(addr:String) {
@@ -55,7 +69,7 @@ class Socket {
 		clientSocket.emit(SocketClientMessageMove, moveDir);
 	}
 
-	public function shoot() {
-		clientSocket.emit(SocketClientMessageShoot, {});
+	public function shoot(shootDir:ShootDir) {
+		clientSocket.emit(SocketClientMessageShoot, shootDir);
 	}
 }

@@ -2,9 +2,11 @@
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io';
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
-import { AppEvents, NotifyPlayerEventMsg, PlayerDisconnectedEvent } from "../app.events";
-import { DtoJoinGame } from "./dto/dto.joinGame";
+import { AppEvents, NotifyEachPlayerEventMsg, NotifyPlayerEventMsg, PlayerDisconnectedEvent } from "../app.events";
 import { Logger, OnModuleInit } from "@nestjs/common";
+import { DtoJoinGame } from "./dto/dto.joinGame";
+import { DtoMove } from "./dto/dto.move";
+import { DtoShoot } from "./dto/dto.shoot";
 
 @WebSocketGateway({
     cors: {
@@ -19,6 +21,8 @@ export class WsGateway implements OnModuleInit {
     public static readonly SocketServerMessageAddShell = 'SocketServerMessageAddShell';
     public static readonly SocketServerMessageRemoveShip = 'SocketServerMessageRemoveShip';
     public static readonly SocketServerMessageUpdateWorldState = 'SocketServerMessageUpdateWorldState';
+    public static readonly SocketServerMessageShipMove = 'SocketServerMessageShipMove';
+    public static readonly SocketServerMessageShipShoot = 'SocketServerMessageShipShoot';
 
     // Client events
     public static readonly SocketClientMessageJoinGame = 'SocketClientMessageJoinGame';
@@ -60,13 +64,13 @@ export class WsGateway implements OnModuleInit {
     }
 
     @SubscribeMessage(WsGateway.SocketClientMessageMove)
-    async move(@MessageBody() data: number) {
-        console.log();
+    async move(@MessageBody() data: DtoMove) {
+        this.eventEmitter.emit(AppEvents.PlayerMove, data);
     }
 
     @SubscribeMessage(WsGateway.SocketClientMessageShoot)
-    async shoot(@MessageBody() data: any) {
-        console.log();
+    async shoot(@MessageBody() data: DtoShoot) {
+        this.eventEmitter.emit(AppEvents.PlayerShoot, data);
     }
 
     // -------------------------------------
@@ -84,8 +88,8 @@ export class WsGateway implements OnModuleInit {
     }
 
     @OnEvent(AppEvents.NotifyEachPlayer)
-    async handleNotifyEachPlayerEvent(event: object) {
-        this.server.sockets.emit(WsGateway.SocketServerMessageUpdateWorldState, event);
+    async handleNotifyEachPlayerEvent(event: NotifyEachPlayerEventMsg) {
+        this.server.sockets.emit(event.socketEvent, event.message);
     }
 
 }

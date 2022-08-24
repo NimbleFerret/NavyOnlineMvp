@@ -240,8 +240,8 @@
 		addShip: function (ship) {
 			this.shipManager.add(ship);
 		}
-		, createShip: function (x, y, ownerId) {
-			var newShip = new engine_entity_EngineShipEntity(x, y, ownerId);
+		, createShip: function (x, y, id, ownerId) {
+			var newShip = new engine_entity_EngineShipEntity(x, y, id, ownerId);
 			this.shipManager.add(newShip);
 			if (this.createShipCallback != null) {
 				this.createShipCallback(newShip);

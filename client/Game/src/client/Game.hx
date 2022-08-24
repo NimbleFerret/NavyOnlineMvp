@@ -1,5 +1,6 @@
 package client;
 
+import client.network.Socket;
 import client.scene.SceneOnlineDemo1.ServerShip;
 import h2d.Scene;
 import hxd.Key in K;
@@ -11,6 +12,11 @@ import client.entity.ClientShip;
 import engine.entity.EngineBaseGameEntity;
 import engine.entity.EngineShellEntity;
 import engine.entity.EngineShipEntity;
+
+enum GameMode {
+	Client;
+	Server;
+}
 
 enum GameState {
 	Init;
@@ -29,9 +35,12 @@ class Game {
 
 	public var gameState = GameState.Init;
 
+	public var playerId:String;
 	public var playerShipId:String;
 
 	//
+	private final gameMode:GameMode;
+
 	private var gameEngine:GameEngine;
 
 	private final clientShips:Map<String, ClientShip> = [];
@@ -52,8 +61,9 @@ class Game {
 
 	private final scene:h2d.Scene;
 
-	public function new(scene:h2d.Scene) {
+	public function new(scene:h2d.Scene, gameMode:GameMode) {
 		this.scene = scene;
+		this.gameMode = gameMode;
 
 		// --------------------------------------
 		// Game managers and services init
@@ -88,7 +98,7 @@ class Game {
 		islandsManager = new IslandsManager(scene);
 
 		// --------------------------------------
-		// UI init
+		// UI
 		// --------------------------------------
 
 		hud = new Hud();
@@ -112,16 +122,6 @@ class Game {
 					inputType = InputType.DebugPlayerShip;
 			}
 		});
-	}
-
-	public function startGame(playerId:String, ships:Array<EngineShipEntity>) {
-		for (ship in ships) {
-			gameEngine.addShip(ship);
-
-			final newClientShip = new ClientShip(scene, ship);
-			clientShips.set(ship.id, newClientShip);
-		}
-		gameState = GameState.Playing;
 	}
 
 	public function update(dt:Float, fps:Float) {
@@ -327,7 +327,6 @@ class Game {
 				if (left || right || up || down)
 					if (lastMovementInputCheck == 0 || lastMovementInputCheck + inputMovementCheckDelayMS < now) {
 						lastMovementInputCheck = now;
-						// TODO direct input only for standalone mode
 						if (up)
 							gameEngine.shipAccelerate(playerShipId);
 						if (down)
@@ -336,6 +335,15 @@ class Game {
 							gameEngine.shipRotateLeft(playerShipId);
 						if (right)
 							gameEngine.shipRotateRight(playerShipId);
+						if ((up || down || left || right) && gameMode == GameMode.Server) {
+							Socket.instance.move({
+								playerId: playerId,
+								up: up,
+								down: down,
+								left: left,
+								right: right
+							});
+						}
 					}
 				if (q || e)
 					if (lastShootInputCheck == 0 || lastShootInputCheck + inputShootCheckDelayMS < now) {
@@ -344,6 +352,12 @@ class Game {
 							gameEngine.shipShootBySide(Side.Left, playerShipId);
 						if (e)
 							gameEngine.shipShootBySide(Side.Right, playerShipId);
+						if ((q || e) && gameMode == GameMode.Server) {
+							Socket.instance.shoot({
+								playerId: playerId,
+								left: q ? true : false
+							});
+						}
 					}
 			case InputType.DebugCamera:
 				final moveMapSpeed = 10;
@@ -375,6 +389,58 @@ class Game {
 				// 	playerShip.rotateRight();
 				// playerShip.x += dx;
 				// playerShip.y += dy;
+		}
+	}
+
+	// --------------------------------------
+	// Authorative funcs
+	// --------------------------------------
+
+	public function startGame(playerId:String, ships:Array<EngineShipEntity>) {
+		if (gameState == GameState.Init) {
+			for (ship in ships) {
+				gameEngine.addShip(ship);
+
+				final newClientShip = new ClientShip(scene, ship);
+				clientShips.set(ship.id, newClientShip);
+
+				if (ship.ownerId == playerId) {
+					playerShipId = ship.id;
+				}
+			}
+			this.playerId = playerId;
+			gameState = GameState.Playing;
+		}
+	}
+
+	// TODO simplyfi state checking
+	public function addShip(ship:EngineShipEntity) {
+		if (gameState == GameState.Playing) {
+			if (!clientShips.exists(ship.id)) {
+				gameEngine.addShip(ship);
+				final newClientShip = new ClientShip(scene, ship);
+				clientShips.set(ship.id, newClientShip);
+			}
+		}
+	}
+
+	// Skip player's own ship for now
+	public function shipMove(shipId:String, up:Bool, down:Bool, left:Bool, right:Bool) {
+		if (gameState == GameState.Playing && playerShipId != shipId) {
+			if (up)
+				gameEngine.shipAccelerate(shipId);
+			if (down)
+				gameEngine.shipDecelerate(shipId);
+			if (left)
+				gameEngine.shipRotateLeft(shipId);
+			if (right)
+				gameEngine.shipRotateRight(shipId);
+		}
+	}
+
+	public function shipShoot(shipId:String, left:Bool) {
+		if (gameState == GameState.Playing && playerShipId != shipId) {
+			gameEngine.shipShootBySide(left ? Side.Left : Side.Right, shipId);
 		}
 	}
 }

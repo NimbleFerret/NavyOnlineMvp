@@ -1,5 +1,6 @@
 package client.scene;
 
+import client.Game.GameMode;
 import h3d.Engine;
 import h2d.Scene;
 
@@ -10,7 +11,7 @@ class SceneDemo1 extends Scene {
 		super();
 
 		camera.setViewport(width / 2, height / 2, 0, 0);
-		game = new Game(this);
+		game = new Game(this, GameMode.Client);
 
 		// --------------------------------------
 		// Mocked client data

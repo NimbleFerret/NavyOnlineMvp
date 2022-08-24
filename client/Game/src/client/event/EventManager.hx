@@ -6,6 +6,8 @@ enum EventType {
 	SocketServerMessageAddShell;
 	SocketServerMessageRemoveShip;
 	SocketServerMessageUpdateWorldState;
+	SocketServerMessageShipMove;
+	SocketServerMessageShipShoot;
 }
 
 interface EventListener {

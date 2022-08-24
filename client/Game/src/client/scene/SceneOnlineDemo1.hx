@@ -1,5 +1,7 @@
 package client.scene;
 
+import uuid.Uuid;
+import client.Game.GameMode;
 import engine.entity.EngineShipEntity;
 import client.event.EventManager;
 import client.event.EventManager.EventType;
@@ -9,10 +11,14 @@ import h3d.Engine;
 import h2d.Scene;
 
 typedef ServerShips = {
-	ships:Array<ServerShip>
+	ships:Array<ServerShipParams>
 }
 
 typedef ServerShip = {
+	ship:ServerShipParams
+}
+
+typedef ServerShipParams = {
 	id:String,
 	ownerId:String,
 	x:Int,
@@ -20,25 +26,15 @@ typedef ServerShip = {
 }
 
 class SceneOnlineDemo1 extends Scene implements EventListener {
-	// private final fui:h2d.Flow;
-	// private final gui:Gui;
 	private final game:Game;
 
-	public var playerId = 'UserId1';
+	public var playerId = Uuid.short();
 
 	public function new(width:Int, height:Int) {
 		super();
 
 		camera.setViewport(width / 2, height / 2, 0, 0);
-		game = new Game(this);
-
-		// fui = new h2d.Flow(this);
-		// fui.layout = Vertical;
-		// fui.verticalSpacing = 5;
-		// fui.padding = 10;
-		// fui.y = 10;
-
-		// gui = new Gui(fui);
+		game = new Game(this, GameMode.Server);
 
 		game.hud.addButton("Connect socket", function() {
 			Socket.instance.joinGame(playerId);
@@ -49,6 +45,8 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		EventManager.instance.subscribe(EventType.SocketServerMessageAddShell, this);
 		EventManager.instance.subscribe(EventType.SocketServerMessageRemoveShip, this);
 		EventManager.instance.subscribe(EventType.SocketServerMessageUpdateWorldState, this);
+		EventManager.instance.subscribe(EventType.SocketServerMessageShipMove, this);
+		EventManager.instance.subscribe(EventType.SocketServerMessageShipShoot, this);
 	}
 
 	public override function render(e:Engine) {
@@ -69,9 +67,8 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		switch (eventType) {
 			case SocketServerGameInit:
 				game.startGame(playerId, jsShipsToHaxeGameEngineShips(params));
-				trace("SocketServerGameInit");
 			case SocketServerMessageAddShip:
-				trace("SocketServerMessageAddShip");
+				game.addShip(jsShipToHaxeGameEngineShip(params));
 			case SocketServerMessageAddShell:
 				trace("SocketServerMessageAddShell");
 			case SocketServerMessageRemoveShip:
@@ -85,14 +82,25 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				// jsShipsToHaxe(params);
 				// TODO type cast here
 				trace(params);
+			case SocketServerMessageShipMove:
+				trace('SocketServerMessageShipMove');
+				trace(params);
+				game.shipMove(params.shipId, params.up, params.down, params.left, params.right);
+			case SocketServerMessageShipShoot:
+				trace('SocketServerMessageShipShoot');
+				trace(params);
 			default:
 				trace('Unknown socket message');
 		}
 	}
 
 	// TODO convert into GameEngineShips
-	private function jsShipsToHaxeGameEngineShips(ships:ServerShips) {
-		return ships.ships.map(ship -> {
+	private function jsShipToHaxeGameEngineShip(message:ServerShip) {
+		return new EngineShipEntity(message.ship.x, message.ship.y, message.ship.id, message.ship.ownerId);
+	}
+
+	private function jsShipsToHaxeGameEngineShips(message:ServerShips) {
+		return message.ships.map(ship -> {
 			return new EngineShipEntity(ship.x, ship.y, ship.id, ship.ownerId);
 		});
 	}
