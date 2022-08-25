@@ -83,10 +83,11 @@ export class GameService implements OnModuleInit {
             }
         };
 
-        // Bots
+        this.gameEngine.createShip('Bot', 100, 100);
+        this.gameEngine.createShip('Bot', 100, 500);
 
-        this.gameEngine.createShip('Bot', 500, 500);
-        // this.gameEngine.createShip('Bot', 800, 500)
+        this.gameEngine.createShip('Bot', 300, 100);
+        this.gameEngine.createShip('Bot', 300, 500);
     }
 
     private collectGameState(full: boolean) {

@@ -53,9 +53,7 @@ class GameEngine {
 
 		gameLoop = new GameLoop(function loop(dt:Float, tick:Int) {
 			framesPassed++;
-			if (framesPassed == 50) {
-				allowShoot = true;
-			}
+
 			for (ship in shipManager.entities) {
 				if (ship.isAlive) {
 					ship.collides(false);
@@ -63,10 +61,12 @@ class GameEngine {
 
 					final engineShipEntity = cast(ship, EngineShipEntity);
 
-					if (engineShipEntity.role == Role.Bot && allowShoot) {
-						allowShoot = false;
-						framesPassed = 0;
-						trace('BOT SHOOT! ship.id: ' + ship.id + ', engineShipEntity.id: ' + engineShipEntity.id);
+					if (framesPassed == 50) {
+						engineShipEntity.allowShoot = true;
+					}
+
+					if (engineShipEntity.role == Role.Bot && engineShipEntity.allowShoot) {
+						engineShipEntity.allowShoot = false;
 						shipShootBySide(Side.Right, engineShipEntity.id);
 					}
 					for (ship2 in shipManager.entities) {
@@ -77,6 +77,11 @@ class GameEngine {
 							}
 						}
 					}
+				}
+
+				// Shit code
+				if (framesPassed > 50) {
+					framesPassed = 0;
 				}
 			}
 

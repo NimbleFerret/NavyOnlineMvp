@@ -140,9 +140,6 @@
 		this.shellManager = new engine_entity_manager_ShellManager();
 		var loop = function (dt, tick) {
 			_gthis.framesPassed++;
-			if (_gthis.framesPassed == 50) {
-				_gthis.allowShoot = true;
-			}
 			var jsIterator = _gthis.shipManager.entities.values();
 			var _g_jsIterator = jsIterator;
 			var _g_lastStep = jsIterator.next();
@@ -154,10 +151,11 @@
 					ship.collides(false);
 					ship.update(dt);
 					var engineShipEntity = js_Boot.__cast(ship, engine_entity_EngineShipEntity);
-					if (engineShipEntity.role == engine_entity_Role.Bot && _gthis.allowShoot) {
-						_gthis.allowShoot = false;
-						_gthis.framesPassed = 0;
-						console.log("engine/GameEngine.hx:69:", "BOT SHOOT! ship.id: " + ship.id + ", engineShipEntity.id: " + engineShipEntity.id);
+					if (_gthis.framesPassed == 50) {
+						engineShipEntity.allowShoot = true;
+					}
+					if (engineShipEntity.role == engine_entity_Role.Bot && engineShipEntity.allowShoot) {
+						engineShipEntity.allowShoot = false;
 						_gthis.shipShootBySide(engine_entity_Side.Right, engineShipEntity.id);
 					}
 					var jsIterator = _gthis.shipManager.entities.values();
@@ -174,6 +172,9 @@
 							}
 						}
 					}
+				}
+				if (_gthis.framesPassed > 50) {
+					_gthis.framesPassed = 0;
 				}
 			}
 			var shipsToDelete = [];
@@ -258,8 +259,6 @@
 				this.createShipCallback(newShip);
 			}
 			this.playerShipMap.h[newShip.ownerId] = newShip.id;
-			console.log("engine/GameEngine.hx:151:", "createShip");
-			console.log("engine/GameEngine.hx:152:", this.playerShipMap == null ? "null" : haxe_ds_StringMap.stringify(this.playerShipMap.h));
 			return newShip;
 		}
 		, getShipById: function (id) {
@@ -504,14 +503,8 @@
 		}
 		if (ownerId == null) {
 			this.ownerId = uuid_Uuid.short();
-			if (entityType == engine_entity_GameEntityType.Shell) {
-				console.log("engine/entity/EngineBaseGameEntity.hx:109:", "GENERATE NEW SHELL OWNER ID: " + this.ownerId);
-			}
 		} else {
 			this.ownerId = ownerId;
-			if (entityType == engine_entity_GameEntityType.Shell) {
-				console.log("engine/entity/EngineBaseGameEntity.hx:114:", "USE EXISTING SHELL OWNER ID: " + ownerId);
-			}
 		}
 	};
 	engine_entity_EngineBaseGameEntity.__name__ = true;
@@ -700,6 +693,7 @@
 		if (role == null) {
 			role = engine_entity_Role.General;
 		}
+		this.allowShoot = false;
 		this.currentArmor = 1000;
 		this.currentHull = 1000;
 		this.baseArmor = 1000;
@@ -1583,15 +1577,6 @@
 	};
 	haxe_ds_StringMap.__name__ = true;
 	haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
-	haxe_ds_StringMap.stringify = function (h) {
-		var s = "{";
-		var first = true;
-		for (var key in h) {
-			if (first) first = false; else s += ',';
-			s += key + ' => ' + Std.string(h[key]);
-		}
-		return s + "}";
-	};
 	haxe_ds_StringMap.prototype = {
 		__class__: haxe_ds_StringMap
 	};

@@ -56,6 +56,9 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	public var currentHull = 1000;
 	public var currentArmor = 1000;
 
+	// Bot stuff
+	public var allowShoot = false;
+
 	public final role:Role;
 
 	// TODO use direction instead of rotation here
