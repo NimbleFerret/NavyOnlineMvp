@@ -1,6 +1,8 @@
 package engine.entity;
 
 import uuid.Uuid;
+import engine.entity.EngineGameRect;
+import engine.MathUtils;
 
 enum GameEntityType {
 	Ship;
@@ -58,6 +60,7 @@ abstract class EngineBaseGameEntity {
 	public var entityType:GameEntityType;
 	public var isAlive = true;
 	public var isCollides = true;
+	public var serverSide = true;
 	// ----------------------
 	// Movement
 	// ----------------------

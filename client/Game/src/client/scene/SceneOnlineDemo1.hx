@@ -1,7 +1,7 @@
 package client.scene;
 
 import uuid.Uuid;
-import client.Game.GameMode;
+import engine.GameEngine.EngineMode;
 import engine.entity.EngineShipEntity;
 import client.event.EventManager;
 import client.event.EventManager.EventType;
@@ -25,6 +25,10 @@ typedef ServerShipParams = {
 	y:Int
 }
 
+typedef RemoveShip = {
+	shipId:String
+}
+
 class SceneOnlineDemo1 extends Scene implements EventListener {
 	private final game:Game;
 
@@ -34,9 +38,14 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		super();
 
 		camera.setViewport(width / 2, height / 2, 0, 0);
-		game = new Game(this, GameMode.Server);
+		game = new Game(this, EngineMode.Server);
 
 		game.hud.addButton("Connect socket", function() {
+			Socket.instance.joinGame(playerId);
+		});
+
+		game.hud.addButton("Retry", function() {
+			// Socket.instance.joinGame(playerId);
 			Socket.instance.joinGame(playerId);
 		});
 
@@ -73,22 +82,21 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				trace("SocketServerMessageAddShell");
 			case SocketServerMessageRemoveShip:
 				trace("SocketServerMessageRemoveShip");
+				game.removeShip(params);
 			case SocketServerMessageUpdateWorldState:
-				// if (gameState == GameState.Init) {
-				// gameState = GameState.Playing;
-				// TODO add all ships and init gameplay
-				// }
-				// trace("SocketServerMessageUpdateWorldState");
-				// jsShipsToHaxe(params);
-				// TODO type cast here
-				trace(params);
+			// if (gameState == GameState.Init) {
+			// gameState = GameState.Playing;
+			// TODO add all ships and init gameplay
+			// }
+			// trace("SocketServerMessageUpdateWorldState");
+			// jsShipsToHaxe(params);
+			// TODO type cast here
 			case SocketServerMessageShipMove:
 				trace('SocketServerMessageShipMove');
-				trace(params);
 				game.shipMove(params.shipId, params.up, params.down, params.left, params.right);
 			case SocketServerMessageShipShoot:
 				trace('SocketServerMessageShipShoot');
-				trace(params);
+				game.shipShoot(params);
 			default:
 				trace('Unknown socket message');
 		}

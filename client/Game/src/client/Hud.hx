@@ -68,6 +68,17 @@ class HorizontalStatsBar {
 	}
 }
 
+class RetryDialog {
+	public function new(fui:h2d.Flow, x:Float, y:Float) {
+		final guiObject = new h2d.Object(fui);
+
+		final fillRect = new h2d.Graphics(guiObject);
+		fillRect.beginFill(0x6D563D);
+		fillRect.drawRect(x, y, 100, 100);
+		fillRect.endFill();
+	}
+}
+
 class Hud extends h2d.Scene {
 	public static final DrawWaterBg = false;
 

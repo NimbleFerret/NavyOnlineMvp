@@ -121,10 +121,21 @@
 			return [];
 		}
 	};
-	var engine_GameEngine = $hx_exports["engine"]["GameEngine"] = function () {
+	var engine_EngineMode = $hxEnums["engine.EngineMode"] = {
+		__ename__: true, __constructs__: null
+		, Client: { _hx_name: "Client", _hx_index: 0, __enum__: "engine.EngineMode", toString: $estr }
+		, Server: { _hx_name: "Server", _hx_index: 1, __enum__: "engine.EngineMode", toString: $estr }
+	};
+	engine_EngineMode.__constructs__ = [engine_EngineMode.Client, engine_EngineMode.Server];
+	var engine_GameEngine = $hx_exports["engine"]["GameEngine"] = function (engineMode) {
+		if (engineMode == null) {
+			engineMode = engine_EngineMode.Server;
+		}
 		this.framesPassed = 0;
 		this.allowShoot = false;
+		this.playerShipMap = new haxe_ds_StringMap();
 		var _gthis = this;
+		this.engineMode = engineMode;
 		this.shipManager = new engine_entity_manager_ShipManager();
 		this.shellManager = new engine_entity_manager_ShellManager();
 		var loop = function (dt, tick) {
@@ -190,7 +201,7 @@
 							if (_gthis.shipHitByShellCallback != null) {
 								_gthis.shipHitByShellCallback({ ship: engineShipEntity, damage: engineShellEntity.baseDamage });
 							}
-							if (!engineShipEntity.isAlive) {
+							if (_gthis.engineMode == engine_EngineMode.Server && !engineShipEntity.isAlive) {
 								shipsToDelete.push(engineShipEntity.id);
 							}
 						}
@@ -218,10 +229,7 @@
 				var i = _g++;
 				var ship = js_Boot.__cast(_gthis.shipManager.getEntityById(shipsToDelete[i]), engine_entity_EngineShipEntity);
 				if (ship != null) {
-					if (_gthis.deleteShipCallback != null) {
-						_gthis.deleteShipCallback(ship);
-					}
-					_gthis.shipManager.remove(ship.id);
+					_gthis.removeShip(ship.id);
 				}
 			}
 			if (_gthis.tickCallback != null) {
@@ -239,6 +247,7 @@
 	engine_GameEngine.prototype = {
 		addShip: function (ship) {
 			this.shipManager.add(ship);
+			this.playerShipMap.h[ship.ownerId] = ship.id;
 		}
 		, createShip: function (x, y, id, ownerId) {
 			var newShip = new engine_entity_EngineShipEntity(x, y, id, ownerId);
@@ -246,10 +255,16 @@
 			if (this.createShipCallback != null) {
 				this.createShipCallback(newShip);
 			}
+			if (ownerId != null) {
+				this.playerShipMap.h[ownerId] = newShip.id;
+			}
 			return newShip;
 		}
 		, getShipById: function (id) {
 			return this.shipManager.getEntityById(id);
+		}
+		, getShipIdByOwnerId: function (id) {
+			return this.playerShipMap.h[id];
 		}
 		, getShips: function () {
 			return this.shipManager.entities;
@@ -259,6 +274,11 @@
 			if (ship != null) {
 				if (this.deleteShipCallback != null) {
 					this.deleteShipCallback(ship);
+				}
+				var key = ship.ownerId;
+				var _this = this.playerShipMap;
+				if (Object.prototype.hasOwnProperty.call(_this.h, key)) {
+					delete (_this.h[key]);
 				}
 				this.shipManager.remove(shipId);
 			}
@@ -287,19 +307,29 @@
 				ship.rotateRight();
 			}
 		}
-		, shipShootBySide: function (side, shipId) {
+		, shipShootBySide: function (side, shipId, serverSide, shellRnd) {
+			if (serverSide == null) {
+				serverSide = true;
+			}
 			var ship = js_Boot.__cast(this.shipManager.getEntityById(shipId), engine_entity_EngineShipEntity);
 			if (ship != null) {
 				var shipSideRadRotation = ship.rotation + engine_MathUtils.degreeToRads(side == engine_entity_Side.Left ? -90 : 90);
 				var pos1 = ship.getCanonOffsetBySideAndIndex(side, 0);
-				var shell1 = this.addShell(side, 0, pos1.x, pos1.y, shipSideRadRotation, ship.id);
+				var pos2 = ship.getCanonOffsetBySideAndIndex(side, 1);
+				var pos3 = ship.getCanonOffsetBySideAndIndex(side, 2);
+				var shell1 = this.addShell(side, 0, pos1.x, pos1.y, shipSideRadRotation, ship.id, shellRnd != null && shellRnd[0] != null ? shellRnd[0] : null);
+				var shell2 = this.addShell(side, 1, pos2.x, pos2.y, shipSideRadRotation, ship.id, shellRnd != null && shellRnd[1] != null ? shellRnd[1] : null);
+				var shell3 = this.addShell(side, 2, pos3.x, pos3.y, shipSideRadRotation, ship.id, shellRnd != null && shellRnd[2] != null ? shellRnd[2] : null);
+				shell1.serverSide = serverSide;
+				shell2.serverSide = serverSide;
+				shell3.serverSide = serverSide;
 				if (this.createShellCallback != null) {
-					this.createShellCallback([shell1]);
+					this.createShellCallback([shell1, shell2, shell3]);
 				}
 			}
 		}
-		, addShell: function (side, pos, x, y, rotation, ownerId) {
-			var newShell = new engine_entity_EngineShellEntity(side, pos, x, y, rotation, ownerId);
+		, addShell: function (side, pos, x, y, rotation, ownerId, shellRnd) {
+			var newShell = new engine_entity_EngineShellEntity(side, pos, x, y, rotation, ownerId, shellRnd);
 			this.shellManager.add(newShell);
 			return newShell;
 		}
@@ -443,6 +473,7 @@
 		this.x = 0.0;
 		this.rotation = 0.0;
 		this.direction = engine_entity_GameEntityDirection.East;
+		this.serverSide = true;
 		this.isCollides = true;
 		this.isAlive = true;
 		this.entityType = entityType;
@@ -613,7 +644,7 @@
 		, Explosion: { _hx_name: "Explosion", _hx_index: 1, __enum__: "engine.entity.DieEffect", toString: $estr }
 	};
 	engine_entity_DieEffect.__constructs__ = [engine_entity_DieEffect.Splash, engine_entity_DieEffect.Explosion];
-	var engine_entity_EngineShellEntity = function (side, pos, x, y, rotation, ownerId) {
+	var engine_entity_EngineShellEntity = function (side, pos, x, y, rotation, ownerId, shellRnd) {
 		this.distanceTraveled = 0.0;
 		this.maxTravelDistance = 600;
 		this.dieEffect = engine_entity_DieEffect.Splash;
@@ -621,11 +652,14 @@
 		engine_entity_EngineBaseGameEntity.call(this, engine_entity_GameEntityType.Shell, x, y, rotation, null, ownerId);
 		this.side = side;
 		this.pos = pos;
+		if (shellRnd != null) {
+			this.shellRnd = shellRnd;
+		} else {
+			this.shellRnd = { speed: Std.random(30), dir: Std.random(2), rotation: Std.random(7) };
+		}
 		this.currentSpeed = 380;
-		this.currentSpeed += Std.random(30);
-		var rndDir = Std.random(2);
-		var rndAngle = Std.random(7);
-		this.rotation += engine_MathUtils.degreeToRads(rndDir == 1 ? rndAngle : -rndAngle);
+		this.currentSpeed += this.shellRnd.speed;
+		this.rotation += engine_MathUtils.degreeToRads(this.shellRnd.dir == 1 ? this.shellRnd.rotation : -this.shellRnd.rotation);
 	};
 	engine_entity_EngineShellEntity.__name__ = true;
 	engine_entity_EngineShellEntity.__super__ = engine_entity_EngineBaseGameEntity;
@@ -1520,6 +1554,14 @@
 		}
 		, __class__: haxe_ds_EnumValueMap
 	});
+	var haxe_ds_StringMap = function () {
+		this.h = Object.create(null);
+	};
+	haxe_ds_StringMap.__name__ = true;
+	haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
+	haxe_ds_StringMap.prototype = {
+		__class__: haxe_ds_StringMap
+	};
 	var haxe_io_Bytes = function (data) {
 		this.length = data.byteLength;
 		this.b = new Uint8Array(data);

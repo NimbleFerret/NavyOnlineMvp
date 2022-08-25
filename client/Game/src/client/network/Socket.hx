@@ -3,6 +3,8 @@ package client.network;
 import client.event.EventManager;
 import js.node.socketio.Client;
 
+// TODO define client and server msgs here
+
 typedef MoveDir = {
 	playerId:String,
 	up:Bool,
@@ -14,7 +16,7 @@ typedef MoveDir = {
 typedef ShotMsg = {
 	playerId:String,
 	left:Bool,
-	shoots:Array<ShotParam>
+	shotParams:Array<ShotParam>
 }
 
 typedef ShotParam = {

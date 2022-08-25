@@ -1,4 +1,5 @@
 import { EntityShip } from './game/entity/entity.ship';
+import { ShotParams } from './ws/dto/dto.shoot';
 
 /* eslint-disable prettier/prettier */
 export enum AppEvents {
@@ -21,19 +22,6 @@ export interface PlayerJoinedEvent {
 
 export interface PlayerDisconnectedEvent {
     playerId: string;
-}
-
-export interface PlayerMoveEventMsg {
-    playerId: string;
-    up: boolean;
-    down: boolean;
-    left: boolean;
-    right: boolean;
-}
-
-export interface PlayerShootEventMsg {
-    playerId: string;
-    left: boolean;
 }
 
 // ---------------------------------
@@ -72,6 +60,7 @@ export interface NotifyShipMoveEventMsg {
 }
 
 export interface NotifyShipShootEventMsg {
-    shipId: string;
-    leftSide: boolean;
+    playerId: string;
+    left: boolean;
+    shotParams: ShotParams[];
 }

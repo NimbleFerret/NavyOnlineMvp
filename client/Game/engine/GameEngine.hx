@@ -13,10 +13,16 @@ typedef ShipShitByShellCallbackParams = {ship:EngineShipEntity, damage:Int}
 
 // TODO oprimize casts
 
+enum EngineMode {
+	Client;
+	Server;
+}
+
 @:expose
 class GameEngine {
 	final gameLoop:GameLoop;
 
+	public final engineMode:EngineMode;
 	public final shipManager:ShipManager;
 	public final shellManager:ShellManager;
 
@@ -29,6 +35,8 @@ class GameEngine {
 	public var deleteShipCallback:EngineShipEntity->Void;
 	public var shipHitByShellCallback:ShipShitByShellCallbackParams->Void;
 
+	private final playerShipMap = new Map<String, String>();
+
 	public static function main() {}
 
 	public static function GenerateId() {
@@ -38,7 +46,8 @@ class GameEngine {
 	var allowShoot = false;
 	var framesPassed = 0;
 
-	public function new() {
+	public function new(engineMode = EngineMode.Server) {
+		this.engineMode = engineMode;
 		shipManager = new ShipManager();
 		shellManager = new ShellManager();
 
@@ -83,7 +92,7 @@ class GameEngine {
 							if (shipHitByShellCallback != null) {
 								shipHitByShellCallback({ship: engineShipEntity, damage: engineShellEntity.baseDamage});
 							}
-							if (!engineShipEntity.isAlive) {
+							if (this.engineMode == EngineMode.Server && !engineShipEntity.isAlive) {
 								shipsToDelete.push(engineShipEntity.id);
 							}
 						}
@@ -107,10 +116,7 @@ class GameEngine {
 			for (i in 0...shipsToDelete.length) {
 				var ship = cast(shipManager.getEntityById(shipsToDelete[i]), EngineShipEntity);
 				if (ship != null) {
-					if (deleteShipCallback != null) {
-						deleteShipCallback(ship);
-					}
-					shipManager.remove(ship.id);
+					removeShip(ship.id);
 				}
 			}
 
@@ -123,22 +129,32 @@ class GameEngine {
 	// -------------------------------------
 	// Ship game object
 	// --------------------------------------
-
+	// TODO divide by client and server parts
+	// Add existing ship
 	public function addShip(ship:EngineShipEntity) {
 		shipManager.add(ship);
+		playerShipMap.set(ship.ownerId, ship.id);
 	}
 
+	// Create a new ship
 	public function createShip(x:Float, y:Float, ?id:String, ?ownerId:String):EngineShipEntity {
 		final newShip = new EngineShipEntity(x, y, id, ownerId);
 		shipManager.add(newShip);
 		if (createShipCallback != null) {
 			createShipCallback(newShip);
 		}
+		if (ownerId != null) {
+			playerShipMap.set(ownerId, newShip.id);
+		}
 		return newShip;
 	}
 
 	public function getShipById(id:String) {
 		return shipManager.getEntityById(id);
+	}
+
+	public function getShipIdByOwnerId(id:String) {
+		return playerShipMap.get(id);
 	}
 
 	public function getShips() {
@@ -151,6 +167,7 @@ class GameEngine {
 			if (deleteShipCallback != null) {
 				deleteShipCallback(ship);
 			}
+			playerShipMap.remove(ship.ownerId);
 			shipManager.remove(shipId);
 		}
 	}
@@ -184,7 +201,7 @@ class GameEngine {
 	}
 
 	// Pass an array of shoot rnd
-	public function shipShootBySide(side:Side, shipId:String, ?shellRnd:Array<ShellRnd>) {
+	public function shipShootBySide(side:Side, shipId:String, serverSide:Bool = true, ?shellRnd:Array<ShellRnd>) {
 		final ship = cast(shipManager.getEntityById(shipId), EngineShipEntity);
 		if (ship != null) {
 			final shipSideRadRotation = ship.rotation + MathUtils.degreeToRads(side == Left ? -90 : 90);
@@ -197,6 +214,10 @@ class GameEngine {
 			final shell1 = addShell(side, 0, pos1.x, pos1.y, shipSideRadRotation, ship.id, (shellRnd != null && shellRnd[0] != null) ? shellRnd[0] : null);
 			final shell2 = addShell(side, 1, pos2.x, pos2.y, shipSideRadRotation, ship.id, (shellRnd != null && shellRnd[1] != null) ? shellRnd[1] : null);
 			final shell3 = addShell(side, 2, pos3.x, pos3.y, shipSideRadRotation, ship.id, (shellRnd != null && shellRnd[2] != null) ? shellRnd[2] : null);
+
+			shell1.serverSide = serverSide;
+			shell2.serverSide = serverSide;
+			shell3.serverSide = serverSide;
 
 			if (createShellCallback != null) {
 				createShellCallback([shell1, shell2, shell3]);

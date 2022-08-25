@@ -7,3 +7,8 @@
 -js navy.js
 -main Main
 -debug
+
+# -cp engine
+# -lib uuid
+# -js GameEngine.js
+# -main engine.GameEngine

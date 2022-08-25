@@ -6,17 +6,18 @@ import {
     NotifyAddShipEventMsg,
     NotifyEachPlayerEventMsg,
     NotifyPlayerEventMsg,
+    NotifyRemoveShipEventMsg,
     NotifyShipMoveEventMsg,
     NotifyShipShootEventMsg,
     NotifyWorldStateEventMsg,
-    PlayerDisconnectedEvent,
-    PlayerMoveEventMsg,
-    PlayerShootEventMsg
+    PlayerDisconnectedEvent
 } from '../app.events';
 import { DtoJoinGame } from '../ws/dto/dto.joinGame';
 import { EntityShip } from './entity/entity.ship.js';
 import { engine } from "../../GameEngine.js"
 import { WsGateway } from 'src/ws/ws.gateway';
+import { DtoShoot } from 'src/ws/dto/dto.shoot';
+import { DtoMove } from 'src/ws/dto/dto.move';
 
 @Injectable()
 export class GameService implements OnModuleInit {
@@ -50,7 +51,10 @@ export class GameService implements OnModuleInit {
             this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
         };
 
-        // console.log(this.gameEngine);
+        this.gameEngine.deleteShipCallback = (ship: object) => {
+            const jsShip = this.converJsShipToTypeScript(ship);
+            console.log();
+        };
     }
 
     private collectGameState(full: boolean) {
@@ -101,7 +105,7 @@ export class GameService implements OnModuleInit {
 
     @OnEvent(AppEvents.PlayerJoined)
     async handlePlayerJoinedEvent(data: DtoJoinGame) {
-        const ship = this.converJsShipToTypeScript(this.gameEngine.createShip((this.playerShipMap.size + 3) * 100, 100, undefined, data.ethAddress));
+        const ship = this.converJsShipToTypeScript(this.gameEngine.createShip(100, (this.playerShipMap.size) * 500, undefined, data.ethAddress));
         this.playerShipMap.set(ship.ownerId, ship.id);
 
         const notifyPlayerEventMsg = {
@@ -116,12 +120,23 @@ export class GameService implements OnModuleInit {
     async handlePlayerDisconnected(data: PlayerDisconnectedEvent) {
         const ship = this.playerShipMap.get(data.playerId);
         if (ship) {
+            this.gameEngine.removeShip(ship);
 
+            const notifyRemoveShipEventMsg = {
+                shipId: ship,
+            } as NotifyRemoveShipEventMsg;
+
+            const notifyEachPlayerEventMsg = {
+                socketEvent: WsGateway.SocketServerMessageRemoveShip,
+                message: notifyRemoveShipEventMsg
+            } as NotifyEachPlayerEventMsg;
+
+            this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
         }
     }
 
     @OnEvent(AppEvents.PlayerMove)
-    async handlePlayerMove(data: PlayerMoveEventMsg) {
+    async handlePlayerMove(data: DtoMove) {
         const ship = this.playerShipMap.get(data.playerId);
         if (ship) {
             if (data.up)
@@ -151,14 +166,15 @@ export class GameService implements OnModuleInit {
     }
 
     @OnEvent(AppEvents.PlayerShoot)
-    async handlePlayerShoot(data: PlayerShootEventMsg) {
+    async handlePlayerShoot(data: DtoShoot) {
         const ship = this.playerShipMap.get(data.playerId);
         if (ship) {
-            this.gameEngine.shipShootBySide(data.left ? 'Left' : 'Right', ship);
+            this.gameEngine.shipShootBySide(data.left ? 'Left' : 'Right', ship, data.shotParams);
 
             const notifyShipShootEventMsg = {
-                shipId: ship,
-                leftSide: data.left
+                playerId: data.playerId,
+                left: data.left,
+                shotParams: data.shotParams
             } as NotifyShipShootEventMsg;
 
             const notifyEachPlayerEventMsg = {
