@@ -1,5 +1,6 @@
 package client.scene;
 
+import engine.entity.EngineShipEntity.Role;
 import engine.GameEngine.EngineMode;
 import h3d.Engine;
 import h2d.Scene;
@@ -18,17 +19,9 @@ class SceneDemo1 extends Scene {
 		// --------------------------------------
 
 		final playerId = 'Player1';
-		final ship1 = game.addShipByClient(100, 100, null, playerId);
-		game.startGame(playerId, [ship1]);
-
-		// final newEngineShip = gameEngine.addShip(100, 100, "1");
-		// final newClientShip = new ClientShip(scene, newEngineShip);
-		// clientShips.set(newEngineShip.id, newClientShip);
-		// playerShipId = newEngineShip.id;
-
-		// final newEngineShip2 = gameEngine.addShip(100, -200, "2");
-		// final newClientShip2 = new ClientShip(scene, newEngineShip2);
-		// clientShips.set(newEngineShip2.id, newClientShip2);
+		final ship1 = game.addShipByClient(Role.Player, 100, 100, null, playerId);
+		final ship2 = game.addShipByClient(Role.Bot, 100, -600, null, null);
+		game.startGame(playerId, [ship1, ship2]);
 	}
 
 	public override function render(e:Engine) {

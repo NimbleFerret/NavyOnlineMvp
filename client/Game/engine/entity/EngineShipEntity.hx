@@ -3,6 +3,12 @@ package engine.entity;
 import engine.entity.EngineBaseGameEntity;
 import engine.MathUtils;
 
+enum Role {
+	Bot;
+	Player;
+	General;
+}
+
 class EngineShipEntity extends EngineBaseGameEntity {
 	public static final ShapeOffsetByDir:Map<GameEntityDirection, PosOffset> = [
 		GameEntityDirection.East => new PosOffset(0, -100, -40),
@@ -50,9 +56,12 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	public var currentHull = 1000;
 	public var currentArmor = 1000;
 
+	public final role:Role;
+
 	// TODO use direction instead of rotation here
-	public function new(x:Float, y:Float, ?id:String, ?ownerId:String) {
+	public function new(role = Role.General, x:Float, y:Float, ?id:String, ?ownerId:String) {
 		super(GameEntityType.Ship, x, y, 0, id, ownerId);
+		this.role = role;
 	}
 
 	// -----------------------

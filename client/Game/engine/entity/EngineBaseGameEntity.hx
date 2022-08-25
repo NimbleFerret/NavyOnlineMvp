@@ -103,7 +103,9 @@ abstract class EngineBaseGameEntity {
 		} else {
 			this.id = id;
 		}
-		if (ownerId != null) {
+		if (ownerId == null) {
+			this.ownerId = Uuid.short();
+		} else {
 			this.ownerId = ownerId;
 		}
 	}

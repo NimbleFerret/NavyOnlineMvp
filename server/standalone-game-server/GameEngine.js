@@ -153,10 +153,12 @@
 				if (ship.isAlive) {
 					ship.collides(false);
 					ship.update(dt);
-					if (ship.id == "2" && _gthis.allowShoot) {
+					var engineShipEntity = js_Boot.__cast(ship, engine_entity_EngineShipEntity);
+					if (engineShipEntity.role == engine_entity_Role.Bot && _gthis.allowShoot) {
 						_gthis.allowShoot = false;
 						_gthis.framesPassed = 0;
-						_gthis.shipShootBySide(engine_entity_Side.Right, "2");
+						console.log("engine/GameEngine.hx:69:", "BOT SHOOT! ship.id: " + ship.id + ", engineShipEntity.id: " + engineShipEntity.id);
+						_gthis.shipShootBySide(engine_entity_Side.Right, engineShipEntity.id);
 					}
 					var jsIterator = _gthis.shipManager.entities.values();
 					var _g_jsIterator1 = jsIterator;
@@ -249,15 +251,15 @@
 			this.shipManager.add(ship);
 			this.playerShipMap.h[ship.ownerId] = ship.id;
 		}
-		, createShip: function (x, y, id, ownerId) {
-			var newShip = new engine_entity_EngineShipEntity(x, y, id, ownerId);
+		, createShip: function (role, x, y, id, ownerId) {
+			var newShip = new engine_entity_EngineShipEntity(role, x, y, id, ownerId);
 			this.shipManager.add(newShip);
 			if (this.createShipCallback != null) {
 				this.createShipCallback(newShip);
 			}
-			if (ownerId != null) {
-				this.playerShipMap.h[ownerId] = newShip.id;
-			}
+			this.playerShipMap.h[newShip.ownerId] = newShip.id;
+			console.log("engine/GameEngine.hx:151:", "createShip");
+			console.log("engine/GameEngine.hx:152:", this.playerShipMap == null ? "null" : haxe_ds_StringMap.stringify(this.playerShipMap.h));
 			return newShip;
 		}
 		, getShipById: function (id) {
@@ -265,6 +267,9 @@
 		}
 		, getShipIdByOwnerId: function (id) {
 			return this.playerShipMap.h[id];
+		}
+		, getShipByOwnerId: function (id) {
+			return this.shipManager.getEntityById(this.playerShipMap.h[id]);
 		}
 		, getShips: function () {
 			return this.shipManager.entities;
@@ -497,8 +502,16 @@
 		} else {
 			this.id = id;
 		}
-		if (ownerId != null) {
+		if (ownerId == null) {
+			this.ownerId = uuid_Uuid.short();
+			if (entityType == engine_entity_GameEntityType.Shell) {
+				console.log("engine/entity/EngineBaseGameEntity.hx:109:", "GENERATE NEW SHELL OWNER ID: " + this.ownerId);
+			}
+		} else {
 			this.ownerId = ownerId;
+			if (entityType == engine_entity_GameEntityType.Shell) {
+				console.log("engine/entity/EngineBaseGameEntity.hx:114:", "USE EXISTING SHELL OWNER ID: " + ownerId);
+			}
 		}
 	};
 	engine_entity_EngineBaseGameEntity.__name__ = true;
@@ -676,12 +689,23 @@
 		}
 		, __class__: engine_entity_EngineShellEntity
 	});
-	var engine_entity_EngineShipEntity = function (x, y, id, ownerId) {
+	var engine_entity_Role = $hxEnums["engine.entity.Role"] = {
+		__ename__: true, __constructs__: null
+		, Bot: { _hx_name: "Bot", _hx_index: 0, __enum__: "engine.entity.Role", toString: $estr }
+		, Player: { _hx_name: "Player", _hx_index: 1, __enum__: "engine.entity.Role", toString: $estr }
+		, General: { _hx_name: "General", _hx_index: 2, __enum__: "engine.entity.Role", toString: $estr }
+	};
+	engine_entity_Role.__constructs__ = [engine_entity_Role.Bot, engine_entity_Role.Player, engine_entity_Role.General];
+	var engine_entity_EngineShipEntity = function (role, x, y, id, ownerId) {
+		if (role == null) {
+			role = engine_entity_Role.General;
+		}
 		this.currentArmor = 1000;
 		this.currentHull = 1000;
 		this.baseArmor = 1000;
 		this.baseHull = 1000;
 		engine_entity_EngineBaseGameEntity.call(this, engine_entity_GameEntityType.Ship, x, y, 0, id, ownerId);
+		this.role = role;
 	};
 	engine_entity_EngineShipEntity.__name__ = true;
 	engine_entity_EngineShipEntity.__super__ = engine_entity_EngineBaseGameEntity;
@@ -1559,6 +1583,15 @@
 	};
 	haxe_ds_StringMap.__name__ = true;
 	haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
+	haxe_ds_StringMap.stringify = function (h) {
+		var s = "{";
+		var first = true;
+		for (var key in h) {
+			if (first) first = false; else s += ',';
+			s += key + ' => ' + Std.string(h[key]);
+		}
+		return s + "}";
+	};
 	haxe_ds_StringMap.prototype = {
 		__class__: haxe_ds_StringMap
 	};

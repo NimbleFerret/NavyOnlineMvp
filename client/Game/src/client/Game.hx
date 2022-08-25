@@ -475,14 +475,7 @@ class Game {
 	}
 
 	// for client mode only
-	public function addShipByClient(x:Int, y:Int, shipId:String, ?ownerId:String) {
-		if (gameEngine.engineMode == EngineMode.Client) {
-			final newEngineShip = gameEngine.createShip(x, y, shipId, ownerId);
-			final newClientShip = new ClientShip(scene, newEngineShip);
-			clientShips.set(newEngineShip.id, newClientShip);
-			return newEngineShip;
-		} else {
-			return null;
-		}
+	public function addShipByClient(role:Role, x:Int, y:Int, shipId:String, ?ownerId:String) {
+		return gameEngine.createShip(role, x, y, shipId, ownerId);
 	}
 }

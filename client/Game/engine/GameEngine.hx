@@ -60,10 +60,14 @@ class GameEngine {
 				if (ship.isAlive) {
 					ship.collides(false);
 					ship.update(dt);
-					if (ship.id == "2" && allowShoot) {
+
+					final engineShipEntity = cast(ship, EngineShipEntity);
+
+					if (engineShipEntity.role == Role.Bot && allowShoot) {
 						allowShoot = false;
 						framesPassed = 0;
-						shipShootBySide(Side.Right, "2");
+						trace('BOT SHOOT! ship.id: ' + ship.id + ', engineShipEntity.id: ' + engineShipEntity.id);
+						shipShootBySide(Side.Right, engineShipEntity.id);
 					}
 					for (ship2 in shipManager.entities) {
 						if (ship.id != ship2.id) {
@@ -137,15 +141,13 @@ class GameEngine {
 	}
 
 	// Create a new ship
-	public function createShip(x:Float, y:Float, ?id:String, ?ownerId:String):EngineShipEntity {
-		final newShip = new EngineShipEntity(x, y, id, ownerId);
+	public function createShip(role:Role, x:Float, y:Float, ?id:String, ?ownerId:String):EngineShipEntity {
+		final newShip = new EngineShipEntity(role, x, y, id, ownerId);
 		shipManager.add(newShip);
 		if (createShipCallback != null) {
 			createShipCallback(newShip);
 		}
-		if (ownerId != null) {
-			playerShipMap.set(ownerId, newShip.id);
-		}
+		playerShipMap.set(newShip.ownerId, newShip.id);
 		return newShip;
 	}
 
@@ -153,8 +155,13 @@ class GameEngine {
 		return shipManager.getEntityById(id);
 	}
 
+	// TODO ship by owner is not clear because each game object has an owner
 	public function getShipIdByOwnerId(id:String) {
 		return playerShipMap.get(id);
+	}
+
+	public function getShipByOwnerId(id:String) {
+		return shipManager.getEntityById(playerShipMap.get(id));
 	}
 
 	public function getShips() {

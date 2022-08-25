@@ -55,6 +55,38 @@ export class GameService implements OnModuleInit {
             const jsShip = this.converJsShipToTypeScript(ship);
             console.log();
         };
+
+        // TODO not shell but all shells from the ship 
+        this.gameEngine.createShellCallback = (shells: any) => {
+            const ship = this.gameEngine.getShipById(shells[0].ownerId);
+            if (ship && ship.role == 'Bot') {
+                const shotParams = shells.map(shell => {
+                    return {
+                        speed: shell.shellRnd.speed,
+                        dir: shell.shellRnd.dir,
+                        rotation: shell.shellRnd.rotation
+                    }
+                });
+
+                const notifyShipShootEventMsg = {
+                    playerId: ship.ownerId,
+                    left: shells[0].side == 'Left' ? true : false,
+                    shotParams
+                } as NotifyShipShootEventMsg;
+
+                const notifyEachPlayerEventMsg = {
+                    socketEvent: WsGateway.SocketServerMessageShipShoot,
+                    message: notifyShipShootEventMsg
+                } as NotifyEachPlayerEventMsg;
+
+                this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
+            }
+        };
+
+        // Bots
+
+        this.gameEngine.createShip('Bot', 500, 500);
+        // this.gameEngine.createShip('Bot', 800, 500)
     }
 
     private collectGameState(full: boolean) {
@@ -105,7 +137,7 @@ export class GameService implements OnModuleInit {
 
     @OnEvent(AppEvents.PlayerJoined)
     async handlePlayerJoinedEvent(data: DtoJoinGame) {
-        const ship = this.converJsShipToTypeScript(this.gameEngine.createShip(100, (this.playerShipMap.size) * 500, undefined, data.ethAddress));
+        const ship = this.converJsShipToTypeScript(this.gameEngine.createShip('Player', 100, (this.playerShipMap.size) * 500, undefined, data.ethAddress));
         this.playerShipMap.set(ship.ownerId, ship.id);
 
         const notifyPlayerEventMsg = {
