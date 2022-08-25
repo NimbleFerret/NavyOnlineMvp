@@ -183,19 +183,23 @@ class GameEngine {
 		}
 	}
 
-	public function shipShootBySide(side:Side, shipId:String) {
+	// Pass an array of shoot rnd
+	public function shipShootBySide(side:Side, shipId:String, ?shellRnd:Array<ShellRnd>) {
 		final ship = cast(shipManager.getEntityById(shipId), EngineShipEntity);
 		if (ship != null) {
 			final shipSideRadRotation = ship.rotation + MathUtils.degreeToRads(side == Left ? -90 : 90);
+
+			// TODO double check ship guns
 			final pos1 = ship.getCanonOffsetBySideAndIndex(side, 0);
-			// final pos2 = ship.getCanonOffsetBySideAndIndex(side, 1);
-			// final pos3 = ship.getCanonOffsetBySideAndIndex(side, 2);
-			final shell1 = addShell(side, 0, pos1.x, pos1.y, shipSideRadRotation, ship.id);
-			// final shell2 = addShell(side, 1, pos2.x, pos2.y, shipSideRadRotation, ship.id);
-			// final shell3 = addShell(side, 2, pos3.x, pos3.y, shipSideRadRotation, ship.id);
+			final pos2 = ship.getCanonOffsetBySideAndIndex(side, 1);
+			final pos3 = ship.getCanonOffsetBySideAndIndex(side, 2);
+
+			final shell1 = addShell(side, 0, pos1.x, pos1.y, shipSideRadRotation, ship.id, (shellRnd != null && shellRnd[0] != null) ? shellRnd[0] : null);
+			final shell2 = addShell(side, 1, pos2.x, pos2.y, shipSideRadRotation, ship.id, (shellRnd != null && shellRnd[1] != null) ? shellRnd[1] : null);
+			final shell3 = addShell(side, 2, pos3.x, pos3.y, shipSideRadRotation, ship.id, (shellRnd != null && shellRnd[2] != null) ? shellRnd[2] : null);
+
 			if (createShellCallback != null) {
-				createShellCallback([shell1]);
-				// createShellCallback([shell1, shell2, shell3]);
+				createShellCallback([shell1, shell2, shell3]);
 			}
 		}
 	}
@@ -203,8 +207,9 @@ class GameEngine {
 	// -------------------------------------
 	// Shell game object
 	// --------------------------------------
-	public function addShell(side:Side, pos:Int, x:Float, y:Float, rotation:Float, ownerId:String):EngineShellEntity {
-		final newShell = new EngineShellEntity(side, pos, x, y, rotation, ownerId);
+
+	public function addShell(side:Side, pos:Int, x:Float, y:Float, rotation:Float, ownerId:String, ?shellRnd:ShellRnd):EngineShellEntity {
+		final newShell = new EngineShellEntity(side, pos, x, y, rotation, ownerId, shellRnd);
 		shellManager.add(newShell);
 		return newShell;
 	}

@@ -73,20 +73,36 @@ class Game {
 		gameEngine.createShipCallback = function callback(engineShipEntity:EngineShipEntity) {}
 		gameEngine.createShellCallback = function callback(engineShellEntities:Array<EngineShellEntity>) {
 			final ownerShip = clientShips.get(engineShellEntities[0].ownerId);
+			final shotParams = new Array<ShotParam>();
 			if (ownerShip != null) {
 				for (engineShell in engineShellEntities) {
 					final clientShell = new ClientShell(scene, engineShell, ownerShip);
 					clientShells.set(engineShell.id, clientShell);
+					shotParams.push({
+						speed: engineShell.shellRnd.speed,
+						dir: engineShell.shellRnd.dir,
+						rotation: engineShell.shellRnd.rotation
+					});
 				}
 			}
+			if (gameMode == GameMode.Server) {
+				Socket.instance.shoot({
+					playerId: playerId,
+					left: engineShellEntities[0].side == Side.Left ? true : false,
+					shoots: shotParams
+				});
+			}
 		};
+
 		gameEngine.deleteShellCallback = function callback(engineShellEntity:EngineShellEntity) {
 			// clientShells.get(engineShellEntity.)
 		};
+
 		gameEngine.deleteShipCallback = function callback(engineShipEntity:EngineShipEntity) {
 			// clientShells.get(engineShellEntity.)
 			trace("Ship");
 		};
+
 		gameEngine.shipHitByShellCallback = function callback(params:ShipShitByShellCallbackParams) {
 			final clientShip = clientShips.get(params.ship.id);
 			if (clientShip != null) {
@@ -102,7 +118,6 @@ class Game {
 		// --------------------------------------
 
 		hud = new Hud();
-
 		hud.addChoice("Debug draw", ["Off", "On"], function(i) {
 			switch (i) {
 				case 0:
@@ -352,12 +367,6 @@ class Game {
 							gameEngine.shipShootBySide(Side.Left, playerShipId);
 						if (e)
 							gameEngine.shipShootBySide(Side.Right, playerShipId);
-						if ((q || e) && gameMode == GameMode.Server) {
-							Socket.instance.shoot({
-								playerId: playerId,
-								left: q ? true : false
-							});
-						}
 					}
 			case InputType.DebugCamera:
 				final moveMapSpeed = 10;
@@ -441,6 +450,18 @@ class Game {
 	public function shipShoot(shipId:String, left:Bool) {
 		if (gameState == GameState.Playing && playerShipId != shipId) {
 			gameEngine.shipShootBySide(left ? Side.Left : Side.Right, shipId);
+		}
+	}
+
+	// for client mode only
+	public function addShipByClient(x:Int, y:Int, shipId:String, ?ownerId:String) {
+		if (gameMode == Client) {
+			final newEngineShip = gameEngine.createShip(x, y, shipId, ownerId);
+			final newClientShip = new ClientShip(scene, newEngineShip);
+			clientShips.set(newEngineShip.id, newClientShip);
+			return newEngineShip;
+		} else {
+			return null;
 		}
 	}
 }

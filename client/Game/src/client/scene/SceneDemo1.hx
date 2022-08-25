@@ -17,6 +17,10 @@ class SceneDemo1 extends Scene {
 		// Mocked client data
 		// --------------------------------------
 
+		final playerId = 'Player1';
+		final ship1 = game.addShipByClient(100, 100, null, playerId);
+		game.startGame(playerId, [ship1]);
+
 		// final newEngineShip = gameEngine.addShip(100, 100, "1");
 		// final newClientShip = new ClientShip(scene, newEngineShip);
 		// clientShips.set(newEngineShip.id, newClientShip);

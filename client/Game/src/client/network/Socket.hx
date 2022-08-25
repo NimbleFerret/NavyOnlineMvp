@@ -11,9 +11,16 @@ typedef MoveDir = {
 	right:Bool,
 }
 
-typedef ShootDir = {
+typedef ShotMsg = {
 	playerId:String,
-	left:Bool
+	left:Bool,
+	shoots:Array<ShotParam>
+}
+
+typedef ShotParam = {
+	speed:Int,
+	dir:Int,
+	rotation:Int
 }
 
 class Socket {
@@ -69,7 +76,7 @@ class Socket {
 		clientSocket.emit(SocketClientMessageMove, moveDir);
 	}
 
-	public function shoot(shootDir:ShootDir) {
-		clientSocket.emit(SocketClientMessageShoot, shootDir);
+	public function shoot(shootMsg:ShotMsg) {
+		clientSocket.emit(SocketClientMessageShoot, shootMsg);
 	}
 }

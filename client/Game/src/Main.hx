@@ -18,7 +18,7 @@ class Main extends GuiApp {
 	private var sceneDemo1:SceneDemo1;
 	private var sceneOnlineDemo1:SceneOnlineDemo1;
 
-	private final defaultScene = Scene.SceneOnlineDemo1;
+	private final defaultScene = Scene.SceneDemo1;
 	private var currentScene:Scene;
 
 	override function init() {
