@@ -1,6 +1,3 @@
-import { EntityShip } from './game/entity/entity.ship';
-import { ShotParams } from './ws/dto/dto.shoot';
-
 /* eslint-disable prettier/prettier */
 export enum AppEvents {
     PlayerJoined = 'PlayerJoined',
@@ -37,30 +34,4 @@ export interface NotifyPlayerEventMsg {
 export interface NotifyEachPlayerEventMsg {
     socketEvent: string;
     message: object;
-}
-
-export interface NotifyWorldStateEventMsg {
-    ships: EntityShip[];
-}
-
-export interface NotifyAddShipEventMsg {
-    ship: EntityShip;
-}
-
-export interface NotifyRemoveShipEventMsg {
-    shipId: string;
-}
-
-export interface NotifyShipMoveEventMsg {
-    shipId: string;
-    up: boolean;
-    down: boolean;
-    left: boolean;
-    right: boolean;
-}
-
-export interface NotifyShipShootEventMsg {
-    playerId: string;
-    left: boolean;
-    shotParams: ShotParams[];
 }

@@ -26,7 +26,7 @@ class SceneDemo1 extends Scene {
 		final ship4 = game.addShipByClient(Role.Bot, 300, -100, null, null);
 		final ship5 = game.addShipByClient(Role.Bot, 300, -600, null, null);
 
-		game.startGame(playerId, [ship1, ship2, ship3, ship4, ship5]);
+		game.startGameByClient(playerId, [ship1, ship2, ship3, ship4, ship5]);
 	}
 
 	public override function render(e:Engine) {

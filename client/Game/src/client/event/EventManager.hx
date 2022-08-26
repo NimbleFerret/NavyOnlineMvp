@@ -1,27 +1,17 @@
 package client.event;
 
-enum EventType {
-	SocketServerGameInit;
-	SocketServerMessageAddShip;
-	SocketServerMessageAddShell;
-	SocketServerMessageRemoveShip;
-	SocketServerMessageUpdateWorldState;
-	SocketServerMessageShipMove;
-	SocketServerMessageShipShoot;
-}
-
 interface EventListener {
-	function notify(eventType:EventType, params:Dynamic):Void;
+	function notify(event:String, params:Dynamic):Void;
 }
 
 class EventManager {
-	private final listeners = new Map<EventType, List<EventListener>>();
+	private final listeners = new Map<String, List<EventListener>>();
 
 	public static final instance:EventManager = new EventManager();
 
 	private function new() {}
 
-	public function subscribe(eventType:EventType, listener:EventListener) {
+	public function subscribe(eventType:String, listener:EventListener) {
 		if (listeners.exists(eventType)) {
 			final users = listeners.get(eventType);
 			users.add(listener);
@@ -32,12 +22,12 @@ class EventManager {
 		}
 	}
 
-	public function unsubscribe(eventType:EventType, listener:EventListener) {
+	public function unsubscribe(eventType:String, listener:EventListener) {
 		final users = listeners.get(eventType);
 		users.remove(listener);
 	}
 
-	public function notify(eventType:EventType, params:Dynamic) {
+	public function notify(eventType:String, params:Dynamic) {
 		final ls = listeners.get(eventType);
 		for (listener in ls) {
 			listener.notify(eventType, params);

@@ -3,82 +3,47 @@ package client.network;
 import client.event.EventManager;
 import js.node.socketio.Client;
 
-// TODO define client and server msgs here
-
-typedef MoveDir = {
-	playerId:String,
-	up:Bool,
-	down:Bool,
-	left:Bool,
-	right:Bool,
-}
-
-typedef ShotMsg = {
-	playerId:String,
-	left:Bool,
-	shotParams:Array<ShotParam>
-}
-
-typedef ShotParam = {
-	speed:Int,
-	dir:Int,
-	rotation:Int
-}
-
 class Socket {
-	// Server events
-	private static final SocketServerGameInit = 'SocketServerGameInit';
-	private static final SocketServerMessageAddShip = 'SocketServerMessageAddShip';
-	private static final SocketServerMessageAddShell = 'SocketServerMessageAddShell';
-	private static final SocketServerMessageRemoveShip = 'SocketServerMessageRemoveShip';
-	private static final SocketServerMessageUpdateWorldState = "SocketServerMessageUpdateWorldState";
-	private static final SocketServerMessageShipMove = 'SocketServerMessageShipMove';
-	private static final SocketServerMessageShipShoot = 'SocketServerMessageShipShoot';
-
-	// Client events
-	private static final SocketClientMessageJoinGame = 'SocketClientMessageJoinGame';
-	private static final SocketClientMessageMove = 'SocketClientMessageMove';
-	private static final SocketClientMessageShoot = 'SocketClientMessageShoot';
-
 	public static final instance:Socket = new Socket();
 
 	private final clientSocket:Client;
 
 	private function new() {
+		// clientSocket = new Client("http://23.111.202.19:3000/");
 		clientSocket = new Client("http://localhost:3000/");
 
-		clientSocket.on(SocketServerGameInit, function(data) {
-			EventManager.instance.notify(EventType.SocketServerGameInit, data);
+		clientSocket.on(Protocol.SocketServerEventGameInit, function(data) {
+			EventManager.instance.notify(Protocol.SocketServerEventGameInit, data);
 		});
-		clientSocket.on(SocketServerMessageAddShip, function(data) {
-			EventManager.instance.notify(EventType.SocketServerMessageAddShip, data);
+		clientSocket.on(Protocol.SocketServerEventAddShip, function(data) {
+			EventManager.instance.notify(Protocol.SocketServerEventAddShip, data);
 		});
-		clientSocket.on(SocketServerMessageAddShell, function(data) {
-			EventManager.instance.notify(EventType.SocketServerMessageAddShell, data);
+		clientSocket.on(Protocol.SocketServerEventAddShell, function(data) {
+			EventManager.instance.notify(Protocol.SocketServerEventAddShell, data);
 		});
-		clientSocket.on(SocketServerMessageRemoveShip, function(data) {
-			EventManager.instance.notify(EventType.SocketServerMessageRemoveShip, data);
+		clientSocket.on(Protocol.SocketServerEventRemoveShip, function(data) {
+			EventManager.instance.notify(Protocol.SocketServerEventRemoveShip, data);
 		});
-		clientSocket.on(SocketServerMessageUpdateWorldState, function(data) {
-			EventManager.instance.notify(EventType.SocketServerMessageUpdateWorldState, data);
+		clientSocket.on(Protocol.SocketServerEventUpdateWorldState, function(data) {
+			EventManager.instance.notify(Protocol.SocketServerEventUpdateWorldState, data);
 		});
-		clientSocket.on(SocketServerMessageShipMove, function(data) {
-			EventManager.instance.notify(EventType.SocketServerMessageShipMove, data);
+		clientSocket.on(Protocol.SocketServerEventShipMove, function(data) {
+			EventManager.instance.notify(Protocol.SocketServerEventShipMove, data);
 		});
-		clientSocket.on(SocketServerMessageShipShoot, function(data) {
-			EventManager.instance.notify(EventType.SocketServerMessageShipShoot, data);
+		clientSocket.on(Protocol.SocketServerEventShipShoot, function(data) {
+			EventManager.instance.notify(Protocol.SocketServerEventShipShoot, data);
 		});
 	}
 
-	public function joinGame(addr:String) {
-		clientSocket.emit(SocketClientMessageJoinGame, {ethAddress: addr});
+	public function joinGame(message:Protocol.SocketClientMessageJoinGame) {
+		clientSocket.emit(Protocol.SocketClientEventJoinGame, message);
 	}
 
-	public function move(moveDir:MoveDir) {
-		clientSocket.emit(SocketClientMessageMove, moveDir);
+	public function move(message:Protocol.SocketClientMessageMove) {
+		clientSocket.emit(Protocol.SocketClientEventMove, message);
 	}
 
-	public function shoot(shootMsg:ShotMsg) {
-		clientSocket.emit(SocketClientMessageShoot, shootMsg);
+	public function shoot(message:Protocol.SocketClientMessageShoot) {
+		clientSocket.emit(Protocol.SocketClientEventShoot, message);
 	}
 }

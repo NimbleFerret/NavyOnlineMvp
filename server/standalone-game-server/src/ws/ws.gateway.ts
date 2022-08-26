@@ -4,9 +4,6 @@ import { Server, Socket } from 'socket.io';
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { AppEvents, NotifyEachPlayerEventMsg, NotifyPlayerEventMsg, PlayerDisconnectedEvent } from "../app.events";
 import { Logger, OnModuleInit } from "@nestjs/common";
-import { DtoJoinGame } from "./dto/dto.joinGame";
-import { DtoMove } from "./dto/dto.move";
-import { DtoShoot } from "./dto/dto.shoot";
 
 @WebSocketGateway({
     cors: {
@@ -14,20 +11,6 @@ import { DtoShoot } from "./dto/dto.shoot";
     },
 })
 export class WsGateway implements OnModuleInit {
-
-    // Server events
-    public static readonly SocketServerGameInit = 'SocketServerGameInit';
-    public static readonly SocketServerMessageAddShip = 'SocketServerMessageAddShip';
-    public static readonly SocketServerMessageAddShell = 'SocketServerMessageAddShell';
-    public static readonly SocketServerMessageRemoveShip = 'SocketServerMessageRemoveShip';
-    public static readonly SocketServerMessageUpdateWorldState = 'SocketServerMessageUpdateWorldState';
-    public static readonly SocketServerMessageShipMove = 'SocketServerMessageShipMove';
-    public static readonly SocketServerMessageShipShoot = 'SocketServerMessageShipShoot';
-
-    // Client events
-    public static readonly SocketClientMessageJoinGame = 'SocketClientMessageJoinGame';
-    public static readonly SocketClientMessageMove = 'SocketClientMessageMove';
-    public static readonly SocketClientMessageShoot = 'SocketClientMessageShoot';
 
     @WebSocketServer()
     server: Server;
@@ -57,6 +40,10 @@ export class WsGateway implements OnModuleInit {
         });
     }
 
+    // -------------------------------------
+    // WebSocket client message listeners
+    // -------------------------------------
+
     @SubscribeMessage(WsGateway.SocketClientMessageJoinGame)
     async joinGame(client: Socket, data: DtoJoinGame) {
         WsGateway.ClientSockets.set(data.ethAddress, client);
@@ -74,7 +61,7 @@ export class WsGateway implements OnModuleInit {
     }
 
     // -------------------------------------
-    // WebSocket clients notification events
+    // WebSocket clients notification
     // -------------------------------------
 
     @OnEvent(AppEvents.NotifyPlayer)

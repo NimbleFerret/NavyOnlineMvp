@@ -1,8 +1,5 @@
 package client;
 
-import client.scene.SceneOnlineDemo1.RemoveShip;
-import client.network.Socket;
-import client.scene.SceneOnlineDemo1.ServerShip;
 import h2d.Scene;
 import hxd.Key in K;
 import hxd.Timer;
@@ -10,6 +7,8 @@ import engine.GameEngine;
 import client.entity.ClientBaseGameEntity;
 import client.entity.ClientShell;
 import client.entity.ClientShip;
+import client.network.Protocol;
+import client.network.Socket;
 import engine.entity.EngineBaseGameEntity;
 import engine.entity.EngineShellEntity;
 import engine.entity.EngineShipEntity;
@@ -70,7 +69,7 @@ class Game {
 		gameEngine.createShipCallback = function callback(engineShipEntity:EngineShipEntity) {}
 		gameEngine.createShellCallback = function callback(engineShellEntities:Array<EngineShellEntity>) {
 			final ownerShip = clientShips.get(engineShellEntities[0].ownerId);
-			final shotParams = new Array<ShotParam>();
+			final shotParams = new Array<ShotParams>();
 			if (ownerShip != null) {
 				for (engineShell in engineShellEntities) {
 					final clientShell = new ClientShell(scene, engineShell, ownerShip);
@@ -415,10 +414,12 @@ class Game {
 	}
 
 	// --------------------------------------
-	// Authorative funcs
+	// Multiplayer
 	// --------------------------------------
 
-	public function startGame(playerId:String, ships:Array<EngineShipEntity>) {
+	public function startGame(playerId:String, message:SocketServerMessageGameInit) {
+		final ships = jsShipsToHaxeGameEngineShips(message.ships);
+
 		if (gameState == GameState.Init) {
 			for (ship in ships) {
 				gameEngine.addShip(ship);
@@ -435,8 +436,9 @@ class Game {
 		}
 	}
 
-	// TODO simplyfi state checking
-	public function addShip(ship:EngineShipEntity) {
+	public function addShip(message:SocketServerMessageAddShip) {
+		final ship = jsShipToHaxeGameEngineShip(message.ship);
+
 		if (gameState == GameState.Playing) {
 			if (!clientShips.exists(ship.id)) {
 				gameEngine.addShip(ship);
@@ -446,36 +448,69 @@ class Game {
 		}
 	}
 
-	// Skip player's own ship for now
-	public function shipMove(shipId:String, up:Bool, down:Bool, left:Bool, right:Bool) {
-		if (gameState == GameState.Playing && playerShipId != shipId) {
-			if (up)
-				gameEngine.shipAccelerate(shipId);
-			if (down)
-				gameEngine.shipDecelerate(shipId);
-			if (left)
-				gameEngine.shipRotateLeft(shipId);
-			if (right)
-				gameEngine.shipRotateRight(shipId);
+	public function shipMove(message:SocketServerMessageShipMove) {
+		if (gameState == GameState.Playing && playerShipId != message.shipId) {
+			if (message.up)
+				gameEngine.shipAccelerate(message.shipId);
+			if (message.down)
+				gameEngine.shipDecelerate(message.shipId);
+			if (message.left)
+				gameEngine.shipRotateLeft(message.shipId);
+			if (message.right)
+				gameEngine.shipRotateRight(message.shipId);
 		}
 	}
 
-	public function shipShoot(shotMsg:ShotMsg) {
-		if (gameState == GameState.Playing && playerId != shotMsg.playerId) {
-			final side = shotMsg.left ? Side.Left : Side.Right;
-			final shipId = gameEngine.getShipIdByOwnerId(shotMsg.playerId);
-			gameEngine.shipShootBySide(side, shipId, shotMsg.shotParams);
+	public function shipShoot(message:SocketServerMessageShipShoot) {
+		if (gameState == GameState.Playing && playerId != message.playerId) {
+			final side = message.left ? Side.Left : Side.Right;
+			final shipId = gameEngine.getShipIdByOwnerId(message.playerId);
+			gameEngine.shipShootBySide(side, shipId, message.shotParams);
 		}
 	}
 
-	public function removeShip(removeShip:RemoveShip) {
+	public function removeShip(message:SocketServerMessageRemoveShip) {
 		if (gameEngine.engineMode == EngineMode.Server) {
-			gameEngine.removeShip(removeShip.shipId);
+			gameEngine.removeShip(message.shipId);
 		}
 	}
 
-	// for client mode only
+	// --------------------------------------
+	// Single player
+	// --------------------------------------
+
+	public function startGameByClient(playerId:String, ships:Array<EngineShipEntity>) {
+		if (gameState == GameState.Init) {
+			for (ship in ships) {
+				gameEngine.addShip(ship);
+
+				final newClientShip = new ClientShip(scene, ship);
+				clientShips.set(ship.id, newClientShip);
+
+				if (ship.ownerId == playerId) {
+					playerShipId = ship.id;
+				}
+			}
+			this.playerId = playerId;
+			gameState = GameState.Playing;
+		}
+	}
+
 	public function addShipByClient(role:Role, x:Int, y:Int, shipId:String, ?ownerId:String) {
 		return gameEngine.createShip(role, x, y, shipId, ownerId);
+	}
+
+	// --------------------------------------
+	// Utils
+	// --------------------------------------
+
+	private function jsShipToHaxeGameEngineShip(ship:EntityShip) {
+		return new EngineShipEntity(ship.x, ship.y, ship.id, ship.ownerId);
+	}
+
+	private function jsShipsToHaxeGameEngineShips(ships:Array<EntityShip>) {
+		return ships.map(ship -> {
+			return new EngineShipEntity(ship.x, ship.y, ship.id, ship.ownerId);
+		});
 	}
 }
