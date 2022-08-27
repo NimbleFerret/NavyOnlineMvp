@@ -17,6 +17,7 @@ import { Logger, OnModuleInit } from "@nestjs/common";
 import {
     SocketClientMessageJoinGame,
     SocketClientMessageMove,
+    SocketClientMessageRespawn,
     SocketClientMessageShoot,
     SocketClientMessageSync,
     SocketServerMessageGameInit,
@@ -100,6 +101,12 @@ export class WsGateway implements OnModuleInit {
     async sync(@MessageBody() data: SocketClientMessageSync) {
         Logger.log(`Got sync request. ${JSON.stringify(data)}`);
         this.eventEmitter.emit(AppEvents.PlayerSync, data);
+    }
+
+    @SubscribeMessage(WsProtocol.SocketClientEventRespawn)
+    async respawn(@MessageBody() data: SocketClientMessageRespawn) {
+        Logger.log(`Got respawn request. ${JSON.stringify(data)}`);
+        this.eventEmitter.emit(AppEvents.PlayerRespawn, data);
     }
 
     // -------------------------------------

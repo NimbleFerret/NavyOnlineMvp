@@ -159,7 +159,7 @@ class Hud extends h2d.Scene {
 		show(false);
 	}
 
-	public function show(show:Bool) {
+	public function show(show:Bool, reset = false) {
 		armorBar.show(show);
 		hullBar.show(show);
 
@@ -167,6 +167,11 @@ class Hud extends h2d.Scene {
 		dirText.alpha = show ? 1 : 0;
 		leftCannonsText.alpha = show ? 0 : 0;
 		rightCannonsText.alpha = show ? 0 : 0;
+
+		if (reset) {
+			armorBar.updateBar(1000, 1000);
+			hullBar.updateBar(1000, 1000);
+		}
 	}
 
 	// TODO reuse GUI class

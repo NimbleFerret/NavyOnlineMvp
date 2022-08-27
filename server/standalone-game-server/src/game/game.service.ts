@@ -9,6 +9,7 @@ import { GameInstance } from './game.instance';
 import {
     SocketClientMessageJoinGame,
     SocketClientMessageMove,
+    SocketClientMessageRespawn,
     SocketClientMessageShoot,
     SocketClientMessageSync,
 } from 'src/ws/ws.protocol';
@@ -138,6 +139,17 @@ export class GameService implements OnModuleInit {
         if (instanceId) {
             const gameInstance = this.gameInstances.get(instanceId);
             gameInstance.handlePlayerSync(data);
+        } else {
+            // TODO add logs
+        }
+    }
+
+    @OnEvent(AppEvents.PlayerRespawn)
+    async handlePlayerRespawn(data: SocketClientMessageRespawn) {
+        const instanceId = this.playerInstaneMap.get(data.playerId);
+        if (instanceId) {
+            const gameInstance = this.gameInstances.get(instanceId);
+            gameInstance.handlePlayerRespawn(data);
         } else {
             // TODO add logs
         }

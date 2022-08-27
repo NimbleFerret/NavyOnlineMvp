@@ -50,4 +50,8 @@ class Socket {
 	public function sync(message:Protocol.SocketClientMessageSync) {
 		clientSocket.emit(Protocol.SocketClientEventSync, message);
 	}
+
+	public function respawn(message:Protocol.SocketClientMessageRespawn) {
+		clientSocket.emit(Protocol.SocketClientEventRespawn, message);
+	}
 }

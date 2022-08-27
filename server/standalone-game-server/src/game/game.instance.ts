@@ -12,6 +12,7 @@ import { engine } from "../../GameEngine.js"
 import {
     SocketClientMessageJoinGame,
     SocketClientMessageMove,
+    SocketClientMessageRespawn,
     SocketClientMessageShoot,
     SocketClientMessageSync,
     SocketServerMessageAddShip,
@@ -24,6 +25,7 @@ import {
     WsProtocol
 } from 'src/ws/ws.protocol';
 import { Logger } from '@nestjs/common';
+import e from 'express';
 
 export class GameInstance {
 
@@ -61,6 +63,10 @@ export class GameInstance {
             const jsShip = this.converJsShipToTypeScript(ship);
             console.log('Ship destroyed');
 
+            if (this.playerShipMap.has(jsShip.ownerId)) {
+                this.playerShipMap.delete(jsShip.ownerId);
+            }
+
             // TODO implement instance notification
             const socketServerMessageRemoveShip = {
                 shipId: jsShip.id
@@ -96,7 +102,7 @@ export class GameInstance {
             }
         };
 
-        // this.addBot(100, 300);
+        this.addBot(100, -200);
     }
 
     private notifyGameWorldState() {
@@ -136,6 +142,12 @@ export class GameInstance {
         }
     }
 
+    private addPlayer(playerId: string) {
+        const ship = this.converJsShipToTypeScript(this.gameEngine.createShip('Player', 100, (this.playerShipMap.size) * 500, undefined, playerId));
+        this.playerShipMap.set(ship.ownerId, ship.id);
+        return ship;
+    }
+
     private notifyPlayer(playerId: string, message: object, event: string) {
         const notifyPlayerEventMsg = {
             playerId,
@@ -161,8 +173,7 @@ export class GameInstance {
     // -------------------------------------
 
     async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
-        const ship = this.converJsShipToTypeScript(this.gameEngine.createShip('Player', 100, (this.playerShipMap.size) * 500, undefined, data.playerId));
-        this.playerShipMap.set(ship.ownerId, ship.id);
+        this.addPlayer(data.playerId);
 
         const socketServerMessageGameInit = {
             instanceId: this.instanceId,
@@ -234,6 +245,18 @@ export class GameInstance {
                 ships: this.collectShips(true)
             } as SocketServerMessageSync;
             this.notifyPlayer(data.playerId, socketServerMessageSync, WsProtocol.SocketServerEventSync);
+        }
+    }
+
+    async handlePlayerRespawn(data: SocketClientMessageRespawn) {
+        if (!this.playerShipMap.has(data.playerId)) {
+            const ship = this.addPlayer(data.playerId);
+            const socketServerMessageAddShip = {
+                ship
+            } as SocketServerMessageAddShip;
+            this.notifyAllPlayers(socketServerMessageAddShip, WsProtocol.SocketServerEventAddShip);
+        } else {
+            Logger.error(`Cant respawn player ${data.playerId} while playing`);
         }
     }
 

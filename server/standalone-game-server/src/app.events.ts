@@ -5,6 +5,7 @@ export enum AppEvents {
     PlayerMove = 'PlayerMove',
     PlayerShoot = 'PlayerShoot',
     PlayerSync = 'PlayerSync',
+    PlayerRespawn = 'PlayerRespawn',
 
     NotifyPlayer = 'NotifyPlayer',
     NotifyEachPlayer = 'NotifyEachPlayer',

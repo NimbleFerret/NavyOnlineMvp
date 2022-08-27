@@ -49,11 +49,14 @@ class Game {
 	private var islandsManager:IslandsManager;
 	private var inputType = InputType.Game;
 
+	// UI
 	public var hud:Hud;
 
-	// UI callbacks
 	public var joinNewGameCallback:Void->Void;
 	public var joinExistingGameCallback:Void->Void;
+
+	private var startGameDialogComp:StartGameDialogComp;
+	private var retryDialogComp:RetryDialogComp;
 
 	//
 	var style = null;
@@ -119,9 +122,8 @@ class Game {
 				scene.removeChild(clientShip);
 
 				if (engineShipEntity.ownerId == playerId) {
-					gameState = GameState.Died;
 					hud.show(false);
-					// TODO show retry dialog
+					retryDialogComp.alpha = 1;
 				}
 
 				clientShips.remove(engineShipEntity.id);
@@ -145,33 +147,54 @@ class Game {
 
 		hud = new Hud();
 
+		style = new h2d.domkit.Style();
+		style.load(hxd.Res.style);
+
 		// TODO center it
+
 		final center = new h2d.Flow(scene);
 		center.horizontalAlign = center.verticalAlign = Middle;
 
-		final root = new ContainerComp(center);
-		root.btn.label = "Join new game";
-		root.btn.getTextComponent().setScale(3);
+		startGameDialogComp = new StartGameDialogComp(center);
+		startGameDialogComp.btn.label = "Join new game";
+		startGameDialogComp.btn.getTextComponent().setScale(3);
 
-		root.btn1.label = "Join existing game";
-		root.btn1.getTextComponent().setScale(3);
+		startGameDialogComp.btn1.label = "Join existing game";
+		startGameDialogComp.btn1.getTextComponent().setScale(3);
 
-		root.btn.onClick = function() {
+		startGameDialogComp.btn.onClick = function() {
 			if (joinNewGameCallback != null) {
 				joinNewGameCallback();
 			}
-			root.alpha = 0;
+			startGameDialogComp.alpha = 0;
 		}
-		root.btn1.onClick = function() {
+		startGameDialogComp.btn1.onClick = function() {
 			if (joinExistingGameCallback != null) {
 				joinExistingGameCallback();
 			}
-			root.alpha = 0;
+			startGameDialogComp.alpha = 0;
 		}
 
-		style = new h2d.domkit.Style();
-		style.load(hxd.Res.style);
-		style.addObject(root);
+		style.addObject(startGameDialogComp);
+
+		// RETRY
+
+		final retryCenter = new h2d.Flow(scene);
+		retryCenter.horizontalAlign = retryCenter.verticalAlign = Middle;
+
+		retryDialogComp = new RetryDialogComp(center);
+		retryDialogComp.labelTxt.text = "You died !";
+		retryDialogComp.labelTxt.setScale(3);
+		retryDialogComp.btn.labelTxt.text = "Retry";
+		retryDialogComp.btn.getTextComponent().setScale(3);
+		retryDialogComp.btn.onClick = function() {
+			Socket.instance.respawn({
+				playerId: playerId
+			});
+		}
+		style.addObject(retryDialogComp);
+
+		retryDialogComp.alpha = 0;
 
 		// root.btn2.labelTxt.text = "Highlight OFF";
 
@@ -498,6 +521,12 @@ class Game {
 				final newClientShip = new ClientShip(scene, ship);
 				clientShips.set(ship.id, newClientShip);
 				clientShipsCount++;
+
+				// TODO double check game state
+				if (ship.ownerId == playerId) {
+					hud.show(true);
+					retryDialogComp.alpha = 0;
+				}
 			}
 		}
 	}
@@ -568,9 +597,10 @@ class Game {
 					clientShip.updateHullAndArmor(ship.currentHull, ship.currentArmor);
 					clientShip.updateEntityPosition(ship.x, ship.y);
 				} else {
-					final newShip = gameEngine.createShip(Role.General, ship.x, ship.y, ship.id, ship.ownerId);
+					final newShip = jsShipToHaxeGameEngineShip(ship);
+					gameEngine.addShip(newShip);
 					final newClientShip = new ClientShip(scene, newShip);
-					clientShips.set(ship.id, newClientShip);
+					clientShips.set(newShip.id, newClientShip);
 					clientShipsCount++;
 				}
 			}

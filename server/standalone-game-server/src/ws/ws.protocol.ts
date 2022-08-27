@@ -77,6 +77,10 @@ export interface SocketClientMessageSync {
     playerId: string;
 }
 
+export interface SocketClientMessageRespawn {
+    playerId: string;
+}
+
 export class WsProtocol {
     // Server -> Client events
     public static readonly SocketServerEventGameInit = 'SocketServerEventGameInit';
@@ -92,4 +96,5 @@ export class WsProtocol {
     public static readonly SocketClientEventMove = 'SocketClientEventMove';
     public static readonly SocketClientEventShoot = 'SocketClientEventShoot';
     public static readonly SocketClientEventSync = 'SocketClientEventSync';
+    public static readonly SocketClientEventRespawn = 'SocketClientEventRespawn';
 }

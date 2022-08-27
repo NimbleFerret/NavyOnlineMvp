@@ -98,6 +98,10 @@ typedef SocketClientMessageSync = {
 	playerId:String
 }
 
+typedef SocketClientMessageRespawn = {
+	playerId:String
+}
+
 class Protocol {
 	// Server -> Client events
 	public static final SocketServerEventGameInit = 'SocketServerEventGameInit';
@@ -113,4 +117,5 @@ class Protocol {
 	public static final SocketClientEventMove = 'SocketClientEventMove';
 	public static final SocketClientEventShoot = 'SocketClientEventShoot';
 	public static final SocketClientEventSync = 'SocketClientEventSync';
+	public static final SocketClientEventRespawn = 'SocketClientEventRespawn';
 }
