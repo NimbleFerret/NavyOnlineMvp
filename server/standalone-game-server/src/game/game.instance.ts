@@ -21,6 +21,7 @@ import {
     WsProtocol
 } from 'src/ws/ws.protocol';
 import { Logger } from '@nestjs/common';
+import { WsGateway } from 'src/ws/ws.gateway';
 
 export class GameInstance {
 
@@ -29,7 +30,6 @@ export class GameInstance {
 
     private readonly playerShipMap: Map<string, string> = new Map();
     private readonly gameEngine: engine.GameEngine;
-
     private notifyGameWorldStateTimer: NodeJS.Timer;
 
     constructor(private eventEmitter: EventEmitter2) {
@@ -58,6 +58,18 @@ export class GameInstance {
         this.gameEngine.deleteShipCallback = (ship: object) => {
             const jsShip = this.converJsShipToTypeScript(ship);
             console.log('Ship destroyed');
+
+            // TODO implement instance notification
+            const socketServerMessageRemoveShip = {
+                shipId: jsShip.id
+            } as SocketServerMessageRemoveShip;
+
+            const notifyEachPlayerEventMsg = {
+                socketEvent: WsProtocol.SocketServerEventRemoveShip,
+                message: socketServerMessageRemoveShip
+            } as NotifyEachPlayerEventMsg;
+
+            this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
         };
 
         // TODO Rename callback
@@ -78,14 +90,11 @@ export class GameInstance {
                     shotParams
                 } as SocketServerMessageShipShoot;
 
-                const notifyEachPlayerEventMsg = {
-                    socketEvent: WsProtocol.SocketServerEventShipShoot,
-                    message: notifyShipShootEventMsg
-                } as NotifyEachPlayerEventMsg;
-
-                this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
+                this.notifyAllPlayers(notifyShipShootEventMsg, WsProtocol.SocketServerEventShipShoot);
             }
         };
+
+        this.addBot(100, 300);
     }
 
     private notifyGameWorldState() {
@@ -95,12 +104,7 @@ export class GameInstance {
                 ships: this.collectShips(false)
             } as SocketServerMessageUpdateWorldState;
 
-            const notifyEachPlayerEventMsg = {
-                socketEvent: WsProtocol.SocketServerEventUpdateWorldState,
-                message: socketServerMessageUpdateWorldState
-            } as NotifyEachPlayerEventMsg;
-
-            this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
+            this.notifyAllPlayers(socketServerMessageUpdateWorldState, WsProtocol.SocketServerEventUpdateWorldState);
         }
     }
 
@@ -130,6 +134,16 @@ export class GameInstance {
         }
     }
 
+    private notifyAllPlayers(message: object, event: string) {
+        const notifyEachPlayerEventMsg = {
+            instanceId: this.instanceId,
+            socketEvent: event,
+            message
+        } as NotifyEachPlayerEventMsg;
+
+        this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
+    }
+
     // -------------------------------------
     // Player input events
     // -------------------------------------
@@ -139,6 +153,7 @@ export class GameInstance {
         this.playerShipMap.set(ship.ownerId, ship.id);
 
         const socketServerMessageGameInit = {
+            instanceId: this.instanceId,
             tickRate: this.gameEngine.gameLoop.targetFps,
             worldStateSyncInterval: this.worldStateUpdateIntervalMS,
             ships: this.collectShips(true)
@@ -163,12 +178,7 @@ export class GameInstance {
                 shipId: ship,
             } as SocketServerMessageRemoveShip;
 
-            const notifyEachPlayerEventMsg = {
-                socketEvent: WsProtocol.SocketServerEventRemoveShip,
-                message: socketServerMessageRemoveShip
-            } as NotifyEachPlayerEventMsg;
-
-            this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
+            this.notifyAllPlayers(socketServerMessageRemoveShip, WsProtocol.SocketServerEventRemoveShip);
         }
     }
 
@@ -192,12 +202,7 @@ export class GameInstance {
                 right: data.right
             } as SocketServerMessageShipMove;
 
-            const notifyEachPlayerEventMsg = {
-                socketEvent: WsProtocol.SocketServerEventShipMove,
-                message: socketServerMessageShipMove
-            } as NotifyEachPlayerEventMsg;
-
-            this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
+            this.notifyAllPlayers(socketServerMessageShipMove, WsProtocol.SocketServerEventShipMove);
         }
     }
 
@@ -212,12 +217,7 @@ export class GameInstance {
                 shotParams: data.shotParams
             } as SocketServerMessageShipShoot;
 
-            const notifyEachPlayerEventMsg = {
-                socketEvent: WsProtocol.SocketServerEventShipShoot,
-                message: socketServerMessageShipShoot
-            } as NotifyEachPlayerEventMsg;
-
-            this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
+            this.notifyAllPlayers(socketServerMessageShipShoot, WsProtocol.SocketServerEventShipShoot);
         }
     }
 

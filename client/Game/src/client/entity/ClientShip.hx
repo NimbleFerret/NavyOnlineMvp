@@ -62,14 +62,15 @@ class ClientShip extends ClientBaseGameEntity {
 	public var right_canon_2_y:Float = 71;
 	public var right_canon_3_x:Float = 15;
 	public var right_canon_3_y:Float = 71;
-	// Canons debug shit code
-	public var serverSideLeftCanonDebugRect1:h2d.Graphics;
-	public var serverSideLeftCanonDebugRect2:h2d.Graphics;
-	public var serverSideLeftCanonDebugRect3:h2d.Graphics;
 
-	public var serverSideRightCanonDebugRect1:h2d.Graphics;
-	public var serverSideRightCanonDebugRect2:h2d.Graphics;
-	public var serverSideRightCanonDebugRect3:h2d.Graphics;
+	// Canons debug shit code
+	public var leftSideCanonDebugRect1:h2d.Graphics;
+	public var leftSideCanonDebugRect2:h2d.Graphics;
+	public var leftSideCanonDebugRect3:h2d.Graphics;
+
+	public var rightSideCanonDebugRect1:h2d.Graphics;
+	public var rightSideCanonDebugRect2:h2d.Graphics;
+	public var rightSideCanonDebugRect3:h2d.Graphics;
 
 	public function new(s2d:h2d.Scene, engineShipEntity:EngineShipEntity) {
 		super();
@@ -148,6 +149,20 @@ class ClientShip extends ClientBaseGameEntity {
 		layers.add(bmp, 1);
 
 		s2d.addChild(this);
+	}
+
+	public function clearDebugGraphics(s2d:h2d.Scene) {
+		if (debugRect != null) {
+			debugRect.clear();
+
+			leftSideCanonDebugRect1.clear();
+			leftSideCanonDebugRect2.clear();
+			leftSideCanonDebugRect3.clear();
+
+			rightSideCanonDebugRect1.clear();
+			rightSideCanonDebugRect2.clear();
+			rightSideCanonDebugRect3.clear();
+		}
 	}
 
 	function toggleDebugDraw() {

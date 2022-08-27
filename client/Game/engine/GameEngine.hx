@@ -105,7 +105,7 @@ class GameEngine {
 							if (shipHitByShellCallback != null) {
 								shipHitByShellCallback({ship: engineShipEntity, damage: engineShellEntity.baseDamage});
 							}
-							if (this.engineMode == EngineMode.Server && !engineShipEntity.isAlive) {
+							if (!engineShipEntity.isAlive) {
 								shipsToDelete.push(engineShipEntity.id);
 							}
 						}

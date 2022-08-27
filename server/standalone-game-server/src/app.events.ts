@@ -32,6 +32,7 @@ export interface NotifyPlayerEventMsg {
 }
 
 export interface NotifyEachPlayerEventMsg {
+    instanceId: string;
     socketEvent: string;
     message: object;
 }

@@ -18,6 +18,7 @@ import {
     SocketClientMessageJoinGame,
     SocketClientMessageMove,
     SocketClientMessageShoot,
+    SocketServerMessageGameInit,
     WsProtocol
 } from "./ws.protocol";
 
@@ -31,7 +32,9 @@ export class WsGateway implements OnModuleInit {
     @WebSocketServer()
     server: Server;
 
-    public static readonly ClientSockets = new Map<string, Socket>();
+    private static readonly ClientSockets = new Map<string, Socket>();
+    private static readonly PlayerToInstance = new Map<string, string>();
+    private static readonly InstanceSockets = new Map<string, Socket[]>();
 
     constructor(private eventEmitter: EventEmitter2) {
         // TODO handle ws disconnected event
@@ -46,9 +49,22 @@ export class WsGateway implements OnModuleInit {
                 WsGateway.ClientSockets.forEach((v, k) => {
                     if (v == socket) {
                         Logger.log(k + ' disconnected');
+
+                        const instanceId = WsGateway.PlayerToInstance.get(k);
+                        if (instanceId) {
+                            const sockets = WsGateway.InstanceSockets.get(instanceId);
+                            if (sockets && sockets.length > 0) {
+                                const index = sockets.indexOf(socket);
+                                if (index !== -1) {
+                                    sockets.splice(index, 1);
+                                }
+                            }
+                        }
+
                         const event = {
                             playerId: k
                         } as PlayerDisconnectedEvent;
+
                         self.eventEmitter.emit(AppEvents.PlayerDisconnected, event);
                     }
                 });
@@ -87,6 +103,19 @@ export class WsGateway implements OnModuleInit {
     async handleNotifyPlayerEvent(event: NotifyPlayerEventMsg) {
         const playerSocket = WsGateway.ClientSockets.get(event.playerId);
         if (playerSocket) {
+            // Save each client socket for every game instance
+            if (event.socketEvent == WsProtocol.SocketServerEventGameInit) {
+                const initMesage = event.message as SocketServerMessageGameInit;
+
+                let sockets = WsGateway.InstanceSockets.get(initMesage.instanceId);
+                if (!sockets) {
+                    sockets = [];
+                }
+                sockets.push(playerSocket);
+
+                WsGateway.InstanceSockets.set(initMesage.instanceId, sockets);
+                WsGateway.PlayerToInstance.set(event.playerId, initMesage.instanceId);
+            }
             playerSocket.emit(event.socketEvent, event.message);
         } else {
             Logger.error(`Unable to notify player: ${event.playerId} event: ${event.socketEvent}`);
@@ -95,7 +124,12 @@ export class WsGateway implements OnModuleInit {
 
     @OnEvent(AppEvents.NotifyEachPlayer)
     async handleNotifyEachPlayerEvent(event: NotifyEachPlayerEventMsg) {
-        this.server.sockets.emit(event.socketEvent, event.message);
+        const sockets = WsGateway.InstanceSockets.get(event.instanceId);
+        if (sockets) {
+            sockets.forEach(socket => {
+                socket.emit(event.socketEvent, event.message);
+            });
+        }
     }
 
 }

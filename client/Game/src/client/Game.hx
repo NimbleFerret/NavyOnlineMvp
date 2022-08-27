@@ -103,15 +103,15 @@ class Game {
 		gameEngine.deleteShipCallback = function callback(engineShipEntity:EngineShipEntity) {
 			final clientShip = clientShips.get(engineShipEntity.id);
 			if (clientShip != null) {
-				if (clientShip.debugRect != null) {
-					clientShip.debugRect.clear();
-				}
+				clientShip.clearDebugGraphics(scene);
 				scene.removeChild(clientShip);
 
 				if (engineShipEntity.ownerId == playerId) {
 					gameState = GameState.Died;
 					// TODO show retry dialog
 				}
+
+				clientShips.remove(engineShipEntity.id);
 			}
 		};
 
@@ -243,83 +243,83 @@ class Game {
 			if (DebugDraw) {
 				// Draw left side canons
 				// 1
-				if (ship.serverSideLeftCanonDebugRect1 == null) {
-					ship.serverSideLeftCanonDebugRect1 = new h2d.Graphics(scene);
+				if (ship.leftSideCanonDebugRect1 == null) {
+					ship.leftSideCanonDebugRect1 = new h2d.Graphics(scene);
 				} else {
-					ship.serverSideLeftCanonDebugRect1.clear();
+					ship.leftSideCanonDebugRect1.clear();
 				}
 
 				final leftGunPos1 = ship.getCanonOffsetBySideAndIndex(Side.Left, 0);
 
-				ship.serverSideLeftCanonDebugRect1.beginFill(0x00ff00);
-				ship.serverSideLeftCanonDebugRect1.drawRect(leftGunPos1.x, leftGunPos1.y, 10, 10);
-				ship.serverSideLeftCanonDebugRect1.endFill();
+				ship.leftSideCanonDebugRect1.beginFill(0x00ff00);
+				ship.leftSideCanonDebugRect1.drawRect(leftGunPos1.x, leftGunPos1.y, 10, 10);
+				ship.leftSideCanonDebugRect1.endFill();
 
 				// 2
-				if (ship.serverSideLeftCanonDebugRect2 == null) {
-					ship.serverSideLeftCanonDebugRect2 = new h2d.Graphics(scene);
+				if (ship.leftSideCanonDebugRect2 == null) {
+					ship.leftSideCanonDebugRect2 = new h2d.Graphics(scene);
 				} else {
-					ship.serverSideLeftCanonDebugRect2.clear();
+					ship.leftSideCanonDebugRect2.clear();
 				}
 
 				final leftGunPos2 = ship.getCanonOffsetBySideAndIndex(Side.Left, 1);
 
-				ship.serverSideLeftCanonDebugRect2.beginFill(0x00ff00);
-				ship.serverSideLeftCanonDebugRect2.drawRect(leftGunPos2.x, leftGunPos2.y, 10, 10);
-				ship.serverSideLeftCanonDebugRect2.endFill();
+				ship.leftSideCanonDebugRect2.beginFill(0x00ff00);
+				ship.leftSideCanonDebugRect2.drawRect(leftGunPos2.x, leftGunPos2.y, 10, 10);
+				ship.leftSideCanonDebugRect2.endFill();
 
 				// 3
-				if (ship.serverSideLeftCanonDebugRect3 == null) {
-					ship.serverSideLeftCanonDebugRect3 = new h2d.Graphics(scene);
+				if (ship.leftSideCanonDebugRect3 == null) {
+					ship.leftSideCanonDebugRect3 = new h2d.Graphics(scene);
 				} else {
-					ship.serverSideLeftCanonDebugRect3.clear();
+					ship.leftSideCanonDebugRect3.clear();
 				}
 
 				final leftGunPos3 = ship.getCanonOffsetBySideAndIndex(Side.Left, 2);
 
-				ship.serverSideLeftCanonDebugRect3.beginFill(0x00ff00);
-				ship.serverSideLeftCanonDebugRect3.drawRect(leftGunPos3.x, leftGunPos3.y, 10, 10);
-				ship.serverSideLeftCanonDebugRect3.endFill();
+				ship.leftSideCanonDebugRect3.beginFill(0x00ff00);
+				ship.leftSideCanonDebugRect3.drawRect(leftGunPos3.x, leftGunPos3.y, 10, 10);
+				ship.leftSideCanonDebugRect3.endFill();
 
 				// Draw right side canons
 				// 1
-				if (ship.serverSideRightCanonDebugRect1 == null) {
-					ship.serverSideRightCanonDebugRect1 = new h2d.Graphics(scene);
+				if (ship.rightSideCanonDebugRect1 == null) {
+					ship.rightSideCanonDebugRect1 = new h2d.Graphics(scene);
 				} else {
-					ship.serverSideRightCanonDebugRect1.clear();
+					ship.rightSideCanonDebugRect1.clear();
 				}
 
 				final rightGunPos1 = ship.getCanonOffsetBySideAndIndex(Side.Right, 0);
 
-				ship.serverSideRightCanonDebugRect1.beginFill(0x00ff00);
-				ship.serverSideRightCanonDebugRect1.drawRect(rightGunPos1.x, rightGunPos1.y, 10, 10);
-				ship.serverSideRightCanonDebugRect1.endFill();
+				ship.rightSideCanonDebugRect1.beginFill(0x00ff00);
+				ship.rightSideCanonDebugRect1.drawRect(rightGunPos1.x, rightGunPos1.y, 10, 10);
+				ship.rightSideCanonDebugRect1.endFill();
 
 				// 2
-				if (ship.serverSideRightCanonDebugRect2 == null) {
-					ship.serverSideRightCanonDebugRect2 = new h2d.Graphics(scene);
+				if (ship.rightSideCanonDebugRect2 == null) {
+					ship.rightSideCanonDebugRect2 = new h2d.Graphics(scene);
 				} else {
-					ship.serverSideRightCanonDebugRect2.clear();
+					ship.rightSideCanonDebugRect2.clear();
 				}
 
 				final rightGunPos2 = ship.getCanonOffsetBySideAndIndex(Side.Right, 1);
 
-				ship.serverSideRightCanonDebugRect2.beginFill(0x00ff00);
-				ship.serverSideRightCanonDebugRect2.drawRect(rightGunPos2.x, rightGunPos2.y, 10, 10);
-				ship.serverSideRightCanonDebugRect2.endFill();
+				ship.rightSideCanonDebugRect2.beginFill(0x00ff00);
+				ship.rightSideCanonDebugRect2.drawRect(rightGunPos2.x, rightGunPos2.y, 10, 10);
+				ship.rightSideCanonDebugRect2.endFill();
 
 				// 3
-				if (ship.serverSideRightCanonDebugRect3 == null) {
-					ship.serverSideRightCanonDebugRect3 = new h2d.Graphics(scene);
+				if (ship.rightSideCanonDebugRect3 == null) {
+					ship.rightSideCanonDebugRect3 = new h2d.Graphics(scene);
 				} else {
-					ship.serverSideRightCanonDebugRect3.clear();
+					ship.rightSideCanonDebugRect3.clear();
 				}
 
 				final rightGunPos3 = ship.getCanonOffsetBySideAndIndex(Side.Right, 2);
 
-				ship.serverSideRightCanonDebugRect3.beginFill(0x00ff00);
-				ship.serverSideRightCanonDebugRect3.drawRect(rightGunPos3.x, rightGunPos3.y, 10, 10);
-				ship.serverSideRightCanonDebugRect3.endFill();
+				ship.rightSideCanonDebugRect3.beginFill(0x00ff00);
+				ship.rightSideCanonDebugRect3.drawRect(rightGunPos3.x, rightGunPos3.y, 10, 10);
+				ship.rightSideCanonDebugRect3.endFill();
 			}
 		}
 
