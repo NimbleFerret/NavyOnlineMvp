@@ -1,5 +1,6 @@
 package client;
 
+import client.ui.UiComponents;
 import h2d.Scene;
 import hxd.Key in K;
 import hxd.Timer;
@@ -30,7 +31,7 @@ class Game {
 	// Global config
 	public static final ShowIslands = false;
 	//
-	public static var DebugDraw = true;
+	public static var DebugDraw = false;
 
 	public var gameState = GameState.Init;
 
@@ -40,14 +41,22 @@ class Game {
 	//
 	private var gameEngine:GameEngine;
 
-	private final clientShips:Map<String, ClientShip> = [];
-	private final clientShells:Map<String, ClientShell> = [];
+	private var clientShipsCount = 0;
+	private final clientShips = new Map<String, ClientShip>();
+	private final clientShells = new Map<String, ClientShell>();
 
 	private var effectsManager:EffectsManager;
 	private var islandsManager:IslandsManager;
 	private var inputType = InputType.Game;
 
 	public var hud:Hud;
+
+	// UI callbacks
+	public var joinNewGameCallback:Void->Void;
+	public var joinExistingGameCallback:Void->Void;
+
+	//
+	var style = null;
 
 	// Player input
 	private var timeSinceLastShipsPosUpdate = 0.0;
@@ -93,6 +102,9 @@ class Game {
 					shotParams: shotParams
 				});
 			}
+			if (ownerShip.getId() == playerShipId) {
+				// TODO update UI
+			}
 		};
 
 		gameEngine.deleteShellCallback = function callback(engineShellEntity:EngineShellEntity) {
@@ -108,10 +120,12 @@ class Game {
 
 				if (engineShipEntity.ownerId == playerId) {
 					gameState = GameState.Died;
+					hud.show(false);
 					// TODO show retry dialog
 				}
 
 				clientShips.remove(engineShipEntity.id);
+				clientShipsCount--;
 			}
 		};
 
@@ -130,28 +144,63 @@ class Game {
 		// --------------------------------------
 
 		hud = new Hud();
-		hud.addChoice("Debug draw", ["Off", "On"], function(i) {
-			switch (i) {
-				case 0:
-					DebugDraw = false;
-				case 1:
-					DebugDraw = true;
-			}
-		});
 
-		hud.addChoice("Input", ["Game", "Camera", "Player"], function(i) {
-			switch (i) {
-				case 0:
-					inputType = InputType.Game;
-				case 1:
-					inputType = InputType.DebugCamera;
-				case 2:
-					inputType = InputType.DebugPlayerShip;
+		// TODO center it
+		final center = new h2d.Flow(scene);
+		center.horizontalAlign = center.verticalAlign = Middle;
+
+		final root = new ContainerComp(center);
+		root.btn.label = "Join new game";
+		root.btn.getTextComponent().setScale(3);
+
+		root.btn1.label = "Join existing game";
+		root.btn1.getTextComponent().setScale(3);
+
+		root.btn.onClick = function() {
+			if (joinNewGameCallback != null) {
+				joinNewGameCallback();
 			}
-		});
+			root.alpha = 0;
+		}
+		root.btn1.onClick = function() {
+			if (joinExistingGameCallback != null) {
+				joinExistingGameCallback();
+			}
+			root.alpha = 0;
+		}
+
+		style = new h2d.domkit.Style();
+		style.load(hxd.Res.style);
+		style.addObject(root);
+
+		// root.btn2.labelTxt.text = "Highlight OFF";
+
+		// Join game dialog
+
+		// hud.addChoice("Debug draw", ["Off", "On"], function(i) {
+		// 	switch (i) {
+		// 		case 0:
+		// 			DebugDraw = false;
+		// 		case 1:
+		// 			DebugDraw = true;
+		// 	}
+		// });
+
+		// hud.addChoice("Input", ["Game", "Camera", "Player"], function(i) {
+		// 	switch (i) {
+		// 		case 0:
+		// 			inputType = InputType.Game;
+		// 		case 1:
+		// 			inputType = InputType.DebugCamera;
+		// 		case 2:
+		// 			inputType = InputType.DebugPlayerShip;
+		// 	}
+		// });
 	}
 
 	public function update(dt:Float, fps:Float) {
+		style.sync();
+
 		if (gameState == GameState.Playing) {
 			hud.update(dt);
 			hud.updateSystemInfo(fps);
@@ -240,15 +289,45 @@ class Game {
 			// Draw ship rect shape
 			drawDebugRect(ship);
 
+			if (ship.leftSideCanonDebugRect1 == null) {
+				ship.leftSideCanonDebugRect1 = new h2d.Graphics(scene);
+			} else {
+				ship.leftSideCanonDebugRect1.clear();
+			}
+
+			if (ship.leftSideCanonDebugRect2 == null) {
+				ship.leftSideCanonDebugRect2 = new h2d.Graphics(scene);
+			} else {
+				ship.leftSideCanonDebugRect2.clear();
+			}
+
+			if (ship.leftSideCanonDebugRect3 == null) {
+				ship.leftSideCanonDebugRect3 = new h2d.Graphics(scene);
+			} else {
+				ship.leftSideCanonDebugRect3.clear();
+			}
+
+			if (ship.rightSideCanonDebugRect1 == null) {
+				ship.rightSideCanonDebugRect1 = new h2d.Graphics(scene);
+			} else {
+				ship.rightSideCanonDebugRect1.clear();
+			}
+
+			if (ship.rightSideCanonDebugRect2 == null) {
+				ship.rightSideCanonDebugRect2 = new h2d.Graphics(scene);
+			} else {
+				ship.rightSideCanonDebugRect2.clear();
+			}
+
+			if (ship.rightSideCanonDebugRect3 == null) {
+				ship.rightSideCanonDebugRect3 = new h2d.Graphics(scene);
+			} else {
+				ship.rightSideCanonDebugRect3.clear();
+			}
+
 			if (DebugDraw) {
 				// Draw left side canons
 				// 1
-				if (ship.leftSideCanonDebugRect1 == null) {
-					ship.leftSideCanonDebugRect1 = new h2d.Graphics(scene);
-				} else {
-					ship.leftSideCanonDebugRect1.clear();
-				}
-
 				final leftGunPos1 = ship.getCanonOffsetBySideAndIndex(Side.Left, 0);
 
 				ship.leftSideCanonDebugRect1.beginFill(0x00ff00);
@@ -256,12 +335,6 @@ class Game {
 				ship.leftSideCanonDebugRect1.endFill();
 
 				// 2
-				if (ship.leftSideCanonDebugRect2 == null) {
-					ship.leftSideCanonDebugRect2 = new h2d.Graphics(scene);
-				} else {
-					ship.leftSideCanonDebugRect2.clear();
-				}
-
 				final leftGunPos2 = ship.getCanonOffsetBySideAndIndex(Side.Left, 1);
 
 				ship.leftSideCanonDebugRect2.beginFill(0x00ff00);
@@ -269,12 +342,6 @@ class Game {
 				ship.leftSideCanonDebugRect2.endFill();
 
 				// 3
-				if (ship.leftSideCanonDebugRect3 == null) {
-					ship.leftSideCanonDebugRect3 = new h2d.Graphics(scene);
-				} else {
-					ship.leftSideCanonDebugRect3.clear();
-				}
-
 				final leftGunPos3 = ship.getCanonOffsetBySideAndIndex(Side.Left, 2);
 
 				ship.leftSideCanonDebugRect3.beginFill(0x00ff00);
@@ -283,12 +350,6 @@ class Game {
 
 				// Draw right side canons
 				// 1
-				if (ship.rightSideCanonDebugRect1 == null) {
-					ship.rightSideCanonDebugRect1 = new h2d.Graphics(scene);
-				} else {
-					ship.rightSideCanonDebugRect1.clear();
-				}
-
 				final rightGunPos1 = ship.getCanonOffsetBySideAndIndex(Side.Right, 0);
 
 				ship.rightSideCanonDebugRect1.beginFill(0x00ff00);
@@ -296,12 +357,6 @@ class Game {
 				ship.rightSideCanonDebugRect1.endFill();
 
 				// 2
-				if (ship.rightSideCanonDebugRect2 == null) {
-					ship.rightSideCanonDebugRect2 = new h2d.Graphics(scene);
-				} else {
-					ship.rightSideCanonDebugRect2.clear();
-				}
-
 				final rightGunPos2 = ship.getCanonOffsetBySideAndIndex(Side.Right, 1);
 
 				ship.rightSideCanonDebugRect2.beginFill(0x00ff00);
@@ -309,12 +364,6 @@ class Game {
 				ship.rightSideCanonDebugRect2.endFill();
 
 				// 3
-				if (ship.rightSideCanonDebugRect3 == null) {
-					ship.rightSideCanonDebugRect3 = new h2d.Graphics(scene);
-				} else {
-					ship.rightSideCanonDebugRect3.clear();
-				}
-
 				final rightGunPos3 = ship.getCanonOffsetBySideAndIndex(Side.Right, 2);
 
 				ship.rightSideCanonDebugRect3.beginFill(0x00ff00);
@@ -373,6 +422,7 @@ class Game {
 						}
 					}
 				if (q || e)
+					// TODO shooting logic to the server
 					if (lastShootInputCheck == 0 || lastShootInputCheck + inputShootCheckDelayMS < now) {
 						lastShootInputCheck = now;
 						if (q)
@@ -426,6 +476,7 @@ class Game {
 
 				final newClientShip = new ClientShip(scene, ship);
 				clientShips.set(ship.id, newClientShip);
+				clientShipsCount++;
 
 				if (ship.ownerId == playerId) {
 					playerShipId = ship.id;
@@ -433,6 +484,8 @@ class Game {
 			}
 			this.playerId = playerId;
 			gameState = GameState.Playing;
+
+			hud.show(true);
 		}
 	}
 
@@ -444,6 +497,7 @@ class Game {
 				gameEngine.addShip(ship);
 				final newClientShip = new ClientShip(scene, ship);
 				clientShips.set(ship.id, newClientShip);
+				clientShipsCount++;
 			}
 		}
 	}
@@ -476,24 +530,48 @@ class Game {
 	}
 
 	public function updateWorldState(message:SocketServerMessageUpdateWorldState) {
-		if (gameEngine.engineMode == EngineMode.Server) {
+		if (gameEngine.engineMode == EngineMode.Server && gameState == GameState.Playing) {
 			// TODO check last sync time in order to reduce computations
 			for (ship in message.ships) {
 				final clientShip = clientShips.get(ship.id);
-				final clientShipHullAndArmor = clientShip.getHullAndArmor();
+				if (clientShip != null) {
+					final clientShipStats = clientShip.getStats();
 
-				if (clientShipHullAndArmor.currentHull != ship.currentHull || clientShipHullAndArmor.currentArmor != ship.currentArmor) {
-					clientShip.updateHullAndArmor(ship.currentHull, ship.currentArmor);
+					if (clientShipStats.currentHull != ship.currentHull || clientShipStats.currentArmor != ship.currentArmor) {
+						clientShip.updateHullAndArmor(ship.currentHull, ship.currentArmor);
+						if (ship.currentHull == 0 && clientShipStats.currentHull != 0) {
+							gameEngine.removeShip(ship.id);
+						}
+					}
 
-					if (ship.currentHull == 0 && clientShipHullAndArmor.currentHull != 0) {
-						gameEngine.removeShip(ship.id);
+					final distanceBetweenServerAndClient = hxd.Math.distance(ship.x - clientShip.x, ship.y - clientShip.y);
+
+					if (distanceBetweenServerAndClient >= 50) {
+						clientShip.updateEntityPosition(ship.x, ship.y);
 					}
 				}
+			}
+			if (message.ships.length != clientShipsCount) {
+				Socket.instance.sync({
+					playerId: playerId
+				});
+			}
+		}
+	}
 
-				final distanceBetweenServerAndClient = hxd.Math.distance(ship.x - clientShip.x, ship.y - clientShip.y);
-
-				if (distanceBetweenServerAndClient >= 50) {
+	public function sync(message:SocketServerMessageSync) {
+		if (gameEngine.engineMode == EngineMode.Server && gameState == GameState.Playing) {
+			// Create ships if necessary or update
+			for (ship in message.ships) {
+				final clientShip = clientShips.get(ship.id);
+				if (clientShip != null) {
+					clientShip.updateHullAndArmor(ship.currentHull, ship.currentArmor);
 					clientShip.updateEntityPosition(ship.x, ship.y);
+				} else {
+					final newShip = gameEngine.createShip(Role.General, ship.x, ship.y, ship.id, ship.ownerId);
+					final newClientShip = new ClientShip(scene, newShip);
+					clientShips.set(ship.id, newClientShip);
+					clientShipsCount++;
 				}
 			}
 		}

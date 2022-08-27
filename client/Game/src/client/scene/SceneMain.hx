@@ -26,4 +26,6 @@ class SceneMain extends Scene {
 			level2Callback();
 		});
 	}
+
+	public function start() {}
 }

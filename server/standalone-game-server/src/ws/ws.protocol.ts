@@ -40,6 +40,11 @@ export interface SocketServerMessageShipShoot {
     shotParams: ShotParams[];
 }
 
+export interface SocketServerMessageSync {
+    tick: number;
+    ships: EntityShip[];
+}
+
 // -------------------------------------
 // WebSocket client messages
 // -------------------------------------
@@ -68,6 +73,10 @@ export interface ShotParams {
     rotation: number;
 }
 
+export interface SocketClientMessageSync {
+    playerId: string;
+}
+
 export class WsProtocol {
     // Server -> Client events
     public static readonly SocketServerEventGameInit = 'SocketServerEventGameInit';
@@ -76,9 +85,11 @@ export class WsProtocol {
     public static readonly SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
     public static readonly SocketServerEventShipMove = 'SocketServerEventShipMove';
     public static readonly SocketServerEventShipShoot = 'SocketServerEventShipShoot';
+    public static readonly SocketServerEventSync = 'SocketServerEventSync';
 
     // Client -> Server events
     public static readonly SocketClientEventJoinGame = 'SocketClientEventJoinGame';
     public static readonly SocketClientEventMove = 'SocketClientEventMove';
     public static readonly SocketClientEventShoot = 'SocketClientEventShoot';
+    public static readonly SocketClientEventSync = 'SocketClientEventSync';
 }

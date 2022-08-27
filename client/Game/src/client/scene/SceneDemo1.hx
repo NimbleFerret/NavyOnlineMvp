@@ -6,12 +6,15 @@ import h3d.Engine;
 import h2d.Scene;
 
 class SceneDemo1 extends Scene {
-	private final game:Game;
+	private var game:Game;
 
 	public function new(width:Int, height:Int) {
 		super();
 
 		camera.setViewport(width / 2, height / 2, 0, 0);
+	}
+
+	public function start() {
 		game = new Game(this, EngineMode.Client);
 
 		// --------------------------------------

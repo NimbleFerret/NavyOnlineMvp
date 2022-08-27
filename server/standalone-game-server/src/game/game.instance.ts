@@ -12,16 +12,18 @@ import { engine } from "../../GameEngine.js"
 import {
     SocketClientMessageJoinGame,
     SocketClientMessageMove,
+    SocketClientMessageShoot,
+    SocketClientMessageSync,
     SocketServerMessageAddShip,
     SocketServerMessageGameInit,
     SocketServerMessageRemoveShip,
     SocketServerMessageShipMove,
     SocketServerMessageShipShoot,
+    SocketServerMessageSync,
     SocketServerMessageUpdateWorldState,
     WsProtocol
 } from 'src/ws/ws.protocol';
 import { Logger } from '@nestjs/common';
-import { WsGateway } from 'src/ws/ws.gateway';
 
 export class GameInstance {
 
@@ -94,7 +96,7 @@ export class GameInstance {
             }
         };
 
-        this.addBot(100, 300);
+        // this.addBot(100, 300);
     }
 
     private notifyGameWorldState() {
@@ -134,6 +136,16 @@ export class GameInstance {
         }
     }
 
+    private notifyPlayer(playerId: string, message: object, event: string) {
+        const notifyPlayerEventMsg = {
+            playerId,
+            socketEvent: event,
+            message
+        } as NotifyPlayerEventMsg;
+
+        this.eventEmitter.emit(AppEvents.NotifyPlayer, notifyPlayerEventMsg);
+    }
+
     private notifyAllPlayers(message: object, event: string) {
         const notifyEachPlayerEventMsg = {
             instanceId: this.instanceId,
@@ -159,13 +171,7 @@ export class GameInstance {
             ships: this.collectShips(true)
         } as SocketServerMessageGameInit;
 
-        const notifyPlayerEventMsg = {
-            playerId: data.playerId,
-            socketEvent: WsProtocol.SocketServerEventGameInit,
-            message: socketServerMessageGameInit
-        } as NotifyPlayerEventMsg;
-
-        this.eventEmitter.emit(AppEvents.NotifyPlayer, notifyPlayerEventMsg);
+        this.notifyPlayer(data.playerId, socketServerMessageGameInit, WsProtocol.SocketServerEventGameInit);
     }
 
     async handlePlayerDisconnected(data: PlayerDisconnectedEvent) {
@@ -206,7 +212,7 @@ export class GameInstance {
         }
     }
 
-    async handlePlayerShoot(data: SocketServerMessageShipShoot) {
+    async handlePlayerShoot(data: SocketClientMessageShoot) {
         const ship = this.playerShipMap.get(data.playerId);
         if (ship) {
             this.gameEngine.shipShootBySide(data.left ? 'Left' : 'Right', ship, data.shotParams);
@@ -218,6 +224,16 @@ export class GameInstance {
             } as SocketServerMessageShipShoot;
 
             this.notifyAllPlayers(socketServerMessageShipShoot, WsProtocol.SocketServerEventShipShoot);
+        }
+    }
+
+    async handlePlayerSync(data: SocketClientMessageSync) {
+        const ship = this.playerShipMap.get(data.playerId);
+        if (ship) {
+            const socketServerMessageSync = {
+                ships: this.collectShips(true)
+            } as SocketServerMessageSync;
+            this.notifyPlayer(data.playerId, socketServerMessageSync, WsProtocol.SocketServerEventSync);
         }
     }
 

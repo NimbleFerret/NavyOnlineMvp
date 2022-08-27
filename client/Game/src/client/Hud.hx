@@ -5,6 +5,8 @@ import h2d.SpriteBatch.BatchElement;
 import client.entity.ClientShip;
 
 class HorizontalStatsBar {
+	final guiObject:h2d.Object;
+
 	final borderRect:h2d.Graphics;
 	final fillRect:h2d.Graphics;
 	final descriptionText:h2d.Text;
@@ -15,7 +17,7 @@ class HorizontalStatsBar {
 	final rectY:Float;
 
 	public function new(fui:h2d.Flow, x:Float, y:Float, desctiption:String, value:String, additionalOffsetX:Float = 0.0) {
-		final guiObject = new h2d.Object(fui);
+		guiObject = new h2d.Object(fui);
 
 		rectX = x + 100 + additionalOffsetX;
 		rectY = y + 15;
@@ -66,6 +68,10 @@ class HorizontalStatsBar {
 			fillRect.endFill();
 		}
 	}
+
+	public function show(show:Bool) {
+		guiObject.alpha = show ? 1 : 0;
+	}
 }
 
 class RetryDialog {
@@ -82,8 +88,12 @@ class RetryDialog {
 class Hud extends h2d.Scene {
 	public static final DrawWaterBg = false;
 
-	public var movementText:h2d.Text;
-	public var systemText:h2d.Text;
+	private var movementText:h2d.Text;
+	private var dirText:h2d.Text;
+	private var systemText:h2d.Text;
+
+	private var leftCannonsText:h2d.Text;
+	private var rightCannonsText:h2d.Text;
 
 	var waterBgObject:h2d.Object;
 	var waterBgbatch:h2d.SpriteBatch;
@@ -132,7 +142,31 @@ class Hud extends h2d.Scene {
 		hullBar = new HorizontalStatsBar(fui, 0, 0, "Hull", "1000", 65);
 
 		systemText = addText();
+		systemText.setScale(4);
+
 		movementText = addText();
+		movementText.setScale(4);
+
+		dirText = addText();
+		dirText.setScale(4);
+
+		leftCannonsText = addText("Left side cannons");
+		leftCannonsText.setScale(4);
+
+		rightCannonsText = addText("Right side cannons");
+		rightCannonsText.setScale(4);
+
+		show(false);
+	}
+
+	public function show(show:Bool) {
+		armorBar.show(show);
+		hullBar.show(show);
+
+		movementText.alpha = show ? 1 : 0;
+		dirText.alpha = show ? 1 : 0;
+		leftCannonsText.alpha = show ? 0 : 0;
+		rightCannonsText.alpha = show ? 0 : 0;
 	}
 
 	// TODO reuse GUI class
@@ -252,19 +286,18 @@ class Hud extends h2d.Scene {
 	}
 
 	public function updateSystemInfo(fps:Float) {
-		systemText.text = "FPS: " + fps;
+		// systemText.text = "FPS: " + fps;
 	}
 
+	// UPDATES
+
 	public function updatePlayerParams(playerShip:ClientShip) {
-		final hullAndArmor = playerShip.getHullAndArmor();
+		final shipStats = playerShip.getStats();
 
-		armorBar.updateBar(hullAndArmor.baseArmor, hullAndArmor.currentArmor);
-		hullBar.updateBar(hullAndArmor.baseHull, hullAndArmor.currentHull);
+		armorBar.updateBar(shipStats.baseArmor, shipStats.currentArmor);
+		hullBar.updateBar(shipStats.baseHull, shipStats.currentHull);
 
-		// playerDX = playerShip.dx;
-		// playerDY = playerShip.dy;
-
-		// movementText.text = "Speed: " + playerShip.currentSpeed + ", Dir: " + playerShip.direction;
-		// movementText.text = "Speed: " + playerShip.currentSpeed + ", Dir: " + playerShip.direction;
+		movementText.text = "Speed: " + shipStats.currentSpeed + " / " + shipStats.maxSpeed;
+		dirText.text = "Direction: " + shipStats.dir;
 	}
 }

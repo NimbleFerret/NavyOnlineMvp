@@ -30,6 +30,9 @@ class Socket {
 		clientSocket.on(Protocol.SocketServerEventShipShoot, function(data) {
 			EventManager.instance.notify(Protocol.SocketServerEventShipShoot, data);
 		});
+		clientSocket.on(Protocol.SocketServerEventSync, function(data) {
+			EventManager.instance.notify(Protocol.SocketServerEventSync, data);
+		});
 	}
 
 	public function joinGame(message:Protocol.SocketClientMessageJoinGame) {
@@ -42,5 +45,9 @@ class Socket {
 
 	public function shoot(message:Protocol.SocketClientMessageShoot) {
 		clientSocket.emit(Protocol.SocketClientEventShoot, message);
+	}
+
+	public function sync(message:Protocol.SocketClientMessageSync) {
+		clientSocket.emit(Protocol.SocketClientEventSync, message);
 	}
 }

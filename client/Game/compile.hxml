@@ -1,6 +1,7 @@
 -cp engine
 -cp src
 -lib heaps
+-lib domkit
 -lib uuid
 -lib tweenxcore
 -lib hxsocketio

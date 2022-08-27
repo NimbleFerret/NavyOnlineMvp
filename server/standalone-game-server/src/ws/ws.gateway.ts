@@ -18,6 +18,7 @@ import {
     SocketClientMessageJoinGame,
     SocketClientMessageMove,
     SocketClientMessageShoot,
+    SocketClientMessageSync,
     SocketServerMessageGameInit,
     WsProtocol
 } from "./ws.protocol";
@@ -93,6 +94,12 @@ export class WsGateway implements OnModuleInit {
     async shoot(@MessageBody() data: SocketClientMessageShoot) {
         Logger.log(`Got shoot request. ${JSON.stringify(data)}`);
         this.eventEmitter.emit(AppEvents.PlayerShoot, data);
+    }
+
+    @SubscribeMessage(WsProtocol.SocketClientEventSync)
+    async sync(@MessageBody() data: SocketClientMessageSync) {
+        Logger.log(`Got sync request. ${JSON.stringify(data)}`);
+        this.eventEmitter.emit(AppEvents.PlayerSync, data);
     }
 
     // -------------------------------------

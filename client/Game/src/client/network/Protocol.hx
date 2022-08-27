@@ -62,6 +62,10 @@ typedef SocketServerMessageShipShoot = {
 	shotParams:Array<ShotParams>
 }
 
+typedef SocketServerMessageSync = {
+	ships:Array<EntityShip>
+}
+
 // -------------------------------------
 // WebSocket client messages
 // -------------------------------------
@@ -90,6 +94,10 @@ typedef ShotParams = {
 	rotation:Int
 }
 
+typedef SocketClientMessageSync = {
+	playerId:String
+}
+
 class Protocol {
 	// Server -> Client events
 	public static final SocketServerEventGameInit = 'SocketServerEventGameInit';
@@ -98,9 +106,11 @@ class Protocol {
 	public static final SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
 	public static final SocketServerEventShipMove = 'SocketServerEventShipMove';
 	public static final SocketServerEventShipShoot = 'SocketServerEventShipShoot';
+	public static final SocketServerEventSync = 'SocketServerEventSync';
 
 	// Client -> Server events
 	public static final SocketClientEventJoinGame = 'SocketClientEventJoinGame';
 	public static final SocketClientEventMove = 'SocketClientEventMove';
 	public static final SocketClientEventShoot = 'SocketClientEventShoot';
+	public static final SocketClientEventSync = 'SocketClientEventSync';
 }

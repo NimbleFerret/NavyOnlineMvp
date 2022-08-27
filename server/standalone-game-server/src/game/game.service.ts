@@ -9,7 +9,8 @@ import { GameInstance } from './game.instance';
 import {
     SocketClientMessageJoinGame,
     SocketClientMessageMove,
-    SocketServerMessageShipShoot,
+    SocketClientMessageShoot,
+    SocketClientMessageSync,
 } from 'src/ws/ws.protocol';
 import { AddBotDto } from './game.controller';
 
@@ -121,11 +122,22 @@ export class GameService implements OnModuleInit {
     }
 
     @OnEvent(AppEvents.PlayerShoot)
-    async handlePlayerShoot(data: SocketServerMessageShipShoot) {
+    async handlePlayerShoot(data: SocketClientMessageShoot) {
         const instanceId = this.playerInstaneMap.get(data.playerId);
         if (instanceId) {
             const gameInstance = this.gameInstances.get(instanceId);
             gameInstance.handlePlayerShoot(data);
+        } else {
+            // TODO add logs
+        }
+    }
+
+    @OnEvent(AppEvents.PlayerSync)
+    async handlePlayerSync(data: SocketClientMessageSync) {
+        const instanceId = this.playerInstaneMap.get(data.playerId);
+        if (instanceId) {
+            const gameInstance = this.gameInstances.get(instanceId);
+            gameInstance.handlePlayerSync(data);
         } else {
             // TODO add logs
         }

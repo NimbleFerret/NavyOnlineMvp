@@ -229,13 +229,16 @@ class ClientShip extends ClientBaseGameEntity {
 		y = hxd.Math.lerp(y, engineEntity.y, 0.1);
 	}
 
-	public function getHullAndArmor() {
+	public function getStats() {
 		final shipEntity = cast(engineEntity, EngineShipEntity);
 		return {
 			baseHull: shipEntity.baseHull,
 			currentHull: shipEntity.currentHull,
 			baseArmor: shipEntity.baseArmor,
 			currentArmor: shipEntity.currentArmor,
+			currentSpeed: shipEntity.currentSpeed,
+			maxSpeed: shipEntity.maxSpeed,
+			dir: shipEntity.direction
 		}
 	}
 

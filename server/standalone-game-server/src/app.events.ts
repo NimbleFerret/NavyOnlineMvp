@@ -4,6 +4,7 @@ export enum AppEvents {
     PlayerDisconnected = 'PlayerDisconnected',
     PlayerMove = 'PlayerMove',
     PlayerShoot = 'PlayerShoot',
+    PlayerSync = 'PlayerSync',
 
     NotifyPlayer = 'NotifyPlayer',
     NotifyEachPlayer = 'NotifyEachPlayer',
@@ -12,10 +13,6 @@ export enum AppEvents {
 // ---------------------------------
 // Client event msg
 // ---------------------------------
-
-export interface PlayerJoinedEvent {
-    message: string;
-}
 
 export interface PlayerDisconnectedEvent {
     playerId: string;

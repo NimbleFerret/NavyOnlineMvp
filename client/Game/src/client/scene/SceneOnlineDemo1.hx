@@ -10,7 +10,7 @@ import h3d.Engine;
 import h2d.Scene;
 
 class SceneOnlineDemo1 extends Scene implements EventListener {
-	private final game:Game;
+	private var game:Game;
 
 	public var playerId = Uuid.short();
 
@@ -18,15 +18,23 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		super();
 
 		camera.setViewport(width / 2, height / 2, 0, 0);
+	}
+
+	public function start() {
 		game = new Game(this, EngineMode.Server);
 
-		game.hud.addButton("Connect socket", function() {
+		game.joinNewGameCallback = function callback() {
 			Socket.instance.joinGame({playerId: playerId});
-		});
+		}
+		game.joinExistingGameCallback = function callback() {}
 
-		game.hud.addButton("Retry", function() {
-			Socket.instance.joinGame({playerId: playerId});
-		});
+		// game.hud.addButton("Connect socket", function() {
+		// 	Socket.instance.joinGame({playerId: playerId});
+		// });
+
+		// game.hud.addButton("Retry", function() {
+		// Socket.instance.joinGame({playerId: playerId});
+		// });
 
 		EventManager.instance.subscribe(Protocol.SocketServerEventGameInit, this);
 		EventManager.instance.subscribe(Protocol.SocketServerEventAddShip, this);
@@ -34,6 +42,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		EventManager.instance.subscribe(Protocol.SocketServerEventUpdateWorldState, this);
 		EventManager.instance.subscribe(Protocol.SocketServerEventShipMove, this);
 		EventManager.instance.subscribe(Protocol.SocketServerEventShipShoot, this);
+		EventManager.instance.subscribe(Protocol.SocketServerEventSync, this);
 	}
 
 	public override function render(e:Engine) {
@@ -64,6 +73,8 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				game.shipMove(message);
 			case Protocol.SocketServerEventShipShoot:
 				game.shipShoot(message);
+			case Protocol.SocketServerEventSync:
+				game.sync(message);
 			default:
 				trace('Unknown socket message');
 		}
