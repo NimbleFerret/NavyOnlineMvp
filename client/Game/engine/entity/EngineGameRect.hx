@@ -1,5 +1,7 @@
 package engine.entity;
 
+import engine.MathUtils;
+
 class EngineGameRect {
 	var x:Float;
 	var y:Float;

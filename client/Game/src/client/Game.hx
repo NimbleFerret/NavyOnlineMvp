@@ -475,6 +475,30 @@ class Game {
 		}
 	}
 
+	public function updateWorldState(message:SocketServerMessageUpdateWorldState) {
+		if (gameEngine.engineMode == EngineMode.Server) {
+			// TODO check last sync time in order to reduce computations
+			for (ship in message.ships) {
+				final clientShip = clientShips.get(ship.id);
+				final clientShipHullAndArmor = clientShip.getHullAndArmor();
+
+				if (clientShipHullAndArmor.currentHull != ship.currentHull || clientShipHullAndArmor.currentArmor != ship.currentArmor) {
+					clientShip.updateHullAndArmor(ship.currentHull, ship.currentArmor);
+
+					if (ship.currentHull == 0 && clientShipHullAndArmor.currentHull != 0) {
+						gameEngine.removeShip(ship.id);
+					}
+				}
+
+				final distanceBetweenServerAndClient = hxd.Math.distance(ship.x - clientShip.x, ship.y - clientShip.y);
+
+				if (distanceBetweenServerAndClient >= 50) {
+					clientShip.updateEntityPosition(ship.x, ship.y);
+				}
+			}
+		}
+	}
+
 	// --------------------------------------
 	// Single player
 	// --------------------------------------

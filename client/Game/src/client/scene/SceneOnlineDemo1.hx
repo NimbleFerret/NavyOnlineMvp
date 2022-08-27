@@ -30,7 +30,6 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 
 		EventManager.instance.subscribe(Protocol.SocketServerEventGameInit, this);
 		EventManager.instance.subscribe(Protocol.SocketServerEventAddShip, this);
-		EventManager.instance.subscribe(Protocol.SocketServerEventAddShell, this);
 		EventManager.instance.subscribe(Protocol.SocketServerEventRemoveShip, this);
 		EventManager.instance.subscribe(Protocol.SocketServerEventUpdateWorldState, this);
 		EventManager.instance.subscribe(Protocol.SocketServerEventShipMove, this);
@@ -58,21 +57,12 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 			case Protocol.SocketServerEventAddShip:
 				game.addShip(message);
 			case Protocol.SocketServerEventRemoveShip:
-				trace("SocketServerMessageRemoveShip");
 				game.removeShip(message);
 			case Protocol.SocketServerEventUpdateWorldState:
-			// if (gameState == GameState.Init) {
-			// gameState = GameState.Playing;
-			// TODO add all ships and init gameplay
-			// }
-			// trace("SocketServerMessageUpdateWorldState");
-			// jsShipsToHaxe(params);
-			// TODO type cast here
+				game.updateWorldState(message);
 			case Protocol.SocketServerEventShipMove:
-				trace('SocketServerMessageShipMove');
 				game.shipMove(message);
 			case Protocol.SocketServerEventShipShoot:
-				trace('SocketServerMessageShipShoot');
 				game.shipShoot(message);
 			default:
 				trace('Unknown socket message');

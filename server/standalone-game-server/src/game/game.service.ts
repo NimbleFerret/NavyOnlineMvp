@@ -25,7 +25,7 @@ export class GameService implements OnModuleInit {
     }
 
     async onModuleInit() {
-        new GameInstance(this.eventEmitter);
+        console.log('Hello');
     }
 
     // -------------------------------------

@@ -18,9 +18,6 @@ class Socket {
 		clientSocket.on(Protocol.SocketServerEventAddShip, function(data) {
 			EventManager.instance.notify(Protocol.SocketServerEventAddShip, data);
 		});
-		clientSocket.on(Protocol.SocketServerEventAddShell, function(data) {
-			EventManager.instance.notify(Protocol.SocketServerEventAddShell, data);
-		});
 		clientSocket.on(Protocol.SocketServerEventRemoveShip, function(data) {
 			EventManager.instance.notify(Protocol.SocketServerEventRemoveShip, data);
 		});

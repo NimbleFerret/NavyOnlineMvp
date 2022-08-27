@@ -203,6 +203,12 @@ class ClientShip extends ClientBaseGameEntity {
 		}
 	}
 
+	public function updateHullAndArmor(currentHull:Int, currentArmor:Int) {
+		final shipEntity = cast(engineEntity, EngineShipEntity);
+		shipEntity.currentHull = currentHull;
+		shipEntity.currentArmor = currentArmor;
+	}
+
 	public function update(dt:Float) {
 		x = hxd.Math.lerp(x, engineEntity.x, 0.1);
 		y = hxd.Math.lerp(y, engineEntity.y, 0.1);

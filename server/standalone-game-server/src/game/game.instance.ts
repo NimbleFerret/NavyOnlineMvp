@@ -23,17 +23,20 @@ import {
 import { Logger } from '@nestjs/common';
 
 export class GameInstance {
+
+    public readonly worldStateUpdateIntervalMS = 5000;
     public readonly instanceId = uuidv4();
 
     private readonly playerShipMap: Map<string, string> = new Map();
     private readonly gameEngine: engine.GameEngine;
 
+    private notifyGameWorldStateTimer: NodeJS.Timer;
+
     constructor(private eventEmitter: EventEmitter2) {
         this.gameEngine = new engine.GameEngine();
+        this.notifyGameWorldStateTimer = setInterval(() => this.notifyGameWorldState(), this.worldStateUpdateIntervalMS);
 
         console.log(this.gameEngine);
-
-        //
 
         this.gameEngine.tickCallback = () => {
             // Send only short info
@@ -54,10 +57,10 @@ export class GameInstance {
 
         this.gameEngine.deleteShipCallback = (ship: object) => {
             const jsShip = this.converJsShipToTypeScript(ship);
-            console.log();
+            console.log('Ship destroyed');
         };
 
-        // TODO not shell but all shells from the ship 
+        // TODO Rename callback
         this.gameEngine.createShellCallback = (shells: any) => {
             const ship = this.gameEngine.getShipById(shells[0].ownerId);
             if (ship && ship.role == 'Bot') {
@@ -83,9 +86,27 @@ export class GameInstance {
                 this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
             }
         };
-
-        this.addBot(100, 100);
     }
+
+    private notifyGameWorldState() {
+        if (this.playerShipMap.size > 0) {
+            const socketServerMessageUpdateWorldState = {
+                tick: this.gameEngine.tick,
+                ships: this.collectShips(false)
+            } as SocketServerMessageUpdateWorldState;
+
+            const notifyEachPlayerEventMsg = {
+                socketEvent: WsProtocol.SocketServerEventUpdateWorldState,
+                message: socketServerMessageUpdateWorldState
+            } as NotifyEachPlayerEventMsg;
+
+            this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
+        }
+    }
+
+    // -------------------------------------
+    // General
+    // -------------------------------------
 
     public addBot(x: number, y: number) {
         this.gameEngine.createShip('Bot', x, y);
@@ -101,6 +122,7 @@ export class GameInstance {
 
     public destroy() {
         try {
+            clearInterval(this.notifyGameWorldStateTimer);
             this.playerShipMap.clear();
             this.gameEngine.destroy();
         } catch (e) {
@@ -118,6 +140,7 @@ export class GameInstance {
 
         const socketServerMessageGameInit = {
             tickRate: this.gameEngine.gameLoop.targetFps,
+            worldStateSyncInterval: this.worldStateUpdateIntervalMS,
             ships: this.collectShips(true)
         } as SocketServerMessageGameInit;
 
@@ -198,16 +221,15 @@ export class GameInstance {
         }
     }
 
-    //
+    // -------------------------------------
+    // Data preparatio
+    // -------------------------------------
 
     private collectShips(full: boolean) {
         const ships: EntityShip[] = [];
         for (const [key, value] of this.gameEngine.shipManager.entities) {
             ships.push(this.converJsShipToTypeScript(value, full));
         }
-        // const result = {
-        //     ships
-        // } as SocketServerMessageUpdateWorldState;
         return ships;
     }
 

@@ -62,17 +62,20 @@ export class WsGateway implements OnModuleInit {
 
     @SubscribeMessage(WsProtocol.SocketClientEventJoinGame)
     async joinGame(client: Socket, data: SocketClientMessageJoinGame) {
+        Logger.log(`Got joinGame request. ${JSON.stringify(data)}`);
         WsGateway.ClientSockets.set(data.playerId, client);
         this.eventEmitter.emit(AppEvents.PlayerJoined, data);
     }
 
     @SubscribeMessage(WsProtocol.SocketClientEventMove)
     async move(@MessageBody() data: SocketClientMessageMove) {
+        Logger.log(`Got move request. ${JSON.stringify(data)}`);
         this.eventEmitter.emit(AppEvents.PlayerMove, data);
     }
 
     @SubscribeMessage(WsProtocol.SocketClientEventShoot)
     async shoot(@MessageBody() data: SocketClientMessageShoot) {
+        Logger.log(`Got shoot request. ${JSON.stringify(data)}`);
         this.eventEmitter.emit(AppEvents.PlayerShoot, data);
     }
 

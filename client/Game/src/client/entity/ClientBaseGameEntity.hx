@@ -23,6 +23,11 @@ abstract class ClientBaseGameEntity extends h2d.Object {
 		set_rotation(engineEntity.rotation);
 	}
 
+	public function updateEntityPosition(x:Float, y:Float) {
+		engineEntity.x = x;
+		engineEntity.y = y;
+	}
+
 	public function getEngineEntityRect() {
 		return engineEntity.getGameRect();
 	}

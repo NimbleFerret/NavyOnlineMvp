@@ -8,10 +8,12 @@ import { EntityShip } from "src/game/entity/entity.ship";
 
 export interface SocketServerMessageGameInit {
     tickRate: number;
+    worldStateSyncInterval: number;
     ships: EntityShip[];
 }
 
 export interface SocketServerMessageUpdateWorldState {
+    tick: number;
     ships: EntityShip[];
 }
 

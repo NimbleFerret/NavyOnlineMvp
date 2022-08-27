@@ -22,6 +22,8 @@ enum EngineMode {
 class GameEngine {
 	final gameLoop:GameLoop;
 
+	public var tick:Int;
+
 	public final engineMode:EngineMode;
 	public final shipManager:ShipManager;
 	public final shellManager:ShellManager;
@@ -52,6 +54,8 @@ class GameEngine {
 		shellManager = new ShellManager();
 
 		gameLoop = new GameLoop(function loop(dt:Float, tick:Int) {
+			this.tick = tick;
+
 			framesPassed++;
 
 			for (ship in shipManager.entities) {
