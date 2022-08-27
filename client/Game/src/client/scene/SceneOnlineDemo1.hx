@@ -2,7 +2,6 @@ package client.scene;
 
 import uuid.Uuid;
 import engine.GameEngine.EngineMode;
-import engine.entity.EngineShipEntity;
 import client.event.EventManager;
 import client.event.EventManager.EventListener;
 import client.network.Socket;
@@ -58,8 +57,6 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				game.startGame(playerId, message);
 			case Protocol.SocketServerEventAddShip:
 				game.addShip(message);
-			case Protocol.SocketServerEventAddShell:
-				trace("SocketServerMessageAddShell");
 			case Protocol.SocketServerEventRemoveShip:
 				trace("SocketServerMessageRemoveShip");
 				game.removeShip(message);

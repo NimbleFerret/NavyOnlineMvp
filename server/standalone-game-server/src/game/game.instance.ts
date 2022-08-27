@@ -13,6 +13,7 @@ import {
     SocketClientMessageJoinGame,
     SocketClientMessageMove,
     SocketServerMessageAddShip,
+    SocketServerMessageGameInit,
     SocketServerMessageRemoveShip,
     SocketServerMessageShipMove,
     SocketServerMessageShipShoot,
@@ -30,6 +31,7 @@ export class GameInstance {
         this.gameEngine = new engine.GameEngine();
 
         console.log(this.gameEngine);
+        console.log(this.gameEngine.gameLoop);
 
         //
 
@@ -110,10 +112,15 @@ export class GameInstance {
         const ship = this.converJsShipToTypeScript(this.gameEngine.createShip('Player', 100, (this.playerShipMap.size) * 500, undefined, data.playerId));
         this.playerShipMap.set(ship.ownerId, ship.id);
 
+        const socketServerMessageGameInit = {
+            tickRate: 10,
+            ships: this.collectShips(true)
+        } as SocketServerMessageGameInit;
+
         const notifyPlayerEventMsg = {
             playerId: data.playerId,
             socketEvent: WsProtocol.SocketServerEventGameInit,
-            message: this.collectGameState(true)
+            message: socketServerMessageGameInit
         } as NotifyPlayerEventMsg;
 
         this.eventEmitter.emit(AppEvents.NotifyPlayer, notifyPlayerEventMsg);
@@ -189,15 +196,15 @@ export class GameInstance {
 
     //
 
-    private collectGameState(full: boolean) {
+    private collectShips(full: boolean) {
         const ships: EntityShip[] = [];
         for (const [key, value] of this.gameEngine.shipManager.entities) {
             ships.push(this.converJsShipToTypeScript(value, full));
         }
-        const result = {
-            ships
-        } as SocketServerMessageUpdateWorldState;
-        return result;
+        // const result = {
+        //     ships
+        // } as SocketServerMessageUpdateWorldState;
+        return ships;
     }
 
     private converJsShipToTypeScript(jsShip: any, full = true) {

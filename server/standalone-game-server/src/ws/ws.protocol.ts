@@ -7,6 +7,7 @@ import { EntityShip } from "src/game/entity/entity.ship";
 // -------------------------------------
 
 export interface SocketServerMessageGameInit {
+    tickRate: number;
     ships: EntityShip[];
 }
 
@@ -68,7 +69,6 @@ export class WsProtocol {
     // Server -> Client events
     public static readonly SocketServerEventGameInit = 'SocketServerEventGameInit';
     public static readonly SocketServerEventAddShip = 'SocketServerEventAddShip';
-    public static readonly SocketServerEventAddShell = 'SocketServerEventAddShell';
     public static readonly SocketServerEventRemoveShip = 'SocketServerEventRemoveShip';
     public static readonly SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
     public static readonly SocketServerEventShipMove = 'SocketServerEventShipMove';

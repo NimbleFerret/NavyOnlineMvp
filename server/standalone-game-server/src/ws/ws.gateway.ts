@@ -1,9 +1,25 @@
 /* eslint-disable prettier/prettier */
-import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import {
+    MessageBody,
+    SubscribeMessage,
+    WebSocketGateway,
+    WebSocketServer
+} from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io';
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
-import { AppEvents, NotifyEachPlayerEventMsg, NotifyPlayerEventMsg, PlayerDisconnectedEvent } from "../app.events";
+import {
+    AppEvents,
+    NotifyEachPlayerEventMsg,
+    NotifyPlayerEventMsg,
+    PlayerDisconnectedEvent
+} from "../app.events";
 import { Logger, OnModuleInit } from "@nestjs/common";
+import {
+    SocketClientMessageJoinGame,
+    SocketClientMessageMove,
+    SocketClientMessageShoot,
+    WsProtocol
+} from "./ws.protocol";
 
 @WebSocketGateway({
     cors: {
@@ -44,19 +60,19 @@ export class WsGateway implements OnModuleInit {
     // WebSocket client message listeners
     // -------------------------------------
 
-    @SubscribeMessage(WsGateway.SocketClientMessageJoinGame)
-    async joinGame(client: Socket, data: DtoJoinGame) {
-        WsGateway.ClientSockets.set(data.ethAddress, client);
+    @SubscribeMessage(WsProtocol.SocketClientEventJoinGame)
+    async joinGame(client: Socket, data: SocketClientMessageJoinGame) {
+        WsGateway.ClientSockets.set(data.playerId, client);
         this.eventEmitter.emit(AppEvents.PlayerJoined, data);
     }
 
-    @SubscribeMessage(WsGateway.SocketClientMessageMove)
-    async move(@MessageBody() data: DtoMove) {
+    @SubscribeMessage(WsProtocol.SocketClientEventMove)
+    async move(@MessageBody() data: SocketClientMessageMove) {
         this.eventEmitter.emit(AppEvents.PlayerMove, data);
     }
 
-    @SubscribeMessage(WsGateway.SocketClientMessageShoot)
-    async shoot(@MessageBody() data: DtoShoot) {
+    @SubscribeMessage(WsProtocol.SocketClientEventShoot)
+    async shoot(@MessageBody() data: SocketClientMessageShoot) {
         this.eventEmitter.emit(AppEvents.PlayerShoot, data);
     }
 

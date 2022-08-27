@@ -92,7 +92,6 @@ class Protocol {
 	// Server -> Client events
 	public static final SocketServerEventGameInit = 'SocketServerEventGameInit';
 	public static final SocketServerEventAddShip = 'SocketServerEventAddShip';
-	public static final SocketServerEventAddShell = 'SocketServerEventAddShell';
 	public static final SocketServerEventRemoveShip = 'SocketServerEventRemoveShip';
 	public static final SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
 	public static final SocketServerEventShipMove = 'SocketServerEventShipMove';
