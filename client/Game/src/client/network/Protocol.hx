@@ -31,6 +31,7 @@ typedef EntityShip = {
 }
 
 typedef SocketServerMessageGameInit = {
+	tickRate:Int,
 	ships:Array<EntityShip>
 }
 

@@ -4,6 +4,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { GameService } from './game.service';
 
 export class AddBotDto {
+    instanceId: string;
     x: number;
     y: number;
 }
@@ -12,17 +13,16 @@ export class AddBotDto {
 export class GameController {
 
     constructor(private readonly gameService: GameService) {
-
     }
 
-    @Get('info')
+    @Get('instancesInfo')
     getInfo() {
-        return 'Every thing is ok';
+        return this.gameService.getInstancesInfo();
     }
 
     @Post('addBot')
-    addBot(@Body() addBotDto: AddBotDto) {
-        console.log(addBotDto);
+    addBot(@Body() dto: AddBotDto) {
+        return this.gameService.addBot(dto);
     }
 
 }

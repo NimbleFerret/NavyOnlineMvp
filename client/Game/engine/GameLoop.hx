@@ -4,13 +4,20 @@ package engine;
 import js.lib.Date;
 #end
 
+interface Loop {
+	function stopLoop():Void;
+}
+
+@:expose
 class GameLoop {
-	public static final TargetFps = 15;
+	public final targetFps = 15;
+
+	private final gameLoop:Loop;
 
 	public function new(update:Dynamic) {
 		#if js
 		trace("JS !");
-		new DummyJsLoop(update);
+		gameLoop = new DummyJsLoop(update, targetFps);
 		#end
 
 		#if (target.threaded)
@@ -23,30 +30,42 @@ class GameLoop {
 		// });
 		#end
 	}
+
+	public function stopLoop() {
+		gameLoop.stopLoop();
+	}
 }
 
 #if js
-class DummyJsLoop {
-	final targetFPSMillis = Math.floor(1000 / GameLoop.TargetFps); // 1000 ms / frames per second
+class DummyJsLoop implements Loop {
+	final targetFPSMillis:Int;
 
 	var tick = 0;
 	var previous = Date.now();
 	var delta = 0.0;
 	var update:Dynamic;
+	var active = true;
 
-	public function new(update:Dynamic) {
+	public function new(update:Dynamic, targetFps:Int) {
+		this.targetFPSMillis = Math.floor(1000 / targetFps); // 1000 ms / frames per second
 		this.update = update;
 		loop();
 	}
 
-	private function loop() {
-		haxe.Timer.delay(loop, targetFPSMillis);
+	public function stopLoop() {
+		active = false;
+	}
 
-		final now = Date.now();
-		this.delta = (now - this.previous) / 1000;
-		this.update(delta, tick);
-		this.previous = now;
-		tick++;
+	private function loop() {
+		if (active) {
+			haxe.Timer.delay(loop, this.targetFPSMillis);
+
+			final now = Date.now();
+			this.delta = (now - this.previous) / 1000;
+			this.update(delta, tick);
+			this.previous = now;
+			tick++;
+		}
 	}
 }
 #end

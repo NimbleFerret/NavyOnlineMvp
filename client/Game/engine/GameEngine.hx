@@ -135,6 +135,19 @@ class GameEngine {
 		});
 	}
 
+	public function destroy() {
+		gameLoop.stopLoop();
+		shipManager.destroy();
+		shellManager.destroy();
+
+		tickCallback = null;
+		createShipCallback = null;
+		createShellCallback = null;
+		deleteShellCallback = null;
+		deleteShipCallback = null;
+		shipHitByShellCallback = null;
+	}
+
 	// -------------------------------------
 	// Ship game object
 	// --------------------------------------

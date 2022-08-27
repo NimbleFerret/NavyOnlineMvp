@@ -20,6 +20,7 @@ import {
     SocketServerMessageUpdateWorldState,
     WsProtocol
 } from 'src/ws/ws.protocol';
+import { Logger } from '@nestjs/common';
 
 export class GameInstance {
     public readonly instanceId = uuidv4();
@@ -31,7 +32,6 @@ export class GameInstance {
         this.gameEngine = new engine.GameEngine();
 
         console.log(this.gameEngine);
-        console.log(this.gameEngine.gameLoop);
 
         //
 
@@ -84,11 +84,11 @@ export class GameInstance {
             }
         };
 
-        this.gameEngine.createShip('Bot', 100, 100);
-        this.gameEngine.createShip('Bot', 100, 500);
+        this.addBot(100, 100);
+    }
 
-        this.gameEngine.createShip('Bot', 300, 100);
-        this.gameEngine.createShip('Bot', 300, 500);
+    public addBot(x: number, y: number) {
+        this.gameEngine.createShip('Bot', x, y);
     }
 
     public getPlayersCount() {
@@ -96,12 +96,16 @@ export class GameInstance {
     }
 
     public getTotalShipsCount() {
-        // return this.playerShipMap.size;
+        return this.gameEngine.shipManager.entities.size;
     }
 
     public destroy() {
-        // TODO stop game loop and release all maps / lists
-        this.playerShipMap.clear();
+        try {
+            this.playerShipMap.clear();
+            this.gameEngine.destroy();
+        } catch (e) {
+            Logger.error(e);
+        }
     }
 
     // -------------------------------------
@@ -113,7 +117,7 @@ export class GameInstance {
         this.playerShipMap.set(ship.ownerId, ship.id);
 
         const socketServerMessageGameInit = {
-            tickRate: 10,
+            tickRate: this.gameEngine.gameLoop.targetFps,
             ships: this.collectShips(true)
         } as SocketServerMessageGameInit;
 

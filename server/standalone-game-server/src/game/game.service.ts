@@ -11,6 +11,7 @@ import {
     SocketClientMessageMove,
     SocketServerMessageShipShoot,
 } from 'src/ws/ws.protocol';
+import { AddBotDto } from './game.controller';
 
 
 @Injectable()
@@ -24,8 +25,35 @@ export class GameService implements OnModuleInit {
     }
 
     async onModuleInit() {
-        console.log();
+        new GameInstance(this.eventEmitter);
     }
+
+    // -------------------------------------
+    // Admin api
+    // -------------------------------------
+
+    getInstancesInfo() {
+        const result = [];
+        this.gameInstances.forEach((v) => {
+            result.push({
+                id: v.instanceId,
+                players: v.getPlayersCount(),
+                ships: v.getTotalShipsCount()
+            });
+        });
+        return result;
+    }
+
+    addBot(dto: AddBotDto) {
+        const gameInstance = this.gameInstances.get(dto.instanceId);
+        if (gameInstance) {
+            gameInstance.addBot(dto.x, dto.y);
+        }
+    }
+
+    // -------------------------------------
+    // Client events from WebSocket
+    // ------------------------------------- 
 
     @OnEvent(AppEvents.PlayerJoined)
     async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
@@ -71,8 +99,10 @@ export class GameService implements OnModuleInit {
             const gameInstance = this.gameInstances.get(instanceId);
             gameInstance.handlePlayerDisconnected(data);
             if (gameInstance.getPlayersCount() == 0) {
+                Logger.log(`No more player in instance: ${instanceId}, destroying...`);
                 gameInstance.destroy();
                 this.gameInstances.delete(instanceId);
+                Logger.log(`Instance: ${instanceId} destroyed !`);
             }
         } else {
             // TODO add logs

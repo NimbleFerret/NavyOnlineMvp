@@ -9,6 +9,11 @@ class BaseEntityManager {
 
 	private var updateCallback:Null<EngineBaseGameEntity->Void>;
 
+	public function destroy() {
+		entities.clear();
+		updateCallback = null;
+	}
+
 	public function add(entity:EngineBaseGameEntity) {
 		entities.set(entity.id, entity);
 	}
