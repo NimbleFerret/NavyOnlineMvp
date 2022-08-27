@@ -104,6 +104,7 @@ typedef SocketClientMessageRespawn = {
 
 class Protocol {
 	// Server -> Client events
+	public static final SocketServerEventPong = 'SocketServerEventPong';
 	public static final SocketServerEventGameInit = 'SocketServerEventGameInit';
 	public static final SocketServerEventAddShip = 'SocketServerEventAddShip';
 	public static final SocketServerEventRemoveShip = 'SocketServerEventRemoveShip';
@@ -113,6 +114,7 @@ class Protocol {
 	public static final SocketServerEventSync = 'SocketServerEventSync';
 
 	// Client -> Server events
+	public static final SocketClientEventPing = 'SocketClientEventPing';
 	public static final SocketClientEventJoinGame = 'SocketClientEventJoinGame';
 	public static final SocketClientEventMove = 'SocketClientEventMove';
 	public static final SocketClientEventShoot = 'SocketClientEventShoot';

@@ -1,5 +1,6 @@
 package client;
 
+import client.network.Socket;
 import h2d.Object;
 import h2d.SpriteBatch.BatchElement;
 import client.entity.ClientShip;
@@ -91,6 +92,7 @@ class Hud extends h2d.Scene {
 	private var movementText:h2d.Text;
 	private var dirText:h2d.Text;
 	private var systemText:h2d.Text;
+	private var latencyText:h2d.Text;
 
 	private var leftCannonsText:h2d.Text;
 	private var rightCannonsText:h2d.Text;
@@ -141,9 +143,6 @@ class Hud extends h2d.Scene {
 		armorBar = new HorizontalStatsBar(fui, 0, 0, "Armor", "1000", 65);
 		hullBar = new HorizontalStatsBar(fui, 0, 0, "Hull", "1000", 65);
 
-		systemText = addText();
-		systemText.setScale(4);
-
 		movementText = addText();
 		movementText.setScale(4);
 
@@ -155,6 +154,12 @@ class Hud extends h2d.Scene {
 
 		rightCannonsText = addText("Right side cannons");
 		rightCannonsText.setScale(4);
+
+		systemText = addText();
+		systemText.setScale(4);
+
+		latencyText = addText();
+		latencyText.setScale(4);
 
 		show(false);
 	}
@@ -288,10 +293,11 @@ class Hud extends h2d.Scene {
 			displacementTile.scrollDiscrete(6 * dt, 12 * dt);
 			waterBgbatch.tile.scrollDiscrete(playerDX * 0.4, -playerDY * 0.4);
 		}
+		latencyText.text = "Latency:" + Socket.instance.latency;
 	}
 
 	public function updateSystemInfo(fps:Float) {
-		// systemText.text = "FPS: " + fps;
+		systemText.text = "FPS: " + fps;
 	}
 
 	// UPDATES

@@ -83,6 +83,7 @@ export interface SocketClientMessageRespawn {
 
 export class WsProtocol {
     // Server -> Client events
+    public static readonly SocketServerEventPong = 'SocketServerEventPong';
     public static readonly SocketServerEventGameInit = 'SocketServerEventGameInit';
     public static readonly SocketServerEventAddShip = 'SocketServerEventAddShip';
     public static readonly SocketServerEventRemoveShip = 'SocketServerEventRemoveShip';
@@ -92,6 +93,7 @@ export class WsProtocol {
     public static readonly SocketServerEventSync = 'SocketServerEventSync';
 
     // Client -> Server events
+    public static readonly SocketClientEventPing = 'SocketClientEventPing';
     public static readonly SocketClientEventJoinGame = 'SocketClientEventJoinGame';
     public static readonly SocketClientEventMove = 'SocketClientEventMove';
     public static readonly SocketClientEventShoot = 'SocketClientEventShoot';

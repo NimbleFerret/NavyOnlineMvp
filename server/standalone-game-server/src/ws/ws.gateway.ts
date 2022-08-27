@@ -78,6 +78,11 @@ export class WsGateway implements OnModuleInit {
     // WebSocket client message listeners
     // -------------------------------------
 
+    @SubscribeMessage(WsProtocol.SocketClientEventPing)
+    async ping(client: Socket) {
+        client.emit(WsProtocol.SocketServerEventPong, {});
+    }
+
     @SubscribeMessage(WsProtocol.SocketClientEventJoinGame)
     async joinGame(client: Socket, data: SocketClientMessageJoinGame) {
         Logger.log(`Got joinGame request. ${JSON.stringify(data)}`);

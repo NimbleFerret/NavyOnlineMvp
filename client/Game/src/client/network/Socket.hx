@@ -1,17 +1,26 @@
 package client.network;
 
+import hxd.System;
+import haxe.Timer;
 import client.event.EventManager;
 import js.node.socketio.Client;
 
 class Socket {
 	public static final instance:Socket = new Socket();
 
+	public var latency = 0.0;
+
 	private final clientSocket:Client;
+	private var lastPingTime = 0.0;
 
 	private function new() {
-		// clientSocket = new Client("http://23.111.202.19:3000/");
-		clientSocket = new Client("http://localhost:3000/");
+		clientSocket = new Client("http://23.111.202.19:3000/");
+		// clientSocket = new Client("http://localhost:3000/");
 
+		clientSocket.on(Protocol.SocketServerEventPong, function(data) {
+			latency = Date.now().getTime() - lastPingTime;
+			trace('Latency:' + latency);
+		});
 		clientSocket.on(Protocol.SocketServerEventGameInit, function(data) {
 			EventManager.instance.notify(Protocol.SocketServerEventGameInit, data);
 		});
@@ -33,6 +42,12 @@ class Socket {
 		clientSocket.on(Protocol.SocketServerEventSync, function(data) {
 			EventManager.instance.notify(Protocol.SocketServerEventSync, data);
 		});
+
+		final timer = new Timer(1000);
+		timer.run = function callback() {
+			lastPingTime = Date.now().getTime();
+			clientSocket.emit(Protocol.SocketClientEventPing, {});
+		}
 	}
 
 	public function joinGame(message:Protocol.SocketClientMessageJoinGame) {
