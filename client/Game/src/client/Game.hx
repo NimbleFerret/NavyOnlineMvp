@@ -62,7 +62,6 @@ class Game {
 	var style = null;
 
 	// Player input
-	private var timeSinceLastShipsPosUpdate = 0.0;
 	private var lastMovementInputCheck = 0.0;
 	private var inputMovementCheckDelayMS = 1.0;
 	private var lastShootInputCheck = 0.0;
@@ -423,36 +422,32 @@ class Game {
 				final q = K.isDown(K.Q);
 				final e = K.isDown(K.E);
 
-				if (left || right || up || down)
-					if (lastMovementInputCheck == 0 || lastMovementInputCheck + inputMovementCheckDelayMS < now) {
-						lastMovementInputCheck = now;
-						if (up)
-							gameEngine.shipAccelerate(playerShipId);
-						if (down)
-							gameEngine.shipDecelerate(playerShipId);
-						if (left)
-							gameEngine.shipRotateLeft(playerShipId);
-						if (right)
-							gameEngine.shipRotateRight(playerShipId);
-						if ((up || down || left || right) && gameEngine.engineMode == EngineMode.Server) {
-							Socket.instance.move({
-								playerId: playerId,
-								up: up,
-								down: down,
-								left: left,
-								right: right
-							});
-						}
+				if (left || right || up || down) {
+					var movementChanged = false;
+					if (up)
+						movementChanged = gameEngine.shipAccelerate(playerShipId);
+					if (down)
+						movementChanged = gameEngine.shipDecelerate(playerShipId);
+					if (left)
+						movementChanged = gameEngine.shipRotateLeft(playerShipId);
+					if (right)
+						movementChanged = gameEngine.shipRotateRight(playerShipId);
+					if (movementChanged && (up || down || left || right) && gameEngine.engineMode == EngineMode.Server) {
+						Socket.instance.move({
+							playerId: playerId,
+							up: up,
+							down: down,
+							left: left,
+							right: right
+						});
 					}
-				if (q || e)
-					// TODO shooting logic to the server
-					if (lastShootInputCheck == 0 || lastShootInputCheck + inputShootCheckDelayMS < now) {
-						lastShootInputCheck = now;
-						if (q)
-							gameEngine.shipShootBySide(Side.Left, playerShipId, false);
-						if (e)
-							gameEngine.shipShootBySide(Side.Right, playerShipId, false);
-					}
+				}
+				if (q || e) {
+					if (q)
+						gameEngine.shipShootBySide(Side.Left, playerShipId, false);
+					if (e)
+						gameEngine.shipShootBySide(Side.Right, playerShipId, false);
+				}
 			case InputType.DebugCamera:
 				final moveMapSpeed = 10;
 				if (hxd.Key.isDown(hxd.Key.RIGHT))

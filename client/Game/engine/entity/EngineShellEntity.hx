@@ -21,7 +21,7 @@ class EngineShellEntity extends EngineBaseGameEntity {
 	public final baseDamage = 50;
 	public var dieEffect = DieEffect.Splash;
 
-	final maxTravelDistance = 900;
+	final maxTravelDistance = 600;
 	var distanceTraveled = 0.0;
 
 	public function new(side:Side, pos:Int, x:Float, y:Float, rotation:Float, ownerId:String, ?shellRnd:ShellRnd) {

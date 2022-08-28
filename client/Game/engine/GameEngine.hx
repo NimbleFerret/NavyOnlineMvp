@@ -204,35 +204,43 @@ class GameEngine {
 	public function shipAccelerate(shipId:String) {
 		final ship = cast(shipManager.getEntityById(shipId), EngineShipEntity);
 		if (ship != null) {
-			ship.accelerate();
+			return ship.accelerate();
+		} else {
+			return false;
 		}
 	}
 
 	public function shipDecelerate(shipId:String) {
 		final ship = cast(shipManager.getEntityById(shipId), EngineShipEntity);
 		if (ship != null) {
-			ship.decelerate();
+			return ship.decelerate();
+		} else {
+			return false;
 		}
 	}
 
 	public function shipRotateLeft(shipId:String) {
 		final ship = cast(shipManager.getEntityById(shipId), EngineShipEntity);
 		if (ship != null) {
-			ship.rotateLeft();
+			return ship.rotateLeft();
+		} else {
+			return false;
 		}
 	}
 
 	public function shipRotateRight(shipId:String) {
 		final ship = cast(shipManager.getEntityById(shipId), EngineShipEntity);
 		if (ship != null) {
-			ship.rotateRight();
+			return ship.rotateRight();
+		} else {
+			return false;
 		}
 	}
 
 	// Pass an array of shoot rnd
 	public function shipShootBySide(side:Side, shipId:String, serverSide:Bool = true, ?shellRnd:Array<ShellRnd>) {
 		final ship = cast(shipManager.getEntityById(shipId), EngineShipEntity);
-		if (ship != null) {
+		if (ship != null && ship.tryShoot(side)) {
 			final shipSideRadRotation = ship.rotation + MathUtils.degreeToRads(side == Left ? -90 : 90);
 
 			// TODO double check ship guns
@@ -251,6 +259,10 @@ class GameEngine {
 			if (createShellCallback != null) {
 				createShellCallback([shell1, shell2, shell3]);
 			}
+
+			return true;
+		} else {
+			return false;
 		}
 	}
 

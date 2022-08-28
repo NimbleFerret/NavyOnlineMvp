@@ -1,5 +1,6 @@
 package engine.entity;
 
+import hxd.Timer;
 import engine.entity.EngineBaseGameEntity;
 import engine.MathUtils;
 
@@ -43,7 +44,11 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		GameEntityDirection.West => new PosOffsetArray(new PosOffset(0, 56, -48), new PosOffset(0, 15, -48), new PosOffset(0, -27, -48)),
 	];
 
-	// Callbacks
+	public final role:Role;
+
+	// -----------------------
+	// Cabblacks
+	// -----------------------
 	public var speedChangeCallback:Float->Void;
 	public var directionChangeCallback:GameEntityDirection->Void;
 
@@ -56,12 +61,21 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	public var currentHull = 1000;
 	public var currentArmor = 1000;
 
+	// -----------------------
+	// Input
+	// -----------------------
+	private var timeSinceLastShipsPosUpdate = 0.0;
+	private var lastMovementInputCheck = 0.0;
+	private var inputMovementCheckDelayMS = 1.0;
+	private var lastRotationInputCheck = 0.0;
+	private var inputRotationCheckDelayMS = 1.0;
+	private var lastLeftShootInputCheck = 0.0;
+	private var lastRightShootInputCheck = 0.0;
+	private var inputShootCheckDelayMS = 0.200;
+
 	// Bot stuff
 	public var allowShoot = false;
 
-	public final role:Role;
-
-	// TODO use direction instead of rotation here
 	public function new(role = Role.General, x:Float, y:Float, ?id:String, ?ownerId:String) {
 		super(GameEntityType.Ship, x, y, 0, id, ownerId);
 		this.role = role;
@@ -71,77 +85,138 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// Movement
 	// -----------------------
 
+	private function checkMovementInput() {
+		final now = Timer.lastTimeStamp;
+
+		if (lastMovementInputCheck == 0 || lastMovementInputCheck + inputMovementCheckDelayMS < now) {
+			lastMovementInputCheck = now;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private function checkRotationInput() {
+		final now = Timer.lastTimeStamp;
+
+		if (lastRotationInputCheck == 0 || lastRotationInputCheck + inputRotationCheckDelayMS < now) {
+			lastRotationInputCheck = now;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public function accelerate() {
-		currentSpeed += speedStep;
-		if (currentSpeed > maxSpeed)
-			currentSpeed = maxSpeed;
-		if (speedChangeCallback != null) {
-			speedChangeCallback(currentSpeed);
+		if (checkMovementInput()) {
+			currentSpeed += speedStep;
+			if (currentSpeed > maxSpeed)
+				currentSpeed = maxSpeed;
+			if (speedChangeCallback != null) {
+				speedChangeCallback(currentSpeed);
+			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 
 	public function decelerate() {
-		currentSpeed -= speedStep;
-		if (currentSpeed < minSpeed)
-			currentSpeed = minSpeed;
-		if (speedChangeCallback != null) {
-			speedChangeCallback(currentSpeed);
+		if (checkMovementInput()) {
+			currentSpeed -= speedStep;
+			if (currentSpeed < minSpeed)
+				currentSpeed = minSpeed;
+			if (speedChangeCallback != null) {
+				speedChangeCallback(currentSpeed);
+			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 
 	public function rotateLeft() {
-		rotation -= MathUtils.degreeToRads(45);
-		switch (direction) {
-			case East:
-				direction = NorthEast;
-			case NorthEast:
-				direction = North;
-			case North:
-				direction = NorthWest;
-			case NorthWest:
-				direction = West;
-			case West:
-				direction = SouthWest;
-			case SouthWest:
-				direction = South;
-			case South:
-				direction = SouthEast;
-			case SouthEast:
-				direction = East;
-		}
-		if (directionChangeCallback != null) {
-			directionChangeCallback(direction);
+		if (checkRotationInput()) {
+			rotation -= MathUtils.degreeToRads(45);
+			switch (direction) {
+				case East:
+					direction = NorthEast;
+				case NorthEast:
+					direction = North;
+				case North:
+					direction = NorthWest;
+				case NorthWest:
+					direction = West;
+				case West:
+					direction = SouthWest;
+				case SouthWest:
+					direction = South;
+				case South:
+					direction = SouthEast;
+				case SouthEast:
+					direction = East;
+			}
+			if (directionChangeCallback != null) {
+				directionChangeCallback(direction);
+			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 
 	public function rotateRight() {
-		rotation += MathUtils.degreeToRads(45);
-		switch (direction) {
-			case East:
-				direction = SouthEast;
-			case SouthEast:
-				direction = South;
-			case South:
-				direction = SouthWest;
-			case SouthWest:
-				direction = West;
-			case West:
-				direction = NorthWest;
-			case NorthWest:
-				direction = North;
-			case North:
-				direction = NorthEast;
-			case NorthEast:
-				direction = East;
-		}
-		if (directionChangeCallback != null) {
-			directionChangeCallback(direction);
+		if (checkRotationInput()) {
+			rotation += MathUtils.degreeToRads(45);
+			switch (direction) {
+				case East:
+					direction = SouthEast;
+				case SouthEast:
+					direction = South;
+				case South:
+					direction = SouthWest;
+				case SouthWest:
+					direction = West;
+				case West:
+					direction = NorthWest;
+				case NorthWest:
+					direction = North;
+				case North:
+					direction = NorthEast;
+				case NorthEast:
+					direction = East;
+			}
+			if (directionChangeCallback != null) {
+				directionChangeCallback(direction);
+			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 
 	// -----------------------
 	// Battle
 	// -----------------------
+
+	public function tryShoot(side:Side) {
+		final now = Timer.lastTimeStamp;
+		if (side == Right) {
+			if (lastRightShootInputCheck == 0 || lastRightShootInputCheck + inputShootCheckDelayMS < now) {
+				lastRightShootInputCheck = now;
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			if (lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + inputShootCheckDelayMS < now) {
+				lastLeftShootInputCheck = now;
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 
 	public function inflictDamage(damage:Int) {
 		if (currentArmor > 0) {
