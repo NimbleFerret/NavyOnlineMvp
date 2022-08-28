@@ -1,42 +1,39 @@
 package client.entity.ship;
 
+import client.entity.ship.ShipTemplate;
 import engine.entity.EngineBaseGameEntity;
 
 class ShipHull extends ShipVisualComponent {
 	private var bmp_hull:h2d.Bitmap;
 
-	private static var eastShipTile:h2d.Tile;
-	private static var northShipTile:h2d.Tile;
-	private static var northEastShipTile:h2d.Tile;
-	private static var northWestShipTile:h2d.Tile;
-	private static var southShipTile:h2d.Tile;
-	private static var southEastShipTile:h2d.Tile;
-	private static var southWestShipTile:h2d.Tile;
-	private static var westShipTile:h2d.Tile;
+	private var eastShipTile:h2d.Tile;
+	private var northShipTile:h2d.Tile;
+	private var northEastShipTile:h2d.Tile;
+	private var northWestShipTile:h2d.Tile;
+	private var southShipTile:h2d.Tile;
+	private var southEastShipTile:h2d.Tile;
+	private var southWestShipTile:h2d.Tile;
+	private var westShipTile:h2d.Tile;
 
-	private static var tilesInitialized = false;
-
-	public function new(direction:GameEntityDirection) {
+	public function new(direction:GameEntityDirection, size:ShipHullSize) {
 		super(direction, side);
 
-		if (!tilesInitialized) {
-			eastShipTile = hxd.Res.mid_ship.Ship.Ship3.toTile();
-			eastShipTile = eastShipTile.center();
-			northShipTile = hxd.Res.mid_ship.Ship.Ship5.toTile();
-			northShipTile = northShipTile.center();
-			northEastShipTile = hxd.Res.mid_ship.Ship.Ship4.toTile();
-			northEastShipTile = northEastShipTile.center();
-			northWestShipTile = hxd.Res.mid_ship.Ship.Ship6.toTile();
-			northWestShipTile = northWestShipTile.center();
-			southShipTile = hxd.Res.mid_ship.Ship.Ship1.toTile();
-			southShipTile = southShipTile.center();
-			southEastShipTile = hxd.Res.mid_ship.Ship.Ship2.toTile();
-			southEastShipTile = southEastShipTile.center();
-			southWestShipTile = hxd.Res.mid_ship.Ship.Ship8.toTile();
-			southWestShipTile = southWestShipTile.center();
-			westShipTile = hxd.Res.mid_ship.Ship.Ship7.toTile();
-			westShipTile = westShipTile.center();
-		}
+		eastShipTile = getHullByDirectionAndSize(GameEntityDirection.East, size);
+		eastShipTile = eastShipTile.center();
+		northShipTile = getHullByDirectionAndSize(GameEntityDirection.North, size);
+		northShipTile = northShipTile.center();
+		northEastShipTile = getHullByDirectionAndSize(GameEntityDirection.NorthEast, size);
+		northEastShipTile = northEastShipTile.center();
+		northWestShipTile = getHullByDirectionAndSize(GameEntityDirection.NorthWest, size);
+		northWestShipTile = northWestShipTile.center();
+		southShipTile = getHullByDirectionAndSize(GameEntityDirection.South, size);
+		southShipTile = southShipTile.center();
+		southEastShipTile = getHullByDirectionAndSize(GameEntityDirection.SouthEast, size);
+		southEastShipTile = southEastShipTile.center();
+		southWestShipTile = getHullByDirectionAndSize(GameEntityDirection.SouthWest, size);
+		southWestShipTile = southWestShipTile.center();
+		westShipTile = getHullByDirectionAndSize(GameEntityDirection.West, size);
+		westShipTile = westShipTile.center();
 
 		bmp_hull = new h2d.Bitmap(eastShipTile);
 
@@ -65,4 +62,25 @@ class ShipHull extends ShipVisualComponent {
 	}
 
 	public function update() {}
+
+	private function getHullByDirectionAndSize(dir:GameEntityDirection, size:ShipHullSize) {
+		switch (dir) {
+			case East:
+				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship3.toTile() : hxd.Res.small_ship.Ship.ship_e.toTile();
+			case NorthEast:
+				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship4.toTile() : hxd.Res.small_ship.Ship.ship_ne.toTile();
+			case North:
+				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship5.toTile() : hxd.Res.small_ship.Ship.ship_n.toTile();
+			case NorthWest:
+				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship6.toTile() : hxd.Res.small_ship.Ship.ship_nw.toTile();
+			case West:
+				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship7.toTile() : hxd.Res.small_ship.Ship.ship_w.toTile();
+			case SouthWest:
+				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship8.toTile() : hxd.Res.small_ship.Ship.ship_sw.toTile();
+			case South:
+				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship1.toTile() : hxd.Res.small_ship.Ship.ship_s.toTile();
+			case SouthEast:
+				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship2.toTile() : hxd.Res.small_ship.Ship.ship_se.toTile();
+		}
+	}
 }
