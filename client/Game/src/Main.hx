@@ -1,4 +1,5 @@
 import client.GuiApp;
+import client.scene.SceneShipsDemo;
 import client.scene.SceneMain;
 import client.scene.SceneDemo1;
 // import client.scene.SceneUIDemo;
@@ -12,15 +13,17 @@ enum Scene {
 	SceneMain;
 	SceneDemo1;
 	SceneOnlineDemo1;
+	SceneShipsDemo;
 }
 
 class Main extends GuiApp {
 	private var sceneMain:SceneMain;
 	private var sceneDemo1:SceneDemo1;
 	// private var sceneUIDemo:SceneUIDemo;
+	private var sceneShipsDemo:SceneShipsDemo;
 	private var sceneOnlineDemo1:SceneOnlineDemo1;
 
-	private final defaultScene = Scene.SceneOnlineDemo1;
+	private final defaultScene = Scene.SceneShipsDemo;
 	private var currentScene:Scene;
 
 	override function init() {
@@ -40,6 +43,8 @@ class Main extends GuiApp {
 
 		// sceneUIDemo = new SceneUIDemo();
 
+		sceneShipsDemo = new SceneShipsDemo();
+
 		// TODO refactor scene load and unload
 		switch (defaultScene) {
 			case SceneMain:
@@ -53,9 +58,11 @@ class Main extends GuiApp {
 				sceneOnlineDemo1.start();
 				sevents.addScene(sceneOnlineDemo1.getHud());
 				setScene2D(sceneOnlineDemo1);
-				// case SceneUIDemo:
-				// 	sceneUIDemo.start();
-				// 	setScene2D(sceneUIDemo);
+			// case SceneUIDemo:
+			// 	sceneUIDemo.start();
+			// 	setScene2D(sceneUIDemo);
+			case SceneShipsDemo:
+				setScene2D(sceneShipsDemo);
 		}
 
 		currentScene = defaultScene;
@@ -71,6 +78,10 @@ class Main extends GuiApp {
 		// if (currentScene == SceneUIDemo) {
 		// 	sceneUIDemo.update();
 		// }
+
+		if (currentScene == SceneShipsDemo) {
+			sceneShipsDemo.update();
+		}
 	}
 
 	override function onResize() {
