@@ -523,9 +523,11 @@ class Game {
 				clientShipsCount++;
 
 				// TODO double check game state
+				// This is game restart
 				if (ship.ownerId == playerId) {
 					hud.show(true);
 					retryDialogComp.alpha = 0;
+					playerShipId = ship.id;
 				}
 			}
 		}
@@ -625,6 +627,10 @@ class Game {
 			}
 			this.playerId = playerId;
 			gameState = GameState.Playing;
+
+			hud.show(true);
+			retryDialogComp.alpha = 0;
+			startGameDialogComp.alpha = 0;
 		}
 	}
 
