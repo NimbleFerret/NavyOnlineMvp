@@ -5,6 +5,7 @@
 -lib uuid
 -lib tweenxcore
 -lib hxsocketio
+-lib hxmoralis
 -js navy.js
 -main Main
 -debug
