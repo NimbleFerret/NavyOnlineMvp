@@ -14,8 +14,8 @@ class Socket {
 	private var lastPingTime = 0.0;
 
 	private function new() {
-		clientSocket = new Client("http://23.111.202.19:3000/");
-		// clientSocket = new Client("http://localhost:3000/");
+		// clientSocket = new Client("http://23.111.202.19:3000/");
+		clientSocket = new Client("http://localhost:3000/");
 
 		clientSocket.on(Protocol.SocketServerEventPong, function(data) {
 			latency = Date.now().getTime() - lastPingTime;

@@ -199,6 +199,15 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// Battle
 	// -----------------------
 
+	public function shootAllowanceBySide(side:Side) {
+		final now = Timer.lastTimeStamp;
+		if (side == Right) {
+			return lastRightShootInputCheck == 0 || lastRightShootInputCheck + inputShootCheckDelayMS < now;
+		} else {
+			return lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + inputShootCheckDelayMS < now;
+		}
+	}
+
 	public function tryShoot(side:Side) {
 		final now = Timer.lastTimeStamp;
 		if (side == Right) {

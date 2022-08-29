@@ -29,9 +29,12 @@ enum InputType {
 
 class Game {
 	// Global config
-	public static final ShowIslands = false;
-	//
+	public static final ShowIslands = true;
 	public static var DebugDraw = false;
+
+	//
+	public static var CurrentSectorX = 0;
+	public static var CurrentSectorY = 0;
 
 	public var gameState = GameState.Init;
 
@@ -46,7 +49,7 @@ class Game {
 	private final clientShells = new Map<String, ClientShell>();
 
 	private var effectsManager:EffectsManager;
-	private var islandsManager:IslandsManager;
+	// private var islandsManager:IslandsManager;
 	private var inputType = InputType.Game;
 
 	// UI
@@ -138,7 +141,7 @@ class Game {
 		};
 
 		effectsManager = new EffectsManager(scene);
-		islandsManager = new IslandsManager(scene);
+		// islandsManager = new IslandsManager(scene);
 
 		// --------------------------------------
 		// UI

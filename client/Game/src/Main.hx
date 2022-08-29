@@ -1,3 +1,5 @@
+import client.scene.SceneGlobalMode;
+import client.scene.SceneIsland;
 import client.GuiApp;
 import client.scene.SceneShipsDemo;
 import client.scene.SceneMain;
@@ -14,6 +16,8 @@ enum Scene {
 	SceneDemo1;
 	SceneOnlineDemo1;
 	SceneShipsDemo;
+	SceneIsland;
+	SceneGlobalMode;
 }
 
 class Main extends GuiApp {
@@ -23,7 +27,10 @@ class Main extends GuiApp {
 	private var sceneShipsDemo:SceneShipsDemo;
 	private var sceneOnlineDemo1:SceneOnlineDemo1;
 
-	private final defaultScene = Scene.SceneShipsDemo;
+	private var sceneIsland:SceneIsland;
+	private var sceneGlobalMode:SceneGlobalMode;
+
+	private final defaultScene = Scene.SceneGlobalMode;
 	private var currentScene:Scene;
 
 	override function init() {
@@ -44,6 +51,14 @@ class Main extends GuiApp {
 		// sceneUIDemo = new SceneUIDemo();
 
 		sceneShipsDemo = new SceneShipsDemo();
+		sceneIsland = new SceneIsland();
+		sceneGlobalMode = new SceneGlobalMode(function callback(sector:SectorDescription) {
+			currentScene = SceneDemo1;
+
+			sceneDemo1.start();
+			sevents.addScene(sceneDemo1.getHud());
+			setScene2D(sceneDemo1);
+		});
 
 		// TODO refactor scene load and unload
 		switch (defaultScene) {
@@ -63,6 +78,10 @@ class Main extends GuiApp {
 			// 	setScene2D(sceneUIDemo);
 			case SceneShipsDemo:
 				setScene2D(sceneShipsDemo);
+			case SceneIsland:
+				setScene2D(sceneIsland);
+			case SceneGlobalMode:
+				setScene2D(sceneGlobalMode);
 		}
 
 		currentScene = defaultScene;

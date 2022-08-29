@@ -149,10 +149,10 @@ class Hud extends h2d.Scene {
 		dirText = addText();
 		dirText.setScale(4);
 
-		leftCannonsText = addText("Left side cannons");
+		leftCannonsText = addText("Left side cannons READY");
 		leftCannonsText.setScale(4);
 
-		rightCannonsText = addText("Right side cannons");
+		rightCannonsText = addText("Right side cannons READY");
 		rightCannonsText.setScale(4);
 
 		systemText = addText();
@@ -164,19 +164,14 @@ class Hud extends h2d.Scene {
 		show(false);
 	}
 
-	public function show(show:Bool, reset = false) {
+	public function show(show:Bool) {
 		armorBar.show(show);
 		hullBar.show(show);
 
 		movementText.alpha = show ? 1 : 0;
 		dirText.alpha = show ? 1 : 0;
-		leftCannonsText.alpha = show ? 0 : 0;
-		rightCannonsText.alpha = show ? 0 : 0;
-
-		if (reset) {
-			armorBar.updateBar(1000, 1000);
-			hullBar.updateBar(1000, 1000);
-		}
+		leftCannonsText.alpha = show ? 1 : 0;
+		rightCannonsText.alpha = show ? 1 : 0;
 	}
 
 	// TODO reuse GUI class
@@ -288,6 +283,8 @@ class Hud extends h2d.Scene {
 		return tf;
 	}
 
+	// UPDATES
+
 	public function update(dt:Float) {
 		if (DrawWaterBg) {
 			displacementTile.scrollDiscrete(6 * dt, 12 * dt);
@@ -300,8 +297,6 @@ class Hud extends h2d.Scene {
 		systemText.text = "FPS: " + fps;
 	}
 
-	// UPDATES
-
 	public function updatePlayerParams(playerShip:ClientShip) {
 		final shipStats = playerShip.getStats();
 
@@ -310,5 +305,17 @@ class Hud extends h2d.Scene {
 
 		movementText.text = "Speed: " + shipStats.currentSpeed + " / " + shipStats.maxSpeed;
 		dirText.text = "Direction: " + shipStats.dir;
+
+		if (shipStats.allowShootLeft) {
+			leftCannonsText.text = "Left side cannons READY!";
+		} else {
+			leftCannonsText.text = "Left side cannons RELOADING...";
+		}
+
+		if (shipStats.allowShootRight) {
+			rightCannonsText.text = "Right side cannons READY!";
+		} else {
+			rightCannonsText.text = "Right side cannons RELOADING...";
+		}
 	}
 }

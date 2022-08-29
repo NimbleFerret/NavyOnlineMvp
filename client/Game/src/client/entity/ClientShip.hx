@@ -238,7 +238,9 @@ class ClientShip extends ClientBaseGameEntity {
 			currentArmor: shipEntity.currentArmor,
 			currentSpeed: shipEntity.currentSpeed,
 			maxSpeed: shipEntity.maxSpeed,
-			dir: shipEntity.direction
+			dir: shipEntity.direction,
+			allowShootLeft: shipEntity.shootAllowanceBySide(Left),
+			allowShootRight: shipEntity.shootAllowanceBySide(Right)
 		}
 	}
 
