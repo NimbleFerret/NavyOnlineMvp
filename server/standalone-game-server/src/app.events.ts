@@ -1,5 +1,10 @@
 /* eslint-disable prettier/prettier */
 export enum AppEvents {
+
+    // ---------------------------------
+    // Socket events
+    // ---------------------------------
+
     PlayerJoined = 'PlayerJoined',
     PlayerDisconnected = 'PlayerDisconnected',
     PlayerMove = 'PlayerMove',
