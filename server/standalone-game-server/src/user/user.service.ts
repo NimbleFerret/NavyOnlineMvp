@@ -9,8 +9,6 @@ import { User, UserDocument, UserWorldState } from "./user.entity";
 @Injectable()
 export class UserService {
 
-    // TODO implement disconnect events here
-
     private readonly playersMap = new Map<string, any>();
 
     constructor(
@@ -39,6 +37,7 @@ export class UserService {
     }
 
     async movePlayerAroundTheWorld(playerEthAddress: string, newX: number, newY: number) {
+        let result = false;
         const player = this.playersMap.get(playerEthAddress);
         if (player) {
             // Allow move ?
@@ -48,13 +47,13 @@ export class UserService {
                 player.worldX = newX;
                 player.worldY = newY;
                 this.playersMap.set(player.ethAddress, await player.save());
-                return true;
-            } else {
-                return false;
+                result = true;
             }
         } else {
             Logger.error('Cant move. No player by address: ' + playerEthAddress);
-            return false;
+        }
+        return {
+            result
         }
     }
 

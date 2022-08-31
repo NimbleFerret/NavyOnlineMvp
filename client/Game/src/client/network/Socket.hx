@@ -1,6 +1,5 @@
 package client.network;
 
-import hxd.System;
 import haxe.Timer;
 import client.event.EventManager;
 import js.node.socketio.Client;
@@ -14,59 +13,59 @@ class Socket {
 	private var lastPingTime = 0.0;
 
 	private function new() {
-		// clientSocket = new Client("http://23.111.202.19:3000/");
-		clientSocket = new Client("http://localhost:3000/");
+		clientSocket = new Client("http://23.111.202.19:3000/");
+		// clientSocket = new Client("http://localhost:3000/");
 
-		clientSocket.on(Protocol.SocketServerEventPong, function(data) {
+		clientSocket.on(SocketProtocol.SocketServerEventPong, function(data) {
 			latency = Date.now().getTime() - lastPingTime;
 			trace('Latency:' + latency);
 		});
-		clientSocket.on(Protocol.SocketServerEventGameInit, function(data) {
-			EventManager.instance.notify(Protocol.SocketServerEventGameInit, data);
+		clientSocket.on(SocketProtocol.SocketServerEventGameInit, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventGameInit, data);
 		});
-		clientSocket.on(Protocol.SocketServerEventAddShip, function(data) {
-			EventManager.instance.notify(Protocol.SocketServerEventAddShip, data);
+		clientSocket.on(SocketProtocol.SocketServerEventAddShip, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventAddShip, data);
 		});
-		clientSocket.on(Protocol.SocketServerEventRemoveShip, function(data) {
-			EventManager.instance.notify(Protocol.SocketServerEventRemoveShip, data);
+		clientSocket.on(SocketProtocol.SocketServerEventRemoveShip, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventRemoveShip, data);
 		});
-		clientSocket.on(Protocol.SocketServerEventUpdateWorldState, function(data) {
-			EventManager.instance.notify(Protocol.SocketServerEventUpdateWorldState, data);
+		clientSocket.on(SocketProtocol.SocketServerEventUpdateWorldState, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventUpdateWorldState, data);
 		});
-		clientSocket.on(Protocol.SocketServerEventShipMove, function(data) {
-			EventManager.instance.notify(Protocol.SocketServerEventShipMove, data);
+		clientSocket.on(SocketProtocol.SocketServerEventShipMove, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventShipMove, data);
 		});
-		clientSocket.on(Protocol.SocketServerEventShipShoot, function(data) {
-			EventManager.instance.notify(Protocol.SocketServerEventShipShoot, data);
+		clientSocket.on(SocketProtocol.SocketServerEventShipShoot, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventShipShoot, data);
 		});
-		clientSocket.on(Protocol.SocketServerEventSync, function(data) {
-			EventManager.instance.notify(Protocol.SocketServerEventSync, data);
+		clientSocket.on(SocketProtocol.SocketServerEventSync, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventSync, data);
 		});
 
 		final timer = new Timer(1000);
 		timer.run = function callback() {
 			lastPingTime = Date.now().getTime();
-			clientSocket.emit(Protocol.SocketClientEventPing, {});
+			clientSocket.emit(SocketProtocol.SocketClientEventPing, {});
 		}
 	}
 
-	public function joinGame(message:Protocol.SocketClientMessageJoinGame) {
-		clientSocket.emit(Protocol.SocketClientEventJoinGame, message);
+	public function joinGame(message:SocketProtocol.SocketClientMessageJoinGame) {
+		clientSocket.emit(SocketProtocol.SocketClientEventJoinGame, message);
 	}
 
-	public function move(message:Protocol.SocketClientMessageMove) {
-		clientSocket.emit(Protocol.SocketClientEventMove, message);
+	public function move(message:SocketProtocol.SocketClientMessageMove) {
+		clientSocket.emit(SocketProtocol.SocketClientEventMove, message);
 	}
 
-	public function shoot(message:Protocol.SocketClientMessageShoot) {
-		clientSocket.emit(Protocol.SocketClientEventShoot, message);
+	public function shoot(message:SocketProtocol.SocketClientMessageShoot) {
+		clientSocket.emit(SocketProtocol.SocketClientEventShoot, message);
 	}
 
-	public function sync(message:Protocol.SocketClientMessageSync) {
-		clientSocket.emit(Protocol.SocketClientEventSync, message);
+	public function sync(message:SocketProtocol.SocketClientMessageSync) {
+		clientSocket.emit(SocketProtocol.SocketClientEventSync, message);
 	}
 
-	public function respawn(message:Protocol.SocketClientMessageRespawn) {
-		clientSocket.emit(Protocol.SocketClientEventRespawn, message);
+	public function respawn(message:SocketProtocol.SocketClientMessageRespawn) {
+		clientSocket.emit(SocketProtocol.SocketClientEventRespawn, message);
 	}
 }

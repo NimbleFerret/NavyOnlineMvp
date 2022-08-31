@@ -1,22 +1,18 @@
 package client.scene;
 
+import haxe.Timer;
+import client.network.RestProtocol;
+import client.network.Rest;
 import h2d.Bitmap;
 import h2d.Tile;
 import h2d.Scene;
-
-enum SectorType {
-	Empty;
-	Base;
-	Island;
-	Combat;
-}
 
 class SectorRectObject {
 	public final object:h2d.Object;
 
 	var contentRect:h2d.Graphics;
 
-	public function new(scene:Scene, x:Float, y:Float, sectorType:SectorType) {
+	public function new(scene:Scene, x:Float, y:Float, sectorType:Int) {
 		object = new h2d.Object(scene);
 		object.setPosition(x, y);
 
@@ -26,15 +22,20 @@ class SectorRectObject {
 		borderRect.endFill();
 
 		contentRect = new h2d.Graphics(object);
-		if (sectorType == Base) {
-			contentRect.beginFill(0xFFEE4D);
+
+		switch (sectorType) {
+			case GameWorld.SectorBaseType:
+				contentRect.beginFill(0xFFEE4D);
+			case GameWorld.SectorIslandType:
+				contentRect.beginFill(0x1EFF00);
+			case GameWorld.SectorBossType:
+				contentRect.beginFill(0xF6BD02);
+			case GameWorld.SectorPVEType:
+				contentRect.beginFill(0x5035FF);
+			case GameWorld.SectorPVPType:
+				contentRect.beginFill(0xFF3B3B);
 		}
-		if (sectorType == Island) {
-			contentRect.beginFill(0x35FF3B);
-		}
-		if (sectorType == Combat) {
-			contentRect.beginFill(0xFF3B3B);
-		}
+
 		contentRect.drawRect(1, 1, 99, 99);
 		contentRect.endFill();
 	}
@@ -51,42 +52,98 @@ class SectorDescription {
 }
 
 class SceneGlobalMode extends Scene {
-	var playerPosX = 7;
-	var playerPosY = 9;
-	var player:h2d.Bitmap;
+	var player:Player;
+	var playerBmp:h2d.Bitmap;
+
+	var playerInitialized = false;
+	var gameWorldInitialized = false;
+
+	var allowPlayerMove = true;
+
+	private final gameWorldSectors = new Array<SectorRectObject>();
+	private final enterSectorCallback:SectorDescription->Void;
 
 	public function new(enterSectorCallback:SectorDescription->Void) {
 		super();
 
-		for (x in 0...15) {
-			for (y in 0...15) {
+		this.enterSectorCallback = enterSectorCallback;
+
+		Rest.instance.signInOrUp('0x0...1', function callback(player:Player) {
+			if (!playerInitialized) {
+				this.player = player;
+				playerInitialized = true;
+				initOrUpdateGameWorld();
+			}
+		});
+
+		// final xxx = new YesNoDialog(this, 0, 0);
+		// addChild(xxx.guiObject);
+	}
+
+	function movePlayer(x:Int, y:Int) {
+		if (gameWorldInitialized && allowPlayerMove) {
+			allowPlayerMove = false;
+			Timer.delay(function resetMoveDelay() {
+				allowPlayerMove = true;
+			}, 2000);
+			Rest.instance.worldMove(player.ethAddress, x, y, function callback(result:Bool) {
+				if (result) {
+					final pos = sectorPosToWorldCoords(x, y);
+					playerBmp.setPosition(pos.x - 10, pos.y - 10);
+
+					player.worldX = x;
+					player.worldY = y;
+				}
+			});
+		}
+	}
+
+	function checkDistance(x:Int, y:Int) {
+		final pos = sectorPosToWorldCoords(x, y);
+		return hxd.Math.distance(pos.x - playerBmp.x, pos.y - playerBmp.y) < 150;
+	}
+
+	function sectorPosToWorldCoords(sx:Int, sy:Int) {
+		return {
+			x: sx * 100 + 100 + 50,
+			y: sy * 100 + 100 + 50
+		}
+	}
+
+	private function initOrUpdateGameWorld() {
+		Rest.instance.getWorldInfo(function callback(world:GameWorld) {
+			if (!gameWorldInitialized) {
+				initiateGameWorld(world);
+			} else {
+				trace('update game world');
+			}
+		});
+	}
+
+	private function initiateGameWorld(world:GameWorld) {
+		for (x in 0...world.size) {
+			for (y in 0...world.size) {
 				final posX = x > 0 ? x * 100 - 1 : x * 100;
 				final posY = y > 0 ? y * 100 - 1 : y * 100;
 
-				var sectorType = Empty;
-				if (x == 7 && y == 9) {
-					sectorType = Base;
-				}
-				if (x == 1 && y == 4 || x == 12 && y == 5) {
-					sectorType = Island;
-				}
-
-				if (x == 4 && y == 14 || x == 9 && y == 3) {
-					sectorType = Combat;
+				var sectorType = GameWorld.SectorEmptyType;
+				for (sector in world.sectors) {
+					if (sector.x == x && sector.y == y) {
+						sectorType = sector.content;
+					}
 				}
 
-				final sector = new SectorRectObject(this, posX + 100, posY + 100, sectorType);
-
-				var interaction = new h2d.Interactive(100, 100, sector.object);
+				final sectorRectObject = new SectorRectObject(this, posX + 100, posY + 100, sectorType);
+				final interaction = new h2d.Interactive(100, 100, sectorRectObject.object);
 				interaction.onClick = function(event:hxd.Event) {
-					if (playerPosX != x || playerPosY != y) {
+					if (this.player.worldX != x || this.player.worldY != y) {
 						if (checkDistance(x, y)) {
 							movePlayer(x, y);
 						} else {
 							trace("Too far");
 							// TODO show dialog
 						}
-					} else if (playerPosX == x && playerPosY == y) {
+					} else if (this.player.worldX == x && this.player.worldY == y) {
 						// TODO show dialog
 
 						Game.CurrentSectorX = x;
@@ -97,35 +154,18 @@ class SceneGlobalMode extends Scene {
 						}
 					}
 				}
+				gameWorldSectors.push(sectorRectObject);
 			}
 		}
 
+		gameWorldInitialized = true;
+
 		final playerTile = Tile.fromColor(0x863D0D, 20, 20);
-		player = new Bitmap(playerTile);
+		playerBmp = new Bitmap(playerTile);
 
-		final pos = sectorPosToWorldCoords(7, 9);
-		player.setPosition(pos.x - 10, pos.y - 10);
+		final pos = sectorPosToWorldCoords(player.worldX, player.worldY);
+		playerBmp.setPosition(pos.x - 10, pos.y - 10);
 
-		addChild(player);
-	}
-
-	function movePlayer(x:Int, y:Int) {
-		final pos = sectorPosToWorldCoords(x, y);
-		player.setPosition(pos.x - 10, pos.y - 10);
-
-		playerPosX = x;
-		playerPosY = y;
-	}
-
-	function checkDistance(x:Int, y:Int) {
-		final pos = sectorPosToWorldCoords(x, y);
-		return hxd.Math.distance(pos.x - player.x, pos.y - player.y) < 150;
-	}
-
-	function sectorPosToWorldCoords(sx:Int, sy:Int) {
-		return {
-			x: sx * 100 + 100 + 50,
-			y: sy * 100 + 100 + 50
-		}
+		addChild(playerBmp);
 	}
 }

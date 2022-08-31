@@ -1,11 +1,12 @@
 package client.scene;
 
+import client.network.Rest;
 import uuid.Uuid;
 import engine.GameEngine.EngineMode;
 import client.event.EventManager;
 import client.event.EventManager.EventListener;
 import client.network.Socket;
-import client.network.Protocol;
+import client.network.SocketProtocol;
 import h3d.Engine;
 import h2d.Scene;
 
@@ -36,19 +37,25 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		// Socket.instance.joinGame({playerId: playerId});
 		// });
 
-		EventManager.instance.subscribe(Protocol.SocketServerEventGameInit, this);
-		EventManager.instance.subscribe(Protocol.SocketServerEventAddShip, this);
-		EventManager.instance.subscribe(Protocol.SocketServerEventRemoveShip, this);
-		EventManager.instance.subscribe(Protocol.SocketServerEventUpdateWorldState, this);
-		EventManager.instance.subscribe(Protocol.SocketServerEventShipMove, this);
-		EventManager.instance.subscribe(Protocol.SocketServerEventShipShoot, this);
-		EventManager.instance.subscribe(Protocol.SocketServerEventSync, this);
+		// Rest.instance.foo();
+
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddShip, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventRemoveShip, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventShipMove, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventShipShoot, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
 	}
 
 	public override function render(e:Engine) {
 		game.hud.render(e);
 		super.render(e);
 		game.debugDraw();
+	}
+
+	public function onResize() {
+		// game.onResize();
 	}
 
 	public function update(dt:Float, fps:Float) {
@@ -61,19 +68,19 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 
 	public function notify(event:String, message:Dynamic) {
 		switch (event) {
-			case Protocol.SocketServerEventGameInit:
+			case SocketProtocol.SocketServerEventGameInit:
 				game.startGame(playerId, message);
-			case Protocol.SocketServerEventAddShip:
+			case SocketProtocol.SocketServerEventAddShip:
 				game.addShip(message);
-			case Protocol.SocketServerEventRemoveShip:
+			case SocketProtocol.SocketServerEventRemoveShip:
 				game.removeShip(message);
-			case Protocol.SocketServerEventUpdateWorldState:
+			case SocketProtocol.SocketServerEventUpdateWorldState:
 				game.updateWorldState(message);
-			case Protocol.SocketServerEventShipMove:
+			case SocketProtocol.SocketServerEventShipMove:
 				game.shipMove(message);
-			case Protocol.SocketServerEventShipShoot:
+			case SocketProtocol.SocketServerEventShipShoot:
 				game.shipShoot(message);
-			case Protocol.SocketServerEventSync:
+			case SocketProtocol.SocketServerEventSync:
 				game.sync(message);
 			default:
 				trace('Unknown socket message');

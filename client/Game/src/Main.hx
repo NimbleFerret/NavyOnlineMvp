@@ -1,3 +1,4 @@
+import client.scene.SceneMoralis;
 import client.scene.SceneGlobalMode;
 import client.scene.SceneIsland;
 import client.GuiApp;
@@ -18,6 +19,7 @@ enum Scene {
 	SceneShipsDemo;
 	SceneIsland;
 	SceneGlobalMode;
+	SceneMoralis;
 }
 
 class Main extends GuiApp {
@@ -29,6 +31,8 @@ class Main extends GuiApp {
 
 	private var sceneIsland:SceneIsland;
 	private var sceneGlobalMode:SceneGlobalMode;
+
+	private var sceneMoralis:SceneMoralis;
 
 	private final defaultScene = Scene.SceneGlobalMode;
 	private var currentScene:Scene;
@@ -45,6 +49,7 @@ class Main extends GuiApp {
 		});
 
 		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
+		sceneMoralis = new SceneMoralis();
 
 		sceneOnlineDemo1 = new SceneOnlineDemo1(engine.width, engine.height);
 
@@ -82,6 +87,8 @@ class Main extends GuiApp {
 				setScene2D(sceneIsland);
 			case SceneGlobalMode:
 				setScene2D(sceneGlobalMode);
+			case SceneMoralis:
+				setScene2D(sceneMoralis);
 		}
 
 		currentScene = defaultScene;
@@ -104,9 +111,9 @@ class Main extends GuiApp {
 	}
 
 	override function onResize() {
-		// if (currentScene == SceneUIDemo) {
-		// 	sceneUIDemo.onResize();
-		// }
+		if (currentScene == SceneOnlineDemo1) {
+			sceneOnlineDemo1.onResize();
+		}
 	}
 
 	static function main() {

@@ -240,7 +240,9 @@ class ClientShip extends ClientBaseGameEntity {
 			maxSpeed: shipEntity.maxSpeed,
 			dir: shipEntity.direction,
 			allowShootLeft: shipEntity.shootAllowanceBySide(Left),
-			allowShootRight: shipEntity.shootAllowanceBySide(Right)
+			allowShootRight: shipEntity.shootAllowanceBySide(Right),
+			x: shipEntity.x,
+			y: shipEntity.y
 		}
 	}
 

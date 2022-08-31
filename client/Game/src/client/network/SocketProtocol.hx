@@ -102,7 +102,7 @@ typedef SocketClientMessageRespawn = {
 	playerId:String
 }
 
-class Protocol {
+class SocketProtocol {
 	// Server -> Client events
 	public static final SocketServerEventPong = 'SocketServerEventPong';
 	public static final SocketServerEventGameInit = 'SocketServerEventGameInit';
