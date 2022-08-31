@@ -46,3 +46,19 @@ class GameWorld {
 		this.sectors = sectors;
 	}
 }
+
+class JoinSector {
+	public final result:Bool;
+	public final reason:String;
+	public final playersCount:Int;
+	public final totalShips:Int;
+	public final instanceId:String;
+
+	public function new(result:Bool, reason:String, playersCount:Int, totalShips:Int, instanceId:String) {
+		this.result = result;
+		this.reason = reason;
+		this.playersCount = playersCount;
+		this.totalShips = totalShips;
+		this.instanceId = instanceId;
+	}
+}

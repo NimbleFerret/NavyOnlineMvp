@@ -68,6 +68,7 @@ class SceneGlobalMode extends Scene {
 
 		this.enterSectorCallback = enterSectorCallback;
 
+		// TODO put metamask address here
 		Rest.instance.signInOrUp('0x0...1', function callback(player:Player) {
 			if (!playerInitialized) {
 				this.player = player;
@@ -80,7 +81,7 @@ class SceneGlobalMode extends Scene {
 		// addChild(xxx.guiObject);
 	}
 
-	function movePlayer(x:Int, y:Int) {
+	private function movePlayer(x:Int, y:Int) {
 		if (gameWorldInitialized && allowPlayerMove) {
 			allowPlayerMove = false;
 			Timer.delay(function resetMoveDelay() {
@@ -98,12 +99,12 @@ class SceneGlobalMode extends Scene {
 		}
 	}
 
-	function checkDistance(x:Int, y:Int) {
+	private function checkDistance(x:Int, y:Int) {
 		final pos = sectorPosToWorldCoords(x, y);
 		return hxd.Math.distance(pos.x - playerBmp.x, pos.y - playerBmp.y) < 150;
 	}
 
-	function sectorPosToWorldCoords(sx:Int, sy:Int) {
+	private function sectorPosToWorldCoords(sx:Int, sy:Int) {
 		return {
 			x: sx * 100 + 100 + 50,
 			y: sy * 100 + 100 + 50
@@ -146,12 +147,14 @@ class SceneGlobalMode extends Scene {
 					} else if (this.player.worldX == x && this.player.worldY == y) {
 						// TODO show dialog
 
-						Game.CurrentSectorX = x;
-						Game.CurrentSectorY = y;
+						enterSector(x, y);
 
-						if (enterSectorCallback != null) {
-							enterSectorCallback(new SectorDescription(x, y));
-						}
+						// Game.CurrentSectorX = x;
+						// Game.CurrentSectorY = y;
+
+						// if (enterSectorCallback != null) {
+						// 	enterSectorCallback(new SectorDescription(x, y));
+						// }
 					}
 				}
 				gameWorldSectors.push(sectorRectObject);
@@ -167,5 +170,14 @@ class SceneGlobalMode extends Scene {
 		playerBmp.setPosition(pos.x - 10, pos.y - 10);
 
 		addChild(playerBmp);
+	}
+
+	private function enterSector(x:Int, y:Int) {
+		if (gameWorldInitialized) {
+			Rest.instance.worldEnter(player.ethAddress, x, y, function callback(sector:JoinSector) {
+				// TODO open online game scene and pass instance id into it
+				trace('');
+			});
+		}
 	}
 }

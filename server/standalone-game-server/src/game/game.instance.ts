@@ -25,7 +25,6 @@ import {
     WsProtocol
 } from 'src/ws/ws.protocol';
 import { Logger } from '@nestjs/common';
-import e from 'express';
 
 export class GameInstance {
 
@@ -36,7 +35,7 @@ export class GameInstance {
     private readonly gameEngine: engine.GameEngine;
     private notifyGameWorldStateTimer: NodeJS.Timer;
 
-    constructor(private eventEmitter: EventEmitter2) {
+    constructor(private eventEmitter: EventEmitter2, public worldX: number, public worldY: number) {
         this.gameEngine = new engine.GameEngine();
         this.notifyGameWorldStateTimer = setInterval(() => this.notifyGameWorldState(), this.worldStateUpdateIntervalMS);
 
@@ -102,7 +101,7 @@ export class GameInstance {
             }
         };
 
-        this.addBot(100, -200);
+        // this.addBot(100, -200);
     }
 
     private notifyGameWorldState() {

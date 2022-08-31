@@ -51,6 +51,7 @@ export interface SocketServerMessageSync {
 
 export interface SocketClientMessageJoinGame {
     playerId: string;
+    gameInstance: string;
 }
 
 export interface SocketClientMessageMove {

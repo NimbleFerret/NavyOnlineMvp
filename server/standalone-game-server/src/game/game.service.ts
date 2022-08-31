@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import {
     AppEvents,
@@ -14,20 +14,73 @@ import {
     SocketClientMessageSync,
 } from 'src/ws/ws.protocol';
 import { AddBotDto } from './game.controller';
+import { SectorContent } from 'src/world/sector.entity';
 
 
 @Injectable()
-export class GameService implements OnModuleInit {
+export class GameService {
 
     private readonly maxPlayersPerInstance = 10;
     private readonly gameInstances = new Map<string, GameInstance>();
+    private readonly sectorInstance = new Map<string, string>();
     private readonly playerInstaneMap = new Map<string, string>();
 
     constructor(private eventEmitter: EventEmitter2) {
     }
 
-    async onModuleInit() {
-        console.log('Hello');
+    // -------------------------------------
+    // World managed api
+    // -------------------------------------
+
+    joinWorldOrCreate(x: number, y: number, sectorContent: SectorContent) {
+        const gameInstanceId = this.sectorInstance.get(x + '+' + y);
+        if (gameInstanceId) {
+            const gameInstance = this.gameInstances.get(gameInstanceId);
+            if (gameInstance.getPlayersCount() < this.maxPlayersPerInstance) {
+                return {
+                    result: true,
+                    playersCount: gameInstance.getPlayersCount(),
+                    totalShips: gameInstance.getTotalShipsCount(),
+                    instanceId: gameInstance.instanceId
+                }
+            } else {
+                return {
+                    result: false,
+                    reason: 'Sector is full'
+                }
+            }
+        } else {
+            const gameInstance = new GameInstance(this.eventEmitter, x, y);
+            this.gameInstances.set(gameInstance.instanceId, gameInstance);
+
+            switch (sectorContent) {
+                case SectorContent.EMPTY: {
+                    // TODO randomly add some loot
+                    break;
+                }
+                case SectorContent.BOSS: {
+                    // TODO generate a boss
+                    break;
+                }
+                case SectorContent.PVE: {
+                    // TODO generate some bots
+                    gameInstance.addBot(100, -200);
+                    gameInstance.addBot(400, -200);
+                    break;
+                }
+                case SectorContent.PVP: {
+                    // TODO allow player kill
+                    break;
+                }
+            }
+
+            return {
+                result: true,
+                playersCount: gameInstance.getPlayersCount(),
+                totalShips: gameInstance.getTotalShipsCount(),
+                instanceId: gameInstance.instanceId
+            }
+        }
     }
 
     // -------------------------------------
@@ -37,6 +90,7 @@ export class GameService implements OnModuleInit {
     getInstancesInfo() {
         const result = [];
         this.gameInstances.forEach((v) => {
+            // TODO add x and y pos
             result.push({
                 id: v.instanceId,
                 players: v.getPlayersCount(),
@@ -61,14 +115,15 @@ export class GameService implements OnModuleInit {
     async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
         // Create a new instance and add player into it
         if (!this.playerInstaneMap.has(data.playerId)) {
+            // TODO drop new game instance creation by socket connect
             if (this.gameInstances.size == 0) {
-                const gameInstance = new GameInstance(this.eventEmitter);
-                gameInstance.handlePlayerJoinedEvent(data);
+                // const gameInstance = new GameInstance(this.eventEmitter);
+                // gameInstance.handlePlayerJoinedEvent(data);
 
-                this.gameInstances.set(gameInstance.instanceId, gameInstance);
-                this.playerInstaneMap.set(data.playerId, gameInstance.instanceId);
+                // this.gameInstances.set(gameInstance.instanceId, gameInstance);
+                // this.playerInstaneMap.set(data.playerId, gameInstance.instanceId);
 
-                Logger.log(`Player: ${data.playerId} was added to the new instance: ${gameInstance.instanceId}`);
+                // Logger.log(`Player: ${data.playerId} was added to the new instance: ${gameInstance.instanceId}`);
             } else {
                 // Populate each instance one by one
                 let gameInstance: GameInstance;

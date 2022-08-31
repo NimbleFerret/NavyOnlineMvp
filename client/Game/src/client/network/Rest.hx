@@ -1,7 +1,6 @@
 package client.network;
 
-import client.network.RestProtocol.Player;
-import client.network.RestProtocol.GameWorld;
+import client.network.RestProtocol;
 import haxe.http.HttpJs;
 
 class Rest {
@@ -48,6 +47,24 @@ class Rest {
 			if (callback != null) {
 				final json = haxe.Json.parse(data);
 				callback(json.result);
+			}
+		};
+	}
+
+	public function worldEnter(ethAddress:String, x:Int, y:Int, callback:JoinSector->Void) {
+		final req = new HttpJs("http://localhost:3000/app/world/enter");
+		final body = {
+			ethAddress: ethAddress,
+			x: x,
+			y: y
+		};
+		req.setPostData(haxe.Json.stringify(body));
+		req.addHeader("Content-type", "application/json");
+		req.request(true);
+		req.onData = function onData(data:String) {
+			if (callback != null) {
+				final json = haxe.Json.parse(data);
+				callback(new JoinSector(json.result, json.reason, json.playersCount, json.totalShips, json.instanceId));
 			}
 		};
 	}

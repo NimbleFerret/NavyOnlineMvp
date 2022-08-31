@@ -71,7 +71,8 @@ typedef SocketServerMessageSync = {
 // -------------------------------------
 
 typedef SocketClientMessageJoinGame = {
-	playerId:String
+	playerId:String,
+	instanceId:String
 }
 
 typedef SocketClientMessageMove = {

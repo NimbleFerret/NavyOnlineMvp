@@ -36,6 +36,15 @@ export class UserService {
         }
     }
 
+    checkPlayerPos(playerEthAddress: string, x: number, y: number) {
+        const player = this.playersMap.get(playerEthAddress);
+        if (player) {
+            return player.worldX == x && player.worldY == y;
+        } else {
+            return false;
+        }
+    }
+
     async movePlayerAroundTheWorld(playerEthAddress: string, newX: number, newY: number) {
         let result = false;
         const player = this.playersMap.get(playerEthAddress);

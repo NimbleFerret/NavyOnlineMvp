@@ -14,6 +14,12 @@ export class WorldMoveDto {
     y: number;
 }
 
+export class WorldEnterDto {
+    ethAddress: string;
+    x: number;
+    y: number;
+}
+
 @Controller('app')
 export class AppController {
 
@@ -38,6 +44,18 @@ export class AppController {
     @Post('world/move')
     async worldMove(@Body() dto: WorldMoveDto) {
         return await this.userService.movePlayerAroundTheWorld(dto.ethAddress, dto.x, dto.y);
+    }
+
+    @Post('world/enter')
+    async worldEnter(@Body() dto: WorldEnterDto) {
+        if (this.userService.checkPlayerPos(dto.ethAddress, dto.x, dto.y)) {
+            return this.worldService.joinSector(dto.x, dto.y);
+        } else {
+            return {
+                result: false,
+                reason: 'Bad position'
+            }
+        }
     }
 
 }

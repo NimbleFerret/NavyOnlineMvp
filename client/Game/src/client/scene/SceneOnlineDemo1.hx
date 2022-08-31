@@ -1,6 +1,5 @@
 package client.scene;
 
-import client.network.Rest;
 import uuid.Uuid;
 import engine.GameEngine.EngineMode;
 import client.event.EventManager;
@@ -25,7 +24,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		game = new Game(this, EngineMode.Server);
 
 		game.joinNewGameCallback = function callback() {
-			Socket.instance.joinGame({playerId: playerId});
+			Socket.instance.joinGame({playerId: playerId, instanceId: ''});
 		}
 		game.joinExistingGameCallback = function callback() {}
 

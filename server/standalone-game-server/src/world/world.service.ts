@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Sector, SectorContent, SectorDocument } from './sector.entity';
 import { World, WorldDocument } from './world.entity';
+import { GameService } from 'src/game/game.service';
 
 export interface SectorInfo {
   x: number;
@@ -16,6 +17,14 @@ export interface WorldInfo {
   sectors: SectorInfo[];
 }
 
+export interface JoinSector {
+  result: boolean;
+  reason?: string;
+  playersCount?: number;
+  totalShips?: number;
+  instanceId?: string;
+}
+
 @Injectable()
 export class WorldService implements OnModuleInit {
 
@@ -23,7 +32,10 @@ export class WorldService implements OnModuleInit {
   public static readonly BASE_POS_X = 5;
   public static readonly BASE_POS_Y = 5;
 
+  private world: World;
+
   constructor(
+    private gameService: GameService,
     @InjectModel(Sector.name) private sectorModel: Model<SectorDocument>,
     @InjectModel(World.name) private worldModel: Model<WorldDocument>
   ) {
@@ -56,8 +68,47 @@ export class WorldService implements OnModuleInit {
           newWorld.sectors.push(sector);
         }
       }
-      await newWorld.save();
+      this.world = await newWorld.save();
+    } else {
+      this.world = world;
     }
+  }
+
+  public async joinSector(x: number, y: number) {
+    const result: JoinSector = {
+      result: false
+    };
+
+    this.world.sectors.forEach(sector => {
+      if (sector.x == x && sector.y == y) {
+        switch (sector.content) {
+          case SectorContent.BASE: {
+            // TODO get base params
+            break;
+          }
+          case SectorContent.ISLAND: {
+            // TODO get island params
+            break;
+          }
+          case SectorContent.EMPTY:
+          case SectorContent.BOSS:
+          case SectorContent.PVE:
+          case SectorContent.PVP:
+            const joinResult = this.gameService.joinWorldOrCreate(x, y, sector.content);
+            result.result = joinResult.result;
+
+            if (!result.result) {
+              result.reason = joinResult.reason;
+            } else {
+              result.instanceId = joinResult.instanceId;
+              result.playersCount = joinResult.playersCount;
+              result.totalShips = joinResult.totalShips;
+            }
+        }
+      }
+    });
+
+    return result;
   }
 
   public async getWorldInfo() {
@@ -75,7 +126,6 @@ export class WorldService implements OnModuleInit {
         });
       }
     });
-    // return JSON.stringify(result)
     return result;
   }
 
