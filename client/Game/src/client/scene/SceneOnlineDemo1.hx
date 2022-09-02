@@ -10,7 +10,7 @@ import h3d.Engine;
 import h2d.Scene;
 
 class SceneOnlineDemo1 extends Scene implements EventListener {
-	private var game:Game;
+	private var game:BattleGameplay;
 
 	public var instanceId:String;
 
@@ -26,7 +26,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 	}
 
 	public function start() {
-		game = new Game(this, EngineMode.Server, function callback() {
+		game = new BattleGameplay(this, EngineMode.Server, function callback() {
 			if (leaveCallback != null) {
 				leaveCallback();
 			}

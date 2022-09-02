@@ -64,7 +64,7 @@ class Rest {
 		req.onData = function onData(data:String) {
 			if (callback != null) {
 				final json = haxe.Json.parse(data);
-				callback(new JoinSectorResponse(json.result, json.reason, json.playersCount, json.totalShips, json.instanceId));
+				callback(new JoinSectorResponse(json.result, json.reason, json.playersCount, json.totalShips, json.instanceId, json.sectorType));
 			}
 		};
 	}

@@ -6,7 +6,7 @@ import h3d.Engine;
 import h2d.Scene;
 
 class SceneDemo1 extends Scene {
-	private var game:Game;
+	private var game:BattleGameplay;
 
 	public function new(width:Int, height:Int) {
 		super();
@@ -15,7 +15,7 @@ class SceneDemo1 extends Scene {
 	}
 
 	public function start() {
-		game = new Game(this, EngineMode.Client, function callback() {});
+		game = new BattleGameplay(this, EngineMode.Client, function callback() {});
 
 		// --------------------------------------
 		// Mocked client data

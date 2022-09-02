@@ -2,7 +2,7 @@ package client;
 
 class IslandsManager {
 	public function new(s2d:h2d.Scene) {
-		if (Game.ShowIslands) {
+		if (BattleGameplay.ShowIslands) {
 			var creepyIslandCompositeTile = hxd.Res.composite.toTile();
 			creepyIslandCompositeTile = creepyIslandCompositeTile.center();
 

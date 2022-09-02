@@ -1,6 +1,6 @@
 package engine;
 
-import engine.entity.EngineBaseGameEntity.GameEntityDirection;
+import engine.entity.EngineBaseGameEntity;
 
 class MathUtils {
 	public static function dirToRad(dir:GameEntityDirection) {

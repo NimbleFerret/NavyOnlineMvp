@@ -2,6 +2,15 @@
 
 import { EntityShip } from "src/game/entity/entity.ship";
 
+export enum SectorContent {
+    EMPTY = 1,
+    BASE = 2,
+    ISLAND = 3,
+    BOSS = 4,
+    PVE = 5,
+    PVP = 6
+}
+
 // -------------------------------------
 // WebSocket server messages
 // -------------------------------------
@@ -52,6 +61,7 @@ export interface SocketServerMessageSync {
 export interface SocketClientMessageJoinGame {
     playerId: string;
     instanceId: string;
+    sectorType: SectorContent;
 }
 
 export interface SocketClientMessageLeaveGame {

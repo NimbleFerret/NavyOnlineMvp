@@ -27,7 +27,7 @@ enum InputType {
 	DebugPlayerShip;
 }
 
-class Game {
+class BattleGameplay {
 	// Global config
 	public static final ShowIslands = true;
 	public static var DebugDraw = false;
@@ -416,8 +416,6 @@ class Game {
 	}
 
 	private function updateInput() {
-		final now = Timer.lastTimeStamp;
-
 		final c = scene.camera;
 
 		if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))

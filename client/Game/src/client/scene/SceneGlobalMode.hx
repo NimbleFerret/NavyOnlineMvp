@@ -43,10 +43,10 @@ class SectorRectObject {
 }
 
 class EnterSectorCallback {
-	public final instanceId:String;
+	public final joinSectorResponse:JoinSectorResponse;
 
-	public function new(instanceId:String) {
-		this.instanceId = instanceId;
+	public function new(joinSectorResponse:JoinSectorResponse) {
+		this.joinSectorResponse = joinSectorResponse;
 	}
 }
 
@@ -185,7 +185,7 @@ class SceneGlobalMode extends Scene {
 			Rest.instance.worldEnter(Player.instance.playerData.ethAddress, x, y, function callback(response:JoinSectorResponse) {
 				if (response.result) {
 					if (enterSectorCallback != null) {
-						enterSectorCallback(new EnterSectorCallback(response.instanceId));
+						enterSectorCallback(new EnterSectorCallback(response));
 					}
 				} else {
 					trace(response.reason);

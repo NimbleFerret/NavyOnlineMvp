@@ -53,12 +53,14 @@ class JoinSectorResponse {
 	public final playersCount:Int;
 	public final totalShips:Int;
 	public final instanceId:String;
+	public final sectorType:Int;
 
-	public function new(result:Bool, reason:String, playersCount:Int, totalShips:Int, instanceId:String) {
+	public function new(result:Bool, reason:String, playersCount:Int, totalShips:Int, instanceId:String, sectorType:Int) {
 		this.result = result;
 		this.reason = reason;
 		this.playersCount = playersCount;
 		this.totalShips = totalShips;
 		this.instanceId = instanceId;
+		this.sectorType = sectorType;
 	}
 }

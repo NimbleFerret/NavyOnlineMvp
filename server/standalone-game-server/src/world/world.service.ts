@@ -1,10 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Sector, SectorContent, SectorDocument } from './sector.entity';
 import { World, WorldDocument } from './world.entity';
 import { GameService } from 'src/game/game.service';
+import { Island, IslandDocument } from './island.entity';
 
 export interface SectorInfo {
   x: number;
@@ -23,6 +25,7 @@ export interface JoinSector {
   playersCount?: number;
   totalShips?: number;
   instanceId?: string;
+  sectorType?: number;
 }
 
 @Injectable()
@@ -37,7 +40,8 @@ export class WorldService implements OnModuleInit {
   constructor(
     private gameService: GameService,
     @InjectModel(Sector.name) private sectorModel: Model<SectorDocument>,
-    @InjectModel(World.name) private worldModel: Model<WorldDocument>
+    @InjectModel(World.name) private worldModel: Model<WorldDocument>,
+    @InjectModel(Island.name) private islandModel: Model<IslandDocument>
   ) {
 
   }
@@ -54,6 +58,7 @@ export class WorldService implements OnModuleInit {
           }
           if ((x == 1 && y == 3) || (x == 5 && y == 7)) {
             content = SectorContent.ISLAND;
+            await this.createIsland('0x0...0', x, y);
           }
           if ((x == 7 && y == 2) || (x == 2 && y == 10) || (x == 10 && y == 8)) {
             content = SectorContent.PVE;
@@ -69,6 +74,7 @@ export class WorldService implements OnModuleInit {
         }
       }
       this.world = await newWorld.save();
+
     } else {
       this.world = world;
     }
@@ -78,16 +84,26 @@ export class WorldService implements OnModuleInit {
     const result: JoinSector = {
       result: false
     };
-
-    this.world.sectors.forEach(sector => {
+    for (const sector of this.world.sectors) {
       if (sector.x == x && sector.y == y) {
         switch (sector.content) {
           case SectorContent.BASE: {
             // TODO get base params
+            result.sectorType = sector.content;
+            result.result = true;
             break;
           }
           case SectorContent.ISLAND: {
             // TODO get island params
+            const island = await this.findIslandByXAndY(x, y)
+            if (island) {
+              result.sectorType = sector.content;
+              result.result = true;
+              result.instanceId = island.tokenId;
+            } else {
+              result.result = false;
+              result.reason = 'Unable to find island on given coords';
+            }
             break;
           }
           case SectorContent.EMPTY:
@@ -103,11 +119,12 @@ export class WorldService implements OnModuleInit {
               result.instanceId = joinResult.instanceId;
               result.playersCount = joinResult.playersCount;
               result.totalShips = joinResult.totalShips;
+              result.sectorType = sector.content;
             }
         }
+        break;
       }
-    });
-
+    }
     return result;
   }
 
@@ -145,5 +162,20 @@ export class WorldService implements OnModuleInit {
 
   private async findWorld() {
     return this.worldModel.findOne().populate('sectors');
+  }
+
+  private async createIsland(owner: string, x: number, y: number) {
+    const island = new this.islandModel();
+    island.tokenId = uuidv4();
+    island.owner = owner;
+    island.x = x;
+    island.y = y;
+    return island.save();
+  }
+
+  private async findIslandByXAndY(x: number, y: number) {
+    return this.islandModel.findOne({
+      x, y
+    });
   }
 }

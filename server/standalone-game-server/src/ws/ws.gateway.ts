@@ -15,6 +15,7 @@ import {
 } from "../app.events";
 import { Logger, OnModuleInit } from "@nestjs/common";
 import {
+    SectorContent,
     SocketClientMessageJoinGame,
     SocketClientMessageMove,
     SocketClientMessageRespawn,
@@ -87,7 +88,12 @@ export class WsGateway implements OnModuleInit {
     async joinGame(client: Socket, data: SocketClientMessageJoinGame) {
         Logger.log(`Got joinGame request. ${JSON.stringify(data)}`);
         WsGateway.ClientSockets.set(data.playerId, client);
-        this.eventEmitter.emit(AppEvents.PlayerJoined, data);
+
+        if (data.sectorType == SectorContent.ISLAND) {
+            this.eventEmitter.emit(AppEvents.PlayerJoinedIslandInstance, data);
+        } else {
+            this.eventEmitter.emit(AppEvents.PlayerJoinedGameInstance, data);
+        }
     }
 
     @SubscribeMessage(WsProtocol.SocketClientEventLeaveGame)

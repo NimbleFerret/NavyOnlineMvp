@@ -34,7 +34,7 @@ class Main extends GuiApp {
 
 	private var sceneMoralis:SceneMoralis;
 
-	private final defaultScene = Scene.SceneGlobalMode;
+	private final defaultScene = Scene.SceneIsland;
 	private var currentScene:Scene;
 
 	override function init() {
@@ -64,7 +64,7 @@ class Main extends GuiApp {
 		sceneGlobalMode = new SceneGlobalMode(function callback(sector:EnterSectorCallback) {
 			currentScene = SceneOnlineDemo1;
 
-			sceneOnlineDemo1.instanceId = sector.instanceId;
+			sceneOnlineDemo1.instanceId = sector.joinSectorResponse.instanceId;
 			sceneOnlineDemo1.start();
 			sevents.addScene(sceneOnlineDemo1.getHud());
 			setScene2D(sceneOnlineDemo1);
@@ -112,6 +112,9 @@ class Main extends GuiApp {
 
 		if (currentScene == SceneShipsDemo) {
 			sceneShipsDemo.update();
+		}
+		if (currentScene == SceneIsland) {
+			sceneIsland.update(dt);
 		}
 	}
 

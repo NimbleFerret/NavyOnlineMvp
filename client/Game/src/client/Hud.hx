@@ -329,13 +329,7 @@ class Hud extends h2d.Scene {
 		movementText.text = "Speed: " + shipStats.currentSpeed + " / " + shipStats.maxSpeed;
 		dirText.text = "Direction: " + shipStats.dir;
 
-		positionText.text = "Sector: "
-			+ Game.CurrentSectorX
-			+ " / "
-			+ Game.CurrentSectorY
-			+ ", Pos: "
-			+ Std.int(shipStats.x)
-			+ " / "
+		positionText.text = "Sector: " + BattleGameplay.CurrentSectorX + " / " + BattleGameplay.CurrentSectorY + ", Pos: " + Std.int(shipStats.x) + " / "
 			+ Std.int(shipStats.y);
 
 		if (shipStats.allowShootLeft) {
