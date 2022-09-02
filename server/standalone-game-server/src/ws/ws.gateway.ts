@@ -90,6 +90,14 @@ export class WsGateway implements OnModuleInit {
         this.eventEmitter.emit(AppEvents.PlayerJoined, data);
     }
 
+    @SubscribeMessage(WsProtocol.SocketClientEventLeaveGame)
+    async leaveGame(client: Socket, data: SocketClientMessageJoinGame) {
+        Logger.log(`Got leaveGame request. ${JSON.stringify(data)}`);
+
+        // TODO handle it better
+        client.disconnect();
+    }
+
     @SubscribeMessage(WsProtocol.SocketClientEventMove)
     async move(@MessageBody() data: SocketClientMessageMove) {
         Logger.log(`Got move request. ${JSON.stringify(data)}`);

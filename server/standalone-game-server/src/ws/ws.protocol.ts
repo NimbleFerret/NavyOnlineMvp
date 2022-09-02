@@ -51,7 +51,12 @@ export interface SocketServerMessageSync {
 
 export interface SocketClientMessageJoinGame {
     playerId: string;
-    gameInstance: string;
+    instanceId: string;
+}
+
+export interface SocketClientMessageLeaveGame {
+    playerId: string;
+    instanceId: string;
 }
 
 export interface SocketClientMessageMove {
@@ -96,6 +101,7 @@ export class WsProtocol {
     // Client -> Server events
     public static readonly SocketClientEventPing = 'SocketClientEventPing';
     public static readonly SocketClientEventJoinGame = 'SocketClientEventJoinGame';
+    public static readonly SocketClientEventLeaveGame = 'SocketClientEventLeaveGame';
     public static readonly SocketClientEventMove = 'SocketClientEventMove';
     public static readonly SocketClientEventShoot = 'SocketClientEventShoot';
     public static readonly SocketClientEventSync = 'SocketClientEventSync';

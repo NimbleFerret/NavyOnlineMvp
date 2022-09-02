@@ -3,6 +3,7 @@ package client.scene;
 import haxe.Timer;
 import client.network.RestProtocol;
 import client.network.Rest;
+import client.Player;
 import h2d.Bitmap;
 import h2d.Tile;
 import h2d.Scene;
@@ -24,15 +25,15 @@ class SectorRectObject {
 		contentRect = new h2d.Graphics(object);
 
 		switch (sectorType) {
-			case GameWorld.SectorBaseType:
+			case GameWorldData.SectorBaseType:
 				contentRect.beginFill(0xFFEE4D);
-			case GameWorld.SectorIslandType:
+			case GameWorldData.SectorIslandType:
 				contentRect.beginFill(0x1EFF00);
-			case GameWorld.SectorBossType:
+			case GameWorldData.SectorBossType:
 				contentRect.beginFill(0xF6BD02);
-			case GameWorld.SectorPVEType:
+			case GameWorldData.SectorPVEType:
 				contentRect.beginFill(0x5035FF);
-			case GameWorld.SectorPVPType:
+			case GameWorldData.SectorPVPType:
 				contentRect.beginFill(0xFF3B3B);
 		}
 
@@ -41,44 +42,50 @@ class SectorRectObject {
 	}
 }
 
-class SectorDescription {
-	public final x:Int;
-	public final y:Int;
+class EnterSectorCallback {
+	public final instanceId:String;
 
-	public function new(x:Int, y:Int) {
-		this.x = x;
-		this.y = y;
+	public function new(instanceId:String) {
+		this.instanceId = instanceId;
 	}
 }
 
 class SceneGlobalMode extends Scene {
-	var player:Player;
 	var playerBmp:h2d.Bitmap;
 
 	var playerInitialized = false;
 	var gameWorldInitialized = false;
+	var allowPlayerMove = false;
 
-	var allowPlayerMove = true;
+	private var gameWorldSectors = new Array<SectorRectObject>();
+	private final enterSectorCallback:EnterSectorCallback->Void;
 
-	private final gameWorldSectors = new Array<SectorRectObject>();
-	private final enterSectorCallback:SectorDescription->Void;
-
-	public function new(enterSectorCallback:SectorDescription->Void) {
+	public function new(enterSectorCallback:EnterSectorCallback->Void) {
 		super();
 
 		this.enterSectorCallback = enterSectorCallback;
 
-		// TODO put metamask address here
-		Rest.instance.signInOrUp('0x0...1', function callback(player:Player) {
+		init();
+	}
+
+	public function init() {
+		playerInitialized = false;
+		gameWorldInitialized = false;
+		allowPlayerMove = false;
+		gameWorldSectors = new Array<SectorRectObject>();
+
+		if (playerBmp != null) {
+			removeChild(playerBmp);
+			playerBmp = null;
+		}
+
+		Rest.instance.signInOrUp(Player.instance.ethAddress, function callback(player:PlayerData) {
 			if (!playerInitialized) {
-				this.player = player;
+				Player.instance.playerData = player;
 				playerInitialized = true;
 				initOrUpdateGameWorld();
 			}
 		});
-
-		// final xxx = new YesNoDialog(this, 0, 0);
-		// addChild(xxx.guiObject);
 	}
 
 	private function movePlayer(x:Int, y:Int) {
@@ -86,14 +93,14 @@ class SceneGlobalMode extends Scene {
 			allowPlayerMove = false;
 			Timer.delay(function resetMoveDelay() {
 				allowPlayerMove = true;
-			}, 2000);
-			Rest.instance.worldMove(player.ethAddress, x, y, function callback(result:Bool) {
+			}, 1000);
+			Rest.instance.worldMove(Player.instance.playerData.ethAddress, x, y, function callback(result:Bool) {
 				if (result) {
 					final pos = sectorPosToWorldCoords(x, y);
 					playerBmp.setPosition(pos.x - 10, pos.y - 10);
 
-					player.worldX = x;
-					player.worldY = y;
+					Player.instance.playerData.worldX = x;
+					Player.instance.playerData.worldY = y;
 				}
 			});
 		}
@@ -112,7 +119,7 @@ class SceneGlobalMode extends Scene {
 	}
 
 	private function initOrUpdateGameWorld() {
-		Rest.instance.getWorldInfo(function callback(world:GameWorld) {
+		Rest.instance.getWorldInfo(function callback(world:GameWorldData) {
 			if (!gameWorldInitialized) {
 				initiateGameWorld(world);
 			} else {
@@ -121,13 +128,13 @@ class SceneGlobalMode extends Scene {
 		});
 	}
 
-	private function initiateGameWorld(world:GameWorld) {
+	private function initiateGameWorld(world:GameWorldData) {
 		for (x in 0...world.size) {
 			for (y in 0...world.size) {
 				final posX = x > 0 ? x * 100 - 1 : x * 100;
 				final posY = y > 0 ? y * 100 - 1 : y * 100;
 
-				var sectorType = GameWorld.SectorEmptyType;
+				var sectorType = GameWorldData.SectorEmptyType;
 				for (sector in world.sectors) {
 					if (sector.x == x && sector.y == y) {
 						sectorType = sector.content;
@@ -137,14 +144,14 @@ class SceneGlobalMode extends Scene {
 				final sectorRectObject = new SectorRectObject(this, posX + 100, posY + 100, sectorType);
 				final interaction = new h2d.Interactive(100, 100, sectorRectObject.object);
 				interaction.onClick = function(event:hxd.Event) {
-					if (this.player.worldX != x || this.player.worldY != y) {
+					if (Player.instance.playerData.worldX != x || Player.instance.playerData.worldY != y) {
 						if (checkDistance(x, y)) {
 							movePlayer(x, y);
 						} else {
 							trace("Too far");
 							// TODO show dialog
 						}
-					} else if (this.player.worldX == x && this.player.worldY == y) {
+					} else if (Player.instance.playerData.worldX == x && Player.instance.playerData.worldY == y) {
 						// TODO show dialog
 
 						enterSector(x, y);
@@ -162,11 +169,12 @@ class SceneGlobalMode extends Scene {
 		}
 
 		gameWorldInitialized = true;
+		allowPlayerMove = true;
 
 		final playerTile = Tile.fromColor(0x863D0D, 20, 20);
 		playerBmp = new Bitmap(playerTile);
 
-		final pos = sectorPosToWorldCoords(player.worldX, player.worldY);
+		final pos = sectorPosToWorldCoords(Player.instance.playerData.worldX, Player.instance.playerData.worldY);
 		playerBmp.setPosition(pos.x - 10, pos.y - 10);
 
 		addChild(playerBmp);
@@ -174,9 +182,14 @@ class SceneGlobalMode extends Scene {
 
 	private function enterSector(x:Int, y:Int) {
 		if (gameWorldInitialized) {
-			Rest.instance.worldEnter(player.ethAddress, x, y, function callback(sector:JoinSector) {
-				// TODO open online game scene and pass instance id into it
-				trace('');
+			Rest.instance.worldEnter(Player.instance.playerData.ethAddress, x, y, function callback(response:JoinSectorResponse) {
+				if (response.result) {
+					if (enterSectorCallback != null) {
+						enterSectorCallback(new EnterSectorCallback(response.instanceId));
+					}
+				} else {
+					trace(response.reason);
+				}
 			});
 		}
 	}

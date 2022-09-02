@@ -13,8 +13,8 @@ class Socket {
 	private var lastPingTime = 0.0;
 
 	private function new() {
-		clientSocket = new Client("http://23.111.202.19:3000/");
-		// clientSocket = new Client("http://localhost:3000/");
+		// clientSocket = new Client("http://23.111.202.19:3000/");
+		clientSocket = new Client("http://localhost:3000/");
 
 		clientSocket.on(SocketProtocol.SocketServerEventPong, function(data) {
 			latency = Date.now().getTime() - lastPingTime;
@@ -51,6 +51,10 @@ class Socket {
 
 	public function joinGame(message:SocketProtocol.SocketClientMessageJoinGame) {
 		clientSocket.emit(SocketProtocol.SocketClientEventJoinGame, message);
+	}
+
+	public function leaveGame(message:SocketProtocol.SocketClientMessageLeaveGame) {
+		clientSocket.emit(SocketProtocol.SocketClientEventLeaveGame, message);
 	}
 
 	public function move(message:SocketProtocol.SocketClientMessageMove) {

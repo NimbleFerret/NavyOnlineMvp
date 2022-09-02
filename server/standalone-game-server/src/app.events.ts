@@ -6,6 +6,7 @@ export enum AppEvents {
     // ---------------------------------
 
     PlayerJoined = 'PlayerJoined',
+    PlayerLeave = 'PlayerLeave',
     PlayerDisconnected = 'PlayerDisconnected',
     PlayerMove = 'PlayerMove',
     PlayerShoot = 'PlayerShoot',

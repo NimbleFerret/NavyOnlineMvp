@@ -8,7 +8,7 @@ import engine.GameEngine;
 import client.entity.ClientBaseGameEntity;
 import client.entity.ClientShell;
 import client.entity.ClientShip;
-import client.network.Protocol;
+import client.network.SocketProtocol;
 import client.network.Socket;
 import engine.entity.EngineBaseGameEntity;
 import engine.entity.EngineShellEntity;
@@ -58,12 +58,10 @@ class Game {
 	public var joinNewGameCallback:Void->Void;
 	public var joinExistingGameCallback:Void->Void;
 
-	private var startGameDialogComp:StartGameDialogComp;
-	private var retryDialogComp:RetryDialogComp;
-
+	// private var startGameDialogComp:StartGameDialogComp;
+	// private var retryDialogComp:RetryDialogComp;
 	//
-	var style = null;
-
+	// var style = null;
 	// Player input
 	private var lastMovementInputCheck = 0.0;
 	private var inputMovementCheckDelayMS = 1.0;
@@ -72,9 +70,14 @@ class Game {
 
 	private final scene:h2d.Scene;
 
-	public function new(scene:h2d.Scene, engineMode:EngineMode) {
-		this.scene = scene;
+	//
+	private var leaveCallback:Void->Void;
 
+	//
+
+	public function new(scene:h2d.Scene, engineMode:EngineMode, leaveCallback:Void->Void) {
+		this.scene = scene;
+		this.leaveCallback = leaveCallback;
 		// --------------------------------------
 		// Game managers and services init
 		// --------------------------------------
@@ -125,7 +128,7 @@ class Game {
 
 				if (engineShipEntity.ownerId == playerId) {
 					hud.show(false);
-					retryDialogComp.alpha = 1;
+					// retryDialogComp.alpha = 1;
 				}
 
 				clientShips.remove(engineShipEntity.id);
@@ -147,56 +150,63 @@ class Game {
 		// UI
 		// --------------------------------------
 
-		hud = new Hud();
+		hud = new Hud(function callback() {
+			// TODO return to the global mode
+			Socket.instance.leaveGame({playerId: playerId});
 
-		style = new h2d.domkit.Style();
-		style.load(hxd.Res.style);
+			if (leaveCallback != null) {
+				leaveCallback();
+			}
+		});
 
 		// TODO center it
 
-		final center = new h2d.Flow(scene);
-		center.horizontalAlign = center.verticalAlign = Middle;
+		// center = new h2d.Flow(scene);
+		// center.horizontalAlign = center.verticalAlign = Middle;
 
-		startGameDialogComp = new StartGameDialogComp(center);
-		startGameDialogComp.btn.label = "Join new game";
-		startGameDialogComp.btn.getTextComponent().setScale(3);
+		// startGameDialogComp = new StartGameDialogComp(center);
 
-		startGameDialogComp.btn1.label = "Join existing game";
-		startGameDialogComp.btn1.getTextComponent().setScale(3);
+		// startGameDialogComp.btn.label = "Join new gam1e";
+		// startGameDialogComp.btn.getTextComponent().setScale(3);
 
-		startGameDialogComp.btn.onClick = function() {
-			if (joinNewGameCallback != null) {
-				joinNewGameCallback();
-			}
-			startGameDialogComp.alpha = 0;
-		}
-		startGameDialogComp.btn1.onClick = function() {
-			if (joinExistingGameCallback != null) {
-				joinExistingGameCallback();
-			}
-			startGameDialogComp.alpha = 0;
-		}
+		// startGameDialogComp.btn1.label = "Join existing game";
+		// startGameDialogComp.btn1.getTextComponent().setScale(3);
 
-		style.addObject(startGameDialogComp);
+		// startGameDialogComp.btn.onClick = function() {
+		// 	if (joinNewGameCallback != null) {
+		// 		joinNewGameCallback();
+		// 	}
+		// 	startGameDialogComp.alpha = 0;
+		// }
+		// startGameDialogComp.btn1.onClick = function() {
+		// 	if (joinExistingGameCallback != null) {
+		// 		joinExistingGameCallback();
+		// 	}
+		// 	startGameDialogComp.alpha = 0;
+		// }
+
+		// style = new h2d.domkit.Style();
+		// style.load(hxd.Res.style);
+		// style.addObject(startGameDialogComp);
 
 		// RETRY
 
-		final retryCenter = new h2d.Flow(scene);
-		retryCenter.horizontalAlign = retryCenter.verticalAlign = Middle;
+		// center2 = new h2d.Flow(scene);
+		// center2.horizontalAlign = center2.verticalAlign = Middle;
 
-		retryDialogComp = new RetryDialogComp(center);
-		retryDialogComp.labelTxt.text = "You died !";
-		retryDialogComp.labelTxt.setScale(3);
-		retryDialogComp.btn.labelTxt.text = "Retry";
-		retryDialogComp.btn.getTextComponent().setScale(3);
-		retryDialogComp.btn.onClick = function() {
-			Socket.instance.respawn({
-				playerId: playerId
-			});
-		}
-		style.addObject(retryDialogComp);
+		// retryDialogComp = new RetryDialogComp(center2);
+		// retryDialogComp.labelTxt.text = "You died !";
+		// retryDialogComp.labelTxt.setScale(3);
+		// retryDialogComp.btn.labelTxt.text = "Retry";
+		// retryDialogComp.btn.getTextComponent().setScale(3);
+		// retryDialogComp.btn.onClick = function() {
+		// 	Socket.instance.respawn({
+		// 		playerId: playerId
+		// 	});
+		// }
+		// style.addObject(retryDialogComp);
 
-		retryDialogComp.alpha = 0;
+		// retryDialogComp.alpha = 0;
 
 		// root.btn2.labelTxt.text = "Highlight OFF";
 
@@ -224,10 +234,9 @@ class Game {
 	}
 
 	public function update(dt:Float, fps:Float) {
-		style.sync();
+		hud.update(dt);
 
 		if (gameState == GameState.Playing) {
-			hud.update(dt);
 			hud.updateSystemInfo(fps);
 
 			effectsManager.update();
@@ -524,7 +533,7 @@ class Game {
 				// This is game restart
 				if (ship.ownerId == playerId) {
 					hud.show(true);
-					retryDialogComp.alpha = 0;
+					// retryDialogComp.alpha = 0;
 					playerShipId = ship.id;
 				}
 			}
@@ -627,8 +636,8 @@ class Game {
 			gameState = GameState.Playing;
 
 			hud.show(true);
-			retryDialogComp.alpha = 0;
-			startGameDialogComp.alpha = 0;
+			// retryDialogComp.alpha = 0;
+			// startGameDialogComp.alpha = 0;
 		}
 	}
 

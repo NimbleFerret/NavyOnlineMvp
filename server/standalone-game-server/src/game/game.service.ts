@@ -52,6 +52,7 @@ export class GameService {
         } else {
             const gameInstance = new GameInstance(this.eventEmitter, x, y);
             this.gameInstances.set(gameInstance.instanceId, gameInstance);
+            this.sectorInstance.set(x + '+' + y, gameInstance.instanceId);
 
             switch (sectorContent) {
                 case SectorContent.EMPTY: {
@@ -115,37 +116,17 @@ export class GameService {
     async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
         // Create a new instance and add player into it
         if (!this.playerInstaneMap.has(data.playerId)) {
-            // TODO drop new game instance creation by socket connect
-            if (this.gameInstances.size == 0) {
-                // const gameInstance = new GameInstance(this.eventEmitter);
-                // gameInstance.handlePlayerJoinedEvent(data);
-
-                // this.gameInstances.set(gameInstance.instanceId, gameInstance);
-                // this.playerInstaneMap.set(data.playerId, gameInstance.instanceId);
-
-                // Logger.log(`Player: ${data.playerId} was added to the new instance: ${gameInstance.instanceId}`);
+            const gameInstance = this.gameInstances.get(data.instanceId);
+            if (gameInstance) {
+                gameInstance.handlePlayerJoinedEvent(data);
+                this.playerInstaneMap.set(data.playerId, data.instanceId);
+                Logger.log(`Player: ${data.playerId} was added to the existing instance: ${data.instanceId}`);
             } else {
-                // Populate each instance one by one
-                let gameInstance: GameInstance;
-
-                this.gameInstances.forEach((v) => {
-                    if (!gameInstance) {
-                        if (v.getPlayersCount() < this.maxPlayersPerInstance) {
-                            gameInstance = v;
-                        }
-                    }
-                });
-
-                if (gameInstance) {
-                    gameInstance.handlePlayerJoinedEvent(data);
-                    this.playerInstaneMap.set(data.playerId, gameInstance.instanceId);
-                    Logger.log(`Player: ${data.playerId} was added to the existing instance: ${gameInstance.instanceId}`);
-                } else {
-                    Logger.error(`Unable to add player into any game instance. Players: ${this.playerInstaneMap.size}, Instances: ${this.gameInstances.size}`);
-                }
+                Logger.error(`Unable to add player into any game instance. Players: ${this.playerInstaneMap.size}, Instances: ${this.gameInstances.size}`);
             }
         } else {
             // TODO add logs
+            Logger.error('Player cant join more than once');
         }
     }
 
@@ -153,6 +134,7 @@ export class GameService {
     async handlePlayerDisconnected(data: PlayerDisconnectedEvent) {
         const instanceId = this.playerInstaneMap.get(data.playerId);
         if (instanceId) {
+            this.playerInstaneMap.delete(data.playerId);
             const gameInstance = this.gameInstances.get(instanceId);
             gameInstance.handlePlayerDisconnected(data);
             if (gameInstance.getPlayersCount() == 0) {

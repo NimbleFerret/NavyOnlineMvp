@@ -4,7 +4,7 @@ package client.network;
 // Player
 // -----------------------------------
 
-class Player {
+class PlayerData {
 	public final ethAddress:String;
 	public final nickname:String;
 	public var worldState:Int;
@@ -30,7 +30,7 @@ typedef Sector = {
 	content:Int
 }
 
-class GameWorld {
+class GameWorldData {
 	public static final SectorEmptyType = 1;
 	public static final SectorBaseType = 2;
 	public static final SectorIslandType = 3;
@@ -47,7 +47,7 @@ class GameWorld {
 	}
 }
 
-class JoinSector {
+class JoinSectorResponse {
 	public final result:Bool;
 	public final reason:String;
 	public final playersCount:Int;

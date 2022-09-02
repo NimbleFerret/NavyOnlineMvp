@@ -15,7 +15,7 @@ class SceneDemo1 extends Scene {
 	}
 
 	public function start() {
-		game = new Game(this, EngineMode.Client);
+		game = new Game(this, EngineMode.Client, function callback() {});
 
 		// --------------------------------------
 		// Mocked client data

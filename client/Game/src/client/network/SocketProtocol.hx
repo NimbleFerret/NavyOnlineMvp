@@ -75,6 +75,10 @@ typedef SocketClientMessageJoinGame = {
 	instanceId:String
 }
 
+typedef SocketClientMessageLeaveGame = {
+	playerId:String
+}
+
 typedef SocketClientMessageMove = {
 	playerId:String,
 	up:Bool,
@@ -117,6 +121,7 @@ class SocketProtocol {
 	// Client -> Server events
 	public static final SocketClientEventPing = 'SocketClientEventPing';
 	public static final SocketClientEventJoinGame = 'SocketClientEventJoinGame';
+	public static final SocketClientEventLeaveGame = 'SocketClientEventLeaveGame';
 	public static final SocketClientEventMove = 'SocketClientEventMove';
 	public static final SocketClientEventShoot = 'SocketClientEventShoot';
 	public static final SocketClientEventSync = 'SocketClientEventSync';

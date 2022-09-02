@@ -8,7 +8,7 @@ class Rest {
 
 	private function new() {}
 
-	public function signInOrUp(ethAddress:String, callback:Player->Void) {
+	public function signInOrUp(ethAddress:String, callback:PlayerData->Void) {
 		final req = new HttpJs("http://localhost:3000/app/signInOrUp");
 		final body = {ethAddress: ethAddress};
 		req.setPostData(haxe.Json.stringify(body));
@@ -17,18 +17,18 @@ class Rest {
 		req.onData = function onData(data:String) {
 			if (callback != null) {
 				final json = haxe.Json.parse(data);
-				callback(new Player(json.ethAddress, json.nickname, json.worldX, json.worldY, json.worldState));
+				callback(new PlayerData(json.ethAddress, json.nickname, json.worldX, json.worldY, json.worldState));
 			}
 		};
 	}
 
-	public function getWorldInfo(callback:GameWorld->Void) {
+	public function getWorldInfo(callback:GameWorldData->Void) {
 		final req = new HttpJs("http://localhost:3000/app/world");
 		req.request();
 		req.onData = function onData(data:String) {
 			if (callback != null) {
 				final json = haxe.Json.parse(data);
-				callback(new GameWorld(json.size, json.sectors));
+				callback(new GameWorldData(json.size, json.sectors));
 			}
 		};
 	}
@@ -51,7 +51,7 @@ class Rest {
 		};
 	}
 
-	public function worldEnter(ethAddress:String, x:Int, y:Int, callback:JoinSector->Void) {
+	public function worldEnter(ethAddress:String, x:Int, y:Int, callback:JoinSectorResponse->Void) {
 		final req = new HttpJs("http://localhost:3000/app/world/enter");
 		final body = {
 			ethAddress: ethAddress,
@@ -64,7 +64,7 @@ class Rest {
 		req.onData = function onData(data:String) {
 			if (callback != null) {
 				final json = haxe.Json.parse(data);
-				callback(new JoinSector(json.result, json.reason, json.playersCount, json.totalShips, json.instanceId));
+				callback(new JoinSectorResponse(json.result, json.reason, json.playersCount, json.totalShips, json.instanceId));
 			}
 		};
 	}

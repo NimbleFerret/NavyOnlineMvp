@@ -12,21 +12,32 @@ import h2d.Scene;
 class SceneOnlineDemo1 extends Scene implements EventListener {
 	private var game:Game;
 
-	public var playerId = Uuid.short();
+	public var instanceId:String;
 
-	public function new(width:Int, height:Int) {
+	//
+	private var leaveCallback:Void->Void;
+
+	//
+
+	public function new(width:Int, height:Int, leaveCallback:Void->Void) {
 		super();
-
+		this.leaveCallback = leaveCallback;
 		camera.setViewport(width / 2, height / 2, 0, 0);
 	}
 
 	public function start() {
-		game = new Game(this, EngineMode.Server);
+		game = new Game(this, EngineMode.Server, function callback() {
+			if (leaveCallback != null) {
+				leaveCallback();
+			}
+		});
 
-		game.joinNewGameCallback = function callback() {
-			Socket.instance.joinGame({playerId: playerId, instanceId: ''});
-		}
-		game.joinExistingGameCallback = function callback() {}
+		Socket.instance.joinGame({playerId: Player.instance.playerData.ethAddress, instanceId: instanceId});
+
+		// game.joinNewGameCallback = function callback() {
+		// 	Socket.instance.joinGame({playerId: playerId, instanceId: ''});
+		// }
+		// game.joinExistingGameCallback = function callback() {}
 
 		// game.hud.addButton("Connect socket", function() {
 		// 	Socket.instance.joinGame({playerId: playerId});
@@ -68,7 +79,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 	public function notify(event:String, message:Dynamic) {
 		switch (event) {
 			case SocketProtocol.SocketServerEventGameInit:
-				game.startGame(playerId, message);
+				game.startGame(Player.instance.playerData.ethAddress, message);
 			case SocketProtocol.SocketServerEventAddShip:
 				game.addShip(message);
 			case SocketProtocol.SocketServerEventRemoveShip:

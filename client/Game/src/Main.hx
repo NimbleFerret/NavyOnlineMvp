@@ -51,18 +51,23 @@ class Main extends GuiApp {
 		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
 		sceneMoralis = new SceneMoralis();
 
-		sceneOnlineDemo1 = new SceneOnlineDemo1(engine.width, engine.height);
+		sceneOnlineDemo1 = new SceneOnlineDemo1(engine.width, engine.height, function leaveCallback() {
+			currentScene = SceneGlobalMode;
+			sceneGlobalMode.init();
+			setScene2D(sceneGlobalMode);
+		});
 
 		// sceneUIDemo = new SceneUIDemo();
 
 		sceneShipsDemo = new SceneShipsDemo();
 		sceneIsland = new SceneIsland();
-		sceneGlobalMode = new SceneGlobalMode(function callback(sector:SectorDescription) {
-			currentScene = SceneDemo1;
+		sceneGlobalMode = new SceneGlobalMode(function callback(sector:EnterSectorCallback) {
+			currentScene = SceneOnlineDemo1;
 
-			sceneDemo1.start();
-			sevents.addScene(sceneDemo1.getHud());
-			setScene2D(sceneDemo1);
+			sceneOnlineDemo1.instanceId = sector.instanceId;
+			sceneOnlineDemo1.start();
+			sevents.addScene(sceneOnlineDemo1.getHud());
+			setScene2D(sceneOnlineDemo1);
 		});
 
 		// TODO refactor scene load and unload

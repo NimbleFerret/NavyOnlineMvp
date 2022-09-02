@@ -1,5 +1,6 @@
 package client;
 
+import client.ui.UiComponents;
 import client.network.Socket;
 import h2d.Object;
 import h2d.SpriteBatch.BatchElement;
@@ -93,6 +94,7 @@ class Hud extends h2d.Scene {
 	private var dirText:h2d.Text;
 	private var systemText:h2d.Text;
 	private var latencyText:h2d.Text;
+	private var positionText:h2d.Text;
 
 	private var leftCannonsText:h2d.Text;
 	private var rightCannonsText:h2d.Text;
@@ -110,7 +112,10 @@ class Hud extends h2d.Scene {
 	final armorBar:HorizontalStatsBar;
 	final hullBar:HorizontalStatsBar;
 
-	public function new() {
+	// UI Dialogs
+	private var startGameDialogComp:StartGameDialogComp;
+
+	public function new(leaveCallback:Void->Void) {
 		super();
 
 		if (DrawWaterBg) {
@@ -149,6 +154,9 @@ class Hud extends h2d.Scene {
 		dirText = addText();
 		dirText.setScale(4);
 
+		positionText = addText();
+		positionText.setScale(4);
+
 		leftCannonsText = addText("Left side cannons READY");
 		leftCannonsText.setScale(4);
 
@@ -161,7 +169,19 @@ class Hud extends h2d.Scene {
 		latencyText = addText();
 		latencyText.setScale(4);
 
+		latencyText = addText();
+		latencyText.setScale(4);
+
+		final leaveButton = addButton('Leave sector', function callback() {
+			if (leaveCallback != null) {
+				leaveCallback();
+			}
+		});
+		leaveButton.setScale(3);
+
 		show(false);
+
+		//
 	}
 
 	public function show(show:Bool) {
@@ -284,8 +304,11 @@ class Hud extends h2d.Scene {
 	}
 
 	// UPDATES
+	var style = null;
 
 	public function update(dt:Float) {
+		// style.sync();
+
 		if (DrawWaterBg) {
 			displacementTile.scrollDiscrete(6 * dt, 12 * dt);
 			waterBgbatch.tile.scrollDiscrete(playerDX * 0.4, -playerDY * 0.4);
@@ -305,6 +328,15 @@ class Hud extends h2d.Scene {
 
 		movementText.text = "Speed: " + shipStats.currentSpeed + " / " + shipStats.maxSpeed;
 		dirText.text = "Direction: " + shipStats.dir;
+
+		positionText.text = "Sector: "
+			+ Game.CurrentSectorX
+			+ " / "
+			+ Game.CurrentSectorY
+			+ ", Pos: "
+			+ Std.int(shipStats.x)
+			+ " / "
+			+ Std.int(shipStats.y);
 
 		if (shipStats.allowShootLeft) {
 			leftCannonsText.text = "Left side cannons READY!";
