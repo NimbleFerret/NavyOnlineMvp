@@ -1,6 +1,5 @@
 package engine.entity;
 
-import hxd.Timer;
 import engine.entity.EngineBaseGameEntity;
 import engine.MathUtils;
 
@@ -86,7 +85,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// -----------------------
 
 	private function checkMovementInput() {
-		final now = Timer.lastTimeStamp;
+		final now = haxe.Timer.stamp();
 
 		if (lastMovementInputCheck == 0 || lastMovementInputCheck + inputMovementCheckDelayMS < now) {
 			lastMovementInputCheck = now;
@@ -97,7 +96,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	}
 
 	private function checkRotationInput() {
-		final now = Timer.lastTimeStamp;
+		final now = haxe.Timer.stamp();
 
 		if (lastRotationInputCheck == 0 || lastRotationInputCheck + inputRotationCheckDelayMS < now) {
 			lastRotationInputCheck = now;
@@ -200,7 +199,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// -----------------------
 
 	public function shootAllowanceBySide(side:Side) {
-		final now = Timer.lastTimeStamp;
+		final now = haxe.Timer.stamp();
 		if (side == Right) {
 			return lastRightShootInputCheck == 0 || lastRightShootInputCheck + inputShootCheckDelayMS < now;
 		} else {
@@ -209,7 +208,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	}
 
 	public function tryShoot(side:Side) {
-		final now = Timer.lastTimeStamp;
+		final now = haxe.Timer.stamp();
 		if (side == Right) {
 			if (lastRightShootInputCheck == 0 || lastRightShootInputCheck + inputShootCheckDelayMS < now) {
 				lastRightShootInputCheck = now;

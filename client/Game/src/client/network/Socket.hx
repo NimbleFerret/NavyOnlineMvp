@@ -23,17 +23,17 @@ class Socket {
 		clientSocket.on(SocketProtocol.SocketServerEventGameInit, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventGameInit, data);
 		});
-		clientSocket.on(SocketProtocol.SocketServerEventAddShip, function(data) {
-			EventManager.instance.notify(SocketProtocol.SocketServerEventAddShip, data);
+		clientSocket.on(SocketProtocol.SocketServerEventAddEntity, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventAddEntity, data);
 		});
-		clientSocket.on(SocketProtocol.SocketServerEventRemoveShip, function(data) {
-			EventManager.instance.notify(SocketProtocol.SocketServerEventRemoveShip, data);
+		clientSocket.on(SocketProtocol.SocketServerEventRemoveEntity, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventRemoveEntity, data);
 		});
 		clientSocket.on(SocketProtocol.SocketServerEventUpdateWorldState, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventUpdateWorldState, data);
 		});
-		clientSocket.on(SocketProtocol.SocketServerEventShipMove, function(data) {
-			EventManager.instance.notify(SocketProtocol.SocketServerEventShipMove, data);
+		clientSocket.on(SocketProtocol.SocketServerEventEntityMove, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventEntityMove, data);
 		});
 		clientSocket.on(SocketProtocol.SocketServerEventShipShoot, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventShipShoot, data);

@@ -517,7 +517,7 @@ class BattleGameplay {
 		}
 	}
 
-	public function addShip(message:SocketServerMessageAddShip) {
+	public function addEntity(message:SocketServerMessageAddEntity) {
 		final ship = jsShipToHaxeGameEngineShip(message.ship);
 
 		if (gameState == GameState.Playing) {
@@ -538,16 +538,16 @@ class BattleGameplay {
 		}
 	}
 
-	public function shipMove(message:SocketServerMessageShipMove) {
-		if (gameState == GameState.Playing && playerShipId != message.shipId) {
+	public function entityMove(message:SocketServerMessageEntityMove) {
+		if (gameState == GameState.Playing && playerShipId != message.entityId) {
 			if (message.up)
-				gameEngine.shipAccelerate(message.shipId);
+				gameEngine.shipAccelerate(message.entityId);
 			if (message.down)
-				gameEngine.shipDecelerate(message.shipId);
+				gameEngine.shipDecelerate(message.entityId);
 			if (message.left)
-				gameEngine.shipRotateLeft(message.shipId);
+				gameEngine.shipRotateLeft(message.entityId);
 			if (message.right)
-				gameEngine.shipRotateRight(message.shipId);
+				gameEngine.shipRotateRight(message.entityId);
 		}
 	}
 
@@ -559,9 +559,9 @@ class BattleGameplay {
 		}
 	}
 
-	public function removeShip(message:SocketServerMessageRemoveShip) {
+	public function removeEntity(message:SocketServerMessageRemoveEntity) {
 		if (gameEngine.engineMode == EngineMode.Server) {
-			gameEngine.removeShip(message.shipId);
+			gameEngine.removeShip(message.entityId);
 		}
 	}
 

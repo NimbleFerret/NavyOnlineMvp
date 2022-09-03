@@ -25,6 +25,14 @@ export class User {
 
     @Prop({ default: UserWorldState.WORLD })
     worldState: number;
+
+    dailyPlayersKilled: number;
+    dailyBotsKilled: number;
+    dailyBossesKilled: number;
+
+    weeklyPlayersKilled: number;
+    weeklyBotsKilled: number;
+    weeklyBossesKilled: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

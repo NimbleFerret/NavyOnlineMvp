@@ -1,3 +1,4 @@
+import client.network.RestProtocol.GameWorldData;
 import client.scene.SceneMoralis;
 import client.scene.SceneGlobalMode;
 import client.scene.SceneIsland;
@@ -5,7 +6,6 @@ import client.GuiApp;
 import client.scene.SceneShipsDemo;
 import client.scene.SceneMain;
 import client.scene.SceneDemo1;
-// import client.scene.SceneUIDemo;
 import client.scene.SceneOnlineDemo1;
 
 interface Updatable {
@@ -34,7 +34,7 @@ class Main extends GuiApp {
 
 	private var sceneMoralis:SceneMoralis;
 
-	private final defaultScene = Scene.SceneIsland;
+	private final defaultScene = Scene.SceneGlobalMode;
 	private var currentScene:Scene;
 
 	override function init() {
@@ -60,14 +60,28 @@ class Main extends GuiApp {
 		// sceneUIDemo = new SceneUIDemo();
 
 		sceneShipsDemo = new SceneShipsDemo();
-		sceneIsland = new SceneIsland();
-		sceneGlobalMode = new SceneGlobalMode(function callback(sector:EnterSectorCallback) {
-			currentScene = SceneOnlineDemo1;
+		sceneIsland = new SceneIsland(engine.width, engine.height, function leaveCallback() {
+			trace('Leave island');
+		});
 
-			sceneOnlineDemo1.instanceId = sector.joinSectorResponse.instanceId;
-			sceneOnlineDemo1.start();
-			sevents.addScene(sceneOnlineDemo1.getHud());
-			setScene2D(sceneOnlineDemo1);
+		//
+
+		sceneGlobalMode = new SceneGlobalMode(function callback(sector:EnterSectorCallback) {
+			if (sector.joinSectorResponse.sectorType == GameWorldData.SectorIslandType) {
+				currentScene = SceneIsland;
+
+				sceneIsland.instanceId = sector.joinSectorResponse.instanceId;
+				sceneIsland.start();
+				// sevents.addScene(sceneIsland.getHud());
+				setScene2D(sceneIsland);
+			} else {
+				currentScene = SceneOnlineDemo1;
+
+				sceneOnlineDemo1.instanceId = sector.joinSectorResponse.instanceId;
+				sceneOnlineDemo1.start();
+				sevents.addScene(sceneOnlineDemo1.getHud());
+				setScene2D(sceneOnlineDemo1);
+			}
 		});
 
 		// TODO refactor scene load and unload

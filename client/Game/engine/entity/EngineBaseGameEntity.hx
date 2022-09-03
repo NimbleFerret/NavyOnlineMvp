@@ -7,6 +7,7 @@ import engine.MathUtils;
 enum GameEntityType {
 	Ship;
 	Shell;
+	Character;
 }
 
 enum GameEntityDirection {
@@ -83,6 +84,9 @@ abstract class EngineBaseGameEntity {
 	public final shapeWidthHalf:Float;
 	public final shapeHeightHalf:Float;
 
+	public var rectOffsetX = 0;
+	public var rectOffsetY = 0;
+
 	public function new(entityType:GameEntityType, x:Float, y:Float, rotation:Float, ?id:String, ?ownerId:String) {
 		this.entityType = entityType;
 		switch (entityType) {
@@ -92,6 +96,9 @@ abstract class EngineBaseGameEntity {
 			case Shell:
 				this.shapeWidth = 10;
 				this.shapeHeight = 10;
+			case Character:
+				this.shapeWidth = 40;
+				this.shapeHeight = 40;
 		}
 		this.shapeWidthHalf = shapeWidth / 2;
 		this.shapeHeightHalf = shapeHeight / 2;
@@ -117,7 +124,7 @@ abstract class EngineBaseGameEntity {
 	}
 
 	public function getGameRect() {
-		return new EngineGameRect(x, y, shapeWidth, shapeHeight, MathUtils.dirToRad(direction));
+		return new EngineGameRect(x + rectOffsetX, y + rectOffsetY, shapeWidth, shapeHeight, MathUtils.dirToRad(direction));
 	}
 
 	public function collides(isCollides:Bool) {

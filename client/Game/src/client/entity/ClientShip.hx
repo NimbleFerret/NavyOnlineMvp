@@ -166,7 +166,7 @@ class ClientShip extends ClientBaseGameEntity {
 	}
 
 	function toggleDebugDraw() {
-		if (Game.DebugDraw) {
+		if (BattleGameplay.DebugDraw) {
 			// leftCanon1.alpha = 1;
 			// leftCanon2.alpha = 1;
 			// leftCanon3.alpha = 1;

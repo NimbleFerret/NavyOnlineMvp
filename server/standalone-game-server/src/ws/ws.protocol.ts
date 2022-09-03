@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 import { EntityShip } from "src/game/entity/entity.ship";
+import { EntityCharacter } from "src/island/entity/entity.character";
 
 export enum SectorContent {
     EMPTY = 1,
@@ -20,23 +21,26 @@ export interface SocketServerMessageGameInit {
     instanceId: string;
     worldStateSyncInterval: number;
     ships: EntityShip[];
+    characters: EntityCharacter[];
 }
 
 export interface SocketServerMessageUpdateWorldState {
     tick: number;
     ships: EntityShip[];
+    characters: EntityCharacter[];
 }
 
-export interface SocketServerMessageAddShip {
+export interface SocketServerMessageAddEntity {
     ship: EntityShip;
+    character: EntityCharacter;
 }
 
-export interface SocketServerMessageRemoveShip {
-    shipId: string;
+export interface SocketServerMessageRemoveEntity {
+    entityId: string;
 }
 
-export interface SocketServerMessageShipMove {
-    shipId: string;
+export interface SocketServerMessageEntityMove {
+    entityId: string;
     up: boolean;
     down: boolean;
     left: boolean;
@@ -52,6 +56,7 @@ export interface SocketServerMessageShipShoot {
 export interface SocketServerMessageSync {
     tick: number;
     ships: EntityShip[];
+    characters: EntityCharacter[];
 }
 
 // -------------------------------------
@@ -101,10 +106,10 @@ export class WsProtocol {
     // Server -> Client events
     public static readonly SocketServerEventPong = 'SocketServerEventPong';
     public static readonly SocketServerEventGameInit = 'SocketServerEventGameInit';
-    public static readonly SocketServerEventAddShip = 'SocketServerEventAddShip';
-    public static readonly SocketServerEventRemoveShip = 'SocketServerEventRemoveShip';
+    public static readonly SocketServerEventAddEntity = 'SocketServerEventAddEntity';
+    public static readonly SocketServerEventRemoveEntity = 'SocketServerEventRemoveEntity';
     public static readonly SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
-    public static readonly SocketServerEventShipMove = 'SocketServerEventShipMove';
+    public static readonly SocketServerEventEntityMove = 'SocketServerEventEntityMove';
     public static readonly SocketServerEventShipShoot = 'SocketServerEventShipShoot';
     public static readonly SocketServerEventSync = 'SocketServerEventSync';
 

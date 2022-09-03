@@ -16,6 +16,7 @@ export enum AppEvents {
 
     NotifyPlayer = 'NotifyPlayer',
     NotifyEachPlayer = 'NotifyEachPlayer',
+    PlayerJoined = "PlayerJoined"
 }
 
 // ---------------------------------

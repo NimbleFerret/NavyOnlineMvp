@@ -30,26 +30,36 @@ typedef EntityShip = {
 	ownerId:String
 }
 
+typedef EntityCharacter = {
+	y:Int,
+	x:Int,
+	id:String,
+	ownerId:String
+}
+
 typedef SocketServerMessageGameInit = {
 	tickRate:Int,
 	worldStateSyncInterval:Int,
-	ships:Array<EntityShip>
+	ships:Array<EntityShip>,
+	characters:Array<EntityCharacter>
 }
 
 typedef SocketServerMessageUpdateWorldState = {
-	ships:Array<EntityShip>
+	ships:Array<EntityShip>,
+	characters:Array<EntityCharacter>
 }
 
-typedef SocketServerMessageAddShip = {
-	ship:EntityShip
+typedef SocketServerMessageAddEntity = {
+	ship:EntityShip,
+	character:EntityCharacter,
 }
 
-typedef SocketServerMessageRemoveShip = {
-	shipId:String
+typedef SocketServerMessageRemoveEntity = {
+	entityId:String
 }
 
-typedef SocketServerMessageShipMove = {
-	shipId:String,
+typedef SocketServerMessageEntityMove = {
+	entityId:String,
 	up:Bool,
 	down:Bool,
 	left:Bool,
@@ -63,7 +73,8 @@ typedef SocketServerMessageShipShoot = {
 }
 
 typedef SocketServerMessageSync = {
-	ships:Array<EntityShip>
+	ships:Array<EntityShip>,
+	characters:Array<EntityCharacter>
 }
 
 // -------------------------------------
@@ -72,7 +83,8 @@ typedef SocketServerMessageSync = {
 
 typedef SocketClientMessageJoinGame = {
 	playerId:String,
-	instanceId:String
+	instanceId:String,
+	sectorType:Int
 }
 
 typedef SocketClientMessageLeaveGame = {
@@ -111,10 +123,10 @@ class SocketProtocol {
 	// Server -> Client events
 	public static final SocketServerEventPong = 'SocketServerEventPong';
 	public static final SocketServerEventGameInit = 'SocketServerEventGameInit';
-	public static final SocketServerEventAddShip = 'SocketServerEventAddShip';
-	public static final SocketServerEventRemoveShip = 'SocketServerEventRemoveShip';
+	public static final SocketServerEventAddEntity = 'SocketServerEventAddEntity';
+	public static final SocketServerEventRemoveEntity = 'SocketServerEventRemoveEntity';
 	public static final SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
-	public static final SocketServerEventShipMove = 'SocketServerEventShipMove';
+	public static final SocketServerEventEntityMove = 'SocketServerEventEntityMove';
 	public static final SocketServerEventShipShoot = 'SocketServerEventShipShoot';
 	public static final SocketServerEventSync = 'SocketServerEventSync';
 

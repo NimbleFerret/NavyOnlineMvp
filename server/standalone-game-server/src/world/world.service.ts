@@ -2,11 +2,13 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { Sector, SectorContent, SectorDocument } from './sector.entity';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Sector, SectorDocument } from './sector.entity';
 import { World, WorldDocument } from './world.entity';
-import { GameService } from 'src/game/game.service';
 import { Island, IslandDocument } from './island.entity';
+import { SectorContent } from 'src/ws/ws.protocol';
+import { GameService } from 'src/game/game.service';
+import { IslandService } from 'src/island/island.service';
 
 export interface SectorInfo {
   x: number;
@@ -39,6 +41,7 @@ export class WorldService implements OnModuleInit {
 
   constructor(
     private gameService: GameService,
+    private islandService: IslandService,
     @InjectModel(Sector.name) private sectorModel: Model<SectorDocument>,
     @InjectModel(World.name) private worldModel: Model<WorldDocument>,
     @InjectModel(Island.name) private islandModel: Model<IslandDocument>
@@ -87,22 +90,17 @@ export class WorldService implements OnModuleInit {
     for (const sector of this.world.sectors) {
       if (sector.x == x && sector.y == y) {
         switch (sector.content) {
-          case SectorContent.BASE: {
-            // TODO get base params
-            result.sectorType = sector.content;
-            result.result = true;
-            break;
-          }
+          case SectorContent.BASE:
           case SectorContent.ISLAND: {
-            // TODO get island params
-            const island = await this.findIslandByXAndY(x, y)
-            if (island) {
-              result.sectorType = sector.content;
-              result.result = true;
-              result.instanceId = island.tokenId;
+            const joinResult = this.islandService.joinWorldOrCreate(x, y, sector.content);
+            result.result = joinResult.result;
+
+            if (!result.result) {
+              result.reason = joinResult.reason;
             } else {
-              result.result = false;
-              result.reason = 'Unable to find island on given coords';
+              result.instanceId = joinResult.instanceId;
+              result.playersCount = joinResult.playersCount;
+              result.sectorType = sector.content;
             }
             break;
           }

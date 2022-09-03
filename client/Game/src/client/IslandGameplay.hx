@@ -1,20 +1,42 @@
 package client;
 
-import js.html.PopupBlockedEvent;
-import h2d.col.Point;
-import hxd.Window;
-import hxd.Cursor;
+import client.entity.ClientCharacter;
+import client.network.Socket;
+import client.network.SocketProtocol;
 import engine.IslandEngine;
 import engine.entity.EngineCharacterEntity;
-import client.entity.ClientCharacter;
+import h2d.col.Point;
+import hxd.Window;
 import hxd.Key in K;
 
-// TODO implement basic client gameplay class
+enum IslandGameState {
+	Init;
+	Dock;
+	Land;
+}
+
+class Contour {
+	private final from:Point;
+	private final to:Point;
+
+	public function new(from:Point, to:Point) {
+		this.from = from;
+		this.to = to;
+	}
+
+	public function print() {
+		trace(from.x, from.y, to.x, to.y);
+	}
+}
+
 class IslandGameplay {
 	private final islandsManager:IslandsManager;
 
 	private final islandEngine:IslandEngine;
 	private final clientCharacters = new Map<String, ClientCharacter>();
+	private var clientCharactersCount = 0;
+
+	public var gameState = IslandGameState.Init;
 
 	public var playerId:String;
 	public var playerCharacterId:String;
@@ -29,23 +51,9 @@ class IslandGameplay {
 		islandsManager = new IslandsManager(scene);
 		islandEngine = new IslandEngine();
 
-		final c = new EngineCharacterEntity(100, 100);
-		islandEngine.addCharacter(c);
-
-		playerCharacterId = c.id;
-
-		final clientChar = new ClientCharacter(scene, c);
-
-		clientCharacters.set(clientChar.getId(), clientChar);
-
-		// colliders
-		// addCollider(scene, 100, 200, 200, 2);
-		// addCollider(scene, 100, 200, 2, 80);
-		// addCollider(scene, 100, 280, 260, 2);
-		// addCollider(scene, 360, 280, 2, 300);
-		// addCollider(scene, 100, 200, 2, 80);
-
-		// Mouse debug
+		for (lineCollider in islandEngine.lineColliders) {
+			addLineCollider(scene, lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2);
+		}
 	}
 
 	public function update(dt:Float) {
@@ -79,59 +87,203 @@ class IslandGameplay {
 			// Left line
 			graphics.lineTo(rect.getTopLeftPoint().x, rect.getTopLeftPoint().y);
 		}
+
+		final playerCharacter = getPlayerCharacter();
+		if (playerCharacter != null) {
+			scene.camera.x = hxd.Math.lerp(scene.camera.x, playerCharacter.x, 0.1);
+			scene.camera.y = hxd.Math.lerp(scene.camera.y, playerCharacter.y, 0.1);
+		}
 	}
 
-	private var previousClick:Point;
-	private var clicks = 0;
-
-	function addColliderObject() {
-		if (clicks == 2) {
-			clicks = 0;
-
-			final g = new h2d.Graphics(scene);
-
-			g.lineStyle(3, 0xff0000);
-
-			g.lineTo(previousClick.x, previousClick.y);
-
-			final to = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
-			scene.camera.screenToCamera(to);
-
-			g.lineTo(to.x, to.y);
-		} else {
-			previousClick = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
-			scene.camera.screenToCamera(previousClick);
-		}
-		trace(previousClick);
+	private function getPlayerCharacter() {
+		return clientCharacters.get(playerCharacterId);
 	}
 
 	private function updateInput() {
-		if (K.isPressed(K.MOUSE_LEFT)) {
-			addColliderObject();
-			clicks++;
-		}
-
 		final left = K.isDown(K.LEFT);
 		final right = K.isDown(K.RIGHT);
 		final up = K.isDown(K.UP);
 		final down = K.isDown(K.DOWN);
 
+		var movementChanged = false;
 		if (left)
-			clientCharacters.get(playerCharacterId).moveLeft();
+			movementChanged = islandEngine.characterMoveLeft(playerCharacterId);
 		if (right)
-			clientCharacters.get(playerCharacterId).moveRight();
+			movementChanged = islandEngine.characterMoveRight(playerCharacterId);
 		if (up)
-			clientCharacters.get(playerCharacterId).moveUp();
+			movementChanged = islandEngine.characterMoveUp(playerCharacterId);
 		if (down)
-			clientCharacters.get(playerCharacterId).moveDown();
+			movementChanged = islandEngine.characterMoveDown(playerCharacterId);
+
+		if (movementChanged && (up || down || left || right)) {
+			Socket.instance.move({
+				playerId: playerId,
+				up: up,
+				down: down,
+				left: left,
+				right: right
+			});
+		}
+
+		// if (space) {
+		// 	for (value in contour) {
+		// 		value.print();
+		// 	}
+		// }
+
+		final space = K.isPressed(K.SPACE);
+
+		// if (K.isPressed(K.MOUSE_LEFT)) {
+		// 	addColliderObject();
+		// 	clicks++;
+		// }
 	}
 
-	private function addCollider(scene:h2d.Scene, x:Int, y:Int, w:Int, h:Int) {
-		islandEngine.addCollider(x, y, w, h);
+	// Online stuff
 
-		final fillRect = new h2d.Graphics(scene);
-		fillRect.beginFill(0xff0000);
-		fillRect.drawRect(x, y, w, h);
-		fillRect.endFill();
+	public function startGame(playerId:String, message:SocketServerMessageGameInit) {
+		final characters = jsCharsToHaxeGameEngineChars(message.characters);
+
+		for (character in characters) {
+			islandEngine.addCharacter(character);
+
+			final newClientChar = new ClientCharacter(scene, character);
+			clientCharacters.set(character.id, newClientChar);
+			clientCharactersCount++;
+
+			if (character.ownerId == playerId) {
+				playerCharacterId = character.id;
+			}
+		}
+		this.playerId = playerId;
+	}
+
+	public function addEntity(message:SocketServerMessageAddEntity) {
+		final character = jsCharToHaxeGameEngineChar(message.character);
+
+		if (!clientCharacters.exists(character.id)) {
+			islandEngine.addCharacter(character);
+			final newClientShip = new ClientCharacter(scene, character);
+			clientCharacters.set(character.id, newClientShip);
+			clientCharactersCount++;
+		}
+	}
+
+	public function entityMove(message:SocketServerMessageEntityMove) {
+		if (playerCharacterId != message.entityId) {
+			if (message.up)
+				islandEngine.characterMoveUp(message.entityId);
+			if (message.down)
+				islandEngine.characterMoveDown(message.entityId);
+			if (message.left)
+				islandEngine.characterMoveLeft(message.entityId);
+			if (message.right)
+				islandEngine.characterMoveRight(message.entityId);
+		}
+	}
+
+	public function removeEntity(message:SocketServerMessageRemoveEntity) {
+		// TODO add server game engine check
+		islandEngine.removeCharacter(message.entityId);
+	}
+
+	public function updateWorldState(message:SocketServerMessageUpdateWorldState) {
+		for (character in message.characters) {
+			final clientCharacter = clientCharacters.get(character.id);
+			if (clientCharacter != null) {
+				final distanceBetweenServerAndClient = hxd.Math.distance(character.x - clientCharacter.x, character.y - clientCharacter.y);
+				if (distanceBetweenServerAndClient >= 50) {
+					clientCharacter.updateEntityPosition(character.x, character.y);
+				}
+			}
+		}
+		if (message.characters.length != clientCharactersCount) {
+			Socket.instance.sync({
+				playerId: playerId
+			});
+		}
+	}
+
+	public function sync(message:SocketServerMessageSync) {
+		for (character in message.characters) {
+			final clientShip = clientCharacters.get(character.id);
+			if (clientShip != null) {
+				clientShip.updateEntityPosition(character.x, character.y);
+			} else {
+				final newCharacter = jsCharToHaxeGameEngineChar(character);
+				islandEngine.addCharacter(newCharacter);
+				final newClientShip = new ClientCharacter(scene, newCharacter);
+				clientCharacters.set(newCharacter.id, newClientShip);
+				clientCharactersCount++;
+			}
+		}
+	}
+
+	// --------------------------------------
+	// Utils
+	// --------------------------------------
+
+	private function jsCharToHaxeGameEngineChar(character:EntityCharacter) {
+		return new EngineCharacterEntity(character.x, character.y, character.id, character.ownerId);
+	}
+
+	private function jsCharsToHaxeGameEngineChars(characters:Array<EntityCharacter>) {
+		return characters.map(character -> {
+			return new EngineCharacterEntity(character.x, character.y, character.id, character.ownerId);
+		});
+	}
+
+	// --------------------------------------
+	// Collider debug stuff
+	// --------------------------------------
+
+	function addColliderObject() {
+		if (firstColliderAdded) {
+			final to = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
+			scene.camera.screenToCamera(to);
+
+			final g = new h2d.Graphics(scene);
+			g.lineStyle(3, 0xff0000);
+			g.lineTo(previousClick.x, previousClick.y);
+			g.lineTo(to.x, to.y);
+
+			contour.push(new Contour(previousClick, to));
+
+			previousClick = to;
+		} else {
+			if (clicks == 2) {
+				clicks = 0;
+
+				final g = new h2d.Graphics(scene);
+				g.lineStyle(3, 0xff0000);
+				g.lineTo(previousClick.x, previousClick.y);
+
+				final to = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
+				scene.camera.screenToCamera(to);
+
+				g.lineTo(to.x, to.y);
+
+				contour.push(new Contour(previousClick, to));
+
+				firstColliderAdded = true;
+
+				previousClick = to;
+			} else {
+				previousClick = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
+				scene.camera.screenToCamera(previousClick);
+			}
+		}
+	}
+
+	private var previousClick:Point;
+	private var clicks = 0;
+	private var firstColliderAdded = false;
+	private var contour = new Array<Contour>();
+
+	private function addLineCollider(scene:h2d.Scene, x1:Float, y1:Float, x2:Float, y2:Float) {
+		final g = new h2d.Graphics(scene);
+		g.lineStyle(3, 0xff0000);
+		g.lineTo(x1, y1);
+		g.lineTo(x2, y2);
 	}
 }

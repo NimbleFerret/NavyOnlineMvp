@@ -7,6 +7,7 @@ import {
 } from '../app.events';
 import { GameInstance } from './game.instance';
 import {
+    SectorContent,
     SocketClientMessageJoinGame,
     SocketClientMessageMove,
     SocketClientMessageRespawn,
@@ -14,8 +15,6 @@ import {
     SocketClientMessageSync,
 } from 'src/ws/ws.protocol';
 import { AddBotDto } from './game.controller';
-import { SectorContent } from 'src/world/sector.entity';
-
 
 @Injectable()
 export class GameService {
@@ -112,7 +111,7 @@ export class GameService {
     // Client events from WebSocket
     // ------------------------------------- 
 
-    @OnEvent(AppEvents.PlayerJoined)
+    @OnEvent(AppEvents.PlayerJoinedGameInstance)
     async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
         // Create a new instance and add player into it
         if (!this.playerInstaneMap.has(data.playerId)) {
@@ -141,6 +140,15 @@ export class GameService {
                 Logger.log(`No more player in instance: ${instanceId}, destroying...`);
                 gameInstance.destroy();
                 this.gameInstances.delete(instanceId);
+
+                let sectorKeyToDelete: string;
+                this.sectorInstance.forEach((v, k) => {
+                    if (v == instanceId) {
+                        sectorKeyToDelete = k;
+                    }
+                });
+                this.sectorInstance.delete(sectorKeyToDelete);
+
                 Logger.log(`Instance: ${instanceId} destroyed !`);
             }
         } else {
