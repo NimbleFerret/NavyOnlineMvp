@@ -108,7 +108,7 @@ class SceneGlobalMode extends Scene {
 
 	private function checkDistance(x:Int, y:Int) {
 		final pos = sectorPosToWorldCoords(x, y);
-		return hxd.Math.distance(pos.x - playerBmp.x, pos.y - playerBmp.y) < 150;
+		return hxd.Math.distance(pos.x - playerBmp.x, pos.y - playerBmp.y) < 200;
 	}
 
 	private function sectorPosToWorldCoords(sx:Int, sy:Int) {

@@ -12,7 +12,7 @@ class IslandEngine extends BaseEngine {
 
 	public static function main() {}
 
-	public function new() {
+	public function new(engineMode = EngineMode.Server) {
 		super(engineMode, GameEntityType.Character, new CharacterManager());
 
 		addLineCollider(1462, 132, 1293, 115);

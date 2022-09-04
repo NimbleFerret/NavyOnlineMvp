@@ -1,13 +1,14 @@
 package client.scene;
 
-import client.gameplay.island.IslandGameplay;
+import h3d.Engine;
+import engine.BaseEngine.EngineMode;
 import client.event.EventManager;
 import client.event.EventManager.EventListener;
+import client.gameplay.island.IslandGameplay;
 import client.network.Socket;
 import client.network.SocketProtocol;
 import h2d.Scene;
 
-// TODO rename event listener to some socket stuff
 class SceneIsland extends Scene implements EventListener {
 	public var instanceId:String;
 
@@ -16,22 +17,41 @@ class SceneIsland extends Scene implements EventListener {
 
 	public function new(width:Int, height:Int, leaveCallback:Void->Void) {
 		super();
-
+		this.leaveCallback = leaveCallback;
 		camera.setViewport(width / 2, height / 2, 0, 0);
 	}
 
 	public function start() {
-		game = new IslandGameplay(this, function callback() {});
+		game = new IslandGameplay(this, function callback() {
+			if (leaveCallback != null) {
+				game = null;
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventGameInit, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventAddEntity, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityMove, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventSync, this);
+				leaveCallback();
+			}
+		}, EngineMode.Server);
 
-		// TODO add socket callbacks
-		Socket.instance.joinGame({playerId: Player.instance.playerData.ethAddress, instanceId: instanceId, sectorType: 3});
+		if (game.baseEngine.engineMode == EngineMode.Server) {
+			Socket.instance.joinGame({playerId: Player.instance.playerData.ethAddress, instanceId: instanceId, sectorType: 3});
 
-		EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);
-		EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddEntity, this);
-		EventManager.instance.subscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
-		EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityMove, this);
-		EventManager.instance.subscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
-		EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
+			EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);
+			EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddEntity, this);
+			EventManager.instance.subscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
+			EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityMove, this);
+			EventManager.instance.subscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
+			EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
+		} else {
+			// TODO implement client init
+		}
+	}
+
+	public override function render(e:Engine) {
+		game.hud.render(e);
+		super.render(e);
 	}
 
 	public function update(dt:Float, fps:Float) {
@@ -62,5 +82,9 @@ class SceneIsland extends Scene implements EventListener {
 			default:
 				trace('Unknown socket message');
 		}
+	}
+
+	public function getHud() {
+		return game.hud;
 	}
 }

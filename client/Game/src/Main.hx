@@ -35,7 +35,8 @@ class Main extends GuiApp {
 	private final defaultScene = Scene.SceneGlobalMode;
 	private var currentScene:Scene;
 
-	private var hudAdded = false;
+	private var battleHudAdded = false;
+	private var islandHudAdded = false;
 
 	override function init() {
 		super.init();
@@ -48,7 +49,7 @@ class Main extends GuiApp {
 		// 	setScene2D(sceneOnlineDemo1);
 		// });
 		// sceneMoralis = new SceneMoralis();
-		// sceneDemo1 = new SceneDemo1(engine.width, engine.height);
+		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
 
 		sceneOnlineDemo1 = new SceneOnlineDemo1(engine.width, engine.height, function leaveCallback() {
 			currentScene = SceneGlobalMode;
@@ -60,7 +61,9 @@ class Main extends GuiApp {
 
 		sceneShipsDemo = new SceneShipsDemo();
 		sceneIsland = new SceneIsland(engine.width, engine.height, function leaveCallback() {
-			trace('Leave island');
+			currentScene = SceneGlobalMode;
+			sceneGlobalMode.start();
+			setScene2D(sceneGlobalMode);
 		});
 
 		//
@@ -71,16 +74,19 @@ class Main extends GuiApp {
 
 				sceneIsland.instanceId = sector.joinSectorResponse.instanceId;
 				sceneIsland.start();
-				// sevents.addScene(sceneIsland.getHud());
+				if (!islandHudAdded) {
+					sevents.addScene(sceneIsland.getHud());
+					islandHudAdded = true;
+				}
 				setScene2D(sceneIsland);
 			} else {
 				currentScene = SceneOnlineDemo1;
 
 				sceneOnlineDemo1.instanceId = sector.joinSectorResponse.instanceId;
 				sceneOnlineDemo1.start();
-				if (!hudAdded) {
+				if (!battleHudAdded) {
 					sevents.addScene(sceneOnlineDemo1.getHud());
-					hudAdded = true;
+					battleHudAdded = true;
 				}
 				setScene2D(sceneOnlineDemo1);
 			}
@@ -93,15 +99,16 @@ class Main extends GuiApp {
 				setScene2D(sceneMain);
 			case SceneDemo1:
 				sceneDemo1.start();
-				sevents.addScene(sceneDemo1.getHud());
+				// sevents.addScene(sceneDemo1.getHud());
 				setScene2D(sceneDemo1);
 			case SceneOnlineDemo1:
 				sceneOnlineDemo1.start();
-				sevents.addScene(sceneOnlineDemo1.getHud());
+				// sevents.addScene(sceneOnlineDemo1.getHud());
 				setScene2D(sceneOnlineDemo1);
 			case SceneShipsDemo:
 				setScene2D(sceneShipsDemo);
 			case SceneIsland:
+				sceneIsland.start();
 				setScene2D(sceneIsland);
 			case SceneGlobalMode:
 				setScene2D(sceneGlobalMode);

@@ -189,7 +189,9 @@ abstract class BasicGameplay {
 		}
 	}
 
-	//
+	// --------------------------------------
+	// Abstract impl
+	// --------------------------------------
 
 	private function moveUp(entityId:String) {
 		return baseEngine.entityMoveUp(entityId);
