@@ -5,8 +5,7 @@ export enum AppEvents {
     // Socket events
     // ---------------------------------
 
-    PlayerJoinedGameInstance = 'PlayerJoinedGameInstance',
-    PlayerJoinedIslandInstance = 'PlayerJoinedIslandInstance',
+    PlayerJoinedInstance = 'PlayerJoinedInstance',
     PlayerLeave = 'PlayerLeave',
     PlayerDisconnected = 'PlayerDisconnected',
     PlayerMove = 'PlayerMove',

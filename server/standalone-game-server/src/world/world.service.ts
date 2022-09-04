@@ -7,8 +7,8 @@ import { Sector, SectorDocument } from './sector.entity';
 import { World, WorldDocument } from './world.entity';
 import { Island, IslandDocument } from './island.entity';
 import { SectorContent } from 'src/ws/ws.protocol';
-import { GameService } from 'src/game/game.service';
-import { IslandService } from 'src/island/island.service';
+import { GameplayIslandService } from 'src/gameplay/island/gameplay.island.service';
+import { GameplayBattleService } from 'src/gameplay/battle/gameplay.battle.service';
 
 export interface SectorInfo {
   x: number;
@@ -40,8 +40,8 @@ export class WorldService implements OnModuleInit {
   private world: World;
 
   constructor(
-    private gameService: GameService,
-    private islandService: IslandService,
+    private gameplayBattleService: GameplayBattleService,
+    private gameplayIslandService: GameplayIslandService,
     @InjectModel(Sector.name) private sectorModel: Model<SectorDocument>,
     @InjectModel(World.name) private worldModel: Model<WorldDocument>,
     @InjectModel(Island.name) private islandModel: Model<IslandDocument>
@@ -92,7 +92,7 @@ export class WorldService implements OnModuleInit {
         switch (sector.content) {
           case SectorContent.BASE:
           case SectorContent.ISLAND: {
-            const joinResult = this.islandService.joinWorldOrCreate(x, y, sector.content);
+            const joinResult = this.gameplayIslandService.joinWorldOrCreate(x, y, sector.content);
             result.result = joinResult.result;
 
             if (!result.result) {
@@ -108,15 +108,15 @@ export class WorldService implements OnModuleInit {
           case SectorContent.BOSS:
           case SectorContent.PVE:
           case SectorContent.PVP:
-            const joinResult = this.gameService.joinWorldOrCreate(x, y, sector.content);
+            const joinResult = this.gameplayBattleService.joinWorldOrCreate(x, y, sector.content);
             result.result = joinResult.result;
 
             if (!result.result) {
               result.reason = joinResult.reason;
             } else {
+              // TODO add total ships info ?
               result.instanceId = joinResult.instanceId;
               result.playersCount = joinResult.playersCount;
-              result.totalShips = joinResult.totalShips;
               result.sectorType = sector.content;
             }
         }

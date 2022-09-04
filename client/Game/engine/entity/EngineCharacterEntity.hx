@@ -82,10 +82,6 @@ class EngineCharacterEntity extends EngineBaseGameEntity {
 		}
 	}
 
-	public function onCollision() {}
-
-	public function customUpdate(dt:Float) {}
-
 	public function checkMovementInput() {
 		final now = haxe.Timer.stamp();
 

@@ -47,6 +47,7 @@ class StartGameDialogComp extends h2d.Flow implements h2d.domkit.Object {
 	</StartGameDialog>;
 	public function new(?parent) {
 		super(parent);
+		
 		initComponent();
 	}
 }
@@ -55,12 +56,27 @@ class StartGameDialogComp extends h2d.Flow implements h2d.domkit.Object {
 class RetryDialogComp extends h2d.Flow implements h2d.domkit.Object {
 	static var SRC =
 	<RetryDialog>
-		<text public id="labelTxt" />
+		<text public id="labelTxt"/>
 		<button public id="btn"/>
 	</RetryDialog>;
 
 	public function getTextComponent() return labelTxt;
 
+	public function new(?parent) {
+		super(parent);
+		initComponent();
+	}
+}
+
+
+@:uiComp("ChoiceDialog")
+class ChoiceDialogComp extends h2d.Flow implements h2d.domkit.Object {
+	static var SRC =
+	<ChoiceDialog>
+		<text public id="labelTxt"/>
+		<button public id="btn1"/>
+		<button public id="btn2"/>
+	</ChoiceDialog>;
 	public function new(?parent) {
 		super(parent);
 		initComponent();

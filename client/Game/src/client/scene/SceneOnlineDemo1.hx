@@ -1,6 +1,7 @@
 package client.scene;
 
-import engine.GameEngine.EngineMode;
+import engine.BaseEngine.EngineMode;
+import client.gameplay.battle.BattleGameplay;
 import client.event.EventManager;
 import client.event.EventManager.EventListener;
 import client.network.Socket;
@@ -27,27 +28,20 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 	public function start() {
 		game = new BattleGameplay(this, EngineMode.Server, function callback() {
 			if (leaveCallback != null) {
+				game = null;
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventGameInit, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventAddEntity, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityMove, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventShipShoot, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventSync, this);
 				leaveCallback();
 			}
 		});
 
 		// Refactor, no need sector type for real
 		Socket.instance.joinGame({playerId: Player.instance.playerData.ethAddress, instanceId: instanceId, sectorType: 1});
-
-		// game.joinNewGameCallback = function callback() {
-		// 	Socket.instance.joinGame({playerId: playerId, instanceId: ''});
-		// }
-		// game.joinExistingGameCallback = function callback() {}
-
-		// game.hud.addButton("Connect socket", function() {
-		// 	Socket.instance.joinGame({playerId: playerId});
-		// });
-
-		// game.hud.addButton("Retry", function() {
-		// Socket.instance.joinGame({playerId: playerId});
-		// });
-
-		// Rest.instance.foo();
 
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddEntity, this);
@@ -69,6 +63,13 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 	}
 
 	public function update(dt:Float, fps:Float) {
+		final c = camera;
+
+		if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))
+			c.scale(1.25, 1.25);
+		if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_DOWN))
+			c.scale(0.8, 0.8);
+
 		game.update(dt, fps);
 	}
 

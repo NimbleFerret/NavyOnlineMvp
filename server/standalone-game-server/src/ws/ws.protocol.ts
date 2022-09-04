@@ -1,8 +1,5 @@
 /* eslint-disable prettier/prettier */
 
-import { EntityShip } from "src/game/entity/entity.ship";
-import { EntityCharacter } from "src/island/entity/entity.character";
-
 export enum SectorContent {
     EMPTY = 1,
     BASE = 2,
@@ -20,19 +17,16 @@ export interface SocketServerMessageGameInit {
     tickRate: number;
     instanceId: string;
     worldStateSyncInterval: number;
-    ships: EntityShip[];
-    characters: EntityCharacter[];
+    entities: object[];
 }
 
 export interface SocketServerMessageUpdateWorldState {
     tick: number;
-    ships: EntityShip[];
-    characters: EntityCharacter[];
+    entities: object[];
 }
 
 export interface SocketServerMessageAddEntity {
-    ship: EntityShip;
-    character: EntityCharacter;
+    entity: object;
 }
 
 export interface SocketServerMessageRemoveEntity {
@@ -55,8 +49,7 @@ export interface SocketServerMessageShipShoot {
 
 export interface SocketServerMessageSync {
     tick: number;
-    ships: EntityShip[];
-    characters: EntityCharacter[];
+    entities: object[];
 }
 
 // -------------------------------------

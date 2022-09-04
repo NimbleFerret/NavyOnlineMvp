@@ -43,7 +43,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		GameEntityDirection.West => new PosOffsetArray(new PosOffset(0, 56, -48), new PosOffset(0, 15, -48), new PosOffset(0, -27, -48)),
 	];
 
-	public final role:Role;
+	public var role:Role;
 
 	// -----------------------
 	// Cabblacks
@@ -266,8 +266,4 @@ class EngineShipEntity extends EngineBaseGameEntity {
 			y: y + offsetY
 		}
 	}
-
-	public function customUpdate(dt:Float) {}
-
-	public function onCollision() {}
 }

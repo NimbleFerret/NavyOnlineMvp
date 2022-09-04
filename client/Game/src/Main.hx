@@ -25,10 +25,8 @@ enum Scene {
 class Main extends GuiApp {
 	private var sceneMain:SceneMain;
 	private var sceneDemo1:SceneDemo1;
-	// private var sceneUIDemo:SceneUIDemo;
 	private var sceneShipsDemo:SceneShipsDemo;
 	private var sceneOnlineDemo1:SceneOnlineDemo1;
-
 	private var sceneIsland:SceneIsland;
 	private var sceneGlobalMode:SceneGlobalMode;
 
@@ -37,23 +35,24 @@ class Main extends GuiApp {
 	private final defaultScene = Scene.SceneGlobalMode;
 	private var currentScene:Scene;
 
+	private var hudAdded = false;
+
 	override function init() {
 		super.init();
 
 		engine.backgroundColor = 0x6BC2EE;
 
-		sceneMain = new SceneMain(function loadLevel1() {
-			setScene2D(sceneDemo1);
-		}, function loadLevel2() {
-			setScene2D(sceneOnlineDemo1);
-		});
-
-		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
-		sceneMoralis = new SceneMoralis();
+		// sceneMain = new SceneMain(function loadLevel1() {
+		// 	setScene2D(sceneDemo1);
+		// }, function loadLevel2() {
+		// 	setScene2D(sceneOnlineDemo1);
+		// });
+		// sceneMoralis = new SceneMoralis();
+		// sceneDemo1 = new SceneDemo1(engine.width, engine.height);
 
 		sceneOnlineDemo1 = new SceneOnlineDemo1(engine.width, engine.height, function leaveCallback() {
 			currentScene = SceneGlobalMode;
-			sceneGlobalMode.init();
+			sceneGlobalMode.start();
 			setScene2D(sceneGlobalMode);
 		});
 
@@ -79,7 +78,10 @@ class Main extends GuiApp {
 
 				sceneOnlineDemo1.instanceId = sector.joinSectorResponse.instanceId;
 				sceneOnlineDemo1.start();
-				sevents.addScene(sceneOnlineDemo1.getHud());
+				if (!hudAdded) {
+					sevents.addScene(sceneOnlineDemo1.getHud());
+					hudAdded = true;
+				}
 				setScene2D(sceneOnlineDemo1);
 			}
 		});
@@ -97,9 +99,6 @@ class Main extends GuiApp {
 				sceneOnlineDemo1.start();
 				sevents.addScene(sceneOnlineDemo1.getHud());
 				setScene2D(sceneOnlineDemo1);
-			// case SceneUIDemo:
-			// 	sceneUIDemo.start();
-			// 	setScene2D(sceneUIDemo);
 			case SceneShipsDemo:
 				setScene2D(sceneShipsDemo);
 			case SceneIsland:
@@ -120,15 +119,11 @@ class Main extends GuiApp {
 		if (currentScene == SceneOnlineDemo1) {
 			sceneOnlineDemo1.update(dt, engine.fps);
 		}
-		// if (currentScene == SceneUIDemo) {
-		// 	sceneUIDemo.update();
-		// }
-
 		if (currentScene == SceneShipsDemo) {
 			sceneShipsDemo.update();
 		}
 		if (currentScene == SceneIsland) {
-			sceneIsland.update(dt);
+			sceneIsland.update(dt, engine.fps);
 		}
 	}
 

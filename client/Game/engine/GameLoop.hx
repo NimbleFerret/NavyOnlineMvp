@@ -16,12 +16,10 @@ class GameLoop {
 
 	public function new(update:Dynamic) {
 		#if js
-		trace("JS !");
 		gameLoop = new DummyJsLoop(update, targetFps);
 		#end
 
 		#if (target.threaded)
-		trace("NATIVE !");
 		// sys.thread.Thread.create(() -> {
 		// 	while (true) {
 		// 		trace("other thread");

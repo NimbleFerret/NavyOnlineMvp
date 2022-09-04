@@ -1,5 +1,6 @@
 package client.scene;
 
+import client.gameplay.island.IslandGameplay;
 import client.event.EventManager;
 import client.event.EventManager.EventListener;
 import client.network.Socket;
@@ -8,10 +9,9 @@ import h2d.Scene;
 
 // TODO rename event listener to some socket stuff
 class SceneIsland extends Scene implements EventListener {
-	private var game:IslandGameplay;
-
 	public var instanceId:String;
 
+	private var game:IslandGameplay;
 	private var leaveCallback:Void->Void;
 
 	public function new(width:Int, height:Int, leaveCallback:Void->Void) {
@@ -34,7 +34,7 @@ class SceneIsland extends Scene implements EventListener {
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
 	}
 
-	public function update(dt:Float) {
+	public function update(dt:Float, fps:Float) {
 		final c = camera;
 
 		if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))
@@ -42,7 +42,7 @@ class SceneIsland extends Scene implements EventListener {
 		if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_DOWN))
 			c.scale(0.8, 0.8);
 
-		game.update(dt);
+		game.update(dt, fps);
 	}
 
 	public function notify(event:String, message:Dynamic) {

@@ -52,7 +52,15 @@ class PosOffsetArray {
 	}
 }
 
-abstract class EngineBaseGameEntity {
+interface GameEntityCustomUpdate {
+	public function onUpdate():Void;
+}
+
+interface GameEntityCustomCollide {
+	public function onCollide():Void;
+}
+
+class EngineBaseGameEntity {
 	// ----------------------
 	// General
 	// ----------------------
@@ -87,6 +95,9 @@ abstract class EngineBaseGameEntity {
 	public var rectOffsetX = 0;
 	public var rectOffsetY = 0;
 
+	public var customUpdate:GameEntityCustomUpdate;
+	public var customCollide:GameEntityCustomCollide;
+
 	public function new(entityType:GameEntityType, x:Float, y:Float, rotation:Float, ?id:String, ?ownerId:String) {
 		this.entityType = entityType;
 		switch (entityType) {
@@ -118,7 +129,8 @@ abstract class EngineBaseGameEntity {
 	}
 
 	public function update(dt:Float) {
-		customUpdate(dt);
+		if (customUpdate != null)
+			customUpdate.onUpdate();
 		if (canMove)
 			move(dt);
 	}
@@ -129,7 +141,8 @@ abstract class EngineBaseGameEntity {
 
 	public function collides(isCollides:Bool) {
 		this.isCollides = isCollides;
-		onCollision();
+		if (customCollide != null)
+			customCollide.onCollide();
 	}
 
 	function move(dt:Float) {
@@ -138,8 +151,4 @@ abstract class EngineBaseGameEntity {
 		x += dx;
 		y += dy;
 	}
-
-	public abstract function onCollision():Void;
-
-	public abstract function customUpdate(dt:Float):Void;
 }

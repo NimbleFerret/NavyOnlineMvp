@@ -1,32 +1,19 @@
 package engine;
 
+import engine.BaseEngine;
 import engine.entity.EngineGameLine;
-import engine.entity.manager.CharacterManager;
 import engine.entity.EngineCharacterEntity;
-import engine.GameLoop;
+import engine.entity.EngineBaseGameEntity;
+import engine.entity.manager.CharacterManager;
 
-// TODO also can use abstraction here
 @:expose
-class IslandEngine {
-	final gameLoop:GameLoop;
-
-	public var tick:Int;
-
-	public final characterManager:CharacterManager;
-
-	private final playerCharacterMap = new Map<String, String>();
-
+class IslandEngine extends BaseEngine {
 	public final lineColliders = new Array<EngineGameLine>();
 
-	// callbacks
-	public var tickCallback:Void->Void;
-	public var createCharacterCallback:EngineCharacterEntity->Void;
-	public var deleteCharacterCallback:EngineCharacterEntity->Void;
+	public static function main() {}
 
 	public function new() {
-		characterManager = new CharacterManager();
-
-		// TODO add colliders here
+		super(engineMode, GameEntityType.Character, new CharacterManager());
 
 		addLineCollider(1462, 132, 1293, 115);
 		addLineCollider(1293, 115, 1274, 62);
@@ -69,72 +56,65 @@ class IslandEngine {
 		addLineCollider(347, 530, 345, 287);
 		addLineCollider(345, 287, 109, 281);
 		addLineCollider(109, 281, 96, 206);
-
-		gameLoop = new GameLoop(function loop(dt:Float, tick:Int) {
-			this.tick = tick;
-
-			for (character in characterManager.entities) {
-				character.collides(false);
-				character.update(dt);
-
-				final char = cast(character, EngineCharacterEntity);
-
-				if (char.wantToMoveLeft) {
-					char.moveLeft();
-				}
-				if (char.wantToMoveRight) {
-					char.moveRight();
-				}
-				if (char.wantToMoveUp) {
-					char.moveUp();
-				}
-				if (char.wantToMoveDown) {
-					char.moveDown();
-				}
-
-				var revertMovement = false;
-
-				for (lineCollider in lineColliders) {
-					if (character.getGameRect().intersectsWithLine(lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2)) {
-						character.collides(true);
-						revertMovement = true;
-					}
-				}
-
-				if (revertMovement) {
-					if (char.wantToMoveLeft) {
-						char.moveLeft(true);
-					}
-					if (char.wantToMoveRight) {
-						char.moveRight(true);
-					}
-					if (char.wantToMoveUp) {
-						char.moveUp(true);
-					}
-					if (char.wantToMoveDown) {
-						char.moveDown(true);
-					}
-				}
-
-				char.wantToMoveLeft = false;
-				char.wantToMoveRight = false;
-				char.wantToMoveUp = false;
-				char.wantToMoveDown = false;
-			}
-
-			if (tickCallback != null) {
-				tickCallback();
-			}
-		});
 	}
 
-	public function destroy() {
-		gameLoop.stopLoop();
-		characterManager.destroy();
+	public function engineLoopUpdate(dt:Float) {
+		for (character in mainEntityManager.entities) {
+			character.collides(false);
+			character.update(dt);
 
-		tickCallback = null;
-		createCharacterCallback = null;
-		deleteCharacterCallback = null;
+			final char = cast(character, EngineCharacterEntity);
+
+			if (char.wantToMoveLeft) {
+				char.moveLeft();
+			}
+			if (char.wantToMoveRight) {
+				char.moveRight();
+			}
+			if (char.wantToMoveUp) {
+				char.moveUp();
+			}
+			if (char.wantToMoveDown) {
+				char.moveDown();
+			}
+
+			var revertMovement = false;
+
+			for (lineCollider in lineColliders) {
+				if (character.getGameRect().intersectsWithLine(lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2)) {
+					character.collides(true);
+					revertMovement = true;
+				}
+			}
+
+			if (revertMovement) {
+				if (char.wantToMoveLeft) {
+					char.moveLeft(true);
+				}
+				if (char.wantToMoveRight) {
+					char.moveRight(true);
+				}
+				if (char.wantToMoveUp) {
+					char.moveUp(true);
+				}
+				if (char.wantToMoveDown) {
+					char.moveDown(true);
+				}
+			}
+
+			char.wantToMoveLeft = false;
+			char.wantToMoveRight = false;
+			char.wantToMoveUp = false;
+			char.wantToMoveDown = false;
+		}
+	}
+
+	public function customDelete() {}
+
+	public function createEntity(x:Float, y:Float, id:String, ?ownerId:String) {
+		final entity = new EngineCharacterEntity(x, y, id, ownerId);
+		createMainEntity(entity, true);
+		return entity;
 	}
 
 	public function addLineCollider(x1:Int, y1:Int, x2:Int, y2:Int) {
@@ -142,34 +122,8 @@ class IslandEngine {
 		lineColliders.push(collider);
 	}
 
-	public function addCharacter(character:EngineCharacterEntity) {
-		characterManager.add(character);
-		playerCharacterMap.set(character.ownerId, character.id);
-	}
-
-	public function createCharacter(x:Float, y:Float, ?id:String, ?ownerId:String):EngineCharacterEntity {
-		final newCharacter = new EngineCharacterEntity(x, y, id, ownerId);
-		characterManager.add(newCharacter);
-		if (createCharacterCallback != null) {
-			createCharacterCallback(newCharacter);
-		}
-		playerCharacterMap.set(newCharacter.ownerId, newCharacter.id);
-		return newCharacter;
-	}
-
-	public function removeCharacter(characterId:String) {
-		final character = cast(characterManager.getEntityById(characterId), EngineCharacterEntity);
-		if (character != null) {
-			if (deleteCharacterCallback != null) {
-				deleteCharacterCallback(character);
-			}
-			playerCharacterMap.remove(character.ownerId);
-			characterManager.remove(characterId);
-		}
-	}
-
-	public function characterMoveUp(characterId:String) {
-		final character = cast(characterManager.getEntityById(characterId), EngineCharacterEntity);
+	public function entityMoveUp(id:String) {
+		final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
 		if (character != null && character.moveUp()) {
 			character.wantToMoveUp = true;
 			return true;
@@ -178,8 +132,8 @@ class IslandEngine {
 		}
 	}
 
-	public function characterMoveDown(characterId:String) {
-		final character = cast(characterManager.getEntityById(characterId), EngineCharacterEntity);
+	public function entityMoveDown(id:String) {
+		final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
 		if (character != null && character.moveDown()) {
 			character.wantToMoveDown = true;
 			return true;
@@ -188,8 +142,8 @@ class IslandEngine {
 		}
 	}
 
-	public function characterMoveLeft(characterId:String) {
-		final character = cast(characterManager.getEntityById(characterId), EngineCharacterEntity);
+	public function entityMoveLeft(id:String) {
+		final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
 		if (character != null && character.moveLeft()) {
 			character.wantToMoveLeft = true;
 			return true;
@@ -198,8 +152,8 @@ class IslandEngine {
 		}
 	}
 
-	public function characterMoveRight(characterId:String) {
-		final character = cast(characterManager.getEntityById(characterId), EngineCharacterEntity);
+	public function entityMoveRight(id:String) {
+		final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
 		if (character != null && character.moveRight()) {
 			character.wantToMoveRight = true;
 			return true;
@@ -207,6 +161,4 @@ class IslandEngine {
 			return false;
 		}
 	}
-
-	public static function main() {}
 }

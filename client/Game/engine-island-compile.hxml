@@ -1,4 +1,0 @@
--cp engine
--lib uuid
--js IslandEngine.js
--main engine.IslandEngine

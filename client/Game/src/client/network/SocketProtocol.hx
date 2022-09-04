@@ -40,18 +40,15 @@ typedef EntityCharacter = {
 typedef SocketServerMessageGameInit = {
 	tickRate:Int,
 	worldStateSyncInterval:Int,
-	ships:Array<EntityShip>,
-	characters:Array<EntityCharacter>
+	entities:Array<Dynamic>
 }
 
 typedef SocketServerMessageUpdateWorldState = {
-	ships:Array<EntityShip>,
-	characters:Array<EntityCharacter>
+	entities:Array<Dynamic>
 }
 
 typedef SocketServerMessageAddEntity = {
-	ship:EntityShip,
-	character:EntityCharacter,
+	entitiy:Dynamic
 }
 
 typedef SocketServerMessageRemoveEntity = {
@@ -73,8 +70,7 @@ typedef SocketServerMessageShipShoot = {
 }
 
 typedef SocketServerMessageSync = {
-	ships:Array<EntityShip>,
-	characters:Array<EntityCharacter>
+	entities:Array<Dynamic>
 }
 
 // -------------------------------------

@@ -1,7 +1,8 @@
 package client.scene;
 
+import client.gameplay.battle.BattleGameplay;
 import engine.entity.EngineShipEntity.Role;
-import engine.GameEngine.EngineMode;
+import engine.BaseEngine.EngineMode;
 import h3d.Engine;
 import h2d.Scene;
 

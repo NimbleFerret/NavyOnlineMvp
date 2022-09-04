@@ -1,5 +1,6 @@
 package client.entity;
 
+import client.gameplay.battle.BattleGameplay;
 import engine.entity.EngineBaseGameEntity;
 import engine.entity.EngineShipEntity;
 import engine.MathUtils;
@@ -227,6 +228,7 @@ class ClientShip extends ClientBaseGameEntity {
 	public function update(dt:Float) {
 		x = hxd.Math.lerp(x, engineEntity.x, 0.1);
 		y = hxd.Math.lerp(y, engineEntity.y, 0.1);
+		// trace('client ship x:' + x);
 	}
 
 	public function getStats() {

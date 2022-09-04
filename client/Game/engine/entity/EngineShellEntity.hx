@@ -14,7 +14,7 @@ enum DieEffect {
 	Explosion;
 }
 
-class EngineShellEntity extends EngineBaseGameEntity {
+class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustomUpdate implements GameEntityCustomCollide {
 	public final side:Side;
 	public final pos:Int;
 	public final shellRnd:ShellRnd;
@@ -26,6 +26,9 @@ class EngineShellEntity extends EngineBaseGameEntity {
 
 	public function new(side:Side, pos:Int, x:Float, y:Float, rotation:Float, ownerId:String, ?shellRnd:ShellRnd) {
 		super(GameEntityType.Shell, x, y, rotation, null, ownerId);
+
+		customUpdate = this;
+		customCollide = this;
 
 		this.side = side;
 		this.pos = pos;
@@ -46,14 +49,14 @@ class EngineShellEntity extends EngineBaseGameEntity {
 		this.rotation += MathUtils.degreeToRads(this.shellRnd.dir == 1 ? this.shellRnd.rotation : -this.shellRnd.rotation);
 	}
 
-	public function customUpdate(dt:Float) {
+	public function onUpdate() {
 		distanceTraveled += Math.abs(dx) + Math.abs(dy);
 		if (distanceTraveled >= maxTravelDistance) {
 			isAlive = false;
 		}
 	}
 
-	public function onCollision() {
+	public function onCollide() {
 		isAlive = false;
 		dieEffect = DieEffect.Explosion;
 	}

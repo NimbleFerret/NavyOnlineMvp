@@ -1,4 +1,4 @@
-package client;
+package client.gameplay.battle;
 
 import client.ui.UiComponents;
 import client.network.Socket;
@@ -87,7 +87,7 @@ class RetryDialog {
 	}
 }
 
-class Hud extends h2d.Scene {
+class BattleHud extends h2d.Scene {
 	public static final DrawWaterBg = false;
 
 	private var movementText:h2d.Text;

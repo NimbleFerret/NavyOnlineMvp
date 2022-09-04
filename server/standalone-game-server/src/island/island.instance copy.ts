@@ -42,7 +42,31 @@
 //             // Send only short info
 //         };
 
-        
+//         this.gameEngine.createCharacterCallback = (character: object) => {
+//             const socketServerMessageAddEntity = {
+//                 character: this.converJsCharacterToTypeScript(character)
+//             } as SocketServerMessageAddEntity;
+//             this.notifyAllPlayers(socketServerMessageAddEntity, WsProtocol.SocketServerEventAddEntity);
+//         };
+
+//         this.gameEngine.deleteCharacterCallback = (character: object) => {
+//             const jsCharacter = this.converJsCharacterToTypeScript(character);
+
+//             if (this.playerCharacterMap.has(jsCharacter.ownerId)) {
+//                 this.playerCharacterMap.delete(jsCharacter.ownerId);
+//             }
+
+//             const socketServerMessageRemoveEntity = {
+//                 entityId: jsCharacter.id
+//             } as SocketServerMessageRemoveEntity;
+
+//             const notifyEachPlayerEventMsg = {
+//                 socketEvent: WsProtocol.SocketServerEventRemoveEntity,
+//                 message: socketServerMessageRemoveEntity
+//             } as NotifyEachPlayerEventMsg;
+
+//             this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
+//         };
 
 //     }
 
