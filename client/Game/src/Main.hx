@@ -2,11 +2,11 @@ import client.network.RestProtocol.GameWorldData;
 import client.scene.SceneMoralis;
 import client.scene.SceneGlobalMode;
 import client.scene.SceneIsland;
-import client.GuiApp;
 import client.scene.SceneShipsDemo;
 import client.scene.SceneMain;
 import client.scene.SceneDemo1;
 import client.scene.SceneOnlineDemo1;
+import client.GuiApp;
 
 interface Updatable {
 	public function update(dt:Float):Void;
@@ -32,11 +32,14 @@ class Main extends GuiApp {
 
 	private var sceneMoralis:SceneMoralis;
 
-	private final defaultScene = Scene.SceneGlobalMode;
+	private final defaultScene = Scene.SceneShipsDemo;
 	private var currentScene:Scene;
 
 	private var battleHudAdded = false;
 	private var islandHudAdded = false;
+
+	public static var ScreenWidth:Int;
+	public static var ScreenHeight:Int;
 
 	override function init() {
 		super.init();
@@ -49,6 +52,10 @@ class Main extends GuiApp {
 		// 	setScene2D(sceneOnlineDemo1);
 		// });
 		// sceneMoralis = new SceneMoralis();
+
+		ScreenWidth = engine.width;
+		ScreenHeight = engine.height;
+
 		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
 
 		sceneOnlineDemo1 = new SceneOnlineDemo1(engine.width, engine.height, function leaveCallback() {
@@ -99,7 +106,7 @@ class Main extends GuiApp {
 				setScene2D(sceneMain);
 			case SceneDemo1:
 				sceneDemo1.start();
-				// sevents.addScene(sceneDemo1.getHud());
+				sevents.addScene(sceneDemo1.getHud());
 				setScene2D(sceneDemo1);
 			case SceneOnlineDemo1:
 				sceneOnlineDemo1.start();
@@ -109,6 +116,7 @@ class Main extends GuiApp {
 				setScene2D(sceneShipsDemo);
 			case SceneIsland:
 				sceneIsland.start();
+				sevents.addScene(sceneIsland.getHud());
 				setScene2D(sceneIsland);
 			case SceneGlobalMode:
 				setScene2D(sceneGlobalMode);

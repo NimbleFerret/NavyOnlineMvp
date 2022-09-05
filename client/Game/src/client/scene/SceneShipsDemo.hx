@@ -1,5 +1,6 @@
 package client.scene;
 
+import client.entity.ship.ShipDecorations;
 import client.entity.ship.ShipTemplate;
 import h2d.Scene;
 import hxd.Key in K;
@@ -13,7 +14,7 @@ class SceneShipsDemo extends Scene {
 	public function new() {
 		super();
 
-		smallShip = new ShipTemplate(this, SMALL, NONE, THREE);
+		smallShip = new ShipTemplate(this, MEDIUM, ONE, FOUR);
 		smallShip.setPosition(400, 300);
 
 		// mediumShip = new ShipTemplate(this, MEDIUM, ONE, FOUR);
@@ -25,19 +26,20 @@ class SceneShipsDemo extends Scene {
 		fui.padding = 10;
 		fui.y = 10;
 
-		addSlider("Right gun1 X ", function() return smallShip.rightSideGun1.x, function(v) smallShip.rightSideGun1.x = v, -300, 300);
-		addSlider("Right gun1 Y ", function() return smallShip.rightSideGun1.y, function(v) smallShip.rightSideGun1.y = v, -300, 300);
-		addSlider("Right gun2 X ", function() return smallShip.rightSideGun2.x, function(v) smallShip.rightSideGun2.x = v, -300, 300);
-		addSlider("Right gun2 Y ", function() return smallShip.rightSideGun2.y, function(v) smallShip.rightSideGun2.y = v, -300, 300);
-		addSlider("Right gun3 X ", function() return smallShip.rightSideGun3.x, function(v) smallShip.rightSideGun3.x = v, -300, 300);
-		addSlider("Right gun3 Y ", function() return smallShip.rightSideGun3.y, function(v) smallShip.rightSideGun3.y = v, -300, 300);
+		addSlider("Capt X ", function() return ShipDecorations.bmp_captain.x, function(v) ShipDecorations.bmp_captain.x = v, -300, 300);
+		addSlider("Capt Y ", function() return ShipDecorations.bmp_captain.y, function(v) ShipDecorations.bmp_captain.y = v, -300, 300);
 
-		addSlider("Left gun1 X ", function() return smallShip.leftSideGun1.x, function(v) smallShip.leftSideGun1.x = v, -300, 300);
-		addSlider("Left gun1 Y ", function() return smallShip.leftSideGun1.y, function(v) smallShip.leftSideGun1.y = v, -300, 300);
-		addSlider("Left gun2 X ", function() return smallShip.leftSideGun2.x, function(v) smallShip.leftSideGun2.x = v, -300, 300);
-		addSlider("Left gun2 Y ", function() return smallShip.leftSideGun2.y, function(v) smallShip.leftSideGun2.y = v, -300, 300);
-		addSlider("Left gun3 X ", function() return smallShip.leftSideGun3.x, function(v) smallShip.leftSideGun3.x = v, -300, 300);
-		addSlider("Left gun3 Y ", function() return smallShip.leftSideGun3.y, function(v) smallShip.leftSideGun3.y = v, -300, 300);
+		// addSlider("Right gun2 X ", function() return smallShip.rightSideGun2.x, function(v) smallShip.rightSideGun2.x = v, -300, 300);
+		// addSlider("Right gun2 Y ", function() return smallShip.rightSideGun2.y, function(v) smallShip.rightSideGun2.y = v, -300, 300);
+		// addSlider("Right gun3 X ", function() return smallShip.rightSideGun3.x, function(v) smallShip.rightSideGun3.x = v, -300, 300);
+		// addSlider("Right gun3 Y ", function() return smallShip.rightSideGun3.y, function(v) smallShip.rightSideGun3.y = v, -300, 300);
+
+		// addSlider("Left gun1 X ", function() return smallShip.leftSideGun1.x, function(v) smallShip.leftSideGun1.x = v, -300, 300);
+		// addSlider("Left gun1 Y ", function() return smallShip.leftSideGun1.y, function(v) smallShip.leftSideGun1.y = v, -300, 300);
+		// addSlider("Left gun2 X ", function() return smallShip.leftSideGun2.x, function(v) smallShip.leftSideGun2.x = v, -300, 300);
+		// addSlider("Left gun2 Y ", function() return smallShip.leftSideGun2.y, function(v) smallShip.leftSideGun2.y = v, -300, 300);
+		// addSlider("Left gun3 X ", function() return smallShip.leftSideGun3.x, function(v) smallShip.leftSideGun3.x = v, -300, 300);
+		// addSlider("Left gun3 Y ", function() return smallShip.leftSideGun3.y, function(v) smallShip.leftSideGun3.y = v, -300, 300);
 	}
 
 	public function update() {

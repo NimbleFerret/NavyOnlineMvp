@@ -308,7 +308,6 @@ class BattleGameplay extends BasicGameplay {
 			for (ship in baseEngine.getMainEntities()) {
 				if (clientMainEntities.exists(ship.id)) {
 					final clientShip = clientMainEntities.get(ship.id);
-					// clientShip.updateEntityPosition(ship.x, ship.y);
 					clientShip.update(dt);
 				}
 			}
@@ -340,6 +339,9 @@ class BattleGameplay extends BasicGameplay {
 					clientShells.remove(key);
 				}
 			}
+
+			final playerShip = cast(getPlayerEntity(), ClientShip);
+			hud.updatePlayerParams(playerShip);
 		}
 	}
 

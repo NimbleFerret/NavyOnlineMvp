@@ -1,5 +1,6 @@
 package client.gameplay.battle;
 
+import h2d.Bitmap;
 import client.gameplay.BaiscHud.BasicHud;
 import client.ui.UiComponents;
 import client.network.Socket;
@@ -114,6 +115,18 @@ class BattleHud extends BasicHud {
 	// UI Dialogs
 	private var startGameDialogComp:StartGameDialogComp;
 
+	// Compass
+	private final compassEast:h2d.Tile;
+	private final compassNorthEast:h2d.Tile;
+	private final compassNorth:h2d.Tile;
+	private final compassNorthWest:h2d.Tile;
+	private final compassWest:h2d.Tile;
+	private final compassSouthWest:h2d.Tile;
+	private final compassSouth:h2d.Tile;
+	private final compassSouthEast:h2d.Tile;
+
+	private final compassBmp:h2d.Bitmap;
+
 	public function new(leaveCallback:Void->Void) {
 		super();
 
@@ -137,6 +150,23 @@ class BattleHud extends BasicHud {
 			waterBgbatch.setScale(4.0);
 			waterBgObject.filter = new h2d.filter.Displacement(displacementTile, 4, 4);
 		}
+
+		// Compass
+		compassEast = hxd.Res.compass.compass_e.toTile();
+		compassNorthEast = hxd.Res.compass.compass_ne.toTile();
+		compassNorth = hxd.Res.compass.compass_n.toTile();
+		compassNorthWest = hxd.Res.compass.compass_nw.toTile();
+		compassWest = hxd.Res.compass.compass_w.toTile();
+		compassSouthWest = hxd.Res.compass.compass_sw.toTile();
+		compassSouth = hxd.Res.compass.compass_s.toTile();
+		compassSouthEast = hxd.Res.compass.compass_se.toTile();
+
+		compassBmp = new h2d.Bitmap(compassEast);
+		compassBmp.setScale(0.5);
+		compassBmp.setPosition(500, 500);
+		compassBmp.alpha = 0;
+
+		addChild(compassBmp);
 
 		armorBar = new HorizontalStatsBar(fui, 0, 0, "Armor", "1000", 65);
 		hullBar = new HorizontalStatsBar(fui, 0, 0, "Hull", "1000", 65);
@@ -211,6 +241,25 @@ class BattleHud extends BasicHud {
 
 		movementText.text = "Speed: " + shipStats.currentSpeed + " / " + shipStats.maxSpeed;
 		dirText.text = "Direction: " + shipStats.dir;
+
+		switch (shipStats.dir) {
+			case East:
+				compassBmp.tile = compassEast;
+			case NorthEast:
+				compassBmp.tile = compassNorthEast;
+			case North:
+				compassBmp.tile = compassNorth;
+			case NorthWest:
+				compassBmp.tile = compassNorthWest;
+			case West:
+				compassBmp.tile = compassWest;
+			case SouthWest:
+				compassBmp.tile = compassSouthWest;
+			case South:
+				compassBmp.tile = compassSouth;
+			case SouthEast:
+				compassBmp.tile = compassSouthEast;
+		}
 
 		positionText.text = "Sector: " + BattleGameplay.CurrentSectorX + " / " + BattleGameplay.CurrentSectorY + ", Pos: " + Std.int(shipStats.x) + " / "
 			+ Std.int(shipStats.y);

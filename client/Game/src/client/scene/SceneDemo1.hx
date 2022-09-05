@@ -35,8 +35,8 @@ class SceneDemo1 extends Scene {
 	}
 
 	public override function render(e:Engine) {
-		game.hud.render(e);
 		super.render(e);
+		game.hud.render(e);
 		game.debugDraw();
 	}
 

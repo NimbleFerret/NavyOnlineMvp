@@ -113,13 +113,13 @@ class ShipTemplate extends h2d.Object {
 		hull = new ShipHull(direction, shipSize);
 		layers.add(hull, 0);
 
-		// Sail and mast
-		sailAndMast = new ShipSailAndMast(direction, shipSize);
-		layers.add(sailAndMast, 6);
-
 		// Decor
 		decor = new ShipDecorations(direction, shipSize);
-		layers.add(decor, 10);
+		layers.add(decor, 6);
+
+		// Sail and mast
+		sailAndMast = new ShipSailAndMast(direction, shipSize);
+		layers.add(sailAndMast, 10);
 
 		// Right side guns
 
@@ -238,18 +238,19 @@ class ShipTemplate extends h2d.Object {
 			case West:
 				direction = SouthWest;
 				changeGunsDrawingOrder();
+				decor.changeDrawingOrder();
 			case SouthWest:
 				direction = South;
 			case South:
 				direction = SouthEast;
 			case SouthEast:
-				changeGunsDrawingOrder();
 				direction = East;
+				changeGunsDrawingOrder();
+				decor.changeDrawingOrder();
 		}
 		hanldeDirectionChange();
 	}
 
-	// TODO refactor boilerplate code
 	private function changeGunsDrawingOrder() {
 		if (gunsDrawingOrder == 1) {
 			gunsDrawingOrder = 2;
@@ -350,7 +351,7 @@ class ShipTemplate extends h2d.Object {
 	private function hanldeDirectionChange() {
 		hull.updateDirection(direction);
 		sailAndMast.updateDirection(direction);
-		// decor.updateDirection(direction);
+		decor.updateDirection(direction);
 
 		// Handle right side guns
 		final rightSideGunsPos = shipSize == SMALL ? RightCanonsOffsetByDirSm.get(direction) : RightCanonsOffsetByDirMid.get(direction);
