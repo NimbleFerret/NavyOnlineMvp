@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
+import { Ship } from 'src/shipyard/shipyard.ship.entity';
 
 export enum UserWorldState {
     WORLD = 1,
@@ -23,6 +24,18 @@ export class User {
     @Prop()
     nickname: string;
 
+    @Prop({ default: false })
+    paidSubscriptionActive: boolean;
+
+    @Prop()
+    paidSubscriptionEndDate: string;
+
+    @Prop({ default: 0 })
+    nvyBalance: number;
+
+    @Prop({ default: 0 })
+    aksBalance: number;
+
     @Prop({ default: UserWorldState.WORLD })
     worldState: number;
 
@@ -33,6 +46,9 @@ export class User {
     weeklyPlayersKilled: number;
     weeklyBotsKilled: number;
     weeklyBossesKilled: number;
+
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ship' }] })
+    shipsOwned: Ship[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

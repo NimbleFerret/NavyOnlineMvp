@@ -10,6 +10,10 @@ import { UserModule } from './user/user.module';
 import { WorldModule } from './world/world.module';
 import { GameplayModule } from './gameplay/gameplay.module';
 import { AppController } from './app.controller';
+import { ShipyardModule } from './shipyard/shipyard.module';
+import { CronosModule } from './cronos/cronos.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
     imports: [
@@ -18,9 +22,11 @@ import { AppController } from './app.controller';
         UserModule,
         GameplayModule,
         WorldModule,
+        ShipyardModule,
+        CronosModule,
         EventEmitterModule.forRoot(),
         ScheduleModule.forRoot(),
-        MongooseModule.forRoot('mongodb://localhost/nest')
+        MongooseModule.forRoot('mongodb://localhost/navy')
     ],
     controllers: [AppController],
     providers: [AppService],

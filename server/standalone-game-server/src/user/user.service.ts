@@ -5,6 +5,8 @@ import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AppEvents, PlayerDisconnectedEvent } from "src/app.events";
+import { ShipyardService } from "src/shipyard/shipyard.service";
+import { ShipType } from "src/shipyard/shipyard.ship.entity";
 import { WorldService } from "src/world/world.service";
 import { User, UserDocument, UserWorldState } from "./user.entity";
 
@@ -16,9 +18,9 @@ export class UserService {
     constructor(
         private eventEmitter: EventEmitter2,
         private worldService: WorldService,
+        private shipyardService: ShipyardService,
         @InjectModel(User.name) private userModel: Model<UserDocument>
     ) {
-
     }
 
     @OnEvent(AppEvents.PlayerDisconnected)
@@ -39,8 +41,10 @@ export class UserService {
                 worldX: WorldService.BASE_POS_X,
                 worldY: WorldService.BASE_POS_Y
             });
-            this.playersMap.set(user.ethAddress, user);
-            return user.save();
+            // const ship = await this.shipyardService.createNewShip(ShipType.FREE);
+            // user.shipsOwned.push(ship);
+            // this.playersMap.set(user.ethAddress, user);
+            // return user.save();
         }
     }
 

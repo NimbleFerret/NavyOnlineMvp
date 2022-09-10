@@ -17,6 +17,9 @@ export class Shipyard {
     @Prop({ default: 10 })
     speedAndAccStep: number;
 
+    @Prop({ default: 10 })
+    delayStep: number;
+
     @Prop({ default: 1 })
     cannonsStep: number;
 
@@ -84,7 +87,115 @@ export class Shipyard {
 
     // Middle ship
 
+    @Prop({ default: 300 })
+    middleShipMinHull: number;
+
+    @Prop({ default: 1000 })
+    middleShipMaxHull: number;
+
+    @Prop({ default: 300 })
+    middleShipMinArmor: number;
+
+    @Prop({ default: 1000 })
+    middleShipMaxArmor: number;
+
+    @Prop({ default: 130 })
+    middleShipMinSpeed: number;
+
+    @Prop({ default: 250 })
+    middleShipMaxSpeed: number;
+
+    @Prop({ default: 20 })
+    middleShipMinAcc: number;
+
+    @Prop({ default: 80 })
+    middleShipMaxAcc: number;
+
+    @Prop({ default: 100 })
+    middleShipMinAccDelay: number;
+
+    @Prop({ default: 200 })
+    middleShipMaxAccDelay: number;
+
+    @Prop({ default: 100 })
+    middleShipMinRotDelay: number;
+
+    @Prop({ default: 250 })
+    middleShipMaxRotDelay: number;
+
+    @Prop({ default: 1 })
+    middleShipMinCannons: number;
+
+    @Prop({ default: 3 })
+    middleShipMaxCannons: number;
+
+    @Prop({ default: 600 })
+    middleShipMinCannonsRange: number;
+
+    @Prop({ default: 1000 })
+    middleShipMaxCannonsRange: number;
+
+    @Prop({ default: 20 })
+    middleShipMinCannonsDamage: number;
+
+    @Prop({ default: 50 })
+    middleShipMaxCannonsDamage: number;
+
     // Large ship
+
+    @Prop({ default: 300 })
+    largeShipMinHull: number;
+
+    @Prop({ default: 1000 })
+    largeShipMaxHull: number;
+
+    @Prop({ default: 300 })
+    largeShipMinArmor: number;
+
+    @Prop({ default: 1000 })
+    largeShipMaxArmor: number;
+
+    @Prop({ default: 130 })
+    largeShipMinSpeed: number;
+
+    @Prop({ default: 250 })
+    largeShipMaxSpeed: number;
+
+    @Prop({ default: 20 })
+    largeShipMinAcc: number;
+
+    @Prop({ default: 80 })
+    largeShipMaxAcc: number;
+
+    @Prop({ default: 100 })
+    largeShipMinAccDelay: number;
+
+    @Prop({ default: 200 })
+    largeShipMaxAccDelay: number;
+
+    @Prop({ default: 100 })
+    largeShipMinRotDelay: number;
+
+    @Prop({ default: 250 })
+    largeShipMaxRotDelay: number;
+
+    @Prop({ default: 1 })
+    largeShipMinCannons: number;
+
+    @Prop({ default: 3 })
+    largeShipMaxCannons: number;
+
+    @Prop({ default: 600 })
+    largeShipMinCannonsRange: number;
+
+    @Prop({ default: 1000 })
+    largeShipMaxCannonsRange: number;
+
+    @Prop({ default: 20 })
+    largeShipMinCannonsDamage: number;
+
+    @Prop({ default: 50 })
+    largeShipMaxCannonsDamage: number;
 
     // -------------------------------------
     // Ship creation
