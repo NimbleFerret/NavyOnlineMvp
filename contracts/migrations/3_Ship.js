@@ -1,5 +1,5 @@
-const Ship = artifacts.require("Ship");
+// const Ship = artifacts.require("Ship");
 
-module.exports = function (deployer) {
-  deployer.deploy(Ship);
-};
+// module.exports = function (deployer) {
+//   deployer.deploy(Ship);
+// };

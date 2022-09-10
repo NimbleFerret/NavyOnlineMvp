@@ -6,7 +6,6 @@ const ShipGenerator = artifacts.require("./ShipGenerator.sol");
 const ShipTemplate = artifacts.require("./ShipTemplate.sol");
 const Shipyard = artifacts.require("./Shipyard.sol");
 
-// TODO chain tests somehow
 contract("Ship", accounts => {
     it("...Should be upgradable", async () => {
         const NVYInstance = await NVY.deployed();
@@ -25,6 +24,7 @@ contract("Ship", accounts => {
         await ShipyardInstance.setNvyContract(NVYInstance.address);
         await ShipyardInstance.setAksContract(AKSInstance.address);
 
+        // Give somve money to accout[1] and buy a new ship
         const amount = web3.utils.toWei('10', 'ether');
         await ShipCollectionSaleInstance.buyShip(amount, { from: accounts[1], value: amount });
 

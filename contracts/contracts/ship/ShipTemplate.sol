@@ -5,13 +5,25 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "../NVYGameLibrary.sol";
 
 contract ShipTemplate is AccessControl {
-    NVYGameLibrary.ShipStatsTemplate shipStatsTemplate;
+    NVYGameLibrary.ShipStatsStep shipStatsStep;
+    NVYGameLibrary.ShipStatsTemplate smallShipStatsTemplate;
+    NVYGameLibrary.ShipStatsTemplate middleShipStatsTemplate;
+    NVYGameLibrary.ShipStatsTemplate largeShipStatsTemplate;
 
     constructor() public {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
         // Default data
-        shipStatsTemplate = NVYGameLibrary.ShipStatsTemplate(
+        shipStatsStep = NVYGameLibrary.ShipStatsStep(
+            100, // armorAndHullStep
+            10, // speedAndAccelerationStep
+            10, // inputdelayStep
+            1, // cannonsStep
+            50, // cannonsRangeStep
+            5 // cannonsDamageStep
+        );
+
+        smallShipStatsTemplate = NVYGameLibrary.ShipStatsTemplate(
             300, // minArmor
             1000, // maxArmor
             300, // minHull
@@ -25,7 +37,49 @@ contract ShipTemplate is AccessControl {
             100, // minRotationDelay
             250, // maxRotationDelay
             1, // minCannonsOnSide
-            3, // maxCannonsOnSide
+            2, // maxCannonsOnSide
+            600, // minCannonsRange
+            1000, // maxCannonsRange
+            20, // minCannonballDamage
+            50 // maxCannonballDamage
+        );
+
+        middleShipStatsTemplate = NVYGameLibrary.ShipStatsTemplate(
+            800, // minArmor
+            1200, // maxArmor
+            700, // minHull
+            1200, // maxHull
+            100, // minMaxSpeed
+            250, // maxMaxSpeed
+            20, // minAccStep
+            80, // maxAccStep
+            100, // minAccDelay
+            5300, // maxAccDelay
+            100, // minRotationDelay
+            500, // maxRotationDelay
+            3, // minCannonsOnSide
+            4, // maxCannonsOnSide
+            700, // minCannonsRange
+            1600, // maxCannonsRange
+            20, // minCannonballDamage
+            80 // maxCannonballDamage
+        );
+
+        largeShipStatsTemplate = NVYGameLibrary.ShipStatsTemplate(
+            300, // minArmor
+            1000, // maxArmor
+            300, // minHull
+            1000, // maxHull
+            130, // minMaxSpeed
+            250, // maxMaxSpeed
+            20, // minAccStep
+            80, // maxAccStep
+            100, // minAccDelay
+            200, // maxAccDelay
+            100, // minRotationDelay
+            250, // maxRotationDelay
+            3, // minCannonsOnSide
+            5, // maxCannonsOnSide
             600, // minCannonsRange
             1000, // maxCannonsRange
             20, // minCannonballDamage
@@ -33,17 +87,60 @@ contract ShipTemplate is AccessControl {
         );
     }
 
-    function getShipStats()
+    function getShipStatsStep()
+        external
+        view
+        returns (NVYGameLibrary.ShipStatsStep memory)
+    {
+        return shipStatsStep;
+    }
+
+    function getSmallShipStats()
         external
         view
         returns (NVYGameLibrary.ShipStatsTemplate memory)
     {
-        return shipStatsTemplate;
+        return smallShipStatsTemplate;
     }
 
-    function updateShipTemplate(
+    function getMiddleShipStats()
+        external
+        view
+        returns (NVYGameLibrary.ShipStatsTemplate memory)
+    {
+        return middleShipStatsTemplate;
+    }
+
+    function getLargeShipStats()
+        external
+        view
+        returns (NVYGameLibrary.ShipStatsTemplate memory)
+    {
+        return largeShipStatsTemplate;
+    }
+
+    function updateShipStatsStep(NVYGameLibrary.ShipStatsStep memory template)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        shipStatsStep = template;
+    }
+
+    function updateSmallShipTemplate(
         NVYGameLibrary.ShipStatsTemplate memory template
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        shipStatsTemplate = template;
+        smallShipStatsTemplate = template;
+    }
+
+    function updateMiddleShipTemplate(
+        NVYGameLibrary.ShipStatsTemplate memory template
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        middleShipStatsTemplate = template;
+    }
+
+    function updateLargeShipTemplate(
+        NVYGameLibrary.ShipStatsTemplate memory template
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        largeShipStatsTemplate = template;
     }
 }

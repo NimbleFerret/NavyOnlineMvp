@@ -3,32 +3,26 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../IGrantNFT.sol";
 
-contract ShipCollectionSale is Ownable {
-    IGrantNFT private shipContract;
+contract FounderShipCollectionSale is Ownable {
+    uint256 public shipOnSaleTotal;
+    uint256 public shipPrice;
 
-    uint256 shipOnSaleTotal;
-    uint256 shipPrice;
+    event GenerateShip(address owner);
 
     constructor(uint256 _shipOnSaleTotal, uint256 _shipPrice) public {
         shipOnSaleTotal = _shipOnSaleTotal;
         shipPrice = _shipPrice * 10**18;
     }
 
-    function setShipContractAddress(address _shipContractAddress)
-        external
-        onlyOwner
-    {
-        shipContract = IGrantNFT(_shipContractAddress);
-    }
-
-    function buyShip(uint256 amount) public payable {
+    function buyShip() public payable {
         require(shipOnSaleTotal > 0, "No more ships to sell");
         require(address(msg.sender).balance >= shipPrice, "Insufficient funds");
-        require(msg.value == amount && msg.value == shipPrice, "Bad amount");
-        require(shipContract.grantNFT(msg.sender), "Error during ship minting");
+
         shipOnSaleTotal -= 1;
+
+        // Notify our backend to generate a new random ship and give it to the user
+        emit GenerateShip(msg.sender);
     }
 
     function getShipsOnSale() public view returns (uint256) {
