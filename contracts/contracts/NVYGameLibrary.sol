@@ -18,10 +18,16 @@ library NVYGameLibrary {
     // Ship and captain stats
 
     struct CaptainStats {
-        uint256 level;
-        uint256 traits;
-        Rarity rarity;
+        bool mining;
+        bool staking;
+        uint256 miningRewardNVY;
+        uint256 stakingRewardNVY;
+        uint256 miningStartedAt;
+        uint256 miningDurationSeconds;
+        uint256 miningIsland;
     }
+
+    // Ship stats
 
     enum ShipSize {
         SMALL,
@@ -60,19 +66,9 @@ library NVYGameLibrary {
     }
 
     struct ShipStats {
-        uint256 armor;
-        uint256 hull;
-        uint256 maxSpeed;
-        uint256 accelerationStep;
-        uint256 accelerationDelay;
-        uint256 rotationDelay;
-        uint256 cannons;
-        uint256 cannonsRange;
-        uint256 cannonsDamage;
-        uint256 level;
-        uint256 traits;
-        ShipSize size;
-        Rarity rarity;
+        bool maintenenceRequired;
+        uint256 maintenenceCostNVY;
+        uint256 maintenenceCostAKS;
     }
 
     // Ship and captain upgrades & traits
@@ -91,13 +87,13 @@ library NVYGameLibrary {
     uint256 constant islandMaxLevel = 3;
 
     struct IslandStats {
-        uint256 reward;
-        uint256 rewardDelaySeconds;
-        uint256 rewardLastAttemptTime;
-        uint256 fees;
-        uint256 mines;
-        uint256 level;
-        IslandSize size;
-        Rarity rarity;
+        bool mining;
+        uint256 miningStartedAt;
+        uint256 miningDurationSeconds;
+        uint256 miningRewardNVY;
+        uint256 shipAndCaptainFee; // percent
+        uint256 currMiners;
+        uint256 maxMiners;
+        uint256 minersFee; // percent
     }
 }

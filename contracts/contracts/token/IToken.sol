@@ -7,4 +7,6 @@ interface IToken {
     function balanceOf(address account) external view returns (uint256);
 
     function transfer(address to, uint256 amount) external returns (bool);
+
+    function mintReward(address recipient, uint256 amount) external;
 }

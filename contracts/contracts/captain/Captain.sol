@@ -1,86 +1,220 @@
-// // SPDX-License-Identifier: MIT
-// pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
 
-// import "@openzeppelin/contracts/access/AccessControl.sol";
-// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-// import "@openzeppelin/contracts/utils/Counters.sol";
+import "../island/IIsland.sol";
+import "../UpgradableEntity.sol";
 
-// import "../NVYGameLibrary.sol";
-// import "../token/IToken.sol";
+contract Captain is UpgradableEntity {
+    IIsland private island;
 
-// contract Captain is ERC721URIStorage, AccessControl {
-//     IToken private nvyToken;
+    mapping(uint256 => NVYGameLibrary.CaptainStats) public idToCaptains;
 
-//     mapping(uint256 => NVYGameLibrary.CaptainStats) public idToCaptains;
+    constructor() public ERC721("CAPT", "NVYCAPT") {
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
-//     // Captaint could be created only by NVY Backend after buying
-//     bytes32 public constant NVY_BACKEND = keccak256("NVY_BACKEND");
+        levelToUpgrade[1] = NVYGameLibrary.UpgradeRequirementsByLevel(
+            100,
+            1,
+            55
+        );
+        levelToUpgrade[2] = NVYGameLibrary.UpgradeRequirementsByLevel(
+            100,
+            1,
+            55
+        );
+        levelToUpgrade[3] = NVYGameLibrary.UpgradeRequirementsByLevel(
+            70,
+            2,
+            55
+        );
+        levelToUpgrade[4] = NVYGameLibrary.UpgradeRequirementsByLevel(
+            51,
+            2,
+            55
+        );
+        levelToUpgrade[5] = NVYGameLibrary.UpgradeRequirementsByLevel(
+            39,
+            3,
+            55
+        );
+        levelToUpgrade[6] = NVYGameLibrary.UpgradeRequirementsByLevel(
+            28,
+            3,
+            55
+        );
+        levelToUpgrade[7] = NVYGameLibrary.UpgradeRequirementsByLevel(
+            20,
+            5,
+            55
+        );
+        levelToUpgrade[8] = NVYGameLibrary.UpgradeRequirementsByLevel(
+            14,
+            8,
+            55
+        );
+        levelToUpgrade[9] = NVYGameLibrary.UpgradeRequirementsByLevel(
+            10,
+            13,
+            55
+        );
+        levelToUpgrade[10] = NVYGameLibrary.UpgradeRequirementsByLevel(
+            5,
+            21,
+            55
+        );
+    }
 
-//     // To keep track of island id's
-//     using Counters for Counters.Counter;
-//     Counters.Counter private _tokenIds;
+    function grantCaptain(
+        address player,
+        NVYGameLibrary.CaptainStats memory captain,
+        string memory tokenURI
+    ) external onlyRole(NVY_BACKEND) {
+        uint256 tokenId = grantNFT(player, tokenURI);
+        idToCaptains[tokenId] = captain;
+    }
 
-//     constructor() public ERC721("CAPT", "NVYCAPT") {
-//         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-//     }
+    function tryUpgrade(uint256 captainId, uint256 islandId) external {
+        require(
+            ERC721.ownerOf(captainId) == msg.sender,
+            "Only owner can upgrade"
+        );
+        island.requireMinted(islandId);
 
-//     function grantNFT(
-//         address player,
-//         NVYGameLibrary.CaptainStats memory captain
-//     ) external onlyRole(NVY_BACKEND) {
-//         _tokenIds.increment();
+        uint256 nextLevel = idToEntityLevel[captainId] + 1;
 
-//         uint256 newItemId = _tokenIds.current();
+        require(
+            nextLevel <= NVYGameLibrary.shipAndCaptainMaxLevel,
+            "Max level already reached"
+        );
 
-//         idToCaptains[newItemId] = captain;
+        NVYGameLibrary.UpgradeRequirementsByLevel memory req = levelToUpgrade[
+            nextLevel
+        ];
 
-//         _mint(player, newItemId);
-//     }
+        uint256 reqNvy = req.nvy * 10**18;
+        uint256 reqAks = req.aks * 10**18;
 
-//     function getCaptainInfo(uint256 captainId)
-//         external
-//         view
-//         returns (NVYGameLibrary.CaptainStats memory)
-//     {
-//         return idToCaptains[captainId];
-//     }
+        require(nvyToken.balanceOf(msg.sender) >= reqNvy, "Not enought NVY");
+        require(aksToken.balanceOf(msg.sender) >= reqAks, "Not enought AKS");
 
-//     // ---------------------------------------
-//     // Admin functions
-//     // ---------------------------------------
+        // Pay the fees and burn tokens
 
-//     function addNvyBackendAddress(address addr)
-//         external
-//         onlyRole(DEFAULT_ADMIN_ROLE)
-//     {
-//         require(
-//             !hasRole(NVY_BACKEND, addr),
-//             "Nvy backend address already added."
-//         );
-//         _grantRole(NVY_BACKEND, addr);
-//     }
+        uint256 feeNvy = (reqNvy / 100) *
+            island.getIslandInfo(islandId).shipAndCaptainFee;
+        uint256 feeAks = (reqAks / 100) *
+            island.getIslandInfo(islandId).shipAndCaptainFee;
 
-//     function removeNvyBackendAddr(address addr)
-//         external
-//         onlyRole(DEFAULT_ADMIN_ROLE)
-//     {
-//         require(
-//             !hasRole(NVY_BACKEND, addr),
-//             "Address is not a recognized NVY backend."
-//         );
-//         _revokeRole(NVY_BACKEND, addr);
-//     }
+        nvyToken.burn(reqNvy - feeNvy);
+        aksToken.burn(reqAks - feeAks);
 
-//     // ---------------------------------------
-//     // Misc
-//     // ---------------------------------------
+        nvyToken.transfer(ERC721.ownerOf(islandId), feeNvy);
+        aksToken.transfer(ERC721.ownerOf(islandId), feeAks);
 
-//     function supportsInterface(bytes4 interfaceId)
-//         public
-//         view
-//         override(ERC721, AccessControl)
-//         returns (bool)
-//     {
-//         return super.supportsInterface(interfaceId);
-//     }
-// }
+        emit UpgradeEntity(msg.sender, captainId);
+    }
+
+    // ---------------------------------------
+    // Staking and mining
+    // ---------------------------------------
+
+    function startStaking(uint256 captainId) external {
+        require(
+            ERC721.ownerOf(captainId) == msg.sender,
+            "Only owner can stake"
+        );
+        NVYGameLibrary.CaptainStats memory captain = idToCaptains[captainId];
+        require(!captain.staking, "Staking already started");
+        require(!captain.mining, "Unable to stake while mining");
+
+        captain.miningStartedAt = block.timestamp;
+        captain.staking = true;
+    }
+
+    function collectStakingRewards(uint256 captainId) external {
+        require(
+            ERC721.ownerOf(captainId) == msg.sender,
+            "Only owner can collect rewards"
+        );
+        NVYGameLibrary.CaptainStats memory captain = idToCaptains[captainId];
+        require(captain.staking, "Staking must be started first");
+        require(
+            captain.miningStartedAt + captain.miningDurationSeconds <
+                block.timestamp,
+            "Staking is not finished yet"
+        );
+
+        captain.miningStartedAt = 0;
+        captain.staking = false;
+
+        nvyToken.mintReward(msg.sender, captain.stakingRewardNVY);
+    }
+
+    function startMining(uint256 captainId, uint256 islandId) external {
+        require(
+            ERC721.ownerOf(captainId) == msg.sender,
+            "Only owner can stake"
+        );
+        island.requireMinted(islandId);
+
+        NVYGameLibrary.CaptainStats memory captain = idToCaptains[captainId];
+        NVYGameLibrary.IslandStats memory islandStats = island.getIslandInfo(
+            islandId
+        );
+        require(!captain.staking, "Unable to mine while staking");
+        require(!captain.mining, "Mining already started");
+        require(
+            islandStats.currMiners + 1 < islandStats.maxMiners,
+            "Mine is full"
+        );
+
+        island.addMiner(islandId);
+
+        captain.miningStartedAt = block.timestamp;
+        captain.mining = true;
+        captain.miningIsland = islandId;
+
+        idToCaptains[captainId] = captain;
+    }
+
+    function collectMiningRewards(uint256 captainId) external {
+        require(
+            ERC721.ownerOf(captainId) == msg.sender,
+            "Only owner can collect rewards"
+        );
+        NVYGameLibrary.CaptainStats memory captain = idToCaptains[captainId];
+        require(captain.mining, "Mining must be started first");
+        require(
+            captain.miningStartedAt + captain.miningDurationSeconds <
+                block.timestamp,
+            "Mining is not finished yet"
+        );
+
+        // Grant reward to the captain owner
+        uint256 islandFee = (captain.miningRewardNVY / 100) *
+            island.getIslandInfo(captain.miningIsland).minersFee;
+        nvyToken.mintReward(msg.sender, captain.miningRewardNVY - islandFee);
+
+        // Grant reward to the island owner
+        nvyToken.mintReward(ERC721.ownerOf(captain.miningIsland), islandFee);
+
+        // Reset
+        island.removeMiner(captain.miningIsland);
+
+        captain.miningStartedAt = 0;
+        captain.mining = false;
+        captain.miningIsland = 0;
+
+        idToCaptains[captainId] = captain;
+    }
+
+    // ---------------------------------------
+    // Admin functions
+    // ---------------------------------------
+
+    function setIslandContractAddress(address addr)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        island = IIsland(addr);
+    }
+}

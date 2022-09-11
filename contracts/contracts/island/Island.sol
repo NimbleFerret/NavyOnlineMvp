@@ -1,31 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-
+import "../UpgradableEntity.sol";
 import "../NVYGameLibrary.sol";
-import "../token/IToken.sol";
 
-contract Island is ERC721URIStorage, AccessControl {
-    IToken private nvyToken;
-    IToken private aksToken;
-
+contract Island is UpgradableEntity {
     mapping(uint256 => NVYGameLibrary.IslandStats) public idToIslands;
-
-    event UpgradeIsland(address player, uint256 islandId);
-
-    // Ship could be created only by NVY Backend after buying
-    bytes32 public constant NVY_BACKEND = keccak256("NVY_BACKEND");
-
-    // To keep track of island id's
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
-
-    // Keep track of every upgrade costs by level
-    mapping(uint256 => NVYGameLibrary.UpgradeRequirementsByLevel)
-        public levelToUpgrade;
 
     constructor() public ERC721("ISLAND", "NVYISL") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -47,21 +27,16 @@ contract Island is ERC721URIStorage, AccessControl {
         );
     }
 
-    function grantNFT(
+    function grantIsland(
         address player,
         NVYGameLibrary.IslandStats memory island,
         string memory tokenURI
     ) external onlyRole(NVY_BACKEND) {
-        _tokenIds.increment();
-
-        uint256 newItemId = _tokenIds.current();
-
-        idToIslands[newItemId] = island;
-
-        _mint(player, newItemId);
-
-        _setTokenURI(newItemId, tokenURI);
+        uint256 tokenId = grantNFT(player, tokenURI);
+        idToIslands[tokenId] = island;
     }
+
+    // Upgrades
 
     function upgradeIsland(
         uint256 islandId,
@@ -76,15 +51,15 @@ contract Island is ERC721URIStorage, AccessControl {
             "Only owner can upgrade"
         );
 
-        NVYGameLibrary.IslandStats memory island = idToIslands[islandId];
+        uint256 nextLevel = idToEntityLevel[islandId] + 1;
 
         require(
-            island.level + 1 <= NVYGameLibrary.islandMaxLevel,
+            nextLevel <= NVYGameLibrary.islandMaxLevel,
             "Max level already reached"
         );
 
         NVYGameLibrary.UpgradeRequirementsByLevel memory req = levelToUpgrade[
-            island.level + 1
+            nextLevel
         ];
 
         uint256 reqNvy = req.nvy * 10**18;
@@ -96,84 +71,42 @@ contract Island is ERC721URIStorage, AccessControl {
         nvyToken.burn(reqNvy);
         aksToken.burn(reqAks);
 
-        emit UpgradeIsland(msg.sender, islandId);
-    }
-
-    function getIslandInfo(uint256 islandId)
-        external
-        view
-        returns (NVYGameLibrary.IslandStats memory)
-    {
-        return idToIslands[islandId];
-    }
-
-    function getCurrentIslandIndex() public view returns (uint256) {
-        return _tokenIds.current();
+        emit UpgradeEntity(msg.sender, islandId);
     }
 
     // ---------------------------------------
-    // Admin functions
+    // Mining
     // ---------------------------------------
 
-    function addNvyBackendAddress(address addr)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+    function startMining(uint256 islandId) external {
+        require(ERC721.ownerOf(islandId) == msg.sender, "Only owner can mine");
+        NVYGameLibrary.IslandStats memory island = idToIslands[islandId];
+        require(!island.mining, "Mining already started");
+
+        island.miningStartedAt = block.timestamp;
+        island.mining = true;
+
+        idToIslands[islandId] = island;
+    }
+
+    function collectRewards(uint256 islandId) external {
         require(
-            !hasRole(NVY_BACKEND, addr),
-            "Nvy backend address already added."
+            ERC721.ownerOf(islandId) == msg.sender,
+            "Only owner can collect rewards"
         );
-        _grantRole(NVY_BACKEND, addr);
-    }
-
-    function removeNvyBackendAddr(address addr)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
+        NVYGameLibrary.IslandStats memory island = idToIslands[islandId];
+        require(island.mining, "Mining must be started first");
         require(
-            !hasRole(NVY_BACKEND, addr),
-            "Address is not a recognized NVY backend."
+            island.miningStartedAt + island.miningDurationSeconds <
+                block.timestamp,
+            "Mining is not finished yet"
         );
-        _revokeRole(NVY_BACKEND, addr);
-    }
 
-    function setNvyContract(address addr)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        nvyToken = IToken(addr);
-    }
+        island.miningStartedAt = 0;
+        island.mining = false;
 
-    function setAksContract(address addr)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        aksToken = IToken(addr);
-    }
+        idToIslands[islandId] = island;
 
-    function updateUpgradeRequirements(
-        uint256 level,
-        uint256 chance,
-        uint256 nvy,
-        uint256 aks
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        levelToUpgrade[level] = NVYGameLibrary.UpgradeRequirementsByLevel(
-            chance,
-            nvy,
-            aks
-        );
-    }
-
-    // ---------------------------------------
-    // Misc
-    // ---------------------------------------
-
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, AccessControl)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
+        nvyToken.mintReward(msg.sender, island.miningRewardNVY);
     }
 }
