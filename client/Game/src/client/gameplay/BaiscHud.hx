@@ -98,7 +98,7 @@ class BasicHud extends h2d.Scene {
 			alpha: 0.8
 		};
 
-		if (isWeb3Related && Main.IsWeb3Available || !isWeb3Related) {
+		if (isWeb3Related && Main.IsWeb3Available != null || !isWeb3Related) {
 			final interaction = new h2d.Interactive(32 * 4 * 3, 32 * 4, button);
 			interaction.onClick = function(event:hxd.Event) {
 				if (callback != null) {
@@ -211,7 +211,7 @@ class BasicHud extends h2d.Scene {
 		return plate;
 	}
 
-	function newCustomPlate(parent:h2d.Flow, width:Int, height:Int) {
+	function newCustomPlate(parent:h2d.Object, width:Int, height:Int) {
 		final plate = new h2d.Object(parent);
 
 		final group = new h2d.TileGroup(paperUiTileImage, plate);

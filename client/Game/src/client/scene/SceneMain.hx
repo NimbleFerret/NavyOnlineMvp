@@ -7,7 +7,7 @@ import h3d.Engine;
 import h2d.Scene;
 
 class SceneMain extends Scene {
-	public var hud:SceneMainHud;
+	public final hud:SceneMainHud;
 
 	private var currentCaptain:UiAvatar;
 

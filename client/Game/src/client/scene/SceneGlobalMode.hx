@@ -1,5 +1,6 @@
 package client.scene;
 
+import h3d.Engine;
 import haxe.Timer;
 import client.network.RestProtocol;
 import client.network.Rest;
@@ -8,37 +9,47 @@ import h2d.Bitmap;
 import h2d.Tile;
 import h2d.Scene;
 
+final SectorSize = 96;
+
 class SectorRectObject {
 	public final object:h2d.Object;
 
-	var contentRect:h2d.Graphics;
+	private var contentBmp:h2d.Bitmap;
 
 	public function new(scene:Scene, x:Float, y:Float, sectorType:Int) {
 		object = new h2d.Object(scene);
 		object.setPosition(x, y);
 
 		final borderRect = new h2d.Graphics(object);
-		borderRect.lineStyle(3, 0xFFFFFF);
-		borderRect.drawRect(0, 0, 100, 100);
+		borderRect.lineStyle(3, 0xC79161);
+		borderRect.drawRect(0, 0, SectorSize, SectorSize);
 		borderRect.endFill();
 
-		contentRect = new h2d.Graphics(object);
+		var isSkull = false;
 
 		switch (sectorType) {
 			case GameWorldData.SectorBaseType:
-				contentRect.beginFill(0xFFEE4D);
+				contentBmp = new h2d.Bitmap(SceneGlobalMode.AcnhorTile);
 			case GameWorldData.SectorIslandType:
-				contentRect.beginFill(0x1EFF00);
+				contentBmp = new h2d.Bitmap(SceneGlobalMode.IslandTile);
 			case GameWorldData.SectorBossType:
-				contentRect.beginFill(0xF6BD02);
+				contentBmp = new h2d.Bitmap(SceneGlobalMode.BlueSkullTile);
+				isSkull = true;
 			case GameWorldData.SectorPVEType:
-				contentRect.beginFill(0x5035FF);
+				contentBmp = new h2d.Bitmap(SceneGlobalMode.CommonSkullTile);
+				isSkull = true;
 			case GameWorldData.SectorPVPType:
-				contentRect.beginFill(0xFF3B3B);
+				contentBmp = new h2d.Bitmap(SceneGlobalMode.PinkSkullTile);
+				isSkull = true;
 		}
 
-		contentRect.drawRect(1, 1, 99, 99);
-		contentRect.endFill();
+		if (contentBmp != null) {
+			if (isSkull) {
+				contentBmp.setScale(2);
+				contentBmp.setPosition(24, 24);
+			}
+			object.addChild(contentBmp);
+		}
 	}
 }
 
@@ -51,21 +62,46 @@ class EnterSectorCallback {
 }
 
 class SceneGlobalMode extends Scene {
+	public final hud:SceneGlobalModeUi;
+
 	var playerBmp:h2d.Bitmap;
 
 	var playerInitialized = false;
 	var gameWorldInitialized = false;
 	var allowPlayerMove = false;
 
+	public static var AcnhorTile:h2d.Tile;
+	public static var IslandTile:h2d.Tile;
+	public static var CommonSkullTile:h2d.Tile;
+	public static var BlueSkullTile:h2d.Tile;
+	public static var PinkSkullTile:h2d.Tile;
+
 	private var gameWorldSectors = new Array<SectorRectObject>();
 	private final enterSectorCallback:EnterSectorCallback->Void;
 
-	public function new(enterSectorCallback:EnterSectorCallback->Void) {
+	public function new(enterSectorCallback:EnterSectorCallback->Void, mainMenuCallback:Void->Void) {
 		super();
+
+		SceneGlobalMode.AcnhorTile = hxd.Res.anchor.toTile();
+		SceneGlobalMode.IslandTile = hxd.Res.small_palm.toTile();
+		SceneGlobalMode.CommonSkullTile = hxd.Res.common_skull.toTile();
+		SceneGlobalMode.BlueSkullTile = hxd.Res.blue_skull.toTile();
+		SceneGlobalMode.PinkSkullTile = hxd.Res.pink_skull.toTile();
+
+		hud = new SceneGlobalModeUi(mainMenuCallback);
 
 		this.enterSectorCallback = enterSectorCallback;
 
 		start();
+	}
+
+	public function getHud() {
+		return hud;
+	}
+
+	public override function render(e:Engine) {
+		hud.render(e);
+		super.render(e);
 	}
 
 	public function start() {
@@ -108,13 +144,13 @@ class SceneGlobalMode extends Scene {
 
 	private function checkDistance(x:Int, y:Int) {
 		final pos = sectorPosToWorldCoords(x, y);
-		return hxd.Math.distance(pos.x - playerBmp.x, pos.y - playerBmp.y) < 200;
+		return hxd.Math.distance(pos.x - playerBmp.x, pos.y - playerBmp.y) < SectorSize * 2;
 	}
 
 	private function sectorPosToWorldCoords(sx:Int, sy:Int) {
 		return {
-			x: sx * 100 + 100 + 50,
-			y: sy * 100 + 100 + 50
+			x: sx * SectorSize + SectorSize + (SectorSize / 2),
+			y: sy * SectorSize + SectorSize + (SectorSize / 2)
 		}
 	}
 
@@ -131,8 +167,8 @@ class SceneGlobalMode extends Scene {
 	private function initiateGameWorld(world:GameWorldData) {
 		for (x in 0...world.size) {
 			for (y in 0...world.size) {
-				final posX = x > 0 ? x * 100 - 1 : x * 100;
-				final posY = y > 0 ? y * 100 - 1 : y * 100;
+				final posX = x > 0 ? x * SectorSize - 1 : x * SectorSize;
+				final posY = y > 0 ? y * SectorSize - 1 : y * SectorSize;
 
 				var sectorType = GameWorldData.SectorEmptyType;
 				for (sector in world.sectors) {
@@ -141,8 +177,8 @@ class SceneGlobalMode extends Scene {
 					}
 				}
 
-				final sectorRectObject = new SectorRectObject(this, posX + 100, posY + 100, sectorType);
-				final interaction = new h2d.Interactive(100, 100, sectorRectObject.object);
+				final sectorRectObject = new SectorRectObject(this, posX + SectorSize, posY + SectorSize, sectorType);
+				final interaction = new h2d.Interactive(SectorSize, SectorSize, sectorRectObject.object);
 				interaction.onClick = function(event:hxd.Event) {
 					if (Player.instance.playerData.worldX != x || Player.instance.playerData.worldY != y) {
 						if (checkDistance(x, y)) {
@@ -155,7 +191,6 @@ class SceneGlobalMode extends Scene {
 						// TODO show dialog
 
 						enterSector(x, y);
-
 						// Game.CurrentSectorX = x;
 						// Game.CurrentSectorY = y;
 

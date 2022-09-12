@@ -47,8 +47,6 @@ class Main extends GuiApp {
 		ScreenHeight = engine.height;
 
 		sceneMain = new SceneMain(function startCallback() {
-			trace('Start global mode...');
-
 			currentScene = SceneGlobalMode;
 			sceneGlobalMode.start();
 			setScene2D(sceneGlobalMode);
@@ -94,7 +92,12 @@ class Main extends GuiApp {
 				}
 				setScene2D(sceneOnlineDemo1);
 			}
+		}, function mainMenuCallback() {
+			currentScene = SceneMain;
+			sceneMain.start();
+			setScene2D(sceneMain);
 		});
+		sevents.addScene(sceneGlobalMode.getHud());
 
 		// TODO refactor scene load and unload
 		switch (defaultScene) {
