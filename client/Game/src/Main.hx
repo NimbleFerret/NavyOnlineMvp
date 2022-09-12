@@ -1,5 +1,4 @@
 import client.network.RestProtocol.GameWorldData;
-import client.scene.SceneMoralis;
 import client.scene.SceneGlobalMode;
 import client.scene.SceneIsland;
 import client.scene.SceneShipsDemo;
@@ -19,7 +18,6 @@ enum Scene {
 	SceneShipsDemo;
 	SceneIsland;
 	SceneGlobalMode;
-	SceneMoralis;
 }
 
 class Main extends GuiApp {
@@ -30,9 +28,7 @@ class Main extends GuiApp {
 	private var sceneIsland:SceneIsland;
 	private var sceneGlobalMode:SceneGlobalMode;
 
-	private var sceneMoralis:SceneMoralis;
-
-	private final defaultScene = Scene.SceneShipsDemo;
+	private final defaultScene = Scene.SceneMain;
 	private var currentScene:Scene;
 
 	private var battleHudAdded = false;
@@ -40,21 +36,24 @@ class Main extends GuiApp {
 
 	public static var ScreenWidth:Int;
 	public static var ScreenHeight:Int;
+	public static var IsWeb3Available = false;
 
 	override function init() {
 		super.init();
 
 		engine.backgroundColor = 0x6BC2EE;
 
-		// sceneMain = new SceneMain(function loadLevel1() {
-		// 	setScene2D(sceneDemo1);
-		// }, function loadLevel2() {
-		// 	setScene2D(sceneOnlineDemo1);
-		// });
-		// sceneMoralis = new SceneMoralis();
-
 		ScreenWidth = engine.width;
 		ScreenHeight = engine.height;
+
+		sceneMain = new SceneMain(function startCallback() {
+			trace('Start global mode...');
+
+			currentScene = SceneGlobalMode;
+			sceneGlobalMode.start();
+			setScene2D(sceneGlobalMode);
+		});
+		sevents.addScene(sceneMain.getHud());
 
 		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
 
@@ -63,8 +62,6 @@ class Main extends GuiApp {
 			sceneGlobalMode.start();
 			setScene2D(sceneGlobalMode);
 		});
-
-		// sceneUIDemo = new SceneUIDemo();
 
 		sceneShipsDemo = new SceneShipsDemo();
 		sceneIsland = new SceneIsland(engine.width, engine.height, function leaveCallback() {
@@ -108,6 +105,7 @@ class Main extends GuiApp {
 				sceneDemo1.start();
 				sevents.addScene(sceneDemo1.getHud());
 				setScene2D(sceneDemo1);
+				trace('NOT IMPLEMENTED');
 			case SceneOnlineDemo1:
 				sceneOnlineDemo1.start();
 				// sevents.addScene(sceneOnlineDemo1.getHud());
@@ -120,17 +118,12 @@ class Main extends GuiApp {
 				setScene2D(sceneIsland);
 			case SceneGlobalMode:
 				setScene2D(sceneGlobalMode);
-			case SceneMoralis:
-				setScene2D(sceneMoralis);
 		}
 
 		currentScene = defaultScene;
 	}
 
 	override function update(dt:Float) {
-		if (currentScene == SceneDemo1) {
-			sceneDemo1.update(dt, engine.fps);
-		}
 		if (currentScene == SceneOnlineDemo1) {
 			sceneOnlineDemo1.update(dt, engine.fps);
 		}
@@ -139,6 +132,9 @@ class Main extends GuiApp {
 		}
 		if (currentScene == SceneIsland) {
 			sceneIsland.update(dt, engine.fps);
+		}
+		if (currentScene == SceneDemo1) {
+			sceneDemo1.update(dt, engine.fps);
 		}
 	}
 

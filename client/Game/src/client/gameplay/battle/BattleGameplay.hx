@@ -24,7 +24,6 @@ class BattleGameplay extends BasicGameplay {
 	// Global config
 	public static var DebugDraw = false;
 
-	//
 	public static var CurrentSectorX = 0;
 	public static var CurrentSectorY = 0;
 
@@ -84,7 +83,6 @@ class BattleGameplay extends BasicGameplay {
 
 		gameEngine.deleteShellCallback = function callback(engineShellEntity:EngineShellEntity) {
 			// clientShells.get(engineShellEntity.)
-			trace("Delete shell callback");
 		};
 
 		gameEngine.deleteMainEntityCallback = function callback(engineShipEntity:EngineBaseGameEntity) {

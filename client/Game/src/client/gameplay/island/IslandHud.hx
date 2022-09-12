@@ -28,9 +28,9 @@ class IslandHud extends BasicHud {
 		// });
 		// leaveButton.setScale(3);
 
-		addGuiButton("Repair ship");
-		addGuiButton("Upgrade ship");
-		addGuiButton("Create ship");
-		addGuiButton("Leave sector");
+		// addGuiButton("Repair ship");
+		// addGuiButton("Upgrade ship");
+		// addGuiButton("Create ship");
+		// addGuiButton("Leave sector");
 	}
 }

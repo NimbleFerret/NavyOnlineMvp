@@ -10,14 +10,10 @@ import h3d.Engine;
 import h2d.Scene;
 
 class SceneOnlineDemo1 extends Scene implements EventListener {
-	private var game:BattleGameplay;
-
 	public var instanceId:String;
 
-	//
+	private var game:BattleGameplay;
 	private var leaveCallback:Void->Void;
-
-	//
 
 	public function new(width:Int, height:Int, leaveCallback:Void->Void) {
 		super();
@@ -41,7 +37,8 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		});
 
 		// Refactor, no need sector type for real
-		Socket.instance.joinGame({playerId: Player.instance.playerData.ethAddress, instanceId: instanceId, sectorType: 1});
+		Socket.instance.joinGame({playerId: Player.instance.ethAddress, instanceId: instanceId, sectorType: 1});
+		// Socket.instance.joinGame({playerId: Player.instance.playerData.ethAddress, instanceId: instanceId, sectorType: 1});
 
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddEntity, this);

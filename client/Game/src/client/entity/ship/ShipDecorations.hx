@@ -16,11 +16,11 @@ class ShipDecorations extends ShipVisualComponent {
 	];
 
 	public static final CaptainPosSmall:Map<GameEntityDirection, PosOffset> = [
-		GameEntityDirection.East => new PosOffset(0, 0),
-		GameEntityDirection.NorthEast => new PosOffset(0, 0),
-		GameEntityDirection.North => new PosOffset(0, 0),
-		GameEntityDirection.NorthWest => new PosOffset(0, 0),
-		GameEntityDirection.West => new PosOffset(0, 0),
+		GameEntityDirection.East => new PosOffset(55, -33),
+		GameEntityDirection.NorthEast => new PosOffset(50, -55),
+		GameEntityDirection.North => new PosOffset(0, -66),
+		GameEntityDirection.NorthWest => new PosOffset(-44, -56),
+		GameEntityDirection.West => new PosOffset(-50, -35),
 		GameEntityDirection.SouthWest => new PosOffset(0, 0),
 		GameEntityDirection.South => new PosOffset(0, 0),
 		GameEntityDirection.SouthEast => new PosOffset(0, 0)
@@ -48,12 +48,16 @@ class ShipDecorations extends ShipVisualComponent {
 
 	public static var bmp_captain:h2d.Bitmap;
 
+	private final size:ShipHullSize;
+
 	// 1 - wheel > capt
 	// 2 - capt > wheel
 	private var wheelAndCaptainDrawingOrder = 1;
 
 	public function new(direction:GameEntityDirection, size:ShipHullSize) {
 		super();
+
+		this.size = size;
 
 		// Wheel
 		eastWheelTile = getWheelByDirectionAndSize(East, size);
@@ -98,7 +102,7 @@ class ShipDecorations extends ShipVisualComponent {
 
 		bmp_captain = new h2d.Bitmap(eastCaptainTile);
 
-		final captainPos = CaptainPosMid.get(direction);
+		final captainPos = size == MEDIUM ? CaptainPosMid.get(direction) : CaptainPosSmall.get(direction);
 		bmp_captain.setPosition(captainPos.x, captainPos.y);
 
 		addChild(bmp_captain);
@@ -132,7 +136,7 @@ class ShipDecorations extends ShipVisualComponent {
 				bmp_captain.tile = southEastCaptainTile;
 		}
 
-		final captainPos = CaptainPosMid.get(direction);
+		final captainPos = size == MEDIUM ? CaptainPosMid.get(direction) : CaptainPosSmall.get(direction);
 		bmp_captain.setPosition(captainPos.x, captainPos.y);
 	}
 

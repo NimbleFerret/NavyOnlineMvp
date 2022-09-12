@@ -1,6 +1,30 @@
 package client.network;
 
 // -----------------------------------
+// Moralis V2
+// -----------------------------------
+
+class MoralisNFTs {
+	public final total:Int;
+	public final nfts:Array<MoralisNFT>;
+
+	public function new(total:Int, nfts:Array<MoralisNFT>) {
+		this.total = total;
+		this.nfts = nfts;
+	}
+}
+
+class MoralisNFT {
+	public final name:String;
+	public final metadata:Dynamic;
+
+	public function new(name:String, metadata:Dynamic) {
+		this.name = name;
+		this.metadata = metadata;
+	}
+}
+
+// -----------------------------------
 // Player
 // -----------------------------------
 

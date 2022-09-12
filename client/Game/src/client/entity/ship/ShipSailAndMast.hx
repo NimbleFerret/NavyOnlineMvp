@@ -52,9 +52,9 @@ class ShipSailAndMast extends ShipVisualComponent {
 		flagTile = flagTile.center();
 		final bmp_flag = new h2d.Bitmap(flagTile);
 
-		bmp_sail.alpha = 0.5;
-		bmp_mast.alpha = 0.5;
-		bmp_flag.alpha = 0.5;
+		// bmp_sail.alpha = 0.5;
+		// bmp_mast.alpha = 0.5;
+		// bmp_flag.alpha = 0.5;
 
 		layers.add(bmp_sail, 0);
 		layers.add(bmp_mast, 1);

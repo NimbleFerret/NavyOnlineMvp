@@ -72,9 +72,9 @@ class ShipTemplate extends h2d.Object {
 
 	public var direction = GameEntityDirection.East;
 
-	final shipSize:ShipHullSize;
-	final shipWindows:ShipWindows;
-	final shipGuns:ShipGuns;
+	public final shipSize:ShipHullSize;
+	public final shipWindows:ShipWindows;
+	public final shipGuns:ShipGuns;
 
 	// Hull
 	private final hull:ShipHull;

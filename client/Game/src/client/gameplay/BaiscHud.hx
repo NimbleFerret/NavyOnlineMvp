@@ -1,10 +1,20 @@
 package client.gameplay;
 
+import h2d.Object;
+
 class BasicHud extends h2d.Scene {
 	var fui:h2d.Flow;
 
+	private final arrowLeftTile:h2d.Tile;
+	private final arrowRightTile:h2d.Tile;
+	private final singleButtonTile:h2d.Tile;
+
 	// Dialog tiles
 	private final paperUiTileImage:h2d.Tile;
+
+	private final dialogSingleLeftTile:h2d.Tile;
+	private final dialogSingleMiddleTile:h2d.Tile;
+	private final dialogSingleRightTile:h2d.Tile;
 
 	private final dialogTopLeftTile:h2d.Tile;
 	private final dialogTopMiddleTile:h2d.Tile;
@@ -38,6 +48,15 @@ class BasicHud extends h2d.Scene {
 		// get tile image (tiles.png) from resources
 		paperUiTileImage = hxd.Res.gui_paper.toTile();
 
+		arrowLeftTile = paperUiTileImage.sub(0, 0, 32, 32);
+		arrowRightTile = paperUiTileImage.sub(0, 32, 32, 32);
+
+		singleButtonTile = paperUiTileImage.sub(384, 192, 32, 32);
+
+		dialogSingleLeftTile = paperUiTileImage.sub(32 * 1, 160, 32, 32);
+		dialogSingleMiddleTile = paperUiTileImage.sub(32 * 2, 160, 32, 32);
+		dialogSingleRightTile = paperUiTileImage.sub(32 * 3, 160, 32, 32);
+
 		dialogTopLeftTile = paperUiTileImage.sub(32 * 1, 32, 32, 32);
 		dialogTopMiddleTile = paperUiTileImage.sub(32 * 2, 32, 32, 32);
 		dialogTopRightTile = paperUiTileImage.sub(32 * 3, 32, 32, 32);
@@ -60,8 +79,8 @@ class BasicHud extends h2d.Scene {
 	}
 
 	// TODO
-	function addGuiButton(text:String) {
-		final button = new h2d.Object(fui);
+	function addGuiButton(parent:h2d.Object, text:String, isWeb3Related:Bool, callback:Void->Void) {
+		final button = new h2d.Object(parent);
 
 		final buttonBmp = new h2d.Bitmap(longButtonTile);
 		buttonBmp.setScale(4);
@@ -79,21 +98,196 @@ class BasicHud extends h2d.Scene {
 			alpha: 0.8
 		};
 
-		final interaction = new h2d.Interactive(32 * 4 * 3, 32 * 4, button);
-		interaction.onClick = function(event:hxd.Event) {};
-		interaction.onMove = function(event:hxd.Event) {
-			button.setScale(0.9);
-			button.alpha = 0.9;
-		};
-		interaction.onOut = function(event:hxd.Event) {
-			button.setScale(1);
-			button.alpha = 1;
-		};
+		if (isWeb3Related && Main.IsWeb3Available || !isWeb3Related) {
+			final interaction = new h2d.Interactive(32 * 4 * 3, 32 * 4, button);
+			interaction.onClick = function(event:hxd.Event) {
+				if (callback != null) {
+					callback();
+				}
+			};
+			interaction.onMove = function(event:hxd.Event) {
+				button.alpha = 0.8;
+			};
+			interaction.onOut = function(event:hxd.Event) {
+				button.alpha = 1;
+			};
+			interaction.onPush = function(event:hxd.Event) {
+				button.setScale(0.9);
+			};
+			interaction.onRelease = function(event:hxd.Event) {
+				button.setScale(1);
+			};
+		} else {
+			button.alpha = 0.8;
+		}
 
-		fui.addChild(button);
+		parent.addChild(button);
+
+		return button;
 	}
 
-	// Yes / no dialog
+	function leftArrowButton(callback:Void->Void, isWeb3Related:Bool) {
+		final button = new h2d.Object(this);
+		button.setScale(4);
+
+		final buttonBmp = new h2d.Bitmap(singleButtonTile);
+		final arrowBmp = new h2d.Bitmap(arrowLeftTile);
+		arrowBmp.setPosition(1, 1);
+
+		button.addChild(buttonBmp);
+		button.addChild(arrowBmp);
+
+		if (isWeb3Related && Main.IsWeb3Available || !isWeb3Related) {
+			final interaction = new h2d.Interactive(30, 30, button);
+			interaction.onClick = function(event:hxd.Event) {
+				if (callback != null) {
+					callback();
+				}
+			};
+			interaction.onMove = function(event:hxd.Event) {
+				button.alpha = 0.80;
+			};
+			interaction.onOut = function(event:hxd.Event) {
+				button.alpha = 1;
+			};
+			interaction.onPush = function(event:hxd.Event) {
+				button.setScale(3.5);
+			};
+			interaction.onRelease = function(event:hxd.Event) {
+				button.setScale(4);
+			};
+		} else {
+			button.alpha = 0.8;
+		}
+
+		return button;
+	}
+
+	function rightArrowButton(callback:Void->Void, isWeb3Related:Bool) {
+		final button = new h2d.Object(this);
+		button.setScale(4);
+
+		final buttonBmp = new h2d.Bitmap(singleButtonTile);
+		final arrowBmp = new h2d.Bitmap(arrowRightTile);
+		arrowBmp.setPosition(2, 1);
+
+		button.addChild(buttonBmp);
+		button.addChild(arrowBmp);
+
+		if (isWeb3Related && Main.IsWeb3Available || !isWeb3Related) {
+			final interaction = new h2d.Interactive(30, 30, button);
+			interaction.onClick = function(event:hxd.Event) {
+				if (callback != null) {
+					callback();
+				}
+			};
+			interaction.onMove = function(event:hxd.Event) {
+				button.alpha = 0.80;
+			};
+			interaction.onOut = function(event:hxd.Event) {
+				button.alpha = 1;
+			};
+			interaction.onPush = function(event:hxd.Event) {
+				button.setScale(3.5);
+			};
+			interaction.onRelease = function(event:hxd.Event) {
+				button.setScale(4);
+			};
+		} else {
+			button.alpha = 0.8;
+		}
+
+		return button;
+	}
+
+	function newWidePlate(width:Int) {
+		final plate = new h2d.Object(this);
+
+		final group = new h2d.TileGroup(paperUiTileImage, plate);
+		final tileScale = 3;
+		group.setScale(tileScale);
+		buildWidePlate(group, width);
+
+		return plate;
+	}
+
+	function newCustomPlate(parent:h2d.Flow, width:Int, height:Int) {
+		final plate = new h2d.Object(parent);
+
+		final group = new h2d.TileGroup(paperUiTileImage, plate);
+		final tileScale = 3;
+		group.setScale(tileScale);
+		buildDialogBackground(group, width, height);
+
+		return plate;
+	}
+
+	function alertDialog(title:String, callback:Void->Void) {
+		final dialog = new h2d.Object(this);
+
+		final group = new h2d.TileGroup(paperUiTileImage, dialog);
+		final tileScale = 3;
+		final width = 14;
+		final height = 3;
+
+		group.setScale(tileScale);
+
+		buildDialogBackground(group, width, height);
+
+		final dialogWidth = width * 32 * tileScale;
+		final dialogHeight = height * 32 * tileScale;
+
+		final tf = new h2d.Text(getFont(), dialog);
+		tf.text = title;
+		tf.setPosition(64, 32);
+		tf.setScale(3);
+		tf.textColor = 0x82590E;
+		tf.dropShadow = {
+			dx: 0.5,
+			dy: 0.5,
+			color: 0x000000,
+			alpha: 0.8
+		};
+
+		dialog.addChild(tf);
+
+		dialog.setPosition((Main.ScreenWidth / 2) - (dialogWidth / 2), (Main.ScreenHeight / 2) - (dialogHeight / 2) - 100);
+
+		final positiveBmp = new h2d.Bitmap(positiveTile);
+		positiveBmp.setScale(4);
+		positiveBmp.setPosition(dialog.getBounds().width / 2 - 32 * 2, 128);
+		dialog.addChild(positiveBmp);
+
+		final interaction = new h2d.Interactive(30, 30, positiveBmp);
+		interaction.onClick = function(event:hxd.Event) {};
+		interaction.onMove = function(event:hxd.Event) {
+			positiveBmp.alpha = 0.80;
+		};
+		interaction.onOut = function(event:hxd.Event) {
+			positiveBmp.alpha = 1;
+		};
+		interaction.onPush = function(event:hxd.Event) {
+			positiveBmp.setScale(3.5);
+		};
+		interaction.onRelease = function(event:hxd.Event) {
+			positiveBmp.setScale(4);
+
+			interaction.cancelEvents = true;
+			interaction.blur();
+
+			// Hack to reset cursor...
+			haxe.Timer.delay(function() {
+				if (callback != null) {
+					callback();
+				}
+				interaction.remove();
+				this.removeChild(dialog);
+			}, 50);
+		};
+
+		this.addChild(dialog);
+	}
+
 	function yesNoDialog(title:String) {
 		final dialog = new h2d.Object(this);
 
@@ -186,6 +380,62 @@ class BasicHud extends h2d.Scene {
 		dialog.setPosition((Main.ScreenWidth / 2) - (480 / 2), (Main.ScreenHeight / 2) - (288 / 2));
 
 		this.addChild(dialog);
+	}
+
+	private function buildWidePlate(group:h2d.TileGroup, dialogTilesWidth:Int) {
+		for (x in 0...dialogTilesWidth) {
+			var tile:h2d.Tile;
+			if (x == 0) {
+				tile = dialogSingleLeftTile;
+			} else if (x == dialogTilesWidth - 1) {
+				tile = dialogSingleRightTile;
+			} else {
+				tile = dialogSingleMiddleTile;
+			}
+			if (tile != null) {
+				group.add(x * 32, y * 32, tile);
+			}
+		}
+	}
+
+	private function buildDialogBackground(group:h2d.TileGroup, dialogTilesWidth:Int, dialogTilesHeight:Int) {
+		for (x in 0...dialogTilesWidth) {
+			for (y in 0...dialogTilesHeight) {
+				var tile:h2d.Tile;
+				if (y == 0) {
+					// Top
+					if (x == 0) {
+						tile = dialogTopLeftTile;
+					} else if (x == dialogTilesWidth - 1) {
+						tile = dialogTopRightTile;
+					} else {
+						tile = dialogTopMiddleTile;
+					}
+				} else if (y == dialogTilesHeight - 1) {
+					// Bottom
+					if (x == 0) {
+						tile = dialogBottomLeftTile;
+					} else if (x == dialogTilesWidth - 1) {
+						tile = dialogBottomRightTile;
+					} else {
+						tile = dialogBottomMiddleTile;
+					}
+				} else {
+					// Middle
+					if (x == 0) {
+						tile = dialogMiddleLeftTile;
+					} else if (x == dialogTilesWidth - 1) {
+						tile = dialogMiddleRightTile;
+					} else {
+						tile = dialogMiddleMiddleTile;
+					}
+				}
+
+				if (tile != null) {
+					group.add(x * 32, y * 32, tile);
+				}
+			}
+		}
 	}
 
 	// Basic heaps.io elements
@@ -292,8 +542,23 @@ class BasicHud extends h2d.Scene {
 	}
 
 	public function addText(text = "") {
-		var tf = new h2d.Text(getFont(), fui);
+		final tf = new h2d.Text(getFont(), fui);
 		tf.text = text;
+		return tf;
+	}
+
+	public function addText2(parent:h2d.Object, text = "") {
+		final tf = new h2d.Text(getFont(), parent);
+		tf.text = text;
+		tf.setPosition(32, 24);
+		tf.setScale(4);
+		tf.textColor = 0x82590E;
+		tf.dropShadow = {
+			dx: 0.5,
+			dy: 0.5,
+			color: 0x000000,
+			alpha: 0.8
+		};
 		return tf;
 	}
 }

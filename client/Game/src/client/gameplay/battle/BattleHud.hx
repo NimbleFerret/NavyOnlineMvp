@@ -202,7 +202,7 @@ class BattleHud extends BasicHud {
 		});
 		leaveButton.setScale(3);
 
-		show(false);
+		show(true);
 	}
 
 	public function show(show:Bool) {
