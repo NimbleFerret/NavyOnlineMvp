@@ -7,6 +7,8 @@ import "../NVYGameLibrary.sol";
 contract Island is UpgradableEntity {
     mapping(uint256 => NVYGameLibrary.IslandStats) public idToIslands;
 
+    bytes32 public constant CAPTAIN_ROLE = keccak256("CAPTAIN_ROLE");
+
     constructor() public ERC721("ISLAND", "NVYISL") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
@@ -108,5 +110,41 @@ contract Island is UpgradableEntity {
         idToIslands[islandId] = island;
 
         nvyToken.mintReward(msg.sender, island.miningRewardNVY);
+    }
+
+    //
+
+    function addMiner(uint256 islandId) external onlyRole(CAPTAIN_ROLE) {
+        idToIslands[islandId].currMiners += 1;
+    }
+
+    function removeMiner(uint256 islandId) external onlyRole(CAPTAIN_ROLE) {
+        idToIslands[islandId].currMiners -= 1;
+    }
+
+    // ---------------------------------------
+    // Admin functions
+    // ---------------------------------------
+
+    function addCaptainAddress(address addr)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(
+            !hasRole(CAPTAIN_ROLE, addr),
+            "Nvy backend address already added."
+        );
+        _grantRole(CAPTAIN_ROLE, addr);
+    }
+
+    function removeCaptainAddress(address addr)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(
+            !hasRole(CAPTAIN_ROLE, addr),
+            "Address is not a recognized NVY backend."
+        );
+        _revokeRole(CAPTAIN_ROLE, addr);
     }
 }
