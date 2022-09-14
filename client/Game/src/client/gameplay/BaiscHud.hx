@@ -79,11 +79,12 @@ class BasicHud extends h2d.Scene {
 	}
 
 	// TODO
-	function addGuiButton(parent:h2d.Object, text:String, isWeb3Related:Bool, callback:Void->Void) {
+	function addGuiButton(parent:h2d.Object, text:String, isWeb3Related:Bool, callback:Void->Void, scaleX = 4, scaleY = 4) {
 		final button = new h2d.Object(parent);
 
 		final buttonBmp = new h2d.Bitmap(longButtonTile);
-		buttonBmp.setScale(4);
+		buttonBmp.scaleX = scaleX;
+		buttonBmp.scaleY = scaleY;
 		button.addChild(buttonBmp);
 
 		var tf = new h2d.Text(getFont(), button);
@@ -120,8 +121,6 @@ class BasicHud extends h2d.Scene {
 		} else {
 			button.alpha = 0.8;
 		}
-
-		parent.addChild(button);
 
 		return button;
 	}

@@ -41,7 +41,7 @@ class Main extends GuiApp {
 	override function init() {
 		super.init();
 
-		engine.backgroundColor = 0x6BC2EE;
+		engine.backgroundColor = 0xFCDCA1;
 
 		ScreenWidth = engine.width;
 		ScreenHeight = engine.height;
