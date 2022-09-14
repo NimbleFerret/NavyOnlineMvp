@@ -69,7 +69,7 @@ export class NftCaptainGenerator {
         const haircut1ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\haircuts\\haircut_1.png';
         const haircut2ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\haircuts\\haircut_2.png';
         const haircut3ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\haircuts\\haircut_3.png';
-        const haircut4ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\haircuts\\haircut_4.png';
+        const haircut4ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\haircuts\\haircuts_4.png';
 
         const hat1ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\hats\\hat_1.png';
         const hat2ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\hats\\hat_2.png';

@@ -6,7 +6,12 @@ import Moralis from "moralis";
 import { CronosService } from 'src/cronos/cronos.service';
 
 interface PlayerCaptainNFT {
-    id: string,
+    id: string;
+    miningRewardNVY: string;
+    stakingRewardNvy: string;
+    traits: string;
+    level: string;
+    rarity: string;
 }
 
 interface PlayerShipNFT {
@@ -29,11 +34,20 @@ interface PlayerShipNFT {
 }
 
 interface PlayerIslandNFT {
-    id: string,
+    id: string;
+    level: number;
+    rarity: number;
+    terrain: string;
+    miningRewardNVY: number;
+    shipAndCaptainFee: number;
+    maxMiners: number;
+    minersFee: number;
 }
 
 @Injectable()
 export class MoralisService implements OnModuleInit {
+
+    private readonly chain = EvmChain.CRONOS_TESTNET;
 
 
     async onModuleInit() {
@@ -72,6 +86,21 @@ export class MoralisService implements OnModuleInit {
             chain: this.chain,
             tokenAddresses: [CronosService.CaptainContractAddress]
         }) as any;
+        const total = response.data.total
+        if (total > 0) {
+            for (const entity of response.data.result) {
+                const metadataAttributes = JSON.parse(entity.metadata).attributes;
+                const playerCaptainNft = {
+                    id: entity.token_id,
+                    miningRewardNVY: metadataAttributes[0]['miningRewardNVY'],
+                    stakingRewardNvy: metadataAttributes[1]['stakingRewardNvy'],
+                    traits: metadataAttributes[2]['traits'],
+                    level: metadataAttributes[3]['level'],
+                    rarity: metadataAttributes[4]['rarity'],
+                } as PlayerCaptainNFT;
+                result.push(playerCaptainNft);
+            }
+        }
         return result;
     }
 
@@ -85,25 +114,23 @@ export class MoralisService implements OnModuleInit {
         const total = response.data.total
         if (total > 0) {
             for (const entity of response.data.result) {
-                const shipMetadataAttributes = JSON.parse(entity.metadata).attributes;
+                const metadataAttributes = JSON.parse(entity.metadata).attributes;
                 const playerShipNft = {
                     id: entity.token_id,
-                    hull: shipMetadataAttributes[0]['hull'],
-                    armor: shipMetadataAttributes[1]['armor'],
-                    maxSpeed: shipMetadataAttributes[2]['maxSpeed'],
-                    accelerationStep: shipMetadataAttributes[3]['accelerationStep'],
-                    accelerationDelay: shipMetadataAttributes[4]['accelerationDelay'],
-                    rotationDelay: shipMetadataAttributes[5]['rotationDelay'],
-                    cannons: shipMetadataAttributes[6]['cannons'],
-                    cannonsRange: shipMetadataAttributes[7]['cannonsRange'],
-                    cannonsDamage: shipMetadataAttributes[8]['cannonsDamage'],
-                    traits: shipMetadataAttributes[9]['traits'],
-                    rarity: shipMetadataAttributes[10]['rarity'],
-                    size: shipMetadataAttributes[11]['size'],
-                    windows: shipMetadataAttributes[12]['windows'],
-                    anchor: shipMetadataAttributes[13]['anchor'],
-                    // TODO add level here
-                    // level: shipMetadataAttributes['level'],
+                    hull: metadataAttributes[0]['hull'],
+                    armor: metadataAttributes[1]['armor'],
+                    maxSpeed: metadataAttributes[2]['maxSpeed'],
+                    accelerationStep: metadataAttributes[3]['accelerationStep'],
+                    accelerationDelay: metadataAttributes[4]['accelerationDelay'],
+                    rotationDelay: metadataAttributes[5]['rotationDelay'],
+                    cannons: metadataAttributes[6]['cannons'],
+                    cannonsRange: metadataAttributes[7]['cannonsRange'],
+                    cannonsDamage: metadataAttributes[8]['cannonsDamage'],
+                    traits: metadataAttributes[9]['traits'],
+                    rarity: metadataAttributes[10]['rarity'],
+                    size: metadataAttributes[11]['size'],
+                    windows: metadataAttributes[12]['windows'],
+                    anchor: metadataAttributes[13]['anchor'],
                 } as PlayerShipNFT;
                 result.push(playerShipNft);
             }
@@ -118,6 +145,23 @@ export class MoralisService implements OnModuleInit {
             chain: this.chain,
             tokenAddresses: [CronosService.IslandContractAddress]
         }) as any;
+        const total = response.data.total
+        if (total > 0) {
+            for (const entity of response.data.result) {
+                const metadataAttributes = JSON.parse(entity.metadata).attributes;
+                const playerIslandNFT = {
+                    id: entity.token_id,
+                    level: metadataAttributes[0]['level'],
+                    rarity: metadataAttributes[1]['rarity'],
+                    terrain: metadataAttributes[2]['terrain'],
+                    miningRewardNVY: metadataAttributes[3]['miningRewardNVY'],
+                    shipAndCaptainFee: metadataAttributes[4]['shipAndCaptainFee'],
+                    maxMiners: metadataAttributes[5]['maxMiners'],
+                    minersFee: metadataAttributes[6]['minersFee']
+                } as PlayerIslandNFT;
+                result.push(playerIslandNFT);
+            }
+        }
         return result;
     }
 }

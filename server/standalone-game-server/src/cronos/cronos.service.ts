@@ -14,9 +14,11 @@ import * as FounderIslandCollectionSale from '../abi/FounderIslandCollectionSale
 import { ShipyardService } from 'src/shipyard/shipyard.service';
 import { NftCaptainGenerator } from 'src/nft/nft.captain.generator';
 import { Rarity } from 'src/random/random.entity';
+import { NftIslandGenerator } from 'src/nft/nft.island.generator';
+import { RandomService } from 'src/random/random.service';
 
 // ------------------------------------
-// Ship stats
+// Captain stats
 // ------------------------------------
 
 export interface CaptainStats {
@@ -82,12 +84,27 @@ export interface ShipStatsStep {
     cannonsDamageStep: number;
 }
 
+// ------------------------------------
+// Island stats
+// ------------------------------------
+
+export interface IslandStats {
+    level: number;
+    rarity: number;
+    mining: boolean;
+    terrain: string;
+    miningStartedAt: number;
+    miningDurationSeconds: number;
+    miningRewardNVY: number;
+    shipAndCaptainFee: number;
+    currMiners: number;
+    maxMiners: number;
+    minersFee: number;
+}
+
 @Injectable()
 export class CronosService implements OnModuleInit {
 
-    private readonly ethersProvider = new ethers.providers.JsonRpcProvider('https://evm-t3.cronos.org');
-
-    // 0xE9f7B8e42b4633f518b9C4854A1D14b85d24EeA2
 
 
     private shipStatsStep: ShipStatsStep;
@@ -113,9 +130,11 @@ export class CronosService implements OnModuleInit {
     private readonly founderIslandsOnSaleTotal = 42;
 
     private readonly nftCaptainGenerator: NftCaptainGenerator;
+    private readonly nftIslandGenerator: NftIslandGenerator;
 
     constructor(private shipyardService: ShipyardService) {
         this.nftCaptainGenerator = new NftCaptainGenerator();
+        this.nftIslandGenerator = new NftIslandGenerator();
     }
 
     async onModuleInit() {
@@ -132,7 +151,6 @@ export class CronosService implements OnModuleInit {
         this.founderShipCollectionSaleContract = new ethers.Contract(this.FounderShipCollectionSaleContractAddress, FounderShipCollectionSale, this.ethersProvider);
         this.founderIslandCollectionSaleContract = new ethers.Contract(this.FounderIslandCollectionSaleContractAddress, FounderIslandCollectionSale, this.ethersProvider);
 
-        // TODO implement not fulfilled requests
         this.founderCaptainCollectionSaleContract.on('GenerateCaptain', async (sender: string) => {
             try {
                 Logger.log('Generating a new captain for: ' + sender);
@@ -159,7 +177,30 @@ export class CronosService implements OnModuleInit {
                     captainStats
                 );
 
-                await this.captainContract.grantCaptain(sender, captainStats, captainMetadata);
+                const tuple: [
+                    boolean,
+                    boolean,
+                    ethers.BigNumber,
+                    ethers.BigNumber,
+                    ethers.BigNumber,
+                    ethers.BigNumber,
+                    ethers.BigNumber,
+                    ethers.BigNumber,
+                    ethers.BigNumber,
+                    ethers.BigNumber] = [
+                        false,
+                        false,
+                        ethers.BigNumber.from(0),
+                        ethers.BigNumber.from(0),
+                        ethers.BigNumber.from(Rarity.LEGENDARY),
+                        ethers.BigNumber.from(15),
+                        ethers.BigNumber.from(5),
+                        ethers.BigNumber.from(0),
+                        ethers.BigNumber.from(120),
+                        ethers.BigNumber.from(0)
+                    ];
+
+                await this.captainContract.grantCaptain(sender, tuple, captainMetadata);
 
                 Logger.log('Captain for: ' + sender + ' generated !');
             } catch (e) {
@@ -196,13 +237,61 @@ export class CronosService implements OnModuleInit {
                 let islandsOnSale = await this.founderIslandCollectionSaleContract.islandOnSaleTotal();
                 islandsOnSale = islandsOnSale.toNumber();
 
+                const terrainRnd = RandomService.GetRandomIntInRange(1, 100);
+                let terrain = 'Green';
+                if (100 - NftIslandGenerator.DarkTerrainChance < terrainRnd) {
+                    terrain = 'Dark'
+                } else if (100 - NftIslandGenerator.SnowTerrainChance < terrainRnd) {
+                    terrain = 'Snow';
+                }
+
+                const islandStats = {
+                    level: 0,
+                    rarity: Rarity.LEGENDARY,
+                    mining: false,
+                    terrain,
+                    miningStartedAt: 0,
+                    miningDurationSeconds: 120,
+                    miningRewardNVY: 45,
+                    shipAndCaptainFee: 10,
+                    currMiners: 0,
+                    maxMiners: 3,
+                    minersFee: 5,
+                } as IslandStats;
+
+                const islandMetadata = await this.nftIslandGenerator.generateFounderIsland(
+                    islandsOnSale,
+                    this.founderIslandsOnSaleTotal,
+                    islandStats
+                );
+
+                const tuple: [
+                    boolean,
+                    ethers.BigNumber,
+                    ethers.BigNumber,
+                    ethers.BigNumber,
+                    ethers.BigNumber,
+                    ethers.BigNumber,
+                    ethers.BigNumber,
+                    ethers.BigNumber] = [
+                        false,
+                        ethers.BigNumber.from(0),
+                        ethers.BigNumber.from(120),
+                        ethers.BigNumber.from(45),
+                        ethers.BigNumber.from(10),
+                        ethers.BigNumber.from(0),
+                        ethers.BigNumber.from(3),
+                        ethers.BigNumber.from(5)
+                    ];
+
+                await this.islandContract.grantIsland(sender, tuple, islandMetadata);
+
                 Logger.log('Island for: ' + sender + ' generated !');
             } catch (e) {
                 Logger.error('Unable to generate island nft !', e);
             }
         });
 
-        // TODO store each ships params
         const shipStatsStep = await shipTemplateContract.getShipStatsStep();
         const smallShipParams = await shipTemplateContract.getSmallShipStats();
         const middleShipParams = await shipTemplateContract.getMiddleShipStats();
@@ -257,34 +346,6 @@ export class CronosService implements OnModuleInit {
             minCannonsDamage: middleShipParams[16].toNumber(),
             maxCannonsDamage: middleShipParams[17].toNumber()
         };
-
-        //
-
-        setTimeout(async () => {
-            let captainsOnSale = await this.founderCaptainCollectionSaleContract.captainOnSaleTotal();
-            captainsOnSale = captainsOnSale.toNumber();
-
-            const captainStats = {
-                level: 0,
-                traits: 0,
-                rarity: Rarity.LEGENDARY,
-                mining: false,
-                staking: false,
-                miningRewardNVY: 15,
-                stakingRewardNVY: 5,
-                miningStartedAt: 0,
-                miningDurationSeconds: 120,
-                miningIsland: 0
-            } as CaptainStats;
-
-            const captainMetadata = await this.nftCaptainGenerator.generateFounderCaptain(
-                captainsOnSale,
-                this.founderCaptainsOnSaleTotal,
-                captainStats
-            );
-
-            await this.captainContract.grantCaptain('0x87400A03678dd03c8BF536404B5B14C609a23b79', captainStats, captainMetadata);
-        }, 2000);
     }
 
     async rewardNVY(amount: number, recipient: string) {
