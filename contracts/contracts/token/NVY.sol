@@ -6,12 +6,16 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract NVY is ERC20, AccessControl {
     // For island mining
+    bytes32 public constant NVY_BACKEND_ROLE = keccak256("NVY_BACKEND_ROLE");
     bytes32 public constant ISLAND_ROLE = keccak256("ISLAND_ROLE");
     bytes32 public constant CAPTAIN_ROLE = keccak256("CAPTAIN_ROLE");
 
+    // Some % of total emission
+    uint256 public ingameRewardsAmountLeft = 144 * 10**18;
     // 36% of total emission
     uint256 public miningAndStakingAmountLeft = 144 * 10**18;
 
+    event IngameRewardGranted(address recipient, uint256 reward);
     event RewardGranted(address recipient, uint256 reward);
 
     constructor() public ERC20("Navy", "NVY") {
@@ -21,6 +25,22 @@ contract NVY is ERC20, AccessControl {
 
     function burn(uint256 amount) external {
         _burn(msg.sender, amount);
+    }
+
+    function mintRewardIngame(address recipient, uint256 amount)
+        external
+        onlyRole(NVY_BACKEND_ROLE)
+    {
+        uint256 reward = amount * 10**18;
+        require(ingameRewardsAmountLeft > 0, "No more tokens for any rewards");
+        if (ingameRewardsAmountLeft - reward < 0) {
+            reward = reward - (ingameRewardsAmountLeft - reward);
+            ingameRewardsAmountLeft = 0;
+        } else {
+            ingameRewardsAmountLeft -= reward;
+        }
+        _mint(recipient, reward);
+        emit IngameRewardGranted(recipient, reward);
     }
 
     function mintReward(address recipient, uint256 amount)
@@ -46,6 +66,28 @@ contract NVY is ERC20, AccessControl {
     // ---------------------------------------
     // Admin functions
     // ---------------------------------------
+
+    function addBackendAddress(address addr)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(
+            !hasRole(NVY_BACKEND_ROLE, addr),
+            "Backend address already added."
+        );
+        _grantRole(NVY_BACKEND_ROLE, addr);
+    }
+
+    function removeBackendAddress(address addr)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(
+            !hasRole(NVY_BACKEND_ROLE, addr),
+            "Address is not a recognized Backend."
+        );
+        _revokeRole(NVY_BACKEND_ROLE, addr);
+    }
 
     function addIslandAddress(address addr)
         external

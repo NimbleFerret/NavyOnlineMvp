@@ -16,6 +16,61 @@ class FounderCollections {
 	}
 }
 
+typedef CaptainNFT = {
+	id:Int,
+	stakingRewardNVY:Int,
+	miningRewardNVY:Int,
+	traits:Int,
+	level:Int,
+	rarity:Int,
+	bg:Int,
+	acc:Int,
+	head:Int,
+	haircutOrHat:Int,
+	clothes:Int,
+}
+
+typedef ShipNFT = {
+	id:Int,
+	hull:Int,
+	armor:Int,
+	maxSpeed:Int,
+	accelerationStep:Int,
+	accelerationDelay:Int,
+	rotationDelay:Int,
+	cannons:Int,
+	cannonsRange:Int,
+	cannonsDamage:Int,
+	traits:Int,
+	rarity:Int,
+	size:Int,
+	windows:Int,
+	anchor:Int
+}
+
+typedef IslandNFT = {
+	id:Int,
+	level:Int,
+	rarity:Int,
+	terrain:String,
+	miningRewardNVY:Int,
+	shipAndCaptainFee:Int,
+	maxMiners:Int,
+	minersFee:Int
+}
+
+class NFTs {
+	public final captains:Array<CaptainNFT>;
+	public final ships:Array<ShipNFT>;
+	public final islands:Array<IslandNFT>;
+
+	public function new(captains:Array<CaptainNFT>, ships:Array<ShipNFT>, islands:Array<IslandNFT>) {
+		this.captains = captains;
+		this.ships = ships;
+		this.islands = islands;
+	}
+}
+
 // -----------------------------------
 // Moralis V2
 // -----------------------------------

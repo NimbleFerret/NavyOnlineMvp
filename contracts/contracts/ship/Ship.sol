@@ -65,7 +65,7 @@ contract Ship is UpgradableEntity {
     }
 
     // Called by our backend app
-    function grantNFT(
+    function grantShip(
         address player,
         NVYGameLibrary.ShipStats memory ship,
         string memory tokenURI

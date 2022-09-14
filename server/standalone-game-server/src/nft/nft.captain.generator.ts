@@ -85,8 +85,11 @@ export class NftCaptainGenerator {
         const canvas = createCanvas(72, 72);
         const ctx = canvas.getContext('2d');
 
-        // Generate BG
-        // 9, 10, 11, 12 - rare
+        let bgIndex = 1;
+        let accIndex = 1;
+        let headIndex = 1;
+        let haircutOrHatIndex = 1;
+        let clothesIndex = 1;
 
         // Background random 
         let bgImagePath = bg1ImagePath;
@@ -94,6 +97,7 @@ export class NftCaptainGenerator {
 
         if (100 - this.RareBgChance < bgRnd1) {
             const bgRnd2 = RandomService.GetRandomIntInRange(1, 4);
+            bgIndex = bgRnd2;
             switch (bgRnd2) {
                 case 1:
                     bgImagePath = bg9ImagePath;
@@ -110,6 +114,7 @@ export class NftCaptainGenerator {
             }
         } else {
             const bgRnd2 = RandomService.GetRandomIntInRange(1, 8);
+            bgIndex = bgRnd2;
             switch (bgRnd2) {
                 case 1:
                     bgImagePath = bg1ImagePath;
@@ -142,16 +147,22 @@ export class NftCaptainGenerator {
         let clothesImagePath;
         const clothesRnd = RandomService.GetRandomIntInRange(1, 100);
         if (100 - this.Clothes1Chance < clothesRnd) {
+            clothesIndex = 1;
             clothesImagePath = clothes1ImagePath;
         } else if (100 - this.Clothes2Chance < clothesRnd) {
+            clothesIndex = 2;
             clothesImagePath = clothes2ImagePath;
         } else if (100 - this.Clothes3Chance < clothesRnd) {
+            clothesIndex = 3;
             clothesImagePath = clothes3ImagePath;
         } else if (100 - this.Clothes4Chance < clothesRnd) {
+            clothesIndex = 4;
             clothesImagePath = clothes4ImagePath;
         } else if (100 - this.Clothes5Chance < clothesRnd) {
+            clothesIndex = 5;
             clothesImagePath = clothes5ImagePath;
         } else if (100 - this.Clothes6Chance < clothesRnd) {
+            clothesIndex = 6;
             clothesImagePath = clothes6ImagePath;
         }
 
@@ -159,12 +170,16 @@ export class NftCaptainGenerator {
         let headImagePath = head1ImagePath;
         const headRnd = RandomService.GetRandomIntInRange(1, 100);
         if (100 - this.Head1Chance < headRnd) {
+            headIndex = 1;
             headImagePath = head1ImagePath;
         } else if (100 - this.Head2Chance < headRnd) {
+            headIndex = 2;
             headImagePath = head2ImagePath;
         } else if (100 - this.Head3Chance < headRnd) {
+            headIndex = 3;
             headImagePath = head3ImagePath;
         } else if (100 - this.Head4Chance < headRnd) {
+            headIndex = 4;
             headImagePath = head4ImagePath;
         }
 
@@ -172,35 +187,49 @@ export class NftCaptainGenerator {
         let accImagePath;
         const accRnd = RandomService.GetRandomIntInRange(1, 100);
         if (100 - this.Acc1Chance < accRnd) {
+            accIndex = 1;
             accImagePath = acc1ImagePath;
         } else if (100 - this.Acc2Chance < accRnd) {
+            accIndex = 2;
             accImagePath = acc2ImagePath;
         } else if (100 - this.Acc3Chance < accRnd) {
+            accIndex = 3;
             accImagePath = acc3ImagePath;
         } else if (100 - this.Acc4Chance < accRnd) {
+            accIndex = 4;
             accImagePath = acc4ImagePath;
         } else if (100 - this.Acc5Chance < accRnd) {
+            accIndex = 5;
             accImagePath = acc5ImagePath;
         }
 
         // Haircut or hat random
         let haircutOrHatImagePath = haircut3ImagePath;
+        haircutOrHatIndex = 3;
         const haircutOrHatRnd = RandomService.GetRandomIntInRange(1, 100);
         if (100 - this.HairOrHat1Chance < haircutOrHatRnd) {
+            haircutOrHatIndex = 1;
             haircutOrHatImagePath = haircut1ImagePath;
         } else if (100 - this.HairOrHat2Chance < haircutOrHatRnd) {
+            haircutOrHatIndex = 2;
             haircutOrHatImagePath = haircut2ImagePath;
         } else if (100 - this.HairOrHat3Chance < haircutOrHatRnd) {
+            haircutOrHatIndex = 4;
             haircutOrHatImagePath = haircut4ImagePath;
         } else if (100 - this.HairOrHat4Chance < haircutOrHatRnd) {
+            haircutOrHatIndex = 5;
             haircutOrHatImagePath = hat1ImagePath;
         } else if (100 - this.HairOrHat5Chance < haircutOrHatRnd) {
+            haircutOrHatIndex = 6;
             haircutOrHatImagePath = hat2ImagePath;
         } else if (100 - this.HairOrHat6Chance < haircutOrHatRnd) {
+            haircutOrHatIndex = 7;
             haircutOrHatImagePath = hat3ImagePath;
         } else if (100 - this.HairOrHat7Chance < haircutOrHatRnd) {
+            haircutOrHatIndex = 8;
             haircutOrHatImagePath = hat4ImagePath;
         } else if (100 - this.HairOrHat8Chance < haircutOrHatRnd) {
+            haircutOrHatIndex = 9;
             haircutOrHatImagePath = hat5ImagePath;
         }
 
@@ -235,7 +264,12 @@ export class NftCaptainGenerator {
                 { stakingRewardNVY: captainStats.stakingRewardNVY },
                 { traits: captainStats.traits },
                 { level: captainStats.level },
-                { rarity: captainStats.rarity }
+                { rarity: captainStats.rarity },
+                { bg: bgIndex },
+                { acc: accIndex },
+                { head: headIndex },
+                { haircutOrHat: haircutOrHatIndex },
+                { clothes: clothesIndex }
             ]
         }
 

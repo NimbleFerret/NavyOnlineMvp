@@ -8,10 +8,15 @@ import { CronosService } from 'src/cronos/cronos.service';
 interface PlayerCaptainNFT {
     id: string;
     miningRewardNVY: string;
-    stakingRewardNvy: string;
+    stakingRewardNVY: string;
     traits: string;
     level: string;
     rarity: string;
+    bg: number;
+    acc: number;
+    head: number;
+    haircutOrHat: number;
+    clothes: number;
 }
 
 interface PlayerShipNFT {
@@ -48,7 +53,7 @@ interface PlayerIslandNFT {
 export class MoralisService implements OnModuleInit {
 
     private readonly chain = EvmChain.CRONOS_TESTNET;
-
+    private readonly apiKey = "aQrAItXuznpPv1pEXAgPIIwcVqwaehaPHpB9WmGo0eP1dGUdmzyt5SYfmstQslBF";
 
     async onModuleInit() {
         await Moralis.start({
@@ -93,10 +98,15 @@ export class MoralisService implements OnModuleInit {
                 const playerCaptainNft = {
                     id: entity.token_id,
                     miningRewardNVY: metadataAttributes[0]['miningRewardNVY'],
-                    stakingRewardNvy: metadataAttributes[1]['stakingRewardNvy'],
+                    stakingRewardNVY: metadataAttributes[1]['stakingRewardNVY'],
                     traits: metadataAttributes[2]['traits'],
                     level: metadataAttributes[3]['level'],
                     rarity: metadataAttributes[4]['rarity'],
+                    bg: metadataAttributes[5]['bg'],
+                    acc: metadataAttributes[6]['acc'],
+                    head: metadataAttributes[7]['head'],
+                    haircutOrHat: metadataAttributes[8]['haircutOrHat'],
+                    clothes: metadataAttributes[9]['clothes'],
                 } as PlayerCaptainNFT;
                 result.push(playerCaptainNft);
             }

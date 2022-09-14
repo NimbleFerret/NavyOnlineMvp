@@ -64,6 +64,7 @@ export class AppController {
 
     // Blockchain
 
+    // Use cache here
     @Get('founders')
     async getFoundersCollectionInfo() {
         return this.cronosService.getFounderCollectionsInfo();
@@ -71,6 +72,7 @@ export class AppController {
 
     @Get('nfts/:address')
     async loadUserNFTs(@Param('address') address: string) {
-        return this.moralisService.loadUserNFTs(address);
+        const nftBasicInfo = await this.moralisService.loadUserNFTs(address);
+        return nftBasicInfo;
     }
 }

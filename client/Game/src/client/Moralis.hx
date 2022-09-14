@@ -8,9 +8,9 @@ extern class Moralis {
 
 	static function getEthAddress():String;
 
-	static function buyFounderShip():Void;
+	static function buyFounderShip(successCallback:Void->Void, errorCallback:Void->Void):Void;
 
-	static function buyFounderIsland():Void;
+	static function buyFounderIsland(successCallback:Void->Void, errorCallback:Void->Void):Void;
 
-	static function buyFounderCaptain():Void;
+	static function buyFounderCaptain(successCallback:Void->Void, errorCallback:Void->Void):Void;
 }

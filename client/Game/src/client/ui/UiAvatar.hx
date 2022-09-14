@@ -50,8 +50,7 @@ class UiAvatar extends h2d.Object {
 	private var boardBmp:h2d.Bitmap;
 	private var bodyBmp:h2d.Bitmap;
 	private var headBmp:h2d.Bitmap;
-	private var hatBmp:h2d.Bitmap;
-	private var hairBmp:h2d.Bitmap;
+	private var haircutOrHatBmp:h2d.Bitmap;
 	private var clothesBmp:h2d.Bitmap;
 	private var bgBmp:h2d.Bitmap;
 	private var accBmp:h2d.Bitmap;
@@ -62,18 +61,16 @@ class UiAvatar extends h2d.Object {
 		boardBmp = new h2d.Bitmap(boardTile);
 		bodyBmp = new h2d.Bitmap(bodyTile);
 		headBmp = new h2d.Bitmap();
-		hatBmp = new h2d.Bitmap();
-		hairBmp = new h2d.Bitmap();
+		haircutOrHatBmp = new h2d.Bitmap();
 		clothesBmp = new h2d.Bitmap();
 		bgBmp = new h2d.Bitmap();
 		accBmp = new h2d.Bitmap();
 
-		setVisuals(3, 0, 3, 3, 1, 0);
+		setVisuals(3, 0, 3, 3, 1);
 
 		bodyBmp.setPosition(9, 9);
 		headBmp.setPosition(9, 9);
-		hatBmp.setPosition(9, 9);
-		hairBmp.setPosition(9, 9);
+		haircutOrHatBmp.setPosition(9, 9);
 		clothesBmp.setPosition(9, 9);
 		bgBmp.setPosition(9, 9);
 		accBmp.setPosition(9, 9);
@@ -86,12 +83,11 @@ class UiAvatar extends h2d.Object {
 		addChild(bodyBmp);
 		addChild(headBmp);
 		addChild(accBmp);
-		addChild(hairBmp);
-		addChild(hatBmp);
+		addChild(haircutOrHatBmp);
 		addChild(clothesBmp);
 	}
 
-	public function setVisuals(head:Int, hat:Int, hair:Int, clothes:Int, bg:Int, acc:Int) {
+	public function setVisuals(head:Int, haircutOrHat:Int, clothes:Int, bg:Int, acc:Int) {
 		switch (head) {
 			case 1:
 				headBmp.tile = head1Tile;
@@ -103,38 +99,25 @@ class UiAvatar extends h2d.Object {
 				headBmp.tile = head4Tile;
 		}
 
-		if (hat != 0) {
-			switch (hat) {
-				case 1:
-					hatBmp.tile = hat1Tile;
-				case 2:
-					hatBmp.tile = hat2Tile;
-				case 3:
-					hatBmp.tile = hat3Tile;
-				case 4:
-					hatBmp.tile = hat4Tile;
-				case 5:
-					hatBmp.tile = hat5Tile;
-			}
-			hatBmp.alpha = 1;
-		} else {
-			hatBmp.alpha = 0;
-		}
-
-		if (hair != 0) {
-			switch (hair) {
-				case 1:
-					hairBmp.tile = hair1Tile;
-				case 2:
-					hairBmp.tile = hair2Tile;
-				case 3:
-					hairBmp.tile = hair3Tile;
-				case 4:
-					hairBmp.tile = hair4Tile;
-			}
-			hairBmp.alpha = 1;
-		} else {
-			hairBmp.alpha = 0;
+		switch (haircutOrHat) {
+			case 1:
+				haircutOrHatBmp.tile = hair1Tile;
+			case 2:
+				haircutOrHatBmp.tile = hair2Tile;
+			case 3:
+				haircutOrHatBmp.tile = hair3Tile;
+			case 4:
+				haircutOrHatBmp.tile = hair4Tile;
+			case 5:
+				haircutOrHatBmp.tile = hat1Tile;
+			case 6:
+				haircutOrHatBmp.tile = hat2Tile;
+			case 7:
+				haircutOrHatBmp.tile = hat3Tile;
+			case 8:
+				haircutOrHatBmp.tile = hat4Tile;
+			case 9:
+				haircutOrHatBmp.tile = hat5Tile;
 		}
 
 		switch (clothes) {

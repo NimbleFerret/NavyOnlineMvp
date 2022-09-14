@@ -440,13 +440,25 @@ class SceneMainHud extends BasicHud {
 		islLeftText.setPosition(cptLeftText.x, 186);
 
 		addGuiButton(buyButtonsFui, "Buy captain", true, function callback() {
-			Moralis.buyFounderCaptain();
+			Moralis.buyFounderCaptain(function successCallback() {
+				alertDialog('You have bought founder edition captain !\nStay a while and listen...while Cronos processing it.', callback);
+			}, function errorCallback() {
+				alertDialog('Error occured during captain buying !\nPlease report to us or try again !', callback);
+			});
 		});
 		addGuiButton(buyButtonsFui, "Buy ship", true, function callback() {
-			Moralis.buyFounderShip();
+			Moralis.buyFounderShip(function successCallback() {
+				alertDialog('You have bought founder edition ship !\nStay a while and listen...while Cronos processing it.', callback);
+			}, function errorCallback() {
+				alertDialog('Error occured during ship buying !\nPlease report to us or try again !', callback);
+			});
 		});
 		addGuiButton(buyButtonsFui, "Buy island", true, function callback() {
-			Moralis.buyFounderIsland();
+			Moralis.buyFounderIsland(function successCallback() {
+				alertDialog('You have bought founder edition island !\nStay a while and listen...while Cronos processing it.', callback);
+			}, function errorCallback() {
+				alertDialog('Error occured during island buying !\nPlease report to us or try again !', callback);
+			});
 		});
 	}
 }
