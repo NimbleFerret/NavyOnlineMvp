@@ -104,26 +104,26 @@ class SceneMain extends Scene {
 			acc: 0
 		});
 
-		captains.push({
-			free: false,
-			currentLevel: 0,
-			maxLevel: 10,
-			rarity: 'Legendary',
-			trait1: '-',
-			trait2: '-',
-			trait3: '-',
-			trait4: '-',
-			trait5: '-',
-			stakingIncome: 5,
-			miningIncome: 20,
-			secondsTillReward: 0,
-			head: 3,
-			hat: 5,
-			hair: 0,
-			clothes: 1,
-			bg: 9,
-			acc: 4
-		});
+		// captains.push({
+		// 	free: false,
+		// 	currentLevel: 0,
+		// 	maxLevel: 10,
+		// 	rarity: 'Legendary',
+		// 	trait1: '-',
+		// 	trait2: '-',
+		// 	trait3: '-',
+		// 	trait4: '-',
+		// 	trait5: '-',
+		// 	stakingIncome: 5,
+		// 	miningIncome: 20,
+		// 	secondsTillReward: 0,
+		// 	head: 3,
+		// 	hat: 5,
+		// 	hair: 0,
+		// 	clothes: 1,
+		// 	bg: 9,
+		// 	acc: 4
+		// });
 
 		ships.push({
 			free: true,
@@ -141,54 +141,54 @@ class SceneMain extends Scene {
 			trait5: '-'
 		});
 
-		ships.push({
-			free: false,
-			currentLevel: 0,
-			maxLevel: 10,
-			rarity: 'Legendary',
-			size: 'Middle',
-			cannons: 4,
-			windows: 2,
-			maintenance: false,
-			trait1: '-',
-			trait2: '-',
-			trait3: '-',
-			trait4: '-',
-			trait5: '-'
-		});
+		// ships.push({
+		// 	free: false,
+		// 	currentLevel: 0,
+		// 	maxLevel: 10,
+		// 	rarity: 'Legendary',
+		// 	size: 'Middle',
+		// 	cannons: 4,
+		// 	windows: 2,
+		// 	maintenance: false,
+		// 	trait1: '-',
+		// 	trait2: '-',
+		// 	trait3: '-',
+		// 	trait4: '-',
+		// 	trait5: '-'
+		// });
 
-		islands.push({
-			currentLevel: 0,
-			maxLevel: 3,
-			rarity: 'Legendary',
-			terrain: 'Green',
-			size: 'Small',
-			income: 40,
-			mining: false,
-			secondsTillReward: 0
-		});
+		// islands.push({
+		// 	currentLevel: 0,
+		// 	maxLevel: 3,
+		// 	rarity: 'Legendary',
+		// 	terrain: 'Green',
+		// 	size: 'Small',
+		// 	income: 40,
+		// 	mining: false,
+		// 	secondsTillReward: 0
+		// });
 
-		islands.push({
-			currentLevel: 1,
-			maxLevel: 3,
-			rarity: 'Legendary',
-			terrain: 'Snow',
-			size: 'Small',
-			income: 40,
-			mining: true,
-			secondsTillReward: 0
-		});
+		// islands.push({
+		// 	currentLevel: 1,
+		// 	maxLevel: 3,
+		// 	rarity: 'Legendary',
+		// 	terrain: 'Snow',
+		// 	size: 'Small',
+		// 	income: 40,
+		// 	mining: true,
+		// 	secondsTillReward: 0
+		// });
 
-		islands.push({
-			currentLevel: 1,
-			maxLevel: 3,
-			rarity: 'Legendary',
-			terrain: 'Dark',
-			size: 'Small',
-			income: 40,
-			mining: true,
-			secondsTillReward: 0
-		});
+		// islands.push({
+		// 	currentLevel: 1,
+		// 	maxLevel: 3,
+		// 	rarity: 'Legendary',
+		// 	terrain: 'Dark',
+		// 	size: 'Small',
+		// 	income: 40,
+		// 	mining: true,
+		// 	secondsTillReward: 0
+		// });
 
 		// Init moralis
 		hud = new SceneMainHud(function metamaskLoginCallback(address:String) {
@@ -199,12 +199,11 @@ class SceneMain extends Scene {
 		}, function unloggedInitCallback() {
 			initiateCaptains();
 			initiateShips();
-			initiateIslands();
 		}, function startGameCallback() {
 			if (startCallback != null) {
 				startCallback();
 			}
-		});
+		}, function refreshNFTsCallback() {});
 
 		// Basic ship position
 		baseShipX = Main.ScreenWidth / 2 - 230;
@@ -353,10 +352,10 @@ class SceneMain extends Scene {
 
 		final arrowCaptainLeft = hud.buttonArrowLeft(function callback() {
 			changeCaptain(-1);
-		}, false);
+		}, true);
 		final arrowCaptainRight = hud.buttonArrowRight(function callback() {
 			changeCaptain(1);
-		}, false);
+		}, true);
 
 		arrowCaptainLeft.setPosition(450, 350);
 		arrowCaptainRight.setPosition(800, 350);
@@ -372,10 +371,10 @@ class SceneMain extends Scene {
 
 		final arrowLeftShip = hud.buttonArrowLeft(function callback() {
 			changeShip(-1);
-		}, false);
+		}, true);
 		final arrowRightShip = hud.buttonArrowRight(function callback() {
 			changeShip(1);
-		}, false);
+		}, true);
 
 		arrowLeftShip.setPosition(baseShipX - 680, 350);
 		arrowRightShip.setPosition(baseShipX + 450, 350);
@@ -412,10 +411,10 @@ class SceneMain extends Scene {
 
 		final arrowLeftIsland = hud.buttonArrowLeft(function callback() {
 			changeIsland(-1);
-		}, false);
+		}, true);
 		final arrowRightIsland = hud.buttonArrowRight(function callback() {
 			changeIsland(1);
-		}, false);
+		}, true);
 		arrowLeftIsland.setPosition(2400, 350);
 		arrowRightIsland.setPosition(3100, 350);
 	}

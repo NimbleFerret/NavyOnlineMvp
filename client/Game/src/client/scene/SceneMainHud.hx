@@ -1,5 +1,7 @@
 package client.scene;
 
+import client.network.Rest;
+import client.network.RestProtocol.FounderCollections;
 import h2d.Object;
 import client.scene.SceneMain.IslandInfo;
 import client.scene.SceneMain.ShipInfo;
@@ -11,6 +13,11 @@ class SceneMainHud extends BasicHud {
 	private var userNameText:h2d.Text;
 	private var loginPlate:h2d.Object;
 	private var loginBtn:h2d.Object;
+
+	// Founder collection
+	private var cptLeftText:h2d.Text;
+	private var shpLeftText:h2d.Text;
+	private var islLeftText:h2d.Text;
 
 	// Captain UI
 	private var captainDescFui:h2d.Flow;
@@ -54,13 +61,16 @@ class SceneMainHud extends BasicHud {
 	private var islandStartMiningButton:h2d.Object;
 	private var islandCollectRewardButton:h2d.Object;
 
-	// TODO add staking
-	private final startGameCallback:Void->Void;
+	private var refreshMyNFTsButton:h2d.Object;
 
-	public function new(metamaskLoginCallback:String->Void, unloggedInitCallback:Void->Void, startGameCallback:Void->Void) {
+	private final startGameCallback:Void->Void;
+	private final refreshNFTsCallback:Void->Void;
+
+	public function new(metamaskLoginCallback:String->Void, unloggedInitCallback:Void->Void, startGameCallback:Void->Void, refreshNFTsCallback:Void->Void) {
 		super();
 
 		this.startGameCallback = startGameCallback;
+		this.refreshNFTsCallback = refreshNFTsCallback;
 
 		Main.IsWeb3Available = Moralis.isEthereumBrowser();
 
@@ -88,6 +98,10 @@ class SceneMainHud extends BasicHud {
 
 		loginPlate.removeChild(loginBtn);
 		addBuyNFTsStuff();
+
+		Rest.instance.getFounderCollections(function callback(founderCollections:FounderCollections) {
+			updateFounderCollections(founderCollections);
+		});
 	}
 
 	// ----------------------------------
@@ -107,8 +121,14 @@ class SceneMainHud extends BasicHud {
 	}
 
 	// ----------------------------------
-	// NFT Collections
+	// Update ui
 	// ----------------------------------
+
+	public function updateFounderCollections(founderCollections:FounderCollections) {
+		cptLeftText.text = 'Captains left: ' + founderCollections.captainsOnSale;
+		shpLeftText.text = 'Ships left: ' + founderCollections.shipsOnSale;
+		islLeftText.text = 'Islands left: ' + founderCollections.islandsOnSale;
+	}
 
 	public function updateCaptainUi(captainInfo:CaptainInfo) {
 		if (captainInfo.free) {
@@ -219,22 +239,28 @@ class SceneMainHud extends BasicHud {
 		alertDialog('You have Web3 plugin installed !\nPlease login and enjoy all game features !', callback);
 	}
 
+	// ----------------------------------
+	// UI initialization
+	// ----------------------------------
+
 	private function init(metamaskLoginCallback:String->Void) {
 		final loginFui = new h2d.Flow(this);
 		loginFui.layout = Vertical;
 		loginFui.verticalSpacing = 5;
 		loginFui.padding = 10;
 
-		loginPlate = newCustomPlate(loginFui, 5, 3);
+		loginPlate = newCustomPlate(loginFui, Main.IsWeb3Available ? 6 : 5, Main.IsWeb3Available ? 3 : 2);
 		loginPlate.setPosition(5, 5);
 
 		userNameText = addText2(loginPlate, "Guest");
-		loginBtn = addGuiButton(loginPlate, "Login", true, function callback() {
-			if (metamaskLoginCallback != null) {
-				Moralis.initMoralis(metamaskLoginCallback);
-			}
-		});
-		loginBtn.setPosition(userNameText.x - 10, 100);
+		if (Main.IsWeb3Available) {
+			loginBtn = addGuiButton(loginPlate, "Login", true, function callback() {
+				if (metamaskLoginCallback != null) {
+					Moralis.initMoralis(metamaskLoginCallback);
+				}
+			});
+			loginBtn.setPosition(userNameText.x - 10, 100);
+		}
 
 		// ---------------------------------
 		// Captain UI stuff
@@ -348,10 +374,6 @@ class SceneMainHud extends BasicHud {
 		shipIntegrityText.setPosition(shipTrait5Text.x, shipTrait5Text.y + 70);
 		shipIntegrityText.alpha = 0;
 
-		// Play button
-		// final startGameButton = addGuiButton(this, "Start game", false, startGameCallback);
-		// startGameButton.setPosition(Main.ScreenWidth / 2 - 500, Main.ScreenHeight - 900);
-
 		// ---------------------------------
 		// Island UI stuff
 		// ---------------------------------
@@ -362,6 +384,7 @@ class SceneMainHud extends BasicHud {
 		islandDescFui.padding = 10;
 		islandDescFui.x = 2510;
 		islandDescFui.y = 690;
+		islandDescFui.alpha = 0;
 
 		final islandDescPlate = newCustomPlate(islandDescFui, 6, 7);
 
@@ -389,9 +412,17 @@ class SceneMainHud extends BasicHud {
 
 		islandStartMiningButton = addGuiButton(islandButtonsContainer, "Start mining", false, null, 5, 4);
 		islandStartMiningButton.setPosition(islandIncomeText.x - 15, islandIncomeText.y + 90);
+
+		// Play button
+		final startGameButton = addGuiButton(this, "Start game", false, startGameCallback);
+		startGameButton.setPosition(Main.ScreenWidth / 2 - 500, Main.ScreenHeight - 200);
 	}
 
 	private function addBuyNFTsStuff() {
+		// Refresh my NFTs button
+		refreshMyNFTsButton = addGuiButton(this, "Refresh my NFTs", false, refreshNFTsCallback, 5, 4);
+		refreshMyNFTsButton.setPosition(userNameText.x - 10, 100);
+
 		final buyButtonsFui = new h2d.Flow(this);
 		buyButtonsFui.layout = Vertical;
 		buyButtonsFui.verticalSpacing = 5;
@@ -402,20 +433,20 @@ class SceneMainHud extends BasicHud {
 		final salePlate = newCustomPlate(buyButtonsFui, 5, 3);
 		salePlate.setPosition(5, 5);
 
-		final cptLeftText = addText2(salePlate, "Captains left: 100");
-		final shpLeftText = addText2(salePlate, "Ships left: 100");
+		cptLeftText = addText2(salePlate, "Captains left: -");
+		shpLeftText = addText2(salePlate, "Ships left: -");
 		shpLeftText.setPosition(cptLeftText.x, 106);
-		final islLeftText = addText2(salePlate, "Islands left: 100");
+		islLeftText = addText2(salePlate, "Islands left: -");
 		islLeftText.setPosition(cptLeftText.x, 186);
 
 		addGuiButton(buyButtonsFui, "Buy captain", true, function callback() {
-			trace(1);
+			Moralis.buyFounderCaptain();
 		});
 		addGuiButton(buyButtonsFui, "Buy ship", true, function callback() {
 			Moralis.buyFounderShip();
 		});
 		addGuiButton(buyButtonsFui, "Buy island", true, function callback() {
-			trace(3);
+			Moralis.buyFounderIsland();
 		});
 	}
 }

@@ -1,6 +1,22 @@
 package client.network;
 
 // -----------------------------------
+// Common api
+// -----------------------------------
+
+class FounderCollections {
+	public final captainsOnSale:Int;
+	public final shipsOnSale:Int;
+	public final islandsOnSale:Int;
+
+	public function new(captainsOnSale:Int, shipsOnSale:Int, islandsOnSale:Int) {
+		this.captainsOnSale = captainsOnSale;
+		this.shipsOnSale = shipsOnSale;
+		this.islandsOnSale = islandsOnSale;
+	}
+}
+
+// -----------------------------------
 // Moralis V2
 // -----------------------------------
 

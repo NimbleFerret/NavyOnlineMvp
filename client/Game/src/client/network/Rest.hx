@@ -71,8 +71,18 @@ class Rest {
 		};
 	}
 
-	//
+	public function getFounderCollections(callback:FounderCollections->Void) {
+		final req = new HttpJs("http://localhost:3000/app/founders");
+		req.request();
+		req.onData = function onData(data:String) {
+			if (callback != null) {
+				final json = haxe.Json.parse(data);
+				callback(new FounderCollections(json.captainsOnSale, json.shipsOnSale, json.islandsOnSale));
+			}
+		};
+	}
 
+	// TODO no need ?
 	public function getNftShips(ethAddress:String) {
 		final req = new HttpJs('https://deep-index.moralis.io/api/v2/' + ethAddress + '/nft?chain=0x152&format=decimal');
 		req.addHeader('Content-type', 'application/json');
