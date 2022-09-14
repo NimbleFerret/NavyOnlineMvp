@@ -1,11 +1,40 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ethers } from 'ethers';
+import { Contract, ethers } from 'ethers';
 
+import * as Captain from '../abi/Captain.json';
+import * as Aks from '../abi/Aks.json';
+import * as Nvy from '../abi/Nvy.json';
 import * as Ship from '../abi/Ship.json';
+import * as Island from '../abi/Island.json';
 import * as ShipTemplate from '../abi/ShipTemplate.json';
+import * as FounderCaptainCollectionSale from '../abi/FounderCaptainCollectionSale.json';
 import * as FounderShipCollectionSale from '../abi/FounderShipCollectionSale.json';
+import * as FounderIslandCollectionSale from '../abi/FounderIslandCollectionSale.json';
 import { ShipyardService } from 'src/shipyard/shipyard.service';
+import { NftCaptainGenerator } from 'src/nft/nft.captain.generator';
+import { Rarity } from 'src/random/random.entity';
+
+// ------------------------------------
+// Ship stats
+// ------------------------------------
+
+export interface CaptainStats {
+    level: number;
+    traits: number;
+    rarity: number;
+    mining: boolean,
+    staking: boolean,
+    miningRewardNVY: number;
+    stakingRewardNVY: number;
+    miningStartedAt: number;
+    miningDurationSeconds: number;
+    miningIsland: number;
+}
+
+// ------------------------------------
+// Ship stats
+// ------------------------------------
 
 export interface ShipStats {
     armor: number;
@@ -58,43 +87,118 @@ export class CronosService implements OnModuleInit {
 
     private readonly ethersProvider = new ethers.providers.JsonRpcProvider('https://evm-t3.cronos.org');
 
-    // 
-    private readonly backendWallet = new ethers.Wallet('', this.ethersProvider);
-    private readonly ShipContractAddress = '';
-    private readonly ShipTemplateContractAddress = '';
-    private readonly FounderShipCollectionSaleContractAddress = '';
+    // 0xE9f7B8e42b4633f518b9C4854A1D14b85d24EeA2
+
 
     private shipStatsStep: ShipStatsStep;
     private smallShipStatsRange: ShipStatsRange;
     private middleShipStatsRange: ShipStatsRange;
 
+    // Token contracts
+    private aksContract: Contract;
+    private nvyContract: Contract;
+
+    // NFT contracts
+    private captainContract: Contract;
+    private shipContract: Contract;
+    private islandContract: Contract;
+
+    // Sale contracts
+    private founderCaptainCollectionSaleContract: Contract;
+    private founderShipCollectionSaleContract: Contract;
+    private founderIslandCollectionSaleContract: Contract;
+
+    private readonly founderCaptainsOnSaleTotal = 100;
+    private readonly founderShipsOnSaleTotal = 500;
+    private readonly founderIslandsOnSaleTotal = 42;
+
+    private readonly nftCaptainGenerator: NftCaptainGenerator;
+
     constructor(private shipyardService: ShipyardService) {
+        this.nftCaptainGenerator = new NftCaptainGenerator();
     }
 
     async onModuleInit() {
-        const shipContract = new ethers.Contract(this.ShipContractAddress, Ship, this.ethersProvider).connect(this.backendWallet);
+        this.aksContract = new ethers.Contract(this.AksContractAddress, Aks, this.ethersProvider).connect(this.backendWallet);
+        this.nvyContract = new ethers.Contract(this.NvyContractAddress, Nvy, this.ethersProvider).connect(this.backendWallet);
+
+        this.captainContract = new ethers.Contract(CronosService.CaptainContractAddress, Captain, this.ethersProvider).connect(this.backendWallet);
+        this.shipContract = new ethers.Contract(CronosService.ShipContractAddress, Ship, this.ethersProvider).connect(this.backendWallet);
+        this.islandContract = new ethers.Contract(CronosService.IslandContractAddress, Island, this.ethersProvider).connect(this.backendWallet);
+
         const shipTemplateContract = new ethers.Contract(this.ShipTemplateContractAddress, ShipTemplate, this.ethersProvider);
-        const founderShipCollectionSaleContract = new ethers.Contract(this.FounderShipCollectionSaleContractAddress, FounderShipCollectionSale, this.ethersProvider);
+
+        this.founderCaptainCollectionSaleContract = new ethers.Contract(this.FounderCaptainCollectionSaleContractAddress, FounderCaptainCollectionSale, this.ethersProvider);
+        this.founderShipCollectionSaleContract = new ethers.Contract(this.FounderShipCollectionSaleContractAddress, FounderShipCollectionSale, this.ethersProvider);
+        this.founderIslandCollectionSaleContract = new ethers.Contract(this.FounderIslandCollectionSaleContractAddress, FounderIslandCollectionSale, this.ethersProvider);
 
         // TODO implement not fulfilled requests
-        founderShipCollectionSaleContract.on('GenerateShip', async (sender: string) => {
+        this.founderCaptainCollectionSaleContract.on('GenerateCaptain', async (sender: string) => {
+            try {
+                Logger.log('Generating a new captain for: ' + sender);
+
+                let captainsOnSale = await this.founderCaptainCollectionSaleContract.captainOnSaleTotal();
+                captainsOnSale = captainsOnSale.toNumber();
+
+                const captainStats = {
+                    level: 0,
+                    traits: 0,
+                    rarity: Rarity.LEGENDARY,
+                    mining: false,
+                    staking: false,
+                    miningRewardNVY: 15,
+                    stakingRewardNVY: 5,
+                    miningStartedAt: 0,
+                    miningDurationSeconds: 120,
+                    miningIsland: 0
+                } as CaptainStats;
+
+                const captainMetadata = await this.nftCaptainGenerator.generateFounderCaptain(
+                    captainsOnSale,
+                    this.founderCaptainsOnSaleTotal,
+                    captainStats
+                );
+
+                await this.captainContract.grantCaptain(sender, captainStats, captainMetadata);
+
+                Logger.log('Captain for: ' + sender + ' generated !');
+            } catch (e) {
+                Logger.error('Unable to generate captain nft !', e);
+            }
+        });
+
+        this.founderShipCollectionSaleContract.on('GenerateShip', async (sender: string) => {
             try {
                 Logger.log('Generating a new ship for: ' + sender);
 
-                const founderShipsTotal = 500;
-                let shipOnSale = await founderShipCollectionSaleContract.getShipsOnSale();
+                let shipOnSale = await this.founderShipCollectionSaleContract.shipOnSaleTotal();
                 shipOnSale = shipOnSale.toNumber();
 
                 const generatedShip = await this.shipyardService.generateShip(
                     shipOnSale,
-                    founderShipsTotal,
+                    this.founderShipsOnSaleTotal,
                     this.smallShipStatsRange,
                     this.middleShipStatsRange,
                     this.shipStatsStep);
-                await shipContract.grantNFT(sender, generatedShip.shipAttributes, generatedShip.shipMetadata);
+                const tuple: [boolean, ethers.BigNumber, ethers.BigNumber] = [false, ethers.BigNumber.from(1), ethers.BigNumber.from(55)];
+                await this.shipContract.grantShip(sender, tuple, generatedShip.shipMetadata);
 
+                Logger.log('Ship for: ' + sender + ' generated !');
             } catch (e) {
                 Logger.error('Unable to generate ship nft !', e);
+            }
+        });
+
+        this.founderIslandCollectionSaleContract.on('GenerateIsland', async (sender: string) => {
+            try {
+                Logger.log('Generating a new island for: ' + sender);
+
+                let islandsOnSale = await this.founderIslandCollectionSaleContract.islandOnSaleTotal();
+                islandsOnSale = islandsOnSale.toNumber();
+
+                Logger.log('Island for: ' + sender + ' generated !');
+            } catch (e) {
+                Logger.error('Unable to generate island nft !', e);
             }
         });
 
@@ -153,6 +257,65 @@ export class CronosService implements OnModuleInit {
             minCannonsDamage: middleShipParams[16].toNumber(),
             maxCannonsDamage: middleShipParams[17].toNumber()
         };
+
+        //
+
+        setTimeout(async () => {
+            let captainsOnSale = await this.founderCaptainCollectionSaleContract.captainOnSaleTotal();
+            captainsOnSale = captainsOnSale.toNumber();
+
+            const captainStats = {
+                level: 0,
+                traits: 0,
+                rarity: Rarity.LEGENDARY,
+                mining: false,
+                staking: false,
+                miningRewardNVY: 15,
+                stakingRewardNVY: 5,
+                miningStartedAt: 0,
+                miningDurationSeconds: 120,
+                miningIsland: 0
+            } as CaptainStats;
+
+            const captainMetadata = await this.nftCaptainGenerator.generateFounderCaptain(
+                captainsOnSale,
+                this.founderCaptainsOnSaleTotal,
+                captainStats
+            );
+
+            await this.captainContract.grantCaptain('0x87400A03678dd03c8BF536404B5B14C609a23b79', captainStats, captainMetadata);
+        }, 2000);
     }
 
+    async rewardNVY(amount: number, recipient: string) {
+        try {
+            Logger.log('Minting ' + amount + ' NVY for ' + recipient);
+            await this.nvyContract.mintReward(recipient, ethers.BigNumber.from(amount));
+        } catch (e) {
+            Logger.error('Unable to mint ' + amount + ' NVY for ' + recipient);
+        }
+    }
+
+    async rewardAKS(amount: number, recipient: string) {
+        try {
+            Logger.log('Minting ' + amount + ' AKS for ' + recipient);
+            await this.aksContract.mintReward(recipient, ethers.BigNumber.from(amount));
+        } catch (e) {
+            Logger.error('Unable to mint ' + amount + ' AKS for ' + recipient);
+        }
+    }
+
+    async getFounderCollectionsInfo() {
+        let captainsOnSale = await this.founderCaptainCollectionSaleContract.captainOnSaleTotal();
+        captainsOnSale = captainsOnSale.toNumber();
+        let shipsOnSale = await this.founderShipCollectionSaleContract.shipOnSaleTotal();
+        shipsOnSale = shipsOnSale.toNumber();
+        let islandsOnSale = await this.founderIslandCollectionSaleContract.islandOnSaleTotal();
+        islandsOnSale = islandsOnSale.toNumber();
+        return {
+            captainsOnSale,
+            shipsOnSale,
+            islandsOnSale
+        }
+    }
 }

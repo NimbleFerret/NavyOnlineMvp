@@ -21,7 +21,7 @@ export class User {
     @Prop()
     worldY: number;
 
-    @Prop()
+    @Prop({ default: '' })
     nickname: string;
 
     @Prop({ default: false })

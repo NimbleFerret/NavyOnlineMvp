@@ -175,6 +175,19 @@
     },
     {
         "inputs": [],
+        "name": "CAPTAIN_ROLE",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "DEFAULT_ADMIN_ROLE",
         "outputs": [
             {
@@ -345,46 +358,6 @@
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "player",
-                "type": "address"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "bool",
-                        "name": "maintenenceRequired",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "maintenenceCostNVY",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "maintenenceCostAKS",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct NVYGameLibrary.ShipStats",
-                "name": "ship",
-                "type": "tuple"
-            },
-            {
-                "internalType": "string",
-                "name": "tokenURI",
-                "type": "string"
-            }
-        ],
-        "name": "grantShip",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "internalType": "bytes32",
                 "name": "role",
                 "type": "bytes32"
@@ -433,21 +406,46 @@
                 "type": "uint256"
             }
         ],
-        "name": "idToShips",
+        "name": "idToIslands",
         "outputs": [
             {
                 "internalType": "bool",
-                "name": "maintenenceRequired",
+                "name": "mining",
                 "type": "bool"
             },
             {
                 "internalType": "uint256",
-                "name": "maintenenceCostNVY",
+                "name": "miningStartedAt",
                 "type": "uint256"
             },
             {
                 "internalType": "uint256",
-                "name": "maintenenceCostAKS",
+                "name": "miningDurationSeconds",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "miningRewardNVY",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "shipAndCaptainFee",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "currMiners",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "maxMiners",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "minersFee",
                 "type": "uint256"
             }
         ],
@@ -722,19 +720,6 @@
                 "type": "address"
             }
         ],
-        "name": "setIslandContractAddress",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "addr",
-                "type": "address"
-            }
-        ],
         "name": "setNvyContract",
         "outputs": [],
         "stateMutability": "nonpayable",
@@ -818,24 +803,6 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "shipId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "islandId",
-                "type": "uint256"
-            }
-        ],
-        "name": "tryUpgrade",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
                 "name": "level",
                 "type": "uint256"
             },
@@ -856,6 +823,222 @@
             }
         ],
         "name": "updateUpgradeRequirements",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "player",
+                "type": "address"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "bool",
+                        "name": "mining",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "miningStartedAt",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "miningDurationSeconds",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "miningRewardNVY",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "shipAndCaptainFee",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "currMiners",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "maxMiners",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "minersFee",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct NVYGameLibrary.IslandStats",
+                "name": "island",
+                "type": "tuple"
+            },
+            {
+                "internalType": "string",
+                "name": "tokenURI",
+                "type": "string"
+            }
+        ],
+        "name": "grantIsland",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "islandId",
+                "type": "uint256"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "bool",
+                        "name": "mining",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "miningStartedAt",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "miningDurationSeconds",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "miningRewardNVY",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "shipAndCaptainFee",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "currMiners",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "maxMiners",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "minersFee",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct NVYGameLibrary.IslandStats",
+                "name": "island",
+                "type": "tuple"
+            }
+        ],
+        "name": "upgradeIsland",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "islandId",
+                "type": "uint256"
+            }
+        ],
+        "name": "tryUpgrade",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "islandId",
+                "type": "uint256"
+            }
+        ],
+        "name": "startMining",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "islandId",
+                "type": "uint256"
+            }
+        ],
+        "name": "collectRewards",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "islandId",
+                "type": "uint256"
+            }
+        ],
+        "name": "addMiner",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "islandId",
+                "type": "uint256"
+            }
+        ],
+        "name": "removeMiner",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "addr",
+                "type": "address"
+            }
+        ],
+        "name": "addCaptainAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "addr",
+                "type": "address"
+            }
+        ],
+        "name": "removeCaptainAddress",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

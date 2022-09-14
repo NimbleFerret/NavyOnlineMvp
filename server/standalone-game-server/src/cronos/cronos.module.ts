@@ -6,5 +6,6 @@ import { CronosService } from './cronos.service';
 @Module({
   imports: [ShipyardModule],
   providers: [CronosService],
+  exports: [CronosService]
 })
 export class CronosModule { }

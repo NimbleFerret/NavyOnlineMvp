@@ -17,13 +17,13 @@ import { join } from 'path';
 
 @Module({
     imports: [
+        CronosModule,
         MoralisModule,
         WsModule,
         UserModule,
         GameplayModule,
         WorldModule,
         ShipyardModule,
-        CronosModule,
         EventEmitterModule.forRoot(),
         ScheduleModule.forRoot(),
         MongooseModule.forRoot('mongodb://localhost/navy')

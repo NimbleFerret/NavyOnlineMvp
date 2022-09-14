@@ -5,12 +5,10 @@ import { Shipyard, ShipyardSchema } from './shipyard.entity';
 import { Ship, ShipSchema } from './shipyard.ship.entity';
 import { ShipyardService } from './shipyard.service';
 import { RandomModule } from 'src/random/random.module';
-import { MoralisModule } from 'src/moralis/moralis.module';
 
 @Module({
   imports: [
     RandomModule,
-    MoralisModule,
     MongooseModule.forFeature([{ name: Ship.name, schema: ShipSchema }]),
     MongooseModule.forFeature([{ name: Shipyard.name, schema: ShipyardSchema }]),
   ],

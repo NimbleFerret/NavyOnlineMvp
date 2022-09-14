@@ -5,23 +5,21 @@ import { Model } from 'mongoose';
 import { Rarity } from 'src/random/random.entity';
 import { RandomService } from 'src/random/random.service';
 import { Shipyard, ShipyardDocument } from './shipyard.entity';
-import { Ship, ShipDocument, ShipSize, ShipType } from './shipyard.ship.entity';
+import { Ship, ShipDocument, ShipSize } from './shipyard.ship.entity';
 import { ShipStats, ShipStatsRange, ShipStatsStep } from 'src/cronos/cronos.service';
-import { ShipyardImageGenerator } from './shipyard.image.generator';
-import { MoralisService } from 'src/moralis/moralis.service';
+import { NftShipGenerator } from 'src/nft/nft.ship.generator';
 
 @Injectable()
 export class ShipyardService implements OnModuleInit {
 
     private shipyard: Shipyard;
-    private shipyardImageGenerator: ShipyardImageGenerator;
+    private nftShipGenerator: NftShipGenerator;
 
     constructor(
         private randomService: RandomService,
-        private moralisService: MoralisService,
         @InjectModel(Ship.name) private shipModel: Model<ShipDocument>,
         @InjectModel(Shipyard.name) private shipyardModel: Model<ShipyardDocument>) {
-        this.shipyardImageGenerator = new ShipyardImageGenerator(moralisService);
+        this.nftShipGenerator = new NftShipGenerator();
     }
 
     async onModuleInit() {
@@ -43,7 +41,7 @@ export class ShipyardService implements OnModuleInit {
         shipStatsStep: ShipStatsStep,
         preferredSize?: ShipSize) {
         const shipAttributes = await this.generateShipAttributes(smallShipStatsRange, middleShipStatsRange, shipStatsStep, preferredSize);
-        const shipMetadata = await this.shipyardImageGenerator.generateFounderShip(shipCurrentIndex, shipMaxIndex, shipAttributes);
+        const shipMetadata = await this.nftShipGenerator.generateFounderShip(shipCurrentIndex, shipMaxIndex, shipAttributes);
         return {
             shipAttributes,
             shipMetadata

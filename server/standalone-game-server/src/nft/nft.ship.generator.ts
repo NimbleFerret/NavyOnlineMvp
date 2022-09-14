@@ -6,15 +6,11 @@ import { RandomService } from "src/random/random.service";
 import { MoralisService } from 'src/moralis/moralis.service';
 import { ShipStats } from 'src/cronos/cronos.service';
 
-export class ShipyardImageGenerator {
+export class NftShipGenerator {
 
     private readonly AnchorChance = 5;
     private readonly OneWindowChance = 35;
     private readonly TwoWindowChance = 15;
-
-    constructor(private readonly moralisService: MoralisService) {
-
-    }
 
     async generateFounderShip(index: number, maxIndex: number, shipStats: ShipStats) {
         const middleShipImagePath = __dirname.split('dist')[0] + 'assets\\middle_ship.png';
@@ -77,12 +73,12 @@ export class ShipyardImageGenerator {
         const entityName = uuidv4();
 
         const fileBuffer = canvas.toBuffer('image/png');
-        const uploadedImageFile = await this.moralisService.uploadFile('nvy/' + entityName + '.png', fileBuffer.toString('base64')) as any;
+        const uploadedImageFile = await MoralisService.UploadFile('nvy/' + entityName + '.png', fileBuffer.toString('base64')) as any;
         const imagePathOnMoralis = uploadedImageFile.data[0].path;
 
         const metadata = {
             name: `Founders middle ship (${index}/${maxIndex})`,
-            description: 'Founders ship colletion of Navy.online.',
+            description: 'Founders ship collection of Navy.online.',
             image: imagePathOnMoralis,
             attributes: [
                 { hull: shipStats.hull },
@@ -102,7 +98,7 @@ export class ShipyardImageGenerator {
             ]
         }
 
-        const uploadedMetadataFile = await this.moralisService.uploadFile('nvy/' + entityName + '.json', Buffer.from(JSON.stringify(metadata)).toString('base64')) as any;
+        const uploadedMetadataFile = await MoralisService.UploadFile('nvy/' + entityName + '.json', Buffer.from(JSON.stringify(metadata)).toString('base64')) as any;
         const metadataPathOnMoralis = uploadedMetadataFile.data[0].path;
 
         return metadataPathOnMoralis as string;

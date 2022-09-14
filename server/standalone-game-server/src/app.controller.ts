@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
 
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { CronosService } from './cronos/cronos.service';
+import { MoralisService } from './moralis/moralis.service';
 import { UserService } from './user/user.service';
 import { WorldService } from './world/world.service';
 
@@ -25,7 +27,9 @@ export class AppController {
 
     constructor(
         private readonly userService: UserService,
-        private readonly worldService: WorldService) {
+        private readonly worldService: WorldService,
+        private readonly cronosService: CronosService,
+        private readonly moralisService: MoralisService) {
     }
 
     // Users stuff
@@ -58,4 +62,15 @@ export class AppController {
         }
     }
 
+    // Blockchain
+
+    @Get('founders')
+    async getFoundersCollectionInfo() {
+        return this.cronosService.getFounderCollectionsInfo();
+    }
+
+    @Get('nfts/:address')
+    async loadUserNFTs(@Param('address') address: string) {
+        return this.moralisService.loadUserNFTs(address);
+    }
 }
