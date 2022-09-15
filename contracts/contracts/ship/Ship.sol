@@ -10,7 +10,9 @@ contract Ship is UpgradableEntity {
 
     mapping(uint256 => NVYGameLibrary.ShipStats) public idToShips;
 
-    constructor() public ERC721("SHIP", "NVYSHIP") {
+    event ShipRepaired(address owner, uint256 shipId);
+
+    constructor() public ERC721("SHP", "NVYSHIP") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         levelToUpgrade[1] = NVYGameLibrary.UpgradeRequirementsByLevel(
             100,
@@ -65,6 +67,7 @@ contract Ship is UpgradableEntity {
     }
 
     // Called by our backend app
+
     function grantShip(
         address player,
         NVYGameLibrary.ShipStats memory ship,
@@ -72,6 +75,32 @@ contract Ship is UpgradableEntity {
     ) external onlyRole(NVY_BACKEND) {
         uint256 tokenId = grantNFT(player, tokenURI);
         idToShips[tokenId] = ship;
+    }
+
+    function updateShip(
+        uint256 shipId,
+        NVYGameLibrary.ShipStats memory ship,
+        string memory newMetadataURI
+    ) external onlyRole(NVY_BACKEND) {
+        idToShips[shipId] = ship;
+        _setTokenURI(shipId, newMetadataURI);
+    }
+
+    // Upgrade and repairs
+    function repair(uint256 shipId) external {
+        require(ERC721.ownerOf(shipId) == msg.sender, "Only owner can repair");
+        NVYGameLibrary.ShipStats memory shipStats = idToShips[shipId];
+
+        uint256 reqNvy = shipStats.maintenenceCostNVY * 10**18;
+        uint256 reqAks = shipStats.maintenenceCostAKS * 10**18;
+
+        require(nvyToken.balanceOf(msg.sender) >= reqNvy, "Not enought NVY");
+        require(aksToken.balanceOf(msg.sender) >= reqAks, "Not enought AKS");
+
+        nvyToken.burn(reqNvy);
+        aksToken.burn(reqAks);
+
+        emit ShipRepaired(msg.sender, shipId);
     }
 
     function tryUpgrade(uint256 shipId, uint256 islandId) external {

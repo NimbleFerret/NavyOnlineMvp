@@ -9,7 +9,7 @@ contract Captain is UpgradableEntity {
 
     mapping(uint256 => NVYGameLibrary.CaptainStats) public idToCaptains;
 
-    constructor() public ERC721("CAPT", "NVYCAPT") {
+    constructor() public ERC721("CPT", "NVYCPT") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
         levelToUpgrade[1] = NVYGameLibrary.UpgradeRequirementsByLevel(
@@ -71,6 +71,15 @@ contract Captain is UpgradableEntity {
     ) external onlyRole(NVY_BACKEND) {
         uint256 tokenId = grantNFT(player, tokenURI);
         idToCaptains[tokenId] = captain;
+    }
+
+    function updateCaptain(
+        uint256 captainId,
+        NVYGameLibrary.CaptainStats memory captain,
+        string memory newMetadataURI
+    ) external onlyRole(NVY_BACKEND) {
+        idToCaptains[captainId] = captain;
+        _setTokenURI(captainId, newMetadataURI);
     }
 
     function tryUpgrade(uint256 captainId, uint256 islandId) external {
@@ -150,7 +159,10 @@ contract Captain is UpgradableEntity {
         captain.miningStartedAt = 0;
         captain.staking = false;
 
-        nvyToken.mintReward(msg.sender, captain.stakingRewardNVY);
+        nvyToken.mintIslandRewardByCaptain(
+            msg.sender,
+            captain.stakingRewardNVY
+        );
     }
 
     function startMining(uint256 captainId, uint256 islandId) external {
@@ -200,10 +212,16 @@ contract Captain is UpgradableEntity {
         // Grant reward to the captain owner
         uint256 islandFee = (captain.miningRewardNVY / 100) *
             island.getIslandInfo(captain.miningIsland).minersFee;
-        nvyToken.mintReward(msg.sender, captain.miningRewardNVY - islandFee);
+        nvyToken.mintIslandRewardByCaptain(
+            msg.sender,
+            captain.miningRewardNVY - islandFee
+        );
 
         // Grant reward to the island owner
-        nvyToken.mintReward(ERC721.ownerOf(captain.miningIsland), islandFee);
+        nvyToken.mintIslandRewardByCaptain(
+            ERC721.ownerOf(captain.miningIsland),
+            islandFee
+        );
 
         // Reset
         island.removeMiner(captain.miningIsland);

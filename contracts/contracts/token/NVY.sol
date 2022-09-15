@@ -30,7 +30,7 @@ contract NVY is ERC20, AccessControl {
         _burn(msg.sender, amount);
     }
 
-    function mintTOkens(address recipient, uint256 amount)
+    function mintTokens(address recipient, uint256 amount)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {

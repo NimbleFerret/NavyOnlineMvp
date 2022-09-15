@@ -9,7 +9,7 @@ contract Island is UpgradableEntity {
 
     bytes32 public constant CAPTAIN_ROLE = keccak256("CAPTAIN_ROLE");
 
-    constructor() public ERC721("ISLAND", "NVYISL") {
+    constructor() public ERC721("ISL", "NVYISL") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
         levelToUpgrade[1] = NVYGameLibrary.UpgradeRequirementsByLevel(
@@ -40,11 +40,13 @@ contract Island is UpgradableEntity {
 
     // Upgrades
 
-    function upgradeIsland(
+    function updateIsland(
         uint256 islandId,
-        NVYGameLibrary.IslandStats memory island
+        NVYGameLibrary.IslandStats memory island,
+        string memory newMetadataURI
     ) external onlyRole(NVY_BACKEND) {
         idToIslands[islandId] = island;
+        _setTokenURI(islandId, newMetadataURI);
     }
 
     function tryUpgrade(uint256 islandId) external {
@@ -109,7 +111,7 @@ contract Island is UpgradableEntity {
 
         idToIslands[islandId] = island;
 
-        nvyToken.mintReward(msg.sender, island.miningRewardNVY);
+        nvyToken.mintIslandRewardByIsland(msg.sender, island.miningRewardNVY);
     }
 
     //

@@ -66,7 +66,6 @@ library NVYGameLibrary {
     }
 
     struct ShipStats {
-        bool maintenenceRequired;
         uint256 maintenenceCostNVY;
         uint256 maintenenceCostAKS;
     }

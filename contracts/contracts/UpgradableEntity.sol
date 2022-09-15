@@ -54,12 +54,8 @@ abstract contract UpgradableEntity is ERC721URIStorage, AccessControl {
 
     // Entity upgrade
 
-    function levelUpNFT(uint256 tokenId, string memory newMetadataURI)
-        public
-        onlyRole(NVY_BACKEND)
-    {
+    function levelUpNFT(uint256 tokenId) public onlyRole(NVY_BACKEND) {
         idToEntityLevel[tokenId] = idToEntityLevel[tokenId] + 1;
-        _setTokenURI(tokenId, newMetadataURI);
     }
 
     // ---------------------------------------

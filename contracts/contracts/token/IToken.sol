@@ -8,5 +8,11 @@ interface IToken {
 
     function transfer(address to, uint256 amount) external returns (bool);
 
-    function mintReward(address recipient, uint256 amount) external;
+    function mintRewardIngame(address recipient, uint256 amount) external;
+
+    function mintIslandRewardByIsland(address recipient, uint256 amount)
+        external;
+
+    function mintIslandRewardByCaptain(address recipient, uint256 amount)
+        external;
 }
