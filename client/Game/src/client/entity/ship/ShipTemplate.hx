@@ -37,7 +37,7 @@ class ShipTemplate extends h2d.Object {
 	// 2 - 1 > 2 > 3 > 4
 	private var gunsDrawingOrder = 1;
 
-	public function new(s2d:h2d.Scene, shipSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns) {
+	public function new(shipSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns) {
 		super();
 
 		this.shipSize = shipSize;
@@ -116,8 +116,6 @@ class ShipTemplate extends h2d.Object {
 		if (leftSideGun2 != null)
 			layers.add(leftSideGun2, 5);
 		layers.add(leftSideGun1, 5);
-
-		s2d.addChild(this);
 	}
 
 	public function update() {
@@ -189,99 +187,32 @@ class ShipTemplate extends h2d.Object {
 	}
 
 	private function changeGunsDrawingOrder() {
-		if (gunsDrawingOrder == 1) {
-			gunsDrawingOrder = 2;
+		// Right side guns
+		var length = shipGuns == ShipGuns.THREE ? 3 : 4;
+		final removedRightGuns = new Array<h2d.Object>();
+		for (i in 0...length) {
+			final rightGun = layers.getChildAtLayer(0, 4);
+			removedRightGuns.push(rightGun);
+			layers.removeChild(rightGun);
+		}
+		var i = length - 1;
+		while (i >= 0) {
+			layers.add(removedRightGuns[i], 4);
+			i--;
+		}
 
-			// Right side guns
-
-			final rightGun4 = layers.getChildAtLayer(0, 4);
-			final rightGun3 = layers.getChildAtLayer(1, 4);
-			final rightGun2 = layers.getChildAtLayer(2, 4);
-			final rightGun1 = layers.getChildAtLayer(3, 4);
-
-			if (rightSideGun4 != null)
-				layers.removeChild(rightGun4);
-			if (rightSideGun3 != null)
-				layers.removeChild(rightGun3);
-			if (rightSideGun2 != null)
-				layers.removeChild(rightGun2);
-			layers.removeChild(rightGun1);
-
-			layers.add(rightSideGun1, 4);
-			if (rightSideGun2 != null)
-				layers.add(rightSideGun2, 4);
-			if (rightSideGun3 != null)
-				layers.add(rightSideGun3, 4);
-			if (rightSideGun4 != null)
-				layers.add(rightSideGun4, 4);
-
-			// Left side guns
-			final leftGun4 = layers.getChildAtLayer(0, 5);
-			final leftGun3 = layers.getChildAtLayer(1, 5);
-			final leftGun2 = layers.getChildAtLayer(2, 5);
-			final leftGun1 = layers.getChildAtLayer(3, 5);
-
-			if (leftSideGun4 != null)
-				layers.removeChild(leftGun4);
-			if (leftSideGun3 != null)
-				layers.removeChild(leftGun3);
-			if (leftSideGun2 != null)
-				layers.removeChild(leftGun2);
-			layers.removeChild(leftGun1);
-
-			layers.add(leftSideGun1, 5);
-			if (leftSideGun2 != null)
-				layers.add(leftSideGun2, 5);
-			if (leftSideGun3 != null)
-				layers.add(leftSideGun3, 5);
-			if (leftSideGun4 != null)
-				layers.add(leftSideGun4, 5);
-		} else {
-			gunsDrawingOrder = 1;
-
-			// Right side guns
-			final rightGun1 = layers.getChildAtLayer(0, 4);
-			final rightGun2 = layers.getChildAtLayer(1, 4);
-			final rightGun3 = layers.getChildAtLayer(2, 4);
-			final rightGun4 = layers.getChildAtLayer(3, 4);
-
-			layers.removeChild(rightGun1);
-			if (rightSideGun2 != null)
-				layers.removeChild(rightGun2);
-			if (rightSideGun3 != null)
-				layers.removeChild(rightGun3);
-			if (rightSideGun4 != null)
-				layers.removeChild(rightGun4);
-
-			if (rightSideGun4 != null)
-				layers.add(rightSideGun4, 4);
-			if (rightSideGun3 != null)
-				layers.add(rightSideGun3, 4);
-			if (rightSideGun2 != null)
-				layers.add(rightSideGun2, 4);
-			layers.add(rightSideGun1, 4);
-
-			// Left side guns
-			final leftGun1 = layers.getChildAtLayer(0, 5);
-			final leftGun2 = layers.getChildAtLayer(1, 5);
-			final leftGun3 = layers.getChildAtLayer(2, 5);
-			final leftGun4 = layers.getChildAtLayer(3, 5);
-
-			layers.removeChild(leftGun1);
-			if (leftSideGun2 != null)
-				layers.removeChild(leftGun2);
-			if (leftSideGun3 != null)
-				layers.removeChild(leftGun3);
-			if (leftSideGun4 != null)
-				layers.removeChild(leftGun4);
-
-			if (leftSideGun4 != null)
-				layers.add(leftSideGun4, 5);
-			if (leftSideGun3 != null)
-				layers.add(leftSideGun3, 5);
-			if (leftSideGun2 != null)
-				layers.add(leftSideGun2, 5);
-			layers.add(leftSideGun1, 5);
+		// Left side guns
+		length = shipGuns == ShipGuns.THREE ? 3 : 4;
+		final removedLeftGuns = new Array<h2d.Object>();
+		for (i in 0...length) {
+			final leftGun = layers.getChildAtLayer(0, 5);
+			removedLeftGuns.push(leftGun);
+			layers.removeChild(leftGun);
+		}
+		i = length - 1;
+		while (i >= 0) {
+			layers.add(removedLeftGuns[i], 5);
+			i--;
 		}
 	}
 

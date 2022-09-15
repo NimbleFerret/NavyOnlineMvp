@@ -22,9 +22,9 @@ class ShipDecorations extends ShipVisualComponent {
 		GameEntityDirection.North => new PosOffset(0, -66),
 		GameEntityDirection.NorthWest => new PosOffset(-44, -56),
 		GameEntityDirection.West => new PosOffset(-50, -35),
-		GameEntityDirection.SouthWest => new PosOffset(0, 0),
-		GameEntityDirection.South => new PosOffset(0, 0),
-		GameEntityDirection.SouthEast => new PosOffset(0, 0)
+		GameEntityDirection.SouthWest => new PosOffset(-28, -14),
+		GameEntityDirection.South => new PosOffset(0, 20),
+		GameEntityDirection.SouthEast => new PosOffset(25, -11)
 	];
 
 	private final eastWheelTile:h2d.Tile;

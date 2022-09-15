@@ -29,10 +29,15 @@ class IslandGameplay extends BasicGameplay {
 	// UI
 	public var hud:IslandHud;
 
+	public final waterBg:WaterBg;
+
 	public function new(scene:h2d.Scene, leaveCallback:Void->Void, engineMode = EngineMode.Server) {
 		super(scene, new IslandEngine(engineMode));
 
-		islandsManager = new IslandsManager(scene);
+		waterBg = new WaterBg(scene, -Main.ScreenWidth / 3.5, -Main.ScreenHeight / 3.5);
+
+		// Pass additional island info here.
+		islandsManager = new IslandsManager(scene, 'Green');
 
 		final islandEngine = cast(baseEngine, IslandEngine);
 
@@ -47,6 +52,10 @@ class IslandGameplay extends BasicGameplay {
 				leaveCallback();
 			}
 		});
+
+		if (engineMode == EngineMode.Client) {
+			gameState = GameState.Playing;
+		}
 	}
 
 	// --------------------------------------
@@ -108,6 +117,8 @@ class IslandGameplay extends BasicGameplay {
 	// --------------------------------------
 
 	public function customUpdate(dt:Float, fps:Float) {
+		waterBg.update(dt);
+
 		for (character in clientMainEntities) {
 			character.update(dt);
 
@@ -165,9 +176,6 @@ class IslandGameplay extends BasicGameplay {
 		if (gameState == GameState.Init) {
 			this.playerId = playerId;
 			gameState = GameState.Playing;
-
-			//
-			// hud.show(true);
 		}
 	}
 

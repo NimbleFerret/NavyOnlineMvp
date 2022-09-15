@@ -14,8 +14,10 @@ class SceneShipsDemo extends Scene {
 	public function new() {
 		super();
 
-		smallShip = new ShipTemplate(this, SMALL, NONE, THREE);
+		smallShip = new ShipTemplate(MEDIUM, NONE, THREE);
 		smallShip.setPosition(400, 300);
+
+		addChild(smallShip);
 
 		// mediumShip = new ShipTemplate(this, MEDIUM, ONE, FOUR);
 		// mediumShip.setPosition(800, 300);

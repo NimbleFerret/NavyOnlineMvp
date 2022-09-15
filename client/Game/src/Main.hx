@@ -108,7 +108,6 @@ class Main extends GuiApp {
 				sceneDemo1.start();
 				sevents.addScene(sceneDemo1.getHud());
 				setScene2D(sceneDemo1);
-				trace('NOT IMPLEMENTED');
 			case SceneOnlineDemo1:
 				sceneOnlineDemo1.start();
 				// sevents.addScene(sceneOnlineDemo1.getHud());

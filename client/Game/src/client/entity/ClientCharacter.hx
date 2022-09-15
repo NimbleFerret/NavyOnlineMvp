@@ -107,6 +107,8 @@ class ClientCharacter extends ClientBaseGameEntity {
 		nickname.setPosition(20, 0);
 
 		s2d.addChild(this);
+
+		setScale(1.5);
 	}
 
 	public function update(dt:Float) {

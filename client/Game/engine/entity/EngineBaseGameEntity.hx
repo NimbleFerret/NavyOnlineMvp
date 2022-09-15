@@ -108,8 +108,8 @@ class EngineBaseGameEntity {
 				this.shapeWidth = 10;
 				this.shapeHeight = 10;
 			case Character:
-				this.shapeWidth = 40;
-				this.shapeHeight = 40;
+				this.shapeWidth = 60;
+				this.shapeHeight = 60;
 		}
 		this.shapeWidthHalf = shapeWidth / 2;
 		this.shapeHeightHalf = shapeHeight / 2;

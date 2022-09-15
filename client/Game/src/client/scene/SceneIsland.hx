@@ -33,7 +33,7 @@ class SceneIsland extends Scene implements EventListener {
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventSync, this);
 				leaveCallback();
 			}
-		}, EngineMode.Client);
+		}, EngineMode.Server);
 
 		if (game.baseEngine.engineMode == EngineMode.Server) {
 			Socket.instance.joinGame({playerId: Player.instance.playerData.ethAddress, instanceId: instanceId, sectorType: 3});
@@ -47,6 +47,8 @@ class SceneIsland extends Scene implements EventListener {
 		} else {
 			// TODO implement client init
 		}
+
+		camera.scale(2.5, 2.5);
 	}
 
 	public override function render(e:Engine) {

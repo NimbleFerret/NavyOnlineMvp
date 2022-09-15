@@ -88,11 +88,14 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	public var role:Role;
 
 	// -----------------------
-	// Cabblacks
+	// Callbacks
 	// -----------------------
 	public var speedChangeCallback:Float->Void;
 	public var directionChangeCallbackLeft:GameEntityDirection->Void;
 	public var directionChangeCallbackRight:GameEntityDirection->Void;
+
+	public var shootLeftCallback:Void->Void;
+	public var shootRightCallback:Void->Void;
 
 	// -----------------------
 	// Ship details
@@ -266,6 +269,9 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		if (side == Right) {
 			if (lastRightShootInputCheck == 0 || lastRightShootInputCheck + inputShootCheckDelayMS < now) {
 				lastRightShootInputCheck = now;
+				if (shootRightCallback != null) {
+					shootRightCallback();
+				}
 				return true;
 			} else {
 				return false;
@@ -273,6 +279,9 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		} else {
 			if (lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + inputShootCheckDelayMS < now) {
 				lastLeftShootInputCheck = now;
+				if (shootLeftCallback != null) {
+					shootLeftCallback();
+				}
 				return true;
 			} else {
 				return false;
@@ -320,6 +329,9 @@ class EngineShipEntity extends EngineBaseGameEntity {
 			offsetX = offset.three.x;
 			offsetY = offset.three.y;
 		}
+
+		final resultX = x + offsetX;
+		final resultY = y + offsetY;
 
 		return {
 			x: x + offsetX,

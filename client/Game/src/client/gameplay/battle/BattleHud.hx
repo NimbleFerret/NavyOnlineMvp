@@ -1,11 +1,10 @@
 package client.gameplay.battle;
 
 import h2d.Bitmap;
+import h2d.Object;
 import client.gameplay.BaiscHud.BasicHud;
 import client.ui.UiComponents;
 import client.network.Socket;
-import h2d.Object;
-import h2d.SpriteBatch.BatchElement;
 import client.entity.ClientShip;
 
 class HorizontalStatsBar {
@@ -90,8 +89,6 @@ class RetryDialog {
 }
 
 class BattleHud extends BasicHud {
-	public static final DrawWaterBg = false;
-
 	private var movementText:h2d.Text;
 	private var dirText:h2d.Text;
 	private var systemText:h2d.Text;
@@ -100,13 +97,6 @@ class BattleHud extends BasicHud {
 
 	private var leftCannonsText:h2d.Text;
 	private var rightCannonsText:h2d.Text;
-
-	var waterBgObject:h2d.Object;
-	var waterBgbatch:h2d.SpriteBatch;
-	var displacementTile:h2d.Tile;
-
-	var playerDX = 0.0;
-	var playerDY = 0.0;
 
 	// HP bars
 	final armorBar:HorizontalStatsBar;
@@ -129,27 +119,6 @@ class BattleHud extends BasicHud {
 
 	public function new(leaveCallback:Void->Void) {
 		super();
-
-		if (DrawWaterBg) {
-			displacementTile = hxd.Res.normalmap.toTile();
-			waterBgObject = new h2d.Object(this);
-
-			var waterBgTile = hxd.Res.water_tile.toTile();
-			waterBgTile = waterBgTile.center();
-
-			waterBgbatch = new h2d.SpriteBatch(waterBgTile, waterBgObject);
-
-			for (y in 0...15)
-				for (x in 0...20) {
-					var batchElement = new h2d.BatchElement(waterBgTile);
-					batchElement.x = 48 * x;
-					batchElement.y = 48 * y;
-					waterBgbatch.add(batchElement);
-				}
-			waterBgbatch.tileWrap = true;
-			waterBgbatch.setScale(4.0);
-			waterBgObject.filter = new h2d.filter.Displacement(displacementTile, 4, 4);
-		}
 
 		// Compass
 		compassEast = hxd.Res.compass.compass_e.toTile();
@@ -215,17 +184,7 @@ class BattleHud extends BasicHud {
 		rightCannonsText.alpha = show ? 1 : 0;
 	}
 
-	// TODO reuse GUI class
-	// UPDATES
-	var style = null;
-
 	public function update(dt:Float) {
-		// style.sync();
-
-		if (DrawWaterBg) {
-			displacementTile.scrollDiscrete(6 * dt, 12 * dt);
-			waterBgbatch.tile.scrollDiscrete(playerDX * 0.4, -playerDY * 0.4);
-		}
 		latencyText.text = "Latency:" + Socket.instance.latency;
 	}
 

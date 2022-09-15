@@ -7,19 +7,12 @@ class ClientShell extends ClientBaseGameEntity {
 	public function new(s2d:h2d.Scene, engineShellEntity:EngineShellEntity, ownerShip:ClientShip) {
 		super();
 		initiateEngineEntity(engineShellEntity);
+
 		// Correct initial pos due to ship's position interpolation
-		var posX = 0.0;
-		var posY = 0.0;
-		if (engineShellEntity.pos == 0) {
-			posX = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 0).x;
-			posX = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 0).y;
-		} else if (engineShellEntity.pos == 1) {
-			posX = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 1).x;
-			posY = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 1).y;
-		} else if (engineShellEntity.pos == 2) {
-			posX = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 2).x;
-			posY = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 2).y;
-		}
+		final offset = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, engineShellEntity.pos);
+		final posX = offset.x;
+		final posY = offset.y;
+
 		setPosition(posX, posY);
 		// Graphics init
 		var shellTile = hxd.Res.cannonBall.toTile();

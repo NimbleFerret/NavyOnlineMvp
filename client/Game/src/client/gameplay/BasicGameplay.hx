@@ -214,7 +214,7 @@ abstract class BasicGameplay {
 
 		if (baseEngine.mainEntityType == GameEntityType.Ship) {
 			final gameEngine = cast(baseEngine, GameEngine);
-			final shipEntity = cast(baseEngine, EngineShipEntity);
+			final shipEntity = cast(entity, EngineShipEntity);
 
 			final newEngineEnity = gameEngine.createEntity(Role.General, shipEntity.x, shipEntity.y, shipEntity.shipHullSize, shipEntity.shipWindows,
 				shipEntity.shipGuns, shipEntity.id, shipEntity.ownerId);

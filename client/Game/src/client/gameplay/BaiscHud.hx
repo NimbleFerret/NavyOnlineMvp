@@ -74,11 +74,8 @@ class BasicHud extends h2d.Scene {
 
 		longButtonTile = paperUiTileImage.sub(384, 224, 96, 32);
 		midButtonTile = paperUiTileImage.sub(416, 224, 64, 32);
-
-		// yesNoDialog("Leave sector ?");
 	}
 
-	// TODO
 	function addGuiButton(parent:h2d.Object, text:String, isWeb3Related:Bool, callback:Void->Void, scaleX = 4, scaleY = 4) {
 		final button = new h2d.Object(parent);
 

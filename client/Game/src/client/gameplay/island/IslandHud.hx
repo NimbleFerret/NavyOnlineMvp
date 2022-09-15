@@ -6,6 +6,8 @@ class IslandHud extends BasicHud {
 	public function new(leaveCallback:Void->Void) {
 		super();
 
+		// waterBg = new WaterBg(this);
+
 		// final repairShipButton = addButton('Repair ship', function callback() {
 		// 	trace(1);
 		// });

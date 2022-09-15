@@ -1,5 +1,6 @@
 package client.entity;
 
+import haxe.Template;
 import client.entity.ship.ShipTemplate;
 import client.gameplay.battle.BattleGameplay;
 import engine.entity.EngineBaseGameEntity;
@@ -7,7 +8,7 @@ import engine.entity.EngineShipEntity;
 import engine.MathUtils;
 
 final RippleOffsetByDir:Map<GameEntityDirection, PosOffset> = [
-	GameEntityDirection.East => new PosOffset(90, -40, 20),
+	GameEntityDirection.East => new PosOffset(90, -80, 20),
 	GameEntityDirection.North => new PosOffset(3.5, -10, 59),
 	GameEntityDirection.NorthEast => new PosOffset(60, -31, 44),
 	GameEntityDirection.NorthWest => new PosOffset(-56, 15, 52),
@@ -25,8 +26,8 @@ class ClientShip extends ClientBaseGameEntity {
 
 	// Ripple config
 	public var ripple_angle:Float = 90;
-	public var ripple_x:Float = -40;
-	public var ripple_y:Float = 20;
+	public var ripple_x:Float = -20;
+	public var ripple_y:Float = 0;
 
 	// Shapes config
 	public var shape_angle:Float = 0;
@@ -46,15 +47,17 @@ class ClientShip extends ClientBaseGameEntity {
 			}
 		};
 		engineShipEntity.directionChangeCallbackLeft = function callback(dir) {
-			shipTemplate.direction = dir;
 			shipTemplate.changeDirLeft();
 		};
 		engineShipEntity.directionChangeCallbackRight = function callback(dir) {
-			shipTemplate.direction = dir;
 			shipTemplate.changeDirRight();
 		};
-
-		shipTemplate = new ShipTemplate(s2d, engineShipEntity.shipHullSize, engineShipEntity.shipWindows, engineShipEntity.shipGuns);
+		engineShipEntity.shootLeftCallback = function callback() {
+			shipTemplate.shootLeft();
+		};
+		engineShipEntity.shootRightCallback = function callback() {
+			shipTemplate.shootRight();
+		};
 
 		initiateEngineEntity(engineShipEntity);
 
@@ -71,6 +74,9 @@ class ClientShip extends ClientBaseGameEntity {
 		rippleAnim.scaleY = 0.9;
 		rippleAnim.alpha = 0.0;
 
+		shipTemplate = new ShipTemplate(engineShipEntity.shipHullSize, engineShipEntity.shipWindows, engineShipEntity.shipGuns);
+		addChild(shipTemplate);
+
 		s2d.addChild(this);
 	}
 
@@ -83,6 +89,7 @@ class ClientShip extends ClientBaseGameEntity {
 	public function update(dt:Float) {
 		x = hxd.Math.lerp(x, engineEntity.x, 0.1);
 		y = hxd.Math.lerp(y, engineEntity.y, 0.1);
+		shipTemplate.update();
 	}
 
 	public function getStats() {
@@ -106,8 +113,6 @@ class ClientShip extends ClientBaseGameEntity {
 		final shipEntity = cast(engineEntity, EngineShipEntity);
 		return shipEntity.getCanonOffsetBySideAndIndex(side, index);
 	}
-
-	//
 
 	public function clearDebugGraphics(s2d:h2d.Scene) {
 		// if (debugRect != null) {

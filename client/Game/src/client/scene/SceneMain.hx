@@ -273,7 +273,7 @@ class SceneMain extends Scene {
 			if (currentShip != null) {
 				removeChild(currentShip);
 			}
-			currentShip = new ShipTemplate(this, shipSize, shipWindows, shipCannons);
+			currentShip = new ShipTemplate(shipSize, shipWindows, shipCannons);
 			if (currentShip.shipSize == SMALL) {
 				currentShip.setPosition(baseShipX - 90, 500);
 			} else {
@@ -371,9 +371,10 @@ class SceneMain extends Scene {
 	}
 
 	private function initiateShips() {
-		currentShip = new ShipTemplate(this, SMALL, NONE, THREE);
+		currentShip = new ShipTemplate(SMALL, NONE, THREE);
 		currentShip.setScale(3);
 		currentShip.setPosition(baseShipX - 90, 500);
+		addChild(currentShip);
 
 		final arrowLeftShip = hud.buttonArrowLeft(function callback() {
 			changeShip(-1);

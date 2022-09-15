@@ -140,7 +140,8 @@ class GunRecoilTween {
 }
 
 class ShipGun extends ShipVisualComponent {
-	private static final RightGunParamsByDir:Map<GameEntityDirection, GunParams> = [
+	// Mid
+	private static final RightGunParamsByDirMid:Map<GameEntityDirection, GunParams> = [
 		GameEntityDirection.East => {
 			w_t_x: 0,
 			w_t_y: 0,
@@ -231,7 +232,190 @@ class ShipGun extends ShipVisualComponent {
 		}
 	];
 
-	private static final LeftGunParamsByDir:Map<GameEntityDirection, GunParams> = [
+	private static final LeftGunParamsByDirMid:Map<GameEntityDirection, GunParams> = [
+		GameEntityDirection.East => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 8,
+			g_x: 0,
+			g_y: -2,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.NorthEast => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: 3,
+			g_y: 1,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.North => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: -4,
+			g_y: 0,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.NorthWest => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: -7,
+			g_y: 4,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.West => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 8,
+			g_x: 0,
+			g_y: 13,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.SouthWest => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: 7,
+			g_y: 5,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.South => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: 4,
+			g_y: 0,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.SouthEast => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: -3,
+			g_y: 1,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		}
+	];
+
+	// Sm
+	private static final RightGunParamsByDirSm:Map<GameEntityDirection, GunParams> = [
+		GameEntityDirection.East => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 8,
+			g_x: 0,
+			g_y: 13,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.NorthEast => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: 7,
+			g_y: 5,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.North => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: 4,
+			g_y: 0,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.NorthWest => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: -3,
+			g_y: 1,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.West => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: 0,
+			g_y: 0,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.SouthWest => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: 3,
+			g_y: 1,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.South => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: -4,
+			g_y: 0,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		},
+		GameEntityDirection.SouthEast => {
+			w_t_x: 0,
+			w_t_y: 0,
+			w_b_x: 0,
+			w_b_y: 0,
+			g_x: -9,
+			g_y: 4,
+			w_t_t: null,
+			w_b_t: null,
+			g_t: null
+		}
+	];
+
+	private static final LeftGunParamsByDirSm:Map<GameEntityDirection, GunParams> = [
 		GameEntityDirection.East => {
 			w_t_x: 0,
 			w_t_y: 0,
@@ -328,82 +512,155 @@ class ShipGun extends ShipVisualComponent {
 	private var bmp_wood_bottom:h2d.Bitmap;
 	private var bmp_gun:h2d.Bitmap;
 
+	private final shipHullSize:ShipHullSize;
 	private final recoilAnim:GunRecoilTween;
 
-	public function new(size:ShipHullSize, direction:GameEntityDirection, side:Side) {
+	public function new(shipHullSize:ShipHullSize, direction:GameEntityDirection, side:Side) {
 		super(direction, side);
 
+		this.shipHullSize = shipHullSize;
+
 		if (!tilesInitialized) {
-			RightGunParamsByDir.get(East).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
-			RightGunParamsByDir.get(East).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
-			RightGunParamsByDir.get(East).g_t = hxd.Res.mid_ship.ok_gun.gun_right_e.toTile();
-			RightGunParamsByDir.get(NorthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			RightGunParamsByDir.get(NorthEast).w_b_t = null;
-			RightGunParamsByDir.get(NorthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_right_ne.toTile();
-			RightGunParamsByDir.get(North).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
-			RightGunParamsByDir.get(North).w_b_t = null;
-			RightGunParamsByDir.get(North).g_t = hxd.Res.mid_ship.ok_gun.gun_right_n.toTile();
-			RightGunParamsByDir.get(NorthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			RightGunParamsByDir.get(NorthWest).w_b_t = null;
-			RightGunParamsByDir.get(NorthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_right_nw.toTile();
-			RightGunParamsByDir.get(West).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w.toTile();
-			RightGunParamsByDir.get(West).w_b_t = null;
-			RightGunParamsByDir.get(West).g_t = hxd.Res.mid_ship.ok_gun.gun_right_w.toTile();
-			RightGunParamsByDir.get(SouthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			RightGunParamsByDir.get(SouthWest).w_b_t = null;
-			RightGunParamsByDir.get(SouthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_right_sw.toTile();
-			RightGunParamsByDir.get(South).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
-			RightGunParamsByDir.get(South).w_b_t = null;
-			RightGunParamsByDir.get(South).g_t = hxd.Res.mid_ship.ok_gun.gun_right_s.toTile();
-			RightGunParamsByDir.get(SouthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			RightGunParamsByDir.get(SouthEast).w_b_t = null;
-			RightGunParamsByDir.get(SouthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_right_se.toTile();
+			RightGunParamsByDirMid.get(East).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
+			RightGunParamsByDirMid.get(East).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
+			RightGunParamsByDirMid.get(East).g_t = hxd.Res.mid_ship.ok_gun.gun_right_e.toTile();
+			RightGunParamsByDirMid.get(NorthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			RightGunParamsByDirMid.get(NorthEast).w_b_t = null;
+			RightGunParamsByDirMid.get(NorthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_right_ne.toTile();
+			RightGunParamsByDirMid.get(North).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
+			RightGunParamsByDirMid.get(North).w_b_t = null;
+			RightGunParamsByDirMid.get(North).g_t = hxd.Res.mid_ship.ok_gun.gun_right_n.toTile();
+			RightGunParamsByDirMid.get(NorthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			RightGunParamsByDirMid.get(NorthWest).w_b_t = null;
+			RightGunParamsByDirMid.get(NorthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_right_nw.toTile();
+			RightGunParamsByDirMid.get(West).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w.toTile();
+			RightGunParamsByDirMid.get(West).w_b_t = null;
+			RightGunParamsByDirMid.get(West).g_t = hxd.Res.mid_ship.ok_gun.gun_right_w.toTile();
+			RightGunParamsByDirMid.get(SouthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			RightGunParamsByDirMid.get(SouthWest).w_b_t = null;
+			RightGunParamsByDirMid.get(SouthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_right_sw.toTile();
+			RightGunParamsByDirMid.get(South).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
+			RightGunParamsByDirMid.get(South).w_b_t = null;
+			RightGunParamsByDirMid.get(South).g_t = hxd.Res.mid_ship.ok_gun.gun_right_s.toTile();
+			RightGunParamsByDirMid.get(SouthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			RightGunParamsByDirMid.get(SouthEast).w_b_t = null;
+			RightGunParamsByDirMid.get(SouthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_right_se.toTile();
 
-			LeftGunParamsByDir.get(East)
-				.w_t_t = size == ShipHullSize.MEDIUM ? hxd.Res.mid_ship.wood_top.wood_top_w.toTile() : hxd.Res.mid_ship.wood_top.wood_top_w_small.toTile();
-			LeftGunParamsByDir.get(East).w_b_t = null;
-			LeftGunParamsByDir.get(East).g_t = hxd.Res.mid_ship.ok_gun.gun_left_e.toTile();
-			LeftGunParamsByDir.get(NorthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			LeftGunParamsByDir.get(NorthEast).w_b_t = null;
-			LeftGunParamsByDir.get(NorthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_left_ne.toTile();
-			LeftGunParamsByDir.get(North).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
-			LeftGunParamsByDir.get(North).w_b_t = null;
-			LeftGunParamsByDir.get(North).g_t = hxd.Res.mid_ship.ok_gun.gun_left_n.toTile();
-			LeftGunParamsByDir.get(NorthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			LeftGunParamsByDir.get(NorthWest).w_b_t = null;
-			LeftGunParamsByDir.get(NorthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_left_nw.toTile();
-			LeftGunParamsByDir.get(West).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
-			LeftGunParamsByDir.get(West).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
-			LeftGunParamsByDir.get(West).g_t = hxd.Res.mid_ship.ok_gun.gun_left_w.toTile();
-			LeftGunParamsByDir.get(SouthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			LeftGunParamsByDir.get(SouthWest).w_b_t = null;
-			LeftGunParamsByDir.get(SouthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_left_sw.toTile();
-			LeftGunParamsByDir.get(South).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
-			LeftGunParamsByDir.get(South).w_b_t = null;
-			LeftGunParamsByDir.get(South).g_t = hxd.Res.mid_ship.ok_gun.gun_left_s.toTile();
-			LeftGunParamsByDir.get(SouthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			LeftGunParamsByDir.get(SouthEast).w_b_t = null;
-			LeftGunParamsByDir.get(SouthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_left_se.toTile();
+			LeftGunParamsByDirMid.get(East).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w.toTile();
+			LeftGunParamsByDirMid.get(East).w_b_t = null;
+			LeftGunParamsByDirMid.get(East).g_t = hxd.Res.mid_ship.ok_gun.gun_left_e.toTile();
+			LeftGunParamsByDirMid.get(NorthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			LeftGunParamsByDirMid.get(NorthEast).w_b_t = null;
+			LeftGunParamsByDirMid.get(NorthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_left_ne.toTile();
+			LeftGunParamsByDirMid.get(North).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
+			LeftGunParamsByDirMid.get(North).w_b_t = null;
+			LeftGunParamsByDirMid.get(North).g_t = hxd.Res.mid_ship.ok_gun.gun_left_n.toTile();
+			LeftGunParamsByDirMid.get(NorthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			LeftGunParamsByDirMid.get(NorthWest).w_b_t = null;
+			LeftGunParamsByDirMid.get(NorthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_left_nw.toTile();
+			LeftGunParamsByDirMid.get(West).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
+			LeftGunParamsByDirMid.get(West).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
+			LeftGunParamsByDirMid.get(West).g_t = hxd.Res.mid_ship.ok_gun.gun_left_w.toTile();
+			LeftGunParamsByDirMid.get(SouthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			LeftGunParamsByDirMid.get(SouthWest).w_b_t = null;
+			LeftGunParamsByDirMid.get(SouthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_left_sw.toTile();
+			LeftGunParamsByDirMid.get(South).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
+			LeftGunParamsByDirMid.get(South).w_b_t = null;
+			LeftGunParamsByDirMid.get(South).g_t = hxd.Res.mid_ship.ok_gun.gun_left_s.toTile();
+			LeftGunParamsByDirMid.get(SouthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			LeftGunParamsByDirMid.get(SouthEast).w_b_t = null;
+			LeftGunParamsByDirMid.get(SouthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_left_se.toTile();
 
-			for (key in RightGunParamsByDir.keys()) {
-				final rightGunParam = RightGunParamsByDir.get(key);
+			RightGunParamsByDirSm.get(East).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
+			RightGunParamsByDirSm.get(East).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
+			RightGunParamsByDirSm.get(East).g_t = hxd.Res.mid_ship.ok_gun.gun_right_e.toTile();
+			RightGunParamsByDirSm.get(NorthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			RightGunParamsByDirSm.get(NorthEast).w_b_t = null;
+			RightGunParamsByDirSm.get(NorthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_right_ne.toTile();
+			RightGunParamsByDirSm.get(North).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
+			RightGunParamsByDirSm.get(North).w_b_t = null;
+			RightGunParamsByDirSm.get(North).g_t = hxd.Res.mid_ship.ok_gun.gun_right_n.toTile();
+			RightGunParamsByDirSm.get(NorthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			RightGunParamsByDirSm.get(NorthWest).w_b_t = null;
+			RightGunParamsByDirSm.get(NorthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_right_nw.toTile();
+			RightGunParamsByDirSm.get(West).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w.toTile();
+			RightGunParamsByDirSm.get(West).w_b_t = null;
+			RightGunParamsByDirSm.get(West).g_t = hxd.Res.mid_ship.ok_gun.gun_right_w.toTile();
+			RightGunParamsByDirSm.get(SouthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			RightGunParamsByDirSm.get(SouthWest).w_b_t = null;
+			RightGunParamsByDirSm.get(SouthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_right_sw.toTile();
+			RightGunParamsByDirSm.get(South).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
+			RightGunParamsByDirSm.get(South).w_b_t = null;
+			RightGunParamsByDirSm.get(South).g_t = hxd.Res.mid_ship.ok_gun.gun_right_s.toTile();
+			RightGunParamsByDirSm.get(SouthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			RightGunParamsByDirSm.get(SouthEast).w_b_t = null;
+			RightGunParamsByDirSm.get(SouthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_right_se.toTile();
+
+			LeftGunParamsByDirSm.get(East).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w_small.toTile();
+			LeftGunParamsByDirSm.get(East).w_b_t = null;
+			LeftGunParamsByDirSm.get(East).g_t = hxd.Res.mid_ship.ok_gun.gun_left_e.toTile();
+			LeftGunParamsByDirSm.get(NorthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			LeftGunParamsByDirSm.get(NorthEast).w_b_t = null;
+			LeftGunParamsByDirSm.get(NorthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_left_ne.toTile();
+			LeftGunParamsByDirSm.get(North).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
+			LeftGunParamsByDirSm.get(North).w_b_t = null;
+			LeftGunParamsByDirSm.get(North).g_t = hxd.Res.mid_ship.ok_gun.gun_left_n.toTile();
+			LeftGunParamsByDirSm.get(NorthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			LeftGunParamsByDirSm.get(NorthWest).w_b_t = null;
+			LeftGunParamsByDirSm.get(NorthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_left_nw.toTile();
+			LeftGunParamsByDirSm.get(West).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
+			LeftGunParamsByDirSm.get(West).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
+			LeftGunParamsByDirSm.get(West).g_t = hxd.Res.mid_ship.ok_gun.gun_left_w.toTile();
+			LeftGunParamsByDirSm.get(SouthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			LeftGunParamsByDirSm.get(SouthWest).w_b_t = null;
+			LeftGunParamsByDirSm.get(SouthWest).g_t = hxd.Res.mid_ship.ok_gun.gun_left_sw.toTile();
+			LeftGunParamsByDirSm.get(South).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
+			LeftGunParamsByDirSm.get(South).w_b_t = null;
+			LeftGunParamsByDirSm.get(South).g_t = hxd.Res.mid_ship.ok_gun.gun_left_s.toTile();
+			LeftGunParamsByDirSm.get(SouthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			LeftGunParamsByDirSm.get(SouthEast).w_b_t = null;
+			LeftGunParamsByDirSm.get(SouthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_left_se.toTile();
+
+			for (key in RightGunParamsByDirMid.keys()) {
+				final rightGunParam = RightGunParamsByDirMid.get(key);
 				if (rightGunParam.w_b_t != null) {
-					RightGunParamsByDir.get(key).w_b_t = RightGunParamsByDir.get(key).w_b_t.center();
+					RightGunParamsByDirMid.get(key).w_b_t = RightGunParamsByDirMid.get(key).w_b_t.center();
 				}
-				RightGunParamsByDir.get(key).w_t_t = RightGunParamsByDir.get(key).w_t_t.center();
-				RightGunParamsByDir.get(key).g_t = RightGunParamsByDir.get(key).g_t.center();
+				RightGunParamsByDirMid.get(key).w_t_t = RightGunParamsByDirMid.get(key).w_t_t.center();
+				RightGunParamsByDirMid.get(key).g_t = RightGunParamsByDirMid.get(key).g_t.center();
 
-				final leftGunParam = LeftGunParamsByDir.get(key);
+				final leftGunParam = LeftGunParamsByDirMid.get(key);
 				if (leftGunParam.w_b_t != null) {
-					LeftGunParamsByDir.get(key).w_b_t = LeftGunParamsByDir.get(key).w_b_t.center();
+					LeftGunParamsByDirMid.get(key).w_b_t = LeftGunParamsByDirMid.get(key).w_b_t.center();
 				}
-				LeftGunParamsByDir.get(key).w_t_t = LeftGunParamsByDir.get(key).w_t_t.center();
-				LeftGunParamsByDir.get(key).g_t = LeftGunParamsByDir.get(key).g_t.center();
+				LeftGunParamsByDirMid.get(key).w_t_t = LeftGunParamsByDirMid.get(key).w_t_t.center();
+				LeftGunParamsByDirMid.get(key).g_t = LeftGunParamsByDirMid.get(key).g_t.center();
+			}
+
+			for (key in RightGunParamsByDirSm.keys()) {
+				final rightGunParam = RightGunParamsByDirSm.get(key);
+				if (rightGunParam.w_b_t != null) {
+					RightGunParamsByDirSm.get(key).w_b_t = RightGunParamsByDirSm.get(key).w_b_t.center();
+				}
+				RightGunParamsByDirSm.get(key).w_t_t = RightGunParamsByDirSm.get(key).w_t_t.center();
+				RightGunParamsByDirSm.get(key).g_t = RightGunParamsByDirSm.get(key).g_t.center();
+
+				final leftGunParam = LeftGunParamsByDirSm.get(key);
+				if (leftGunParam.w_b_t != null) {
+					LeftGunParamsByDirSm.get(key).w_b_t = LeftGunParamsByDirSm.get(key).w_b_t.center();
+				}
+				LeftGunParamsByDirSm.get(key).w_t_t = LeftGunParamsByDirSm.get(key).w_t_t.center();
+				LeftGunParamsByDirSm.get(key).g_t = LeftGunParamsByDirSm.get(key).g_t.center();
 			}
 			tilesInitialized = true;
 		}
 
-		final paramsByDir = side == Right ? RightGunParamsByDir.get(direction) : LeftGunParamsByDir.get(direction);
+		var paramsByDir:GunParams;
+		if (shipHullSize == ShipHullSize.SMALL) {
+			paramsByDir = side == Right ? RightGunParamsByDirSm.get(direction) : LeftGunParamsByDirSm.get(direction);
+		} else {
+			paramsByDir = side == Right ? RightGunParamsByDirMid.get(direction) : LeftGunParamsByDirMid.get(direction);
+		}
 
 		if (paramsByDir.w_b_t != null) {
 			bmp_wood_bottom = new h2d.Bitmap(paramsByDir.w_b_t);
@@ -427,7 +684,12 @@ class ShipGun extends ShipVisualComponent {
 	}
 
 	public function changeTilesDirection() {
-		final paramsByDir = side == Right ? RightGunParamsByDir.get(direction) : LeftGunParamsByDir.get(direction);
+		var paramsByDir:GunParams;
+		if (shipHullSize == ShipHullSize.SMALL) {
+			paramsByDir = side == Right ? RightGunParamsByDirSm.get(direction) : LeftGunParamsByDirSm.get(direction);
+		} else {
+			paramsByDir = side == Right ? RightGunParamsByDirMid.get(direction) : LeftGunParamsByDirMid.get(direction);
+		}
 
 		// TODO Refactor bottom tile and bmp_wood_bottom null check
 		if (paramsByDir.w_b_t != null) {

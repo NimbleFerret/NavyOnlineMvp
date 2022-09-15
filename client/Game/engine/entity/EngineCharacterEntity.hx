@@ -20,8 +20,8 @@ class EngineCharacterEntity extends EngineBaseGameEntity {
 		super(GameEntityType.Character, x, y, 0, id, ownerId);
 
 		// This is needed because char files are not cropped
-		rectOffsetX = 40;
-		rectOffsetY = 40;
+		rectOffsetX = 60;
+		rectOffsetY = 60;
 
 		speedStep = 20;
 	}
