@@ -10,21 +10,40 @@ contract NVY is ERC20, AccessControl {
     bytes32 public constant ISLAND_ROLE = keccak256("ISLAND_ROLE");
     bytes32 public constant CAPTAIN_ROLE = keccak256("CAPTAIN_ROLE");
 
-    // Some % of total emission
-    uint256 public ingameRewardsAmountLeft = 144 * 10**18;
+    // 400.000.000 NVY total
+    // 20% of total emission
+    uint256 public ingameRewardsAmountLeft = 80 * 10**18;
     // 36% of total emission
     uint256 public miningAndStakingAmountLeft = 144 * 10**18;
+    // 44% of rest emission
+    uint256 public restEmissionAmountLeft = 176 * 10**18;
 
     event IngameRewardGranted(address recipient, uint256 reward);
-    event RewardGranted(address recipient, uint256 reward);
+    event MiningRewardGranted(address recipient, uint256 reward);
+    event TokensMinted(address recipient, uint256 reward);
 
     constructor() public ERC20("Navy", "NVY") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _mint(msg.sender, 2000 * 10**18);
     }
 
     function burn(uint256 amount) external {
         _burn(msg.sender, amount);
+    }
+
+    function mintTOkens(address recipient, uint256 amount)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        uint256 mintAmount = amount * 10**18;
+        require(restEmissionAmountLeft > 0, "No more tokens for minting");
+        if (restEmissionAmountLeft - mintAmount < 0) {
+            mintAmount = mintAmount - (restEmissionAmountLeft - mintAmount);
+            restEmissionAmountLeft = 0;
+        } else {
+            restEmissionAmountLeft -= mintAmount;
+        }
+        _mint(recipient, mintAmount);
+        emit TokensMinted(recipient, mintAmount);
     }
 
     function mintRewardIngame(address recipient, uint256 amount)
@@ -43,9 +62,27 @@ contract NVY is ERC20, AccessControl {
         emit IngameRewardGranted(recipient, reward);
     }
 
-    function mintReward(address recipient, uint256 amount)
+    function mintIslandRewardByIsland(address recipient, uint256 amount)
         external
         onlyRole(ISLAND_ROLE)
+    {
+        uint256 reward = amount * 10**18;
+        require(
+            miningAndStakingAmountLeft > 0,
+            "No more tokens for any rewards"
+        );
+        if (miningAndStakingAmountLeft - reward < 0) {
+            reward = reward - (miningAndStakingAmountLeft - reward);
+            miningAndStakingAmountLeft = 0;
+        } else {
+            miningAndStakingAmountLeft -= reward;
+        }
+        _mint(recipient, reward);
+        emit MiningRewardGranted(recipient, reward);
+    }
+
+    function mintIslandRewardByCaptain(address recipient, uint256 amount)
+        external
         onlyRole(CAPTAIN_ROLE)
     {
         uint256 reward = amount * 10**18;
@@ -60,7 +97,7 @@ contract NVY is ERC20, AccessControl {
             miningAndStakingAmountLeft -= reward;
         }
         _mint(recipient, reward);
-        emit RewardGranted(recipient, reward);
+        emit MiningRewardGranted(recipient, reward);
     }
 
     // ---------------------------------------

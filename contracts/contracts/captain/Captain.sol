@@ -97,18 +97,22 @@ contract Captain is UpgradableEntity {
         require(nvyToken.balanceOf(msg.sender) >= reqNvy, "Not enought NVY");
         require(aksToken.balanceOf(msg.sender) >= reqAks, "Not enought AKS");
 
-        // Pay the fees and burn tokens
+        // Pay the fees and burn tokens if not owner
+        if (ERC721.ownerOf(captainId) != ERC721.ownerOf(islandId)) {
+            uint256 feeNvy = (reqNvy / 100) *
+                island.getIslandInfo(islandId).shipAndCaptainFee;
+            uint256 feeAks = (reqAks / 100) *
+                island.getIslandInfo(islandId).shipAndCaptainFee;
 
-        uint256 feeNvy = (reqNvy / 100) *
-            island.getIslandInfo(islandId).shipAndCaptainFee;
-        uint256 feeAks = (reqAks / 100) *
-            island.getIslandInfo(islandId).shipAndCaptainFee;
+            nvyToken.burn(reqNvy - feeNvy);
+            aksToken.burn(reqAks - feeAks);
 
-        nvyToken.burn(reqNvy - feeNvy);
-        aksToken.burn(reqAks - feeAks);
-
-        nvyToken.transfer(ERC721.ownerOf(islandId), feeNvy);
-        aksToken.transfer(ERC721.ownerOf(islandId), feeAks);
+            nvyToken.transfer(ERC721.ownerOf(islandId), feeNvy);
+            aksToken.transfer(ERC721.ownerOf(islandId), feeAks);
+        } else {
+            nvyToken.burn(reqNvy / 2);
+            aksToken.burn(reqAks / 2);
+        }
 
         emit UpgradeEntity(msg.sender, captainId);
     }
@@ -165,6 +169,10 @@ contract Captain is UpgradableEntity {
         require(
             islandStats.currMiners + 1 < islandStats.maxMiners,
             "Mine is full"
+        );
+        require(
+            ERC721.ownerOf(captainId) != ERC721.ownerOf(islandId),
+            "Can't mine on own island"
         );
 
         island.addMiner(islandId);
