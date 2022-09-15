@@ -160,86 +160,86 @@ class BattleGameplay extends BasicGameplay {
 
 			final ship = cast(entity, ClientShip);
 
-			if (ship.leftSideCanonDebugRect1 == null) {
-				ship.leftSideCanonDebugRect1 = new h2d.Graphics(scene);
-			} else {
-				ship.leftSideCanonDebugRect1.clear();
-			}
+			// if (ship.leftSideCanonDebugRect1 == null) {
+			// 	ship.leftSideCanonDebugRect1 = new h2d.Graphics(scene);
+			// } else {
+			// 	ship.leftSideCanonDebugRect1.clear();
+			// }
 
-			if (ship.leftSideCanonDebugRect2 == null) {
-				ship.leftSideCanonDebugRect2 = new h2d.Graphics(scene);
-			} else {
-				ship.leftSideCanonDebugRect2.clear();
-			}
+			// if (ship.leftSideCanonDebugRect2 == null) {
+			// 	ship.leftSideCanonDebugRect2 = new h2d.Graphics(scene);
+			// } else {
+			// 	ship.leftSideCanonDebugRect2.clear();
+			// }
 
-			if (ship.leftSideCanonDebugRect3 == null) {
-				ship.leftSideCanonDebugRect3 = new h2d.Graphics(scene);
-			} else {
-				ship.leftSideCanonDebugRect3.clear();
-			}
+			// if (ship.leftSideCanonDebugRect3 == null) {
+			// 	ship.leftSideCanonDebugRect3 = new h2d.Graphics(scene);
+			// } else {
+			// 	ship.leftSideCanonDebugRect3.clear();
+			// }
 
-			if (ship.rightSideCanonDebugRect1 == null) {
-				ship.rightSideCanonDebugRect1 = new h2d.Graphics(scene);
-			} else {
-				ship.rightSideCanonDebugRect1.clear();
-			}
+			// if (ship.rightSideCanonDebugRect1 == null) {
+			// 	ship.rightSideCanonDebugRect1 = new h2d.Graphics(scene);
+			// } else {
+			// 	ship.rightSideCanonDebugRect1.clear();
+			// }
 
-			if (ship.rightSideCanonDebugRect2 == null) {
-				ship.rightSideCanonDebugRect2 = new h2d.Graphics(scene);
-			} else {
-				ship.rightSideCanonDebugRect2.clear();
-			}
+			// if (ship.rightSideCanonDebugRect2 == null) {
+			// 	ship.rightSideCanonDebugRect2 = new h2d.Graphics(scene);
+			// } else {
+			// 	ship.rightSideCanonDebugRect2.clear();
+			// }
 
-			if (ship.rightSideCanonDebugRect3 == null) {
-				ship.rightSideCanonDebugRect3 = new h2d.Graphics(scene);
-			} else {
-				ship.rightSideCanonDebugRect3.clear();
-			}
+			// if (ship.rightSideCanonDebugRect3 == null) {
+			// 	ship.rightSideCanonDebugRect3 = new h2d.Graphics(scene);
+			// } else {
+			// 	ship.rightSideCanonDebugRect3.clear();
+			// }
 
 			if (DebugDraw) {
 				// Draw left side canons
 				// 1
-				final leftGunPos1 = ship.getCanonOffsetBySideAndIndex(Side.Left, 0);
+				// final leftGunPos1 = ship.getCanonOffsetBySideAndIndex(Side.Left, 0);
 
-				ship.leftSideCanonDebugRect1.beginFill(0x00ff00);
-				ship.leftSideCanonDebugRect1.drawRect(leftGunPos1.x, leftGunPos1.y, 10, 10);
-				ship.leftSideCanonDebugRect1.endFill();
+				// ship.leftSideCanonDebugRect1.beginFill(0x00ff00);
+				// ship.leftSideCanonDebugRect1.drawRect(leftGunPos1.x, leftGunPos1.y, 10, 10);
+				// ship.leftSideCanonDebugRect1.endFill();
 
-				// 2
-				final leftGunPos2 = ship.getCanonOffsetBySideAndIndex(Side.Left, 1);
+				// // 2
+				// final leftGunPos2 = ship.getCanonOffsetBySideAndIndex(Side.Left, 1);
 
-				ship.leftSideCanonDebugRect2.beginFill(0x00ff00);
-				ship.leftSideCanonDebugRect2.drawRect(leftGunPos2.x, leftGunPos2.y, 10, 10);
-				ship.leftSideCanonDebugRect2.endFill();
+				// ship.leftSideCanonDebugRect2.beginFill(0x00ff00);
+				// ship.leftSideCanonDebugRect2.drawRect(leftGunPos2.x, leftGunPos2.y, 10, 10);
+				// ship.leftSideCanonDebugRect2.endFill();
 
-				// 3
-				final leftGunPos3 = ship.getCanonOffsetBySideAndIndex(Side.Left, 2);
+				// // 3
+				// final leftGunPos3 = ship.getCanonOffsetBySideAndIndex(Side.Left, 2);
 
-				ship.leftSideCanonDebugRect3.beginFill(0x00ff00);
-				ship.leftSideCanonDebugRect3.drawRect(leftGunPos3.x, leftGunPos3.y, 10, 10);
-				ship.leftSideCanonDebugRect3.endFill();
+				// ship.leftSideCanonDebugRect3.beginFill(0x00ff00);
+				// ship.leftSideCanonDebugRect3.drawRect(leftGunPos3.x, leftGunPos3.y, 10, 10);
+				// ship.leftSideCanonDebugRect3.endFill();
 
-				// Draw right side canons
-				// 1
-				final rightGunPos1 = ship.getCanonOffsetBySideAndIndex(Side.Right, 0);
+				// // Draw right side canons
+				// // 1
+				// final rightGunPos1 = ship.getCanonOffsetBySideAndIndex(Side.Right, 0);
 
-				ship.rightSideCanonDebugRect1.beginFill(0x00ff00);
-				ship.rightSideCanonDebugRect1.drawRect(rightGunPos1.x, rightGunPos1.y, 10, 10);
-				ship.rightSideCanonDebugRect1.endFill();
+				// ship.rightSideCanonDebugRect1.beginFill(0x00ff00);
+				// ship.rightSideCanonDebugRect1.drawRect(rightGunPos1.x, rightGunPos1.y, 10, 10);
+				// ship.rightSideCanonDebugRect1.endFill();
 
-				// 2
-				final rightGunPos2 = ship.getCanonOffsetBySideAndIndex(Side.Right, 1);
+				// // 2
+				// final rightGunPos2 = ship.getCanonOffsetBySideAndIndex(Side.Right, 1);
 
-				ship.rightSideCanonDebugRect2.beginFill(0x00ff00);
-				ship.rightSideCanonDebugRect2.drawRect(rightGunPos2.x, rightGunPos2.y, 10, 10);
-				ship.rightSideCanonDebugRect2.endFill();
+				// ship.rightSideCanonDebugRect2.beginFill(0x00ff00);
+				// ship.rightSideCanonDebugRect2.drawRect(rightGunPos2.x, rightGunPos2.y, 10, 10);
+				// ship.rightSideCanonDebugRect2.endFill();
 
-				// 3
-				final rightGunPos3 = ship.getCanonOffsetBySideAndIndex(Side.Right, 2);
+				// // 3
+				// final rightGunPos3 = ship.getCanonOffsetBySideAndIndex(Side.Right, 2);
 
-				ship.rightSideCanonDebugRect3.beginFill(0x00ff00);
-				ship.rightSideCanonDebugRect3.drawRect(rightGunPos3.x, rightGunPos3.y, 10, 10);
-				ship.rightSideCanonDebugRect3.endFill();
+				// ship.rightSideCanonDebugRect3.beginFill(0x00ff00);
+				// ship.rightSideCanonDebugRect3.drawRect(rightGunPos3.x, rightGunPos3.y, 10, 10);
+				// ship.rightSideCanonDebugRect3.endFill();
 			}
 		}
 
@@ -284,9 +284,9 @@ class BattleGameplay extends BasicGameplay {
 		}
 	}
 
-	public function addShipByClient(role:Role, x:Int, y:Int, shipId:String, ?ownerId:String) {
+	public function addShipByClient(role:Role, x:Int, y:Int, size:ShipHullSize, windows:ShipWindows, cannons:ShipGuns, shipId:String, ?ownerId:String) {
 		final gameEngine = cast(baseEngine, GameEngine);
-		return gameEngine.createEntity(role, x, y, shipId, ownerId);
+		return gameEngine.createEntity(role, x, y, size, windows, cannons, shipId, ownerId);
 	}
 
 	// --------------------------------------
@@ -375,12 +375,21 @@ class BattleGameplay extends BasicGameplay {
 	// Utils
 
 	public function jsEntityToEngineEntity(message:Dynamic):EngineBaseGameEntity {
-		return new EngineShipEntity(Role.General, message.entity.x, message.entity.y, message.entity.id, message.entity.ownerId);
+		final shipHullSize = ShipHullSize.createByIndex(message.entity.shipHullSize);
+		final shipWindows = ShipWindows.createByIndex(message.entity.shipWindows);
+		final shipGuns = ShipGuns.createByIndex(message.entity.shipGuns);
+
+		return new EngineShipEntity(Role.General, message.entity.x, message.entity.y, shipHullSize, shipWindows, shipGuns, message.entity.id,
+			message.entity.ownerId);
 	}
 
 	public function jsEntitiesToEngineEntities(entities:Dynamic):Array<EngineBaseGameEntity> {
 		return entities.map(entity -> {
-			return new EngineShipEntity(Role.General, entity.x, entity.y, entity.id, entity.ownerId);
+			final shipHullSize = ShipHullSize.createByIndex(entity.shipHullSize);
+			final shipWindows = ShipWindows.createByIndex(entity.shipWindows);
+			final shipGuns = ShipGuns.createByIndex(entity.shipGuns);
+
+			return new EngineShipEntity(Role.General, entity.x, entity.y, shipHullSize, shipWindows, shipGuns, entity.id, entity.ownerId);
 		});
 	}
 }

@@ -2,10 +2,12 @@ package client.scene;
 
 import client.network.RestProtocol.NFTs;
 import client.network.Rest;
+import client.Player;
 import client.ui.UiIsland;
 import client.ui.UiToken;
 import client.ui.UiAvatar;
 import client.entity.ship.ShipTemplate;
+import engine.entity.EngineShipEntity;
 import h3d.Engine;
 import h2d.Scene;
 
@@ -122,7 +124,7 @@ class SceneMain extends Scene {
 
 		// Init moralis
 		hud = new SceneMainHud(function metamaskLoginCallback(address:String) {
-			Player.instance.ethAddress = address;
+			client.Player.instance.ethAddress = address;
 			hud.initiateWeb3(address);
 			Rest.instance.getNfts(address, function callback(nfts:NFTs) {
 				currentCaptainIndex = 0;
@@ -154,9 +156,9 @@ class SceneMain extends Scene {
 					acc: 0
 				});
 
-				for (value in nfts.captains) {
-					captains.push();
-				}
+				// for (value in nfts.captains) {
+				// 	captains.push();
+				// }
 
 				// Reinit ships
 				ships.push({

@@ -1,6 +1,7 @@
 package client.entity.ship;
 
 import engine.entity.EngineBaseGameEntity;
+import engine.entity.EngineShipEntity;
 
 using tweenxcore.Tools;
 
@@ -329,7 +330,7 @@ class ShipGun extends ShipVisualComponent {
 
 	private final recoilAnim:GunRecoilTween;
 
-	public function new(direction:GameEntityDirection, side:Side) {
+	public function new(size:ShipHullSize, direction:GameEntityDirection, side:Side) {
 		super(direction, side);
 
 		if (!tilesInitialized) {
@@ -358,7 +359,8 @@ class ShipGun extends ShipVisualComponent {
 			RightGunParamsByDir.get(SouthEast).w_b_t = null;
 			RightGunParamsByDir.get(SouthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_right_se.toTile();
 
-			LeftGunParamsByDir.get(East).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w.toTile();
+			LeftGunParamsByDir.get(East)
+				.w_t_t = size == ShipHullSize.MEDIUM ? hxd.Res.mid_ship.wood_top.wood_top_w.toTile() : hxd.Res.mid_ship.wood_top.wood_top_w_small.toTile();
 			LeftGunParamsByDir.get(East).w_b_t = null;
 			LeftGunParamsByDir.get(East).g_t = hxd.Res.mid_ship.ok_gun.gun_left_e.toTile();
 			LeftGunParamsByDir.get(NorthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
@@ -379,7 +381,6 @@ class ShipGun extends ShipVisualComponent {
 			LeftGunParamsByDir.get(South).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
 			LeftGunParamsByDir.get(South).w_b_t = null;
 			LeftGunParamsByDir.get(South).g_t = hxd.Res.mid_ship.ok_gun.gun_left_s.toTile();
-
 			LeftGunParamsByDir.get(SouthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
 			LeftGunParamsByDir.get(SouthEast).w_b_t = null;
 			LeftGunParamsByDir.get(SouthEast).g_t = hxd.Res.mid_ship.ok_gun.gun_left_se.toTile();

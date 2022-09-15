@@ -214,7 +214,10 @@ abstract class BasicGameplay {
 
 		if (baseEngine.mainEntityType == GameEntityType.Ship) {
 			final gameEngine = cast(baseEngine, GameEngine);
-			final newEngineEnity = gameEngine.createEntity(Role.General, entity.x, entity.y, entity.id, entity.ownerId);
+			final shipEntity = cast(baseEngine, EngineShipEntity);
+
+			final newEngineEnity = gameEngine.createEntity(Role.General, shipEntity.x, shipEntity.y, shipEntity.shipHullSize, shipEntity.shipWindows,
+				shipEntity.shipGuns, shipEntity.id, shipEntity.ownerId);
 
 			newClientEntity = new ClientShip(scene, newEngineEnity);
 		} else if (baseEngine.mainEntityType == GameEntityType.Character) {

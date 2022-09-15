@@ -2,6 +2,7 @@ package client.scene;
 
 import client.gameplay.battle.BattleGameplay;
 import engine.entity.EngineShipEntity.Role;
+import engine.entity.EngineShipEntity;
 import engine.BaseEngine.EngineMode;
 import h3d.Engine;
 import h2d.Scene;
@@ -23,7 +24,7 @@ class SceneDemo1 extends Scene {
 		// --------------------------------------
 
 		final playerId = 'Player1';
-		final ship1 = game.addShipByClient(Role.Player, -200, 100, null, playerId);
+		final ship1 = game.addShipByClient(Role.Player, -200, 100, ShipHullSize.SMALL, ShipWindows.NONE, ShipGuns.THREE, null, playerId);
 
 		// final ship2 = game.addShipByClient(Role.Bot, -200, -400, null, null);
 		// final ship3 = game.addShipByClient(Role.Bot, 100, -100, null, null);

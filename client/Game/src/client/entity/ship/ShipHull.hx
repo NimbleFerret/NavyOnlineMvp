@@ -1,39 +1,31 @@
 package client.entity.ship;
 
-import client.entity.ship.ShipTemplate;
 import engine.entity.EngineBaseGameEntity;
+import engine.entity.EngineShipEntity;
 
 class ShipHull extends ShipVisualComponent {
-	private var bmp_hull:h2d.Bitmap;
+	private final bmp_hull:h2d.Bitmap;
 
-	private var eastShipTile:h2d.Tile;
-	private var northShipTile:h2d.Tile;
-	private var northEastShipTile:h2d.Tile;
-	private var northWestShipTile:h2d.Tile;
-	private var southShipTile:h2d.Tile;
-	private var southEastShipTile:h2d.Tile;
-	private var southWestShipTile:h2d.Tile;
-	private var westShipTile:h2d.Tile;
+	private final eastShipTile:h2d.Tile;
+	private final northShipTile:h2d.Tile;
+	private final northEastShipTile:h2d.Tile;
+	private final northWestShipTile:h2d.Tile;
+	private final southShipTile:h2d.Tile;
+	private final southEastShipTile:h2d.Tile;
+	private final southWestShipTile:h2d.Tile;
+	private final westShipTile:h2d.Tile;
 
 	public function new(direction:GameEntityDirection, size:ShipHullSize) {
 		super(direction, side);
 
-		eastShipTile = getHullByDirectionAndSize(GameEntityDirection.East, size);
-		eastShipTile = eastShipTile.center();
-		northShipTile = getHullByDirectionAndSize(GameEntityDirection.North, size);
-		northShipTile = northShipTile.center();
-		northEastShipTile = getHullByDirectionAndSize(GameEntityDirection.NorthEast, size);
-		northEastShipTile = northEastShipTile.center();
-		northWestShipTile = getHullByDirectionAndSize(GameEntityDirection.NorthWest, size);
-		northWestShipTile = northWestShipTile.center();
-		southShipTile = getHullByDirectionAndSize(GameEntityDirection.South, size);
-		southShipTile = southShipTile.center();
-		southEastShipTile = getHullByDirectionAndSize(GameEntityDirection.SouthEast, size);
-		southEastShipTile = southEastShipTile.center();
-		southWestShipTile = getHullByDirectionAndSize(GameEntityDirection.SouthWest, size);
-		southWestShipTile = southWestShipTile.center();
-		westShipTile = getHullByDirectionAndSize(GameEntityDirection.West, size);
-		westShipTile = westShipTile.center();
+		eastShipTile = getHullByDirectionAndSize(GameEntityDirection.East, size).center();
+		northShipTile = getHullByDirectionAndSize(GameEntityDirection.North, size).center();
+		northEastShipTile = getHullByDirectionAndSize(GameEntityDirection.NorthEast, size).center();
+		northWestShipTile = getHullByDirectionAndSize(GameEntityDirection.NorthWest, size).center();
+		southShipTile = getHullByDirectionAndSize(GameEntityDirection.South, size).center();
+		southEastShipTile = getHullByDirectionAndSize(GameEntityDirection.SouthEast, size).center();
+		southWestShipTile = getHullByDirectionAndSize(GameEntityDirection.SouthWest, size).center();
+		westShipTile = getHullByDirectionAndSize(GameEntityDirection.West, size).center();
 
 		bmp_hull = new h2d.Bitmap(eastShipTile);
 

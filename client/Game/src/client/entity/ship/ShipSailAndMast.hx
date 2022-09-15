@@ -3,17 +3,18 @@ package client.entity.ship;
 import h2d.Layers;
 import client.entity.ship.ShipTemplate;
 import engine.entity.EngineBaseGameEntity;
+import engine.entity.EngineShipEntity;
 
 class ShipSailAndMast extends ShipVisualComponent {
-	private var bmp_sail:h2d.Bitmap;
-	private var eastSailTile:h2d.Tile;
-	private var northSailTile:h2d.Tile;
-	private var northEastSailTile:h2d.Tile;
-	private var northWestSailTile:h2d.Tile;
-	private var southSailTile:h2d.Tile;
-	private var southEastSailTile:h2d.Tile;
-	private var southWestSailTile:h2d.Tile;
-	private var westSailTile:h2d.Tile;
+	private final bmp_sail:h2d.Bitmap;
+	private final eastSailTile:h2d.Tile;
+	private final northSailTile:h2d.Tile;
+	private final northEastSailTile:h2d.Tile;
+	private final northWestSailTile:h2d.Tile;
+	private final southSailTile:h2d.Tile;
+	private final southEastSailTile:h2d.Tile;
+	private final southWestSailTile:h2d.Tile;
+	private final westSailTile:h2d.Tile;
 
 	private final layers:h2d.Layers;
 	// 1 - sail > mast
@@ -25,31 +26,21 @@ class ShipSailAndMast extends ShipVisualComponent {
 
 		layers = new Layers(this);
 
-		eastSailTile = getSailByDirectionAndSize(East, size);
-		eastSailTile = eastSailTile.center();
-		northSailTile = getSailByDirectionAndSize(North, size);
-		northSailTile = northSailTile.center();
-		northEastSailTile = getSailByDirectionAndSize(NorthEast, size);
-		northEastSailTile = northEastSailTile.center();
-		northWestSailTile = getSailByDirectionAndSize(NorthWest, size);
-		northWestSailTile = northWestSailTile.center();
-		southSailTile = getSailByDirectionAndSize(South, size);
-		southSailTile = southSailTile.center();
-		southEastSailTile = getSailByDirectionAndSize(SouthEast, size);
-		southEastSailTile = southEastSailTile.center();
-		southWestSailTile = getSailByDirectionAndSize(SouthWest, size);
-		southWestSailTile = southWestSailTile.center();
-		westSailTile = getSailByDirectionAndSize(West, size);
-		westSailTile = westSailTile.center();
+		eastSailTile = getSailByDirectionAndSize(East, size).center();
+		northSailTile = getSailByDirectionAndSize(North, size).center();
+		northEastSailTile = getSailByDirectionAndSize(NorthEast, size).center();
+		northWestSailTile = getSailByDirectionAndSize(NorthWest, size).center();
+		southSailTile = getSailByDirectionAndSize(South, size).center();
+		southEastSailTile = getSailByDirectionAndSize(SouthEast, size).center();
+		southWestSailTile = getSailByDirectionAndSize(SouthWest, size).center();
+		westSailTile = getSailByDirectionAndSize(West, size).center();
 
 		bmp_sail = new h2d.Bitmap(eastSailTile);
 
-		var mastTile = getMastByDirectionAndSize(size);
-		mastTile = mastTile.center();
+		final mastTile = getMastByDirectionAndSize(size).center();
 		final bmp_mast = new h2d.Bitmap(mastTile);
 
-		var flagTile = getFlagByDirectionAndSize(size);
-		flagTile = flagTile.center();
+		final flagTile = getFlagByDirectionAndSize(size).center();
 		final bmp_flag = new h2d.Bitmap(flagTile);
 
 		// bmp_sail.alpha = 0.5;

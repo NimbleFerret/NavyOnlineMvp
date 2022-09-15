@@ -10,28 +10,15 @@ class ClientShell extends ClientBaseGameEntity {
 		// Correct initial pos due to ship's position interpolation
 		var posX = 0.0;
 		var posY = 0.0;
-		if (engineShellEntity.side == Side.Left) {
-			if (engineShellEntity.pos == 0) {
-				posX = ownerShip.leftCanon1.localToGlobal().x;
-				posY = ownerShip.leftCanon1.localToGlobal().y;
-			} else if (engineShellEntity.pos == 1) {
-				posX = ownerShip.leftCanon2.localToGlobal().x;
-				posY = ownerShip.leftCanon2.localToGlobal().y;
-			} else if (engineShellEntity.pos == 2) {
-				posX = ownerShip.leftCanon3.localToGlobal().x;
-				posY = ownerShip.leftCanon3.localToGlobal().y;
-			}
-		} else {
-			if (engineShellEntity.pos == 0) {
-				posX = ownerShip.rightCanon1.localToGlobal().x;
-				posY = ownerShip.rightCanon1.localToGlobal().y;
-			} else if (engineShellEntity.pos == 1) {
-				posX = ownerShip.rightCanon2.localToGlobal().x;
-				posY = ownerShip.rightCanon2.localToGlobal().y;
-			} else if (engineShellEntity.pos == 2) {
-				posX = ownerShip.rightCanon3.localToGlobal().x;
-				posY = ownerShip.rightCanon3.localToGlobal().y;
-			}
+		if (engineShellEntity.pos == 0) {
+			posX = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 0).x;
+			posX = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 0).y;
+		} else if (engineShellEntity.pos == 1) {
+			posX = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 1).x;
+			posY = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 1).y;
+		} else if (engineShellEntity.pos == 2) {
+			posX = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 2).x;
+			posY = ownerShip.getCanonOffsetBySideAndIndex(engineShellEntity.side, 2).y;
 		}
 		setPosition(posX, posY);
 		// Graphics init
