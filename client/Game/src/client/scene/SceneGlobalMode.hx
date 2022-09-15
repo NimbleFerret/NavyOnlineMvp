@@ -91,8 +91,6 @@ class SceneGlobalMode extends Scene {
 		hud = new SceneGlobalModeUi(mainMenuCallback);
 
 		this.enterSectorCallback = enterSectorCallback;
-
-		start();
 	}
 
 	public function getHud() {
@@ -115,13 +113,15 @@ class SceneGlobalMode extends Scene {
 			playerBmp = null;
 		}
 
-		Rest.instance.signInOrUp(Player.instance.ethAddress, function callback(player:PlayerData) {
-			if (!playerInitialized) {
-				Player.instance.playerData = player;
-				playerInitialized = true;
-				initOrUpdateGameWorld();
-			}
-		});
+		// Rest.instance.signInOrUp(Player.instance.ethAddress, function callback(player:PlayerData) {
+		// 	if (!playerInitialized) {
+		// 		Player.instance.playerData = player;
+		// 		playerInitialized = true;
+		// 		initOrUpdateGameWorld();
+		// 	}
+		// });
+		playerInitialized = true;
+		initOrUpdateGameWorld();
 	}
 
 	private function movePlayer(x:Int, y:Int) {

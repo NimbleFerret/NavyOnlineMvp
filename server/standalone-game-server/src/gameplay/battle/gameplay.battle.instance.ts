@@ -51,6 +51,31 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
 
     // Impl
     public converJsEntityToTypeScript(jsEntity: any): BaseGameplayEntity {
+        let shipHullSize = 0;
+        let shipWindows = 2;
+        let shipGuns = 2;
+
+        if (jsEntity.shipHullSize == 'MEDIUM') {
+            shipHullSize = 1;
+        }
+
+        if (jsEntity.shipWindows == 'ONE') {
+            shipWindows = 0;
+        }
+        if (jsEntity.shipWindows == 'TWO') {
+            shipWindows = 1;
+        }
+
+        if (jsEntity.shipGuns == 'ONE') {
+            shipGuns = 0;
+        }
+        if (jsEntity.shipGuns == 'TWO') {
+            shipGuns = 1;
+        }
+        if (jsEntity.shipGuns == 'FOUR') {
+            shipGuns = 3;
+        }
+
         const result = {
             currentArmor: jsEntity.currentArmor,
             currentHull: jsEntity.currentHull,
@@ -59,7 +84,10 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             currentSpeed: jsEntity.currentSpeed,
             direction: jsEntity.direction._hx_name,
             id: jsEntity.id,
-            ownerId: jsEntity.ownerId
+            ownerId: jsEntity.ownerId,
+            shipHullSize,
+            shipWindows,
+            shipGuns
         } as GameplayShipEntity;
         return result;
     }

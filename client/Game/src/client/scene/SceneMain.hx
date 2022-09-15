@@ -1,5 +1,6 @@
 package client.scene;
 
+import client.network.RestProtocol.PlayerData;
 import client.network.RestProtocol.NFTs;
 import client.network.Rest;
 import client.Player;
@@ -86,122 +87,58 @@ class SceneMain extends Scene {
 	public function new(startCallback:Void->Void) {
 		super();
 
-		captains.push({
-			free: true,
-			currentLevel: 0,
-			maxLevel: 0,
-			rarity: 'Common',
-			trait1: '-',
-			trait2: '-',
-			trait3: '-',
-			trait4: '-',
-			trait5: '-',
-			stakingIncome: 0,
-			miningIncome: 0,
-			secondsTillReward: 0,
-			head: 3,
-			haircutOrHat: 3,
-			clothes: 3,
-			bg: 1,
-			acc: 0
-		});
-
-		ships.push({
-			free: true,
-			currentLevel: 0,
-			maxLevel: 0,
-			rarity: 'Common',
-			size: 'Small',
-			cannons: 2,
-			windows: 0,
-			maintenance: false,
-			trait1: '-',
-			trait2: '-',
-			trait3: '-',
-			trait4: '-',
-			trait5: '-'
-		});
+		// Rest.instance.getNfts(address, function callback(nfts:NFTs) {
 
 		// Init moralis
 		hud = new SceneMainHud(function metamaskLoginCallback(address:String) {
 			client.Player.instance.ethAddress = address;
 			hud.initiateWeb3(address);
-			Rest.instance.getNfts(address, function callback(nfts:NFTs) {
-				currentCaptainIndex = 0;
-				currentShipIndex = 0;
-				currentIslandIndex = 0;
 
-				captains = new Array<CaptainInfo>();
-				ships = new Array<ShipInfo>();
-				islands = new Array<IslandInfo>();
+			// TODO signInOrUp
 
-				// Reinit captain
-				captains.push({
-					free: true,
-					currentLevel: 0,
-					maxLevel: 0,
-					rarity: 'Common',
-					trait1: '-',
-					trait2: '-',
-					trait3: '-',
-					trait4: '-',
-					trait5: '-',
-					stakingIncome: 0,
-					miningIncome: 0,
-					secondsTillReward: 0,
-					head: 3,
-					haircutOrHat: 3,
-					clothes: 3,
-					bg: 1,
-					acc: 0
-				});
+			currentCaptainIndex = 0;
+			currentShipIndex = 0;
+			currentIslandIndex = 0;
 
-				// for (value in nfts.captains) {
-				// 	captains.push();
-				// }
+			captains = new Array<CaptainInfo>();
+			ships = new Array<ShipInfo>();
+			islands = new Array<IslandInfo>();
 
-				// Reinit ships
-				ships.push({
-					free: true,
-					currentLevel: 0,
-					maxLevel: 0,
-					rarity: 'Common',
-					size: 'Small',
-					cannons: 2,
-					windows: 0,
-					maintenance: false,
-					trait1: '-',
-					trait2: '-',
-					trait3: '-',
-					trait4: '-',
-					trait5: '-'
-				});
-				for (value in nfts.ships) {
-					ships.push({
-						free: false,
-						currentLevel: 0,
-						maxLevel: 10,
-						rarity: 'Legendary',
-						size: 'Middle',
-						cannons: value.cannons,
-						windows: value.windows,
-						maintenance: false,
-						trait1: '-',
-						trait2: '-',
-						trait3: '-',
-						trait4: '-',
-						trait5: '-'
-					});
-				}
-				changeShip(0);
-
-				trace(nfts);
+			// Reinit captain
+			captains.push({
+				free: true,
+				currentLevel: 0,
+				maxLevel: 0,
+				rarity: 'Common',
+				trait1: '-',
+				trait2: '-',
+				trait3: '-',
+				trait4: '-',
+				trait5: '-',
+				stakingIncome: 0,
+				miningIncome: 0,
+				secondsTillReward: 0,
+				head: 3,
+				haircutOrHat: 3,
+				clothes: 3,
+				bg: 1,
+				acc: 0
 			});
-			initiateBalances();
-			initiateIslands();
+
+			// for (value in nfts.captains) {
+			// 	captains.push();
+			// }
+
+			// Reinit ships
+
+			// for (value in nfts.ships) {
+			//
+			// }
+			// changeShip(0);
+			// initiateBalances();
+			// initiateIslands();
 		}, function unloggedInitCallback() {
-			initiateCaptains();
-			initiateShips();
+			signInOrUp();
 		}, function startGameCallback() {
 			if (startCallback != null) {
 				startCallback();
@@ -211,6 +148,36 @@ class SceneMain extends Scene {
 		// Basic ship position
 		baseShipX = Main.ScreenWidth / 2 - 230;
 		baseShipY = Main.ScreenHeight / 2 + 30;
+	}
+
+	private function signInOrUp() {
+		Rest.instance.signInOrUp(client.Player.instance.ethAddress, function callback(player:PlayerData) {
+			client.Player.instance.playerData = player;
+
+			for (ship in player.ownedC) {
+			}
+
+			for (ship in player.ownedShips) {
+				ships.push({
+					free: ship.type == 1 ? true : false,
+					currentLevel: ship.level,
+					maxLevel: 10,
+					rarity: ship.rarity == 3 ? 'Legendary' : 'Common',
+					size: ship.size == 1 ? 'Small' : 'Middle',
+					cannons: ship.cannons,
+					windows: ship.windows,
+					maintenance: false,
+					trait1: '-',
+					trait2: '-',
+					trait3: '-',
+					trait4: '-',
+					trait5: '-'
+				});
+			}
+
+			initiateCaptains();
+			initiateShips();\
+		});
 	}
 
 	private function changeCaptain(dir:Int) {
@@ -280,6 +247,7 @@ class SceneMain extends Scene {
 				currentShip.setPosition(baseShipX, 500);
 			}
 			currentShip.setScale(3);
+			addChild(currentShip);
 
 			hud.updateShipUi(newShipInfo);
 		}
@@ -371,23 +339,20 @@ class SceneMain extends Scene {
 	}
 
 	private function initiateShips() {
-		currentShip = new ShipTemplate(SMALL, NONE, THREE);
-		currentShip.setScale(3);
-		currentShip.setPosition(baseShipX - 90, 500);
-		addChild(currentShip);
-
 		final arrowLeftShip = hud.buttonArrowLeft(function callback() {
 			changeShip(-1);
-		}, true);
+		}, false);
 		final arrowRightShip = hud.buttonArrowRight(function callback() {
 			changeShip(1);
-		}, true);
+		}, false);
 
 		arrowLeftShip.setPosition(baseShipX - 680, 350);
 		arrowRightShip.setPosition(baseShipX + 450, 350);
 
 		addChild(arrowLeftShip);
 		addChild(arrowRightShip);
+
+		changeShip(0);
 	}
 
 	private function initiateIslands() {

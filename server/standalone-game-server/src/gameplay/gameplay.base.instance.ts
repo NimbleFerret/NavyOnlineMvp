@@ -37,7 +37,27 @@ export abstract class BaseGameplayInstance {
     addPlayer(playerId: string) {
         let engineEntity: any;
         if (this.gameplayType == GameplayType.Battle) {
-            engineEntity = this.gameEngine.createEntity('Player', 100, (this.playerEntityMap.size) * 500, undefined, playerId);
+
+            // As stands for HAXE:
+            //
+            // enum ShipHullSize {
+            //     SMALL;
+            //     MEDIUM;
+            // }
+            // enum ShipWindows {
+            //     ONE;
+            //     TWO;
+            //     NONE;
+            // }
+            // enum ShipGuns {
+            //     ONE;
+            //     TWO;
+            //     THREE;
+            //     FOUR;
+            // }
+
+            // TODO Set specific params...
+            engineEntity = this.gameEngine.createEntity('Player', 100, (this.playerEntityMap.size) * 500, 'SMALL', 'NONE', 'THREE', undefined, playerId);
         } else {
             engineEntity = this.gameEngine.createEntity(350, 290, undefined, playerId);
         }

@@ -13,6 +13,26 @@ export enum ShipSize {
     LARGE = 3
 }
 
+export interface PlayerShipEntity {
+    id: string;
+    type: number;
+    armor: number;
+    hull: number;
+    maxSpeed: number;
+    accelerationStep: number;
+    accelerationDelay: number;
+    rotationDelay: number;
+    cannons: number;
+    cannonsRange: number;
+    cannonsDamage: number;
+    level: number;
+    traits: number;
+    size: number;
+    rarity: number;
+    windows: number;
+    anchor: number;
+}
+
 export type ShipDocument = Ship & Document;
 
 @Schema()
@@ -28,16 +48,16 @@ export class Ship {
     armor: number;
 
     @Prop()
-    speed: number;
+    maxSpeed: number;
 
     @Prop()
-    acc: number;
+    accelerationStep: number;
 
     @Prop()
-    accDelay: number;
+    accelerationDelay: number;
 
     @Prop()
-    rotDelay: number;
+    rotationDelay: number;
 
     @Prop()
     cannons: number;
@@ -56,6 +76,18 @@ export class Ship {
 
     @Prop()
     type: number;
+
+    @Prop()
+    traits: number;
+
+    @Prop()
+    level: number;
+
+    @Prop()
+    windows: number;
+
+    @Prop()
+    anchor: number;
 
 }
 

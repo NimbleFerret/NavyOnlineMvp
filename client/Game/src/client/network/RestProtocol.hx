@@ -16,7 +16,7 @@ class FounderCollections {
 	}
 }
 
-typedef CaptainNFT = {
+typedef CaptainEntity = {
 	id:Int,
 	stakingRewardNVY:Int,
 	miningRewardNVY:Int,
@@ -30,8 +30,9 @@ typedef CaptainNFT = {
 	clothes:Int,
 }
 
-typedef ShipNFT = {
+typedef ShipEntity = {
 	id:Int,
+	type:Int,
 	hull:Int,
 	armor:Int,
 	maxSpeed:Int,
@@ -45,10 +46,11 @@ typedef ShipNFT = {
 	rarity:Int,
 	size:Int,
 	windows:Int,
-	anchor:Int
+	anchor:Int,
+	level:Int
 }
 
-typedef IslandNFT = {
+typedef IslandEntity = {
 	id:Int,
 	level:Int,
 	rarity:Int,
@@ -60,38 +62,14 @@ typedef IslandNFT = {
 }
 
 class NFTs {
-	public final captains:Array<CaptainNFT>;
-	public final ships:Array<ShipNFT>;
-	public final islands:Array<IslandNFT>;
+	public final captains:Array<CaptainEntity>;
+	public final ships:Array<ShipEntity>;
+	public final islands:Array<IslandEntity>;
 
-	public function new(captains:Array<CaptainNFT>, ships:Array<ShipNFT>, islands:Array<IslandNFT>) {
+	public function new(captains:Array<CaptainEntity>, ships:Array<ShipEntity>, islands:Array<IslandEntity>) {
 		this.captains = captains;
 		this.ships = ships;
 		this.islands = islands;
-	}
-}
-
-// -----------------------------------
-// Moralis V2
-// -----------------------------------
-
-class MoralisNFTs {
-	public final total:Int;
-	public final nfts:Array<MoralisNFT>;
-
-	public function new(total:Int, nfts:Array<MoralisNFT>) {
-		this.total = total;
-		this.nfts = nfts;
-	}
-}
-
-class MoralisNFT {
-	public final name:String;
-	public final metadata:Dynamic;
-
-	public function new(name:String, metadata:Dynamic) {
-		this.name = name;
-		this.metadata = metadata;
 	}
 }
 
@@ -102,16 +80,21 @@ class MoralisNFT {
 class PlayerData {
 	public final ethAddress:String;
 	public final nickname:String;
-	public var worldState:Int;
+	public final ownedCaptains:Array<CaptainEntity>;
+	public final ownedShips:Array<ShipEntity>;
+	public final ownedIslands:Array<IslandEntity>;
 	public var worldX:Int;
 	public var worldY:Int;
 
-	public function new(ethAddress:String, nickname:String, worldX:Int, worldY:Int, worldState:Int) {
+	public function new(ethAddress:String, nickname:String, worldX:Int, worldY:Int, ownedCaptains:Array<CaptainEntity>, ownedShips:Array<ShipEntity>,
+			ownedIslands:Array<IslandEntity>) {
 		this.ethAddress = ethAddress;
 		this.nickname = nickname;
 		this.worldX = worldX;
 		this.worldY = worldY;
-		this.worldState = worldState;
+		this.ownedCaptains = ownedCaptains;
+		this.ownedShips = ownedShips;
+		this.ownedIslands = ownedIslands;
 	}
 }
 

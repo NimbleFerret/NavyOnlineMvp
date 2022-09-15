@@ -6,4 +6,7 @@ export interface GameplayShipEntity extends BaseGameplayEntity {
     currentHull: number;
     currentSpeed: number;
     direction: string;
+    shipHullSize: number;
+    shipWindows: number;
+    shipGuns: number;
 }

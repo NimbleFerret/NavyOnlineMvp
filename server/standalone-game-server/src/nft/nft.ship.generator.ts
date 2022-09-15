@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createCanvas, loadImage } from "canvas";
 import { RandomService } from "src/random/random.service";
 import { MoralisService } from 'src/moralis/moralis.service';
-import { ShipStats } from 'src/cronos/cronos.service';
+import { PlayerShipEntity } from 'src/shipyard/shipyard.ship.entity';
 
 export class NftShipGenerator {
 
@@ -12,7 +12,7 @@ export class NftShipGenerator {
     private readonly OneWindowChance = 35;
     private readonly TwoWindowChance = 15;
 
-    async generateFounderShip(index: number, maxIndex: number, shipStats: ShipStats) {
+    async generateFounderShip(index: number, maxIndex: number, shipStats: PlayerShipEntity) {
         const middleShipImagePath = __dirname.split('dist')[0] + 'assets\\middle_ship.png';
         const threeCannonsImagePath = __dirname.split('dist')[0] + 'assets\\cannons3.png';
         const fourCannonsImagePath = __dirname.split('dist')[0] + 'assets\\cannons4.png';
@@ -91,6 +91,7 @@ export class NftShipGenerator {
                 { cannonsRange: shipStats.cannonsRange },
                 { cannonsDamage: shipStats.cannonsDamage },
                 { traits: shipStats.traits },
+                { level: shipStats.level },
                 { rarity: shipStats.rarity },
                 { size: shipStats.size },
                 { windows },

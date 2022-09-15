@@ -1,13 +1,24 @@
 /* eslint-disable prettier/prettier */
-
+import { Model } from "mongoose";
 import { Injectable, Logger } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
 import { AppEvents, PlayerDisconnectedEvent } from "src/app.events";
+import { User, UserDocument, UserWorldState } from "./user.entity";
+import { MoralisService, PlayerCaptainNFT, PlayerIslandNFT } from "src/moralis/moralis.service";
 import { ShipyardService } from "src/shipyard/shipyard.service";
 import { WorldService } from "src/world/world.service";
-import { User, UserDocument, UserWorldState } from "./user.entity";
+import { PlayerShipEntity, ShipType } from "src/shipyard/shipyard.ship.entity";
+
+export interface SignInOrUpResponse {
+    ethAddress: string;
+    nickname: string;
+    worldX: number;
+    worldY: number;
+    captains?: PlayerCaptainNFT[];
+    ownedShips?: PlayerShipEntity[];
+    islands?: PlayerIslandNFT[];
+}
 
 @Injectable()
 export class UserService {
@@ -18,6 +29,7 @@ export class UserService {
         private eventEmitter: EventEmitter2,
         private worldService: WorldService,
         private shipyardService: ShipyardService,
+        private moralisService: MoralisService,
         @InjectModel(User.name) private userModel: Model<UserDocument>
     ) {
     }
@@ -28,21 +40,55 @@ export class UserService {
     }
 
     async signInOrUp(ethAddress: string) {
-        const user = await this.userModel.findOne({
+        let user = await this.userModel.findOne({
             ethAddress
-        });
+        }).populate('shipsOwned');
         if (user) {
             this.playersMap.set(user.ethAddress, user);
-            return user;
+            user = await this.syncPlayerNFTs(user);
         } else {
-            const user = new this.userModel({
+            const userModel = new this.userModel({
                 ethAddress,
                 worldX: WorldService.BASE_POS_X,
                 worldY: WorldService.BASE_POS_Y
             });
-            this.playersMap.set(user.ethAddress, user);
-            return user.save();
+            this.playersMap.set(userModel.ethAddress, userModel);
+            const newFreeShip = await this.shipyardService.generateFreeShip();
+            userModel.shipsOwned = [newFreeShip];
+            user = await userModel.save();
         }
+
+        const ownedShips = user.shipsOwned.map(f => {
+            return {
+                id: f.tokenId,
+                type: f.type,
+                armor: f.armor,
+                hull: f.hull,
+                maxSpeed: f.maxSpeed,
+                accelerationStep: f.accelerationStep,
+                accelerationDelay: f.accelerationDelay,
+                rotationDelay: f.rotationDelay,
+                cannons: f.cannons,
+                cannonsRange: f.cannonsRange,
+                cannonsDamage: f.cannonsDamage,
+                level: f.level,
+                traits: f.traits,
+                size: f.size,
+                rarity: f.rarity,
+                windows: f.windows,
+                anchor: f.anchor,
+            } as PlayerShipEntity;
+        });
+
+        const signInOrUpResponse = {
+            ethAddress: user.ethAddress,
+            nickname: user.nickname,
+            worldX: user.worldX,
+            worldY: user.worldY,
+            ownedShips
+        } as SignInOrUpResponse;
+
+        return signInOrUpResponse;
     }
 
     checkPlayerPos(playerEthAddress: string, x: number, y: number) {
@@ -105,4 +151,20 @@ export class UserService {
         return this.userModel.find().exec();
     }
 
+    async syncPlayerNFTs(user: UserDocument): Promise<any> {
+        const nftBasicInfo = await this.moralisService.loadUserNFTs(user.ethAddress);
+        const freeShip = user.shipsOwned.filter(f => f.type == ShipType.FREE)[0];
+
+        // Sync ships
+        user.shipsOwned = [freeShip];
+        for (const nftShip of nftBasicInfo.ships) {
+            const ship = await this.shipyardService.syncShipIfNeeded(nftShip);
+            user.shipsOwned.push(ship)
+        }
+
+        // Sync islands
+
+        user = await user.save();
+        return user;
+    }
 }

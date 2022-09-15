@@ -75,7 +75,8 @@ class SceneMainHud extends BasicHud {
 		Main.IsWeb3Available = Moralis.isEthereumBrowser();
 
 		if (!Main.IsWeb3Available) {
-			Player.instance.ethAddress = Uuid.short();
+			Player.instance.ethAddress = '0x87400A03678dd03c8BF536404B5B14C609a23b79';
+			// Player.instance.ethAddress = Uuid.short();
 			showMetamaskError(function callback() {
 				init(null);
 				if (unloggedInitCallback != null) {

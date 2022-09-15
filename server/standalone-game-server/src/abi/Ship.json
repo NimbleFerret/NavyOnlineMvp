@@ -133,6 +133,25 @@
         "anonymous": false,
         "inputs": [
             {
+                "indexed": false,
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "shipId",
+                "type": "uint256"
+            }
+        ],
+        "name": "ShipRepaired",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
                 "indexed": true,
                 "internalType": "address",
                 "name": "from",
@@ -352,11 +371,6 @@
             {
                 "components": [
                     {
-                        "internalType": "bool",
-                        "name": "maintenenceRequired",
-                        "type": "bool"
-                    },
-                    {
                         "internalType": "uint256",
                         "name": "maintenenceCostNVY",
                         "type": "uint256"
@@ -436,11 +450,6 @@
         "name": "idToShips",
         "outputs": [
             {
-                "internalType": "bool",
-                "name": "maintenenceRequired",
-                "type": "bool"
-            },
-            {
                 "internalType": "uint256",
                 "name": "maintenenceCostNVY",
                 "type": "uint256"
@@ -513,11 +522,6 @@
                 "internalType": "uint256",
                 "name": "tokenId",
                 "type": "uint256"
-            },
-            {
-                "internalType": "string",
-                "name": "newMetadataURI",
-                "type": "string"
             }
         ],
         "name": "levelUpNFT",
@@ -597,6 +601,19 @@
             }
         ],
         "name": "renounceRole",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "shipId",
+                "type": "uint256"
+            }
+        ],
+        "name": "repair",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -828,6 +845,41 @@
             }
         ],
         "name": "tryUpgrade",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "shipId",
+                "type": "uint256"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "maintenenceCostNVY",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "maintenenceCostAKS",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct NVYGameLibrary.ShipStats",
+                "name": "ship",
+                "type": "tuple"
+            },
+            {
+                "internalType": "string",
+                "name": "newMetadataURI",
+                "type": "string"
+            }
+        ],
+        "name": "updateShip",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

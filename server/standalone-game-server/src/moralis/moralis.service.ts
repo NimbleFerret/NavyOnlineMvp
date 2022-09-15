@@ -4,8 +4,9 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import Moralis from "moralis";
 import { CronosService } from 'src/cronos/cronos.service';
+import { PlayerShipEntity, ShipType } from 'src/shipyard/shipyard.ship.entity';
 
-interface PlayerCaptainNFT {
+export interface PlayerCaptainNFT {
     id: string;
     miningRewardNVY: string;
     stakingRewardNVY: string;
@@ -19,26 +20,7 @@ interface PlayerCaptainNFT {
     clothes: number;
 }
 
-interface PlayerShipNFT {
-    id: string,
-    armor: number;
-    hull: number;
-    maxSpeed: number;
-    accelerationStep: number;
-    accelerationDelay: number;
-    rotationDelay: number;
-    cannons: number;
-    cannonsRange: number;
-    cannonsDamage: number;
-    level: number;
-    traits: number;
-    size: number;
-    rarity: number;
-    windows: number;
-    anchor: number;
-}
-
-interface PlayerIslandNFT {
+export interface PlayerIslandNFT {
     id: string;
     level: number;
     rarity: number;
@@ -62,9 +44,9 @@ export class MoralisService implements OnModuleInit {
     }
 
     async loadUserNFTs(address: string) {
-        const captains = await this.getCaptainNFTsByOwnerAddress(address);
-        const ships = await this.getShipNFTsByOwnerAddress(address);
-        const islands = await this.getIslandNFTsByOwnerAddress(address);
+        const captains = await this.getCaptainNFTsByOwnerAddress(address) as PlayerCaptainNFT[];
+        const ships = await this.getShipNFTsByOwnerAddress(address) as PlayerShipEntity[];
+        const islands = await this.getIslandNFTsByOwnerAddress(address) as PlayerIslandNFT[];
         return {
             captains,
             ships,
@@ -127,6 +109,7 @@ export class MoralisService implements OnModuleInit {
                 const metadataAttributes = JSON.parse(entity.metadata).attributes;
                 const playerShipNft = {
                     id: entity.token_id,
+                    type: ShipType.COMMON,
                     hull: metadataAttributes[0]['hull'],
                     armor: metadataAttributes[1]['armor'],
                     maxSpeed: metadataAttributes[2]['maxSpeed'],
@@ -137,11 +120,12 @@ export class MoralisService implements OnModuleInit {
                     cannonsRange: metadataAttributes[7]['cannonsRange'],
                     cannonsDamage: metadataAttributes[8]['cannonsDamage'],
                     traits: metadataAttributes[9]['traits'],
-                    rarity: metadataAttributes[10]['rarity'],
-                    size: metadataAttributes[11]['size'],
-                    windows: metadataAttributes[12]['windows'],
-                    anchor: metadataAttributes[13]['anchor'],
-                } as PlayerShipNFT;
+                    level: metadataAttributes[10]['level'],
+                    rarity: metadataAttributes[11]['rarity'],
+                    size: metadataAttributes[12]['size'],
+                    windows: metadataAttributes[13]['windows'],
+                    anchor: metadataAttributes[14]['anchor'],
+                } as PlayerShipEntity;
                 result.push(playerShipNft);
             }
         }

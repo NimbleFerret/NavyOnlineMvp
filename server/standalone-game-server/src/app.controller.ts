@@ -66,7 +66,7 @@ export class AppController {
 
     // Use cache here
     @Get('founders')
-    async getFoundersCollectionInfo() {
+    async getFounderCollectionInfo() {
         return this.cronosService.getFounderCollectionsInfo();
     }
 
