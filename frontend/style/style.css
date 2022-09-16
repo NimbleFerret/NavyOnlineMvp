@@ -2,8 +2,8 @@
   padding: 0;
   margin: 0;
   border: 0;
-  -webkit-transition: all 0.2s;
-  transition: all 0.2s;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
 }
 
 *,
@@ -19,6 +19,7 @@ html {
 
 a,
 button {
+  cursor: pointer;
   text-decoration: none;
 }
 
@@ -45,11 +46,17 @@ button {
 
 .logo {
   display: block;
-  width: 220px;
+  width: 226px;
 }
 
 .capitan-gif {
   margin-right: -10px;
+}
+
+.capitan-gif-right {
+  -webkit-transform: scaleX(-1);
+          transform: scaleX(-1);
+  margin-left: -11px;
 }
 
 .capitan-gif-road {
@@ -89,7 +96,7 @@ button {
   letter-spacing: 0.06em;
   font-weight: 700;
   text-transform: uppercase;
-  color: #000;
+  color: #fff;
   padding: 6px;
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
@@ -97,7 +104,7 @@ button {
 
 .nav-link:hover {
   cursor: pointer;
-  color: #fff;
+  color: #000;
 }
 
 .header-right {
@@ -140,6 +147,7 @@ button {
 
 .btn-header:hover {
   cursor: pointer;
+  background-color: #1336f2;
   -webkit-transform: scale(1.06);
           transform: scale(1.06);
 }
@@ -212,6 +220,10 @@ button {
   color: #fff;
 }
 
+.text-shadow {
+  text-shadow: 4px 4px 16px rgba(0, 0, 0, 0.6);
+}
+
 .banner-btn {
   font-family: "Baloo 2", sans-serif;
   color: #fff;
@@ -233,7 +245,7 @@ button {
   color: #000;
   background-color: #00f45b;
   border-radius: 10px;
-  padding: 3px 36px 3px 0;
+  padding: 3px  0;
   -webkit-box-shadow: -2px 2px 16px rgba(0, 0, 0, 0.6);
           box-shadow: -2px 2px 16px rgba(0, 0, 0, 0.6);
 }
@@ -387,6 +399,12 @@ button {
   width: 52px;
   height: 52px;
   background: none;
+}
+
+.btn-arrow:hover {
+  cursor: pointer;
+  -webkit-transform: scale(1.08);
+          transform: scale(1.08);
 }
 
 .roadmap {
