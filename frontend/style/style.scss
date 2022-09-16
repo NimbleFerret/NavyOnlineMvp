@@ -1,0 +1,396 @@
+$text-color-light: #fff;
+$text-color-dark: #034d82;
+
+$color-blue-leght: #06aeee;
+$color-blue-dark: #1336f2;
+$color-green: #00f45b;
+$color-orange: #ff8500;
+$color-black: #000;
+
+@mixin head-title {
+  font-family: "Baloo 2", sans-serif;
+  color: $text-color-light;
+  font-size: 24px;
+  line-height: 1.25rem;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@mixin main-text {
+  font-family: "Exo", sans-serif;
+  line-height: 1.25rem;
+  letter-spacing: 0.06em;
+  font-size: 22px;
+  font-weight: 400;
+}
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  transition: all 0.3s;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+a,
+button {
+  cursor: pointer;
+  text-decoration: none;
+  
+}
+
+.center {
+  padding-left: calc(50% - 570px);
+  padding-right: calc(50% - 570px);
+}
+
+.header {
+  height: 128px;
+  background-color: $color-blue-leght;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  border-bottom: 6px solid $color-green;
+}
+
+.logo {
+  display: block;
+  width: 226px;
+}
+
+.capitan-gif {   
+  margin-right: -10px;
+}
+
+.capitan-gif-right{
+  transform: scaleX(-1); // отразить по вертикали
+  margin-left: -11px;
+}
+
+.capitan-gif-road {
+  margin-left: -30px;
+  margin-bottom: 4px;
+}
+
+.twitter-icon {
+  padding: 8px;
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.06);
+  }
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  padding-left: 40px;
+}
+
+.nav-link {
+  @include head-title;
+  // color: $color-black;
+  color: $text-color-light;
+  padding: 6px;
+  transition: all 0.3s;
+
+  &:hover {
+    cursor: pointer;
+    color: $color-black;
+  }
+}
+
+.header-right {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  padding-right: 40px;
+}
+
+.btn-header {
+  @include main-text;
+  font-weight: 800;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 160px;
+  max-height: 65px;
+  background-color: $color-black;
+  border: 4px solid $color-green;
+  padding: 16px 36px;
+  color: $text-color-light;
+
+  &:hover {
+    cursor: pointer;
+    background-color: $color-blue-dark;
+    transform: scale(1.06);
+  }
+}
+
+.banner {
+  height: 900px;
+  //   background: url("images/water.png");
+  //   background-repeat: repeat;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  background-image: linear-gradient(
+    180deg,
+    rgba(0, 188, 235, 0.3),
+    rgba(56, 82, 199, 0.3)
+  );
+}
+
+.banner video {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  object-fit: cover;
+  z-index: -100;
+  margin-left: -5px;
+  margin-right: 0;
+}
+
+.overlay {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+  z-index: 1;
+  padding-top: 308px;
+}
+
+.heading {
+  @include main-text;
+  font-size: 50px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: $text-color-light; 
+}
+
+.subheading {
+  @include head-title;
+  font-size: 24px;
+  font-weight: 300px;
+  color: $text-color-light; 
+}
+
+.text-shadow {
+  text-shadow: 4px 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.banner-btn {
+  @include head-title;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $color-black;
+  background-color: $color-green;
+  //   background: #fdd835;
+  border-radius: 10px;
+  padding: 3px  0;
+  box-shadow: -2px 2px 16px rgba(0, 0, 0, 0.6);
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.06);
+  }
+}
+
+.about {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 48px;
+  padding: 60px 40px;
+}
+
+.section-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.heading-about {
+  color: $color-black;
+  line-height: 3.25rem;
+}
+
+.text {
+  @include main-text;
+  line-height: 2.25rem;
+}
+
+.capitan-gif__about {
+  display: inline-block;
+  margin-left: -30px;
+  margin-bottom: -30px;
+}
+
+.about-img {
+  max-width: 800px;
+}
+
+.text li {
+  margin-left: 34px;
+}
+
+.nft {
+  min-height: 800px; //
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 40px 60px;
+  background: $color-green;
+}
+
+.container {
+  width: 1000px;
+  height: 760px;
+  overflow: hidden;
+  position: relative;
+}
+
+.slider {
+  width: 1000px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slider_card {
+  width: 900px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  margin: 0 50px;
+}
+
+.capitans-img {
+  max-width: 900px;
+  //   padding: 0 90px;
+}
+
+.ships-img {
+  max-width: 900px;
+}
+
+.islands-img {
+  max-width: 900px;
+}
+
+.btns-block {
+  display: flex;
+  justify-content: center;
+  gap: 52px;
+  margin-top: 32px;
+  position: absolute;
+  bottom: 10px;
+  left: 41%;
+}
+
+.btn-arrow {
+  width: 52px;
+  height: 52px;
+  background: none;
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.08);
+  }
+}
+
+
+.roadmap {
+  min-height: 800px;
+  background: $color-blue-dark;
+}
+
+.roadmap-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 60px 40px;
+}
+
+.flex_block {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 24px;
+}
+
+.list-items {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.card-item {
+  width: 240px;
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 18px;
+  border-radius: 10px;
+  background: #3753f3;
+  padding: 18px 14px;
+}
+
+.card-heading {
+  @include main-text;
+  font-size: 28px;
+  color: $color-green;
+  font-weight: 800;
+}
+
+.card-text {
+  @include head-title;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.4rem;
+  color: rgb(234, 239, 245);
+  text-transform: none;
+}
+
+.footer {
+  min-height: 200px;
+  background: $color-black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 40px;
+}
+
+.footer-copy {
+  @include main-text;
+  font-size: 22px;
+  color: rgb(234, 239, 245);
+}
