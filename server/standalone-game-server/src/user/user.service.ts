@@ -9,6 +9,7 @@ import { MoralisService, PlayerCaptainNFT, PlayerIslandNFT } from "src/moralis/m
 import { ShipyardService } from "src/shipyard/shipyard.service";
 import { WorldService } from "src/world/world.service";
 import { PlayerShipEntity, ShipType } from "src/shipyard/shipyard.ship.entity";
+import { trace } from "console";
 
 export interface SignInOrUpResponse {
     ethAddress: string;
@@ -26,8 +27,6 @@ export class UserService {
     private readonly playersMap = new Map<string, any>();
 
     constructor(
-        private eventEmitter: EventEmitter2,
-        private worldService: WorldService,
         private shipyardService: ShipyardService,
         private moralisService: MoralisService,
         @InjectModel(User.name) private userModel: Model<UserDocument>
@@ -78,6 +77,12 @@ export class UserService {
                 windows: f.windows,
                 anchor: f.anchor,
             } as PlayerShipEntity;
+        });
+
+        // TODO Rename
+        const ownedIslands = user.islandsOwned.map(f => {
+            trace(1);
+            return 1;
         });
 
         const signInOrUpResponse = {

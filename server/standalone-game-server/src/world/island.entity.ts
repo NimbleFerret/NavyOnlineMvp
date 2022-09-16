@@ -6,17 +6,26 @@ export type IslandDocument = Island & Document;
 
 @Schema()
 export class Island {
-    @Prop({ required: true })
+    @Prop()
     tokenId: string;
 
-    @Prop({ required: true })
+    @Prop()
     owner: string;
+
+    @Prop({ default: false })
+    isBase: boolean;
 
     @Prop()
     x: number;
 
     @Prop()
     y: number;
+
+    @Prop()
+    terrain: string;
+
+    @Prop()
+    mining: boolean;
 }
 
 export const IslandSchema = SchemaFactory.createForClass(Island);

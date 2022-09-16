@@ -2,6 +2,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { Ship } from 'src/shipyard/shipyard.ship.entity';
+import { Island } from 'src/world/island.entity';
 
 export enum UserWorldState {
     WORLD = 1,
@@ -49,6 +50,9 @@ export class User {
 
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ship' }] })
     shipsOwned: Ship[];
+
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Island' }] })
+    islandsOwned: Island[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

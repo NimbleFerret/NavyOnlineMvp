@@ -42,6 +42,9 @@ export class Ship {
     tokenId: string;
 
     @Prop()
+    owner: string;
+
+    @Prop()
     hull: number;
 
     @Prop()

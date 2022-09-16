@@ -4,13 +4,11 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { MoralisModule } from "src/moralis/moralis.module";
 import { ShipyardModule } from "src/shipyard/shipyard.module";
-import { WorldModule } from "src/world/world.module";
 import { User, UserSchema } from "./user.entity";
 import { UserService } from "./user.service";
 
 @Module({
     imports: [
-        WorldModule,
         ShipyardModule,
         MoralisModule,
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])
