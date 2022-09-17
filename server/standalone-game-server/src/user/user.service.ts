@@ -3,14 +3,15 @@ import { Model } from "mongoose";
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
-import { AppEvents, PlayerDisconnectedEvent } from "src/app.events";
+import { AppEvents, PlayerDisconnectedEvent } from "../app.events";
 import { User, UserDocument, UserWorldState } from "./user.entity";
-import { MoralisService } from "src/moralis/moralis.service";
-import { ShipyardService } from "src/shipyard/shipyard.service";
-import { WorldService } from "src/world/world.service";
-import { PlayerCaptainEntity } from "./asset/asset.captain.entity";
-import { PlayerIslandEntity } from "./asset/asset.island.entity";
-import { PlayerShipEntity, ShipType } from "./asset/asset.ship.entity";
+import { MoralisService } from "../moralis/moralis.service";
+import { ShipyardService } from "../shipyard/shipyard.service";
+import { WorldService } from "../world/world.service";
+import { Captain, CaptainDocument, PlayerCaptainEntity } from "../asset/asset.captain.entity";
+import { PlayerIslandEntity } from "../asset/asset.island.entity";
+import { PlayerShipEntity, ShipType } from "../asset/asset.ship.entity";
+import { AssetService } from "src/asset/asset.service";
 
 export interface SignInOrUpResponse {
     ethAddress: string;
@@ -30,6 +31,7 @@ export class UserService {
     constructor(
         private shipyardService: ShipyardService,
         private moralisService: MoralisService,
+        private assetService: AssetService,
         @InjectModel(User.name) private userModel: Model<UserDocument>
     ) {
     }
@@ -172,4 +174,5 @@ export class UserService {
         user = await user.save();
         return user;
     }
+
 }

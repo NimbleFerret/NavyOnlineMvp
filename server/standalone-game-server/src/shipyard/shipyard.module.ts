@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ShipyardService } from './shipyard.service';
 import { RandomModule } from '../random/random.module';
 import { Shipyard, ShipyardSchema } from './shipyard.entity';
-import { Ship, ShipSchema } from '../user/asset/asset.ship.entity';
+import { Ship, ShipSchema } from '../asset/asset.ship.entity';
 
 @Module({
   imports: [

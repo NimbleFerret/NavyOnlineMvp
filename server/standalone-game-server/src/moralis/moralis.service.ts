@@ -3,10 +3,10 @@ import { EvmChain } from '@moralisweb3/evm-utils';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import Moralis from "moralis";
-import { CronosService } from 'src/cronos/cronos.service';
-import { PlayerCaptainEntity } from 'src/user/asset/asset.captain.entity';
-import { PlayerIslandEntity } from 'src/user/asset/asset.island.entity';
-import { PlayerShipEntity, ShipType } from 'src/user/asset/asset.ship.entity';
+import { PlayerCaptainEntity } from '../asset/asset.captain.entity';
+import { PlayerIslandEntity } from '../asset/asset.island.entity';
+import { PlayerShipEntity, ShipType } from '../asset/asset.ship.entity';
+import { CronosService } from '../cronos/cronos.service';
 
 @Injectable()
 export class MoralisService implements OnModuleInit {

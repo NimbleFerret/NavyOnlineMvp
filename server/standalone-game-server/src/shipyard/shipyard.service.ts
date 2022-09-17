@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { Rarity } from 'src/random/random.entity';
 import { RandomService } from 'src/random/random.service';
 import { Shipyard, ShipyardDocument } from './shipyard.entity';
-import { PlayerShipEntity, Ship, ShipDocument, ShipSize, ShipType } from '../user/asset/asset.ship.entity';
+import { PlayerShipEntity, Ship, ShipDocument, ShipSize, ShipType } from '../asset/asset.ship.entity';
 import { ShipStatsRange, ShipStatsStep } from 'src/cronos/cronos.service';
 import { NftShipGenerator } from 'src/nft/nft.ship.generator';
 
@@ -119,9 +119,7 @@ export class ShipyardService implements OnModuleInit {
     private async generateShipAttributes(smallShipStatsRange: ShipStatsRange, middleShipStatsRange: ShipStatsRange, shipStatsStep: ShipStatsStep, preferredSize?: ShipSize) {
         const size = this.randomService.generateShipSize(preferredSize);
         const shipStatsRange = size == ShipSize.MIDDLE ? middleShipStatsRange : smallShipStatsRange;
-        // TODO refactor additional gun chance, move it into the contract ?
         const cannons = this.randomService.generateShipGuns(3, 4, 10);
-        // const cannons = this.randomService.generateShipGuns(shipStatsRange.minCannons, shipStatsRange.maxCannons, 10);
         return {
             hull: this.calculateShipAttribute(shipStatsRange.minHull, shipStatsRange.maxHull, shipStatsStep.armorAndHullStep),
             armor: this.calculateShipAttribute(shipStatsRange.minArmor, shipStatsRange.maxArmor, shipStatsStep.armorAndHullStep),
