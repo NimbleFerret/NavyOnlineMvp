@@ -102,21 +102,7 @@ export class CronosService implements OnModuleInit {
 
     private readonly ethersProvider = new ethers.providers.JsonRpcProvider('https://evm-t3.cronos.org');
 
-    // 0xE9f7B8e42b4633f518b9C4854A1D14b85d24EeA2
-    private readonly backendWallet = new ethers.Wallet('6c72bdb8e4c65dacbdb00f1a5e2a031d31e105f1b852844a438045d008f12d92', this.ethersProvider);
 
-    private readonly AksContractAddress = '0x50aCa9A511d59D74C4dB8766b64aCa16C9751a43';
-    private readonly NvyContractAddress = '0x7Cd571Bfc68a7c35292fec98D005EecD5767742C';
-
-    public static readonly CaptainContractAddress = '0xaCf10BA05a8B36324E0A083Cf4454359A4644147';
-    public static readonly ShipContractAddress = '0xcE1011514ca5f24cA4A63D41fE595AF2C5916c4c';
-    public static readonly IslandContractAddress = '0x805325D64B9178F85d52aFb51B2A99EC403f447d';
-
-    private readonly ShipTemplateContractAddress = '0x517f1dCB0aeDBb28A7C983c8AF2a39f1Fc0D107b';
-
-    private readonly FounderCaptainCollectionSaleContractAddress = '0x7F60a7257A943400BA30dFda6A6A2356E977d0e2';
-    private readonly FounderShipCollectionSaleContractAddress = '0x825cD99fAaA4394de728a7B2133857FB8bcc6921';
-    private readonly FounderIslandCollectionSaleContractAddress = '0xc9F020cD68DCeB36E4466a5A0aAaED5aEC96FECF';
 
     private shipStatsStep: ShipStatsStep;
     private smallShipStatsRange: ShipStatsRange;
@@ -237,6 +223,7 @@ export class CronosService implements OnModuleInit {
                 shipOnSale = shipOnSale.toNumber();
 
                 const newShipMetadata = await this.assetService.generateShipMetadata(
+                    sender,
                     shipOnSale,
                     this.founderShipsOnSaleTotal,
                     this.smallShipStatsRange,

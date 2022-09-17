@@ -31,7 +31,7 @@ class PosOffset {
 	public var x:Float;
 	public var y:Float;
 
-	public function new(x, y, r = 0) {
+	public function new(x:Float, y:Float, r:Float = 0) {
 		this.x = x;
 		this.y = y;
 		this.r = r;

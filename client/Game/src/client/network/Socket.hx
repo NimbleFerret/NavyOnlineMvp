@@ -18,7 +18,7 @@ class Socket {
 
 		clientSocket.on(SocketProtocol.SocketServerEventPong, function(data) {
 			latency = Date.now().getTime() - lastPingTime;
-			trace('Latency:' + latency);
+			// trace('Latency:' + latency);
 		});
 		clientSocket.on(SocketProtocol.SocketServerEventGameInit, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventGameInit, data);

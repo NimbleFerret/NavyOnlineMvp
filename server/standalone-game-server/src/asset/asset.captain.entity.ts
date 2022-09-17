@@ -4,11 +4,14 @@ import { Document } from 'mongoose';
 
 export interface PlayerCaptainEntity {
     id: string;
-    miningRewardNVY: string;
-    stakingRewardNVY: string;
-    traits: string;
-    level: string;
-    rarity: string;
+    owner: string;
+    miningRewardNVY: number;
+    stakingRewardNVY: number;
+    miningStartedAt: number;
+    miningDurationSeconds: number;
+    traits: number;
+    level: number;
+    rarity: number;
     bg: number;
     acc: number;
     head: number;
@@ -20,6 +23,8 @@ export type CaptainDocument = Captain & Document;
 
 @Schema()
 export class Captain {
+
+    // Common
     @Prop()
     tokenId: string;
 
@@ -27,8 +32,34 @@ export class Captain {
     owner: string;
 
     @Prop()
+    rarity: number;
+
+    @Prop()
     level: number;
 
+    @Prop()
+    type: number;
+
+    @Prop()
+    traits: number;
+
+    // NFT stuff
+    @Prop()
+    bg: number;
+
+    @Prop()
+    acc: number;
+
+    @Prop()
+    head: number;
+
+    @Prop()
+    haircutOrHat: number;
+
+    @Prop()
+    clothes: number;
+
+    // Mining and staking
     @Prop()
     staking: boolean;
 

@@ -2,11 +2,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export enum ShipType {
-    FREE = 1,
-    COMMON = 2
-}
-
 export enum ShipSize {
     SMALL = 1,
     MIDDLE = 2,
@@ -15,6 +10,7 @@ export enum ShipSize {
 
 export interface PlayerShipEntity {
     id: string;
+    owner: string;
     type: number;
     armor: number;
     hull: number;

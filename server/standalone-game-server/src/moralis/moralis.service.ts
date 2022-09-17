@@ -3,9 +3,10 @@ import { EvmChain } from '@moralisweb3/evm-utils';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import Moralis from "moralis";
+import { AssetType } from 'src/asset/asset.service';
 import { PlayerCaptainEntity } from '../asset/asset.captain.entity';
 import { PlayerIslandEntity } from '../asset/asset.island.entity';
-import { PlayerShipEntity, ShipType } from '../asset/asset.ship.entity';
+import { PlayerShipEntity } from '../asset/asset.ship.entity';
 import { CronosService } from '../cronos/cronos.service';
 
 @Injectable()
@@ -86,7 +87,7 @@ export class MoralisService implements OnModuleInit {
                 const metadataAttributes = JSON.parse(entity.metadata).attributes;
                 const playerShipEntity = {
                     id: entity.token_id,
-                    type: ShipType.COMMON,
+                    type: AssetType.COMMON,
                     hull: metadataAttributes[0]['hull'],
                     armor: metadataAttributes[1]['armor'],
                     maxSpeed: metadataAttributes[2]['maxSpeed'],

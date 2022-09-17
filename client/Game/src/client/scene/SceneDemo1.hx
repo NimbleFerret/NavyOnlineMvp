@@ -9,11 +9,14 @@ import h2d.Scene;
 
 class SceneDemo1 extends Scene {
 	private var game:BattleGameplay;
+	private var islandsManager:IslandsManager;
 
 	public function new(width:Int, height:Int) {
 		super();
 
 		camera.setViewport(width / 2, height / 2, 0, 0);
+
+		islandsManager = new IslandsManager(this, 'Green');
 	}
 
 	public function start() {
@@ -26,13 +29,15 @@ class SceneDemo1 extends Scene {
 		final playerId = 'Player1';
 		final ship1 = game.addShipByClient(Role.Player, -200, 100, ShipHullSize.SMALL, ShipWindows.NONE, ShipGuns.THREE, null, playerId);
 
-		// final ship2 = game.addShipByClient(Role.Bot, -200, -400, null, null);
+		final ship2 = game.addShipByClient(Role.General, -200, -400, ShipHullSize.SMALL, ShipWindows.NONE, ShipGuns.THREE, null, null);
 		// final ship3 = game.addShipByClient(Role.Bot, 100, -100, null, null);
 		// final ship4 = game.addShipByClient(Role.Bot, 300, -100, null, null);
 		// final ship5 = game.addShipByClient(Role.Bot, 300, -600, null, null);
 
-		game.startGameByClient(playerId, [ship1]);
+		game.startGameByClient(playerId, [ship1, ship2]);
 		// game.startGameByClient(playerId, [ship1, ship2, ship3, ship4, ship5]);
+
+		camera.scale(2, 2);
 	}
 
 	public override function render(e:Engine) {
@@ -44,7 +49,16 @@ class SceneDemo1 extends Scene {
 	}
 
 	public function update(dt:Float, fps:Float) {
+		final c = camera;
+
+		if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))
+			c.scale(1.25, 1.25);
+		if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_DOWN))
+			c.scale(0.8, 0.8);
+
 		game.update(dt, fps);
+
+		islandsManager.update();
 	}
 
 	public function getHud() {

@@ -17,9 +17,13 @@ class FounderCollections {
 }
 
 typedef CaptainEntity = {
-	id:Int,
+	id:String,
+	owner:String,
+	type:Int,
 	stakingRewardNVY:Int,
 	miningRewardNVY:Int,
+	miningStartedAt:Int,
+	miningDurationSeconds:Int,
 	traits:Int,
 	level:Int,
 	rarity:Int,
@@ -31,7 +35,8 @@ typedef CaptainEntity = {
 }
 
 typedef ShipEntity = {
-	id:Int,
+	id:String,
+	owner:String,
 	type:Int,
 	hull:Int,
 	armor:Int,
@@ -51,13 +56,17 @@ typedef ShipEntity = {
 }
 
 typedef IslandEntity = {
-	id:Int,
+	id:String,
+	owner:String,
 	level:Int,
 	rarity:Int,
+	size:Int,
 	terrain:String,
 	miningRewardNVY:Int,
 	shipAndCaptainFee:Int,
 	maxMiners:Int,
+	mining:Bool,
+	miners:Int,
 	minersFee:Int
 }
 
@@ -128,17 +137,25 @@ class GameWorldData {
 class JoinSectorResponse {
 	public final result:Bool;
 	public final reason:String;
-	public final playersCount:Int;
-	public final totalShips:Int;
 	public final instanceId:String;
 	public final sectorType:Int;
 
-	public function new(result:Bool, reason:String, playersCount:Int, totalShips:Int, instanceId:String, sectorType:Int) {
+	public final islandId:String;
+	public final islandOwner:String;
+	public final islandTerrain:String;
+	public final islandMining:Bool;
+
+	public function new(result:Bool, reason:String, totalShips:Int, instanceId:String, sectorType:Int, islandId:String, islandOwner:String,
+			islandTerrain:String, islandMining:Bool) {
 		this.result = result;
 		this.reason = reason;
-		this.playersCount = playersCount;
-		this.totalShips = totalShips;
 		this.instanceId = instanceId;
 		this.sectorType = sectorType;
+
+		// Island
+		this.islandId = islandId;
+		this.islandOwner = islandOwner;
+		this.islandTerrain = islandTerrain;
+		this.islandMining = islandMining;
 	}
 }

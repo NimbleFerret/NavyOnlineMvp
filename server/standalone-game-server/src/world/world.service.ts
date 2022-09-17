@@ -11,6 +11,7 @@ import { GameplayBattleService } from 'src/gameplay/battle/gameplay.battle.servi
 import { User, UserDocument } from 'src/user/user.entity';
 import { AssetService } from 'src/asset/asset.service';
 import { IslandDocument } from 'src/asset/asset.island.entity';
+import { Rarity } from 'src/random/random.entity';
 
 export interface SectorInfo {
   x: number;
@@ -82,7 +83,7 @@ export class WorldService implements OnModuleInit {
           }
           let sector = await this.createSector(x, y, content);
           if (content == SectorContent.BASE) {
-            const baseIsland = await this.assetService.createIsland(uuidv4(), 'ADMIN', 4, 4, 'Green', true);
+            const baseIsland = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, 'ADMIN', 4, 4, 'Green', true);
             sector.island = baseIsland;
             sector = await sector.save();
           }
@@ -120,9 +121,9 @@ export class WorldService implements OnModuleInit {
       }
 
       if (!hasMockedSectors) {
-        const island1 = await this.assetService.createIsland(uuidv4(), mockedUserAddress, mockedSector1X, mockedSector1Y, 'Green');
-        const island2 = await this.assetService.createIsland(uuidv4(), mockedUserAddress, mockedSector2X, mockedSector2Y, 'Dark');
-        const island3 = await this.assetService.createIsland(uuidv4(), mockedUserAddress, mockedSector3X, mockedSector3Y, 'Snow');
+        const island1 = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, mockedUserAddress, mockedSector1X, mockedSector1Y, 'Green');
+        const island2 = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, mockedUserAddress, mockedSector2X, mockedSector2Y, 'Dark');
+        const island3 = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, mockedUserAddress, mockedSector3X, mockedSector3Y, 'Snow');
 
         const sector1 = await this.createSector(mockedSector1X, mockedSector1Y, SectorContent.ISLAND, island1);
         const sector2 = await this.createSector(mockedSector2X, mockedSector2Y, SectorContent.ISLAND, island2);

@@ -1,6 +1,5 @@
 package client.entity;
 
-import haxe.Template;
 import client.entity.ship.ShipTemplate;
 import client.gameplay.battle.BattleGameplay;
 import engine.entity.EngineBaseGameEntity;
@@ -8,14 +7,14 @@ import engine.entity.EngineShipEntity;
 import engine.MathUtils;
 
 final RippleOffsetByDir:Map<GameEntityDirection, PosOffset> = [
-	GameEntityDirection.East => new PosOffset(90, -80, 20),
-	GameEntityDirection.North => new PosOffset(3.5, -10, 59),
-	GameEntityDirection.NorthEast => new PosOffset(60, -31, 44),
-	GameEntityDirection.NorthWest => new PosOffset(-56, 15, 52),
-	GameEntityDirection.South => new PosOffset(181, -6, -15),
-	GameEntityDirection.SouthEast => new PosOffset(117, -57, 6),
-	GameEntityDirection.SouthWest => new PosOffset(246, 48, 10),
-	GameEntityDirection.West => new PosOffset(261, 40, 15),
+	GameEntityDirection.East => new PosOffset(-20, 0, 90),
+	GameEntityDirection.North => new PosOffset(0, 59, 3.5),
+	GameEntityDirection.NorthEast => new PosOffset(-31, 44, 60),
+	GameEntityDirection.NorthWest => new PosOffset(15, 40, -56),
+	GameEntityDirection.South => new PosOffset(-6, -15, 181),
+	GameEntityDirection.SouthEast => new PosOffset(-57, 6, 117),
+	GameEntityDirection.SouthWest => new PosOffset(48, 10, 246),
+	GameEntityDirection.West => new PosOffset(40, 15, 261),
 ];
 
 class ClientShip extends ClientBaseGameEntity {
@@ -23,11 +22,6 @@ class ClientShip extends ClientBaseGameEntity {
 	// Ripple anim
 	// --------------------------------
 	var rippleAnim:h2d.Anim;
-
-	// Ripple config
-	public var ripple_angle:Float = 90;
-	public var ripple_x:Float = -20;
-	public var ripple_y:Float = 0;
 
 	// Shapes config
 	public var shape_angle:Float = 0;
@@ -39,18 +33,26 @@ class ClientShip extends ClientBaseGameEntity {
 	public function new(s2d:h2d.Scene, engineShipEntity:EngineShipEntity) {
 		super();
 
-		engineShipEntity.speedChangeCallback = function callback(speed) {
-			if (speed != 0) {
-				rippleAnim.alpha = 0.55;
-			} else {
-				rippleAnim.alpha = 0;
-			}
-		};
+		// engineShipEntity.speedChangeCallback = function callback(speed) {
+		// 	if (speed != 0) {
+		// 		rippleAnim.alpha = 0.55;
+		// 	} else {
+		// 		rippleAnim.alpha = 0;
+		// 	}
+		// };
 		engineShipEntity.directionChangeCallbackLeft = function callback(dir) {
 			shipTemplate.changeDirLeft();
+
+			final rippleOffsetByDir = RippleOffsetByDir.get(dir);
+			rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
+			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
 		engineShipEntity.directionChangeCallbackRight = function callback(dir) {
 			shipTemplate.changeDirRight();
+
+			final rippleOffsetByDir = RippleOffsetByDir.get(dir);
+			rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
+			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
 		engineShipEntity.shootLeftCallback = function callback() {
 			shipTemplate.shootLeft();
@@ -68,8 +70,11 @@ class ClientShip extends ClientBaseGameEntity {
 		final rippleTile5 = hxd.Res.water_ripple_big_004.toTile().center();
 
 		rippleAnim = new h2d.Anim([rippleTile1, rippleTile2, rippleTile3, rippleTile4, rippleTile5], this);
-		rippleAnim.rotation = MathUtils.degreeToRads(ripple_angle);
-		rippleAnim.setPosition(ripple_x, ripple_y);
+
+		final rippleOffsetByDir = RippleOffsetByDir.get(engineShipEntity.direction);
+
+		rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
+		rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		rippleAnim.scaleX = 1.5;
 		rippleAnim.scaleY = 0.9;
 		rippleAnim.alpha = 0.0;

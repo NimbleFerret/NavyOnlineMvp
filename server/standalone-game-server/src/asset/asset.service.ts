@@ -3,13 +3,18 @@ import { v4 as uuidv4 } from 'uuid';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Captain, CaptainDocument } from './asset.captain.entity';
+import { Captain, CaptainDocument, PlayerCaptainEntity } from './asset.captain.entity';
 import { Island, IslandDocument } from './asset.island.entity';
-import { PlayerShipEntity, Ship, ShipDocument, ShipSize, ShipType } from './asset.ship.entity';
+import { PlayerShipEntity, Ship, ShipDocument, ShipSize } from './asset.ship.entity';
 import { ShipStatsRange, ShipStatsStep } from '../cronos/cronos.service';
 import { Rarity } from '../random/random.entity';
 import { RandomService } from '../random/random.service';
 import { NftShipGenerator } from '../nft/nft.ship.generator';
+
+export enum AssetType {
+    FREE = 1,
+    COMMON = 2
+}
 
 @Injectable()
 export class AssetService {
@@ -26,35 +31,94 @@ export class AssetService {
 
     // Captain
 
+    async syncCaptainIfNeeded(playerCaptainEntity: PlayerCaptainEntity) {
+        let captain = await this.captainModel.findOne({
+            tokenId: playerCaptainEntity.id
+        });
+        // Save captain if not exists
+        if (!captain) {
+            captain = await this.saveNewCaptain(AssetType.COMMON, playerCaptainEntity);
+        } else {
+            // Update captain stats
+            captain.miningRewardNVY = playerCaptainEntity.miningRewardNVY;
+            captain.stakingRewardNVY = playerCaptainEntity.stakingRewardNVY;
+            captain.traits = playerCaptainEntity.traits;
+            captain.level = playerCaptainEntity.level;
+            captain = await captain.save();
+        }
+        return captain;
+    }
+
+    async generateFreeCaptain(owner: string) {
+        return await this.saveNewCaptain(AssetType.FREE, {
+            id: uuidv4(),
+            owner,
+            miningRewardNVY: 0,
+            stakingRewardNVY: 0,
+            miningStartedAt: 0,
+            miningDurationSeconds: 0,
+            traits: 0,
+            level: 0,
+            bg: 1,
+            acc: 0,
+            head: 3,
+            haircutOrHat: 3,
+            clothes: 3,
+            rarity: Rarity.COMMON,
+        } as PlayerCaptainEntity);
+    }
+
+    private async saveNewCaptain(assetType: AssetType, captainEntity: PlayerCaptainEntity) {
+        const newCaptain = new this.captainModel();
+
+        newCaptain.tokenId = captainEntity.id;
+        newCaptain.owner = captainEntity.owner;
+        newCaptain.miningRewardNVY = captainEntity.miningRewardNVY;
+        newCaptain.stakingRewardNVY = captainEntity.stakingRewardNVY;
+        newCaptain.traits = captainEntity.traits;
+        newCaptain.level = captainEntity.level;
+        newCaptain.type = assetType;
+        newCaptain.rarity = captainEntity.rarity;
+        newCaptain.bg = captainEntity.bg;
+        newCaptain.acc = captainEntity.acc;
+        newCaptain.head = captainEntity.head;
+        newCaptain.haircutOrHat = captainEntity.haircutOrHat;
+        newCaptain.clothes = captainEntity.clothes;
+
+        return await newCaptain.save();
+    }
+
     // Ship
 
-    async syncShipIfNeeded(playerShipNFT: PlayerShipEntity) {
+    async syncShipIfNeeded(playerShipEntity: PlayerShipEntity) {
         let ship = await this.shipModel.findOne({
-            tokenId: playerShipNFT.id
+            tokenId: playerShipEntity.id
         });
         // Save ship if not exists
         if (!ship) {
-            ship = await this.saveNewShip(playerShipNFT.id, ShipType.COMMON, playerShipNFT);
+            ship = await this.saveNewShip(AssetType.COMMON, playerShipEntity);
         } else {
             // Update ship stats
-            ship.hull = playerShipNFT.hull;
-            ship.armor = playerShipNFT.armor;
-            ship.maxSpeed = playerShipNFT.maxSpeed;
-            ship.accelerationStep = playerShipNFT.accelerationStep;
-            ship.accelerationDelay = playerShipNFT.accelerationDelay;
-            ship.rotationDelay = playerShipNFT.rotationDelay;
-            ship.cannons = playerShipNFT.cannons;
-            ship.cannonsRange = playerShipNFT.cannonsRange;
-            ship.cannonsDamage = playerShipNFT.cannonsDamage;
-            ship.traits = playerShipNFT.traits;
-            ship.level = playerShipNFT.level;
+            ship.hull = playerShipEntity.hull;
+            ship.armor = playerShipEntity.armor;
+            ship.maxSpeed = playerShipEntity.maxSpeed;
+            ship.accelerationStep = playerShipEntity.accelerationStep;
+            ship.accelerationDelay = playerShipEntity.accelerationDelay;
+            ship.rotationDelay = playerShipEntity.rotationDelay;
+            ship.cannons = playerShipEntity.cannons;
+            ship.cannonsRange = playerShipEntity.cannonsRange;
+            ship.cannonsDamage = playerShipEntity.cannonsDamage;
+            ship.traits = playerShipEntity.traits;
+            ship.level = playerShipEntity.level;
             ship = await ship.save();
         }
         return ship;
     }
 
-    async generateFreeShip() {
-        return await this.saveNewShip(uuidv4(), ShipType.FREE, {
+    async generateFreeShip(owner: string) {
+        return await this.saveNewShip(AssetType.FREE, {
+            id: uuidv4(),
+            owner,
             armor: 300,
             hull: 300,
             maxSpeed: 150,
@@ -74,6 +138,7 @@ export class AssetService {
     }
 
     async generateShipMetadata(
+        owner: string,
         shipCurrentIndex: number,
         shipMaxIndex: number,
         smallShipStatsRange: ShipStatsRange,
@@ -82,30 +147,34 @@ export class AssetService {
         preferredSize?: ShipSize) {
         const shipAttributes = await this.generateShipAttributes(smallShipStatsRange, middleShipStatsRange, shipStatsStep, preferredSize);
 
-        await this.saveNewShip(shipCurrentIndex.toString(), ShipType.COMMON, shipAttributes);
+        shipAttributes.id = shipCurrentIndex.toString();
+        shipAttributes.owner = owner;
+
+        await this.saveNewShip(AssetType.COMMON, shipAttributes);
 
         return await this.nftShipGenerator.generateFounderShip(shipCurrentIndex, shipMaxIndex, shipAttributes);
     }
 
-    private async saveNewShip(tokenId: string, shipType: ShipType, shipStats: PlayerShipEntity) {
+    private async saveNewShip(assetType: AssetType, shipEntity: PlayerShipEntity) {
         const newShip = new this.shipModel();
 
-        newShip.tokenId = tokenId;
-        newShip.hull = shipStats.hull;
-        newShip.armor = shipStats.armor;
-        newShip.maxSpeed = shipStats.maxSpeed;
-        newShip.accelerationStep = shipStats.accelerationStep;
-        newShip.accelerationDelay = shipStats.accelerationDelay;
-        newShip.rotationDelay = shipStats.rotationDelay;
-        newShip.cannons = shipStats.cannons;
-        newShip.cannonsRange = shipStats.cannonsRange;
-        newShip.cannonsDamage = shipStats.cannonsDamage;
-        newShip.rarity = shipStats.rarity;
-        newShip.size = shipStats.size;
-        newShip.type = shipType;
-        newShip.level = shipStats.level;
-        newShip.windows = shipStats.windows;
-        newShip.anchor = shipStats.anchor;
+        newShip.tokenId = shipEntity.id;
+        newShip.owner = shipEntity.owner;
+        newShip.hull = shipEntity.hull;
+        newShip.armor = shipEntity.armor;
+        newShip.maxSpeed = shipEntity.maxSpeed;
+        newShip.accelerationStep = shipEntity.accelerationStep;
+        newShip.accelerationDelay = shipEntity.accelerationDelay;
+        newShip.rotationDelay = shipEntity.rotationDelay;
+        newShip.cannons = shipEntity.cannons;
+        newShip.cannonsRange = shipEntity.cannonsRange;
+        newShip.cannonsDamage = shipEntity.cannonsDamage;
+        newShip.rarity = shipEntity.rarity;
+        newShip.size = shipEntity.size;
+        newShip.type = assetType;
+        newShip.level = shipEntity.level;
+        newShip.windows = shipEntity.windows;
+        newShip.anchor = shipEntity.anchor;
 
         return await newShip.save();
     }
@@ -146,7 +215,7 @@ export class AssetService {
         });
     }
 
-    public async createIsland(tokenId: string, owner: string, x: number, y: number, terrain: string, isBase = false) {
+    public async createIsland(tokenId: string, rarity: Rarity, owner: string, x: number, y: number, terrain: string, isBase = false) {
         const island = new this.islandModel();
         island.tokenId = tokenId;
         island.owner = owner;
@@ -154,6 +223,16 @@ export class AssetService {
         island.y = y;
         island.isBase = isBase;
         island.terrain = terrain;
+        island.rarity = rarity;
+        island.mining = false;
+        island.miningStartedAt = 0;
+        island.miningDurationSeconds = 120;
+        island.miningRewardNVY = 45;
+        island.shipAndCaptainFee = 10;
+        island.minersFee = 5;
+        island.miners = 0;
+        island.maxMiners = 3;
+
         return island.save();
     }
 

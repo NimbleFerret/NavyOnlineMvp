@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import { Captain } from '../asset/asset.captain.entity';
 import { Island } from '../asset/asset.island.entity';
 import { Ship } from '../asset/asset.ship.entity';
 
@@ -47,6 +48,9 @@ export class User {
     weeklyPlayersKilled: number;
     weeklyBotsKilled: number;
     weeklyBossesKilled: number;
+
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Captain' }] })
+    captainsOwned: Captain[];
 
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ship' }] })
     shipsOwned: Ship[];
