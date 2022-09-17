@@ -5,11 +5,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Sector, SectorDocument } from './sector.entity';
 import { World, WorldDocument } from './world.entity';
-import { Island, IslandDocument } from './island.entity';
 import { SectorContent } from 'src/ws/ws.protocol';
 import { GameplayIslandService } from 'src/gameplay/island/gameplay.island.service';
 import { GameplayBattleService } from 'src/gameplay/battle/gameplay.battle.service';
 import { User, UserDocument } from 'src/user/user.entity';
+import { Island, IslandDocument } from 'src/user/asset/asset.island.entity';
 
 export interface SectorInfo {
   x: number;
@@ -25,16 +25,19 @@ export interface WorldInfo {
 // HTTP responses
 
 export interface JoinSectorResponse {
+  // Common
   result: boolean;
   reason?: string;
   instanceId?: string;
   sectorType?: number;
 
+  // Island info
   islandId?: string;
   islandOwner?: string;
   islandTerrain?: string;
   islandMining?: boolean;
 
+  // Battle info
   totalShips?: number;
 }
 

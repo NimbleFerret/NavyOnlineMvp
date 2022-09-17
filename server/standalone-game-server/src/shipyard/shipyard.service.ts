@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { Rarity } from 'src/random/random.entity';
 import { RandomService } from 'src/random/random.service';
 import { Shipyard, ShipyardDocument } from './shipyard.entity';
-import { PlayerShipEntity, Ship, ShipDocument, ShipSize, ShipType } from './shipyard.ship.entity';
+import { PlayerShipEntity, Ship, ShipDocument, ShipSize, ShipType } from '../user/asset/asset.ship.entity';
 import { ShipStatsRange, ShipStatsStep } from 'src/cronos/cronos.service';
 import { NftShipGenerator } from 'src/nft/nft.ship.generator';
 

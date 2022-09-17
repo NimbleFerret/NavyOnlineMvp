@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { GameplayModule } from 'src/gameplay/gameplay.module';
-import { User, UserSchema } from 'src/user/user.entity';
-import { Island, IslandSchema } from './island.entity';
-import { Sector, SectorSchema } from './sector.entity';
+import { GameplayModule } from '../gameplay/gameplay.module';
 import { World, WorldSchema } from './world.entity';
 import { WorldService } from './world.service';
+import { Island, IslandSchema } from 'src/user/asset/asset.island.entity';
+import { User, UserSchema } from '../user/user.entity';
+import { Sector, SectorSchema } from './sector.entity';
 
 @Module({
   imports: [

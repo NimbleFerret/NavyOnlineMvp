@@ -1,24 +1,25 @@
 /* eslint-disable prettier/prettier */
 import { Model } from "mongoose";
 import { Injectable, Logger } from "@nestjs/common";
-import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
+import { OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
 import { AppEvents, PlayerDisconnectedEvent } from "src/app.events";
 import { User, UserDocument, UserWorldState } from "./user.entity";
-import { MoralisService, PlayerCaptainNFT, PlayerIslandNFT } from "src/moralis/moralis.service";
+import { MoralisService } from "src/moralis/moralis.service";
 import { ShipyardService } from "src/shipyard/shipyard.service";
 import { WorldService } from "src/world/world.service";
-import { PlayerShipEntity, ShipType } from "src/shipyard/shipyard.ship.entity";
-import { trace } from "console";
+import { PlayerCaptainEntity } from "./asset/asset.captain.entity";
+import { PlayerIslandEntity } from "./asset/asset.island.entity";
+import { PlayerShipEntity, ShipType } from "./asset/asset.ship.entity";
 
 export interface SignInOrUpResponse {
     ethAddress: string;
     nickname: string;
     worldX: number;
     worldY: number;
-    captains?: PlayerCaptainNFT[];
+    captains?: PlayerCaptainEntity[];
     ownedShips?: PlayerShipEntity[];
-    islands?: PlayerIslandNFT[];
+    islands?: PlayerIslandEntity[];
 }
 
 @Injectable()
@@ -81,7 +82,6 @@ export class UserService {
 
         // TODO Rename
         const ownedIslands = user.islandsOwned.map(f => {
-            trace(1);
             return 1;
         });
 

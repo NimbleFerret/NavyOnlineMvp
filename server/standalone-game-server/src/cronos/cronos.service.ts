@@ -16,6 +16,7 @@ import { NftCaptainGenerator } from 'src/nft/nft.captain.generator';
 import { Rarity } from 'src/random/random.entity';
 import { NftIslandGenerator } from 'src/nft/nft.island.generator';
 import { RandomService } from 'src/random/random.service';
+import { ShipSize } from 'src/user/asset/asset.ship.entity';
 
 // ------------------------------------
 // Captain stats
@@ -38,21 +39,21 @@ export interface CaptainStats {
 // Ship stats
 // ------------------------------------
 
-export interface ShipStats {
-    armor: number;
-    hull: number;
-    maxSpeed: number;
-    accelerationStep: number;
-    accelerationDelay: number;
-    rotationDelay: number;
-    cannons: number;
-    cannonsRange: number;
-    cannonsDamage: number;
-    level: number;
-    traits: number;
-    size: number;
-    rarity: number;
-}
+// export interface ShipStats {
+//     armor: number;
+//     hull: number;
+//     maxSpeed: number;
+//     accelerationStep: number;
+//     accelerationDelay: number;
+//     rotationDelay: number;
+//     cannons: number;
+//     cannonsRange: number;
+//     cannonsDamage: number;
+//     level: number;
+//     traits: number;
+//     size: number;
+//     rarity: number;
+// }
 
 export interface ShipStatsRange {
     minArmor: number;
@@ -102,10 +103,36 @@ export interface IslandStats {
     minersFee: number;
 }
 
+// ------------------------------------
+// Cache
+// ------------------------------------
+
+export interface FounderCollectionsInfo {
+    captainsOnSale: string;
+    shipsOnSale: string;
+    islandsOnSale: string;
+}
+
 @Injectable()
 export class CronosService implements OnModuleInit {
 
+    private readonly ethersProvider = new ethers.providers.JsonRpcProvider('https://evm-t3.cronos.org');
 
+    // 0xE9f7B8e42b4633f518b9C4854A1D14b85d24EeA2
+    private readonly backendWallet = new ethers.Wallet('6c72bdb8e4c65dacbdb00f1a5e2a031d31e105f1b852844a438045d008f12d92', this.ethersProvider);
+
+    private readonly AksContractAddress = '0x50aCa9A511d59D74C4dB8766b64aCa16C9751a43';
+    private readonly NvyContractAddress = '0x7Cd571Bfc68a7c35292fec98D005EecD5767742C';
+
+    public static readonly CaptainContractAddress = '0xaCf10BA05a8B36324E0A083Cf4454359A4644147';
+    public static readonly ShipContractAddress = '0xcE1011514ca5f24cA4A63D41fE595AF2C5916c4c';
+    public static readonly IslandContractAddress = '0x805325D64B9178F85d52aFb51B2A99EC403f447d';
+
+    private readonly ShipTemplateContractAddress = '0x517f1dCB0aeDBb28A7C983c8AF2a39f1Fc0D107b';
+
+    private readonly FounderCaptainCollectionSaleContractAddress = '0x7F60a7257A943400BA30dFda6A6A2356E977d0e2';
+    private readonly FounderShipCollectionSaleContractAddress = '0x825cD99fAaA4394de728a7B2133857FB8bcc6921';
+    private readonly FounderIslandCollectionSaleContractAddress = '0xc9F020cD68DCeB36E4466a5A0aAaED5aEC96FECF';
 
     private shipStatsStep: ShipStatsStep;
     private smallShipStatsRange: ShipStatsRange;
@@ -132,9 +159,19 @@ export class CronosService implements OnModuleInit {
     private readonly nftCaptainGenerator: NftCaptainGenerator;
     private readonly nftIslandGenerator: NftIslandGenerator;
 
+    private founderCollectionsInfo: FounderCollectionsInfo;
+
     constructor(private shipyardService: ShipyardService) {
         this.nftCaptainGenerator = new NftCaptainGenerator();
         this.nftIslandGenerator = new NftIslandGenerator();
+
+        this.founderCollectionsInfo = {
+            captainsOnSale: '-',
+            shipsOnSale: '-',
+            islandsOnSale: '-',
+        }
+
+        // setInterval(() => this.updateFounderCollectionsInfo(), 1000 * 60 * 5);
     }
 
     async onModuleInit() {
@@ -215,14 +252,15 @@ export class CronosService implements OnModuleInit {
                 let shipOnSale = await this.founderShipCollectionSaleContract.shipOnSaleTotal();
                 shipOnSale = shipOnSale.toNumber();
 
-                const generatedShip = await this.shipyardService.generateShip(
+                const newShipMetadata = await this.shipyardService.generateShipMetadata(
                     shipOnSale,
                     this.founderShipsOnSaleTotal,
                     this.smallShipStatsRange,
                     this.middleShipStatsRange,
-                    this.shipStatsStep);
-                const tuple: [boolean, ethers.BigNumber, ethers.BigNumber] = [false, ethers.BigNumber.from(1), ethers.BigNumber.from(55)];
-                await this.shipContract.grantShip(sender, tuple, generatedShip.shipMetadata);
+                    this.shipStatsStep,
+                    ShipSize.MIDDLE);
+                const tuple: [ethers.BigNumber, ethers.BigNumber] = [ethers.BigNumber.from(1), ethers.BigNumber.from(55)];
+                await this.shipContract.grantShip(sender, tuple, newShipMetadata);
 
                 Logger.log('Ship for: ' + sender + ' generated !');
             } catch (e) {
@@ -244,6 +282,8 @@ export class CronosService implements OnModuleInit {
                 } else if (100 - NftIslandGenerator.SnowTerrainChance < terrainRnd) {
                     terrain = 'Snow';
                 }
+
+                // TODO add island coords
 
                 const islandStats = {
                     level: 0,
@@ -292,60 +332,63 @@ export class CronosService implements OnModuleInit {
             }
         });
 
-        const shipStatsStep = await shipTemplateContract.getShipStatsStep();
-        const smallShipParams = await shipTemplateContract.getSmallShipStats();
-        const middleShipParams = await shipTemplateContract.getMiddleShipStats();
+        // const shipStatsStep = await shipTemplateContract.getShipStatsStep();
+        // const smallShipParams = await shipTemplateContract.getSmallShipStats();
+        // const middleShipParams = await shipTemplateContract.getMiddleShipStats();
 
-        this.shipStatsStep = {
-            armorAndHullStep: shipStatsStep[0].toNumber(),
-            speedAndAccelerationStep: shipStatsStep[1].toNumber(),
-            inputdelayStep: shipStatsStep[2].toNumber(),
-            cannonsStep: shipStatsStep[3].toNumber(),
-            cannonsRangeStep: shipStatsStep[4].toNumber(),
-            cannonsDamageStep: shipStatsStep[5].toNumber()
-        }
+        // this.shipStatsStep = {
+        //     armorAndHullStep: shipStatsStep[0].toNumber(),
+        //     speedAndAccelerationStep: shipStatsStep[1].toNumber(),
+        //     inputdelayStep: shipStatsStep[2].toNumber(),
+        //     cannonsStep: shipStatsStep[3].toNumber(),
+        //     cannonsRangeStep: shipStatsStep[4].toNumber(),
+        //     cannonsDamageStep: shipStatsStep[5].toNumber()
+        // }
 
-        this.smallShipStatsRange = {
-            minArmor: smallShipParams[0].toNumber(),
-            maxArmor: smallShipParams[1].toNumber(),
-            minHull: smallShipParams[2].toNumber(),
-            maxHull: smallShipParams[3].toNumber(),
-            minMaxSpeed: smallShipParams[4].toNumber(),
-            maxMaxSpeed: smallShipParams[5].toNumber(),
-            minAccelerationStep: smallShipParams[6].toNumber(),
-            maxAccelerationStep: smallShipParams[7].toNumber(),
-            minAccelerationDelay: smallShipParams[8].toNumber(),
-            maxAccelerationDelay: smallShipParams[9].toNumber(),
-            minRotationDelay: smallShipParams[10].toNumber(),
-            maxRotationDelay: smallShipParams[11].toNumber(),
-            minCannons: smallShipParams[12].toNumber(),
-            maxCannons: smallShipParams[13].toNumber(),
-            minCannonsRange: smallShipParams[14].toNumber(),
-            maxCannonsRange: smallShipParams[15].toNumber(),
-            minCannonsDamage: smallShipParams[16].toNumber(),
-            maxCannonsDamage: smallShipParams[17].toNumber()
-        };
+        // this.smallShipStatsRange = {
+        //     minArmor: smallShipParams[0].toNumber(),
+        //     maxArmor: smallShipParams[1].toNumber(),
+        //     minHull: smallShipParams[2].toNumber(),
+        //     maxHull: smallShipParams[3].toNumber(),
+        //     minMaxSpeed: smallShipParams[4].toNumber(),
+        //     maxMaxSpeed: smallShipParams[5].toNumber(),
+        //     minAccelerationStep: smallShipParams[6].toNumber(),
+        //     maxAccelerationStep: smallShipParams[7].toNumber(),
+        //     minAccelerationDelay: smallShipParams[8].toNumber(),
+        //     maxAccelerationDelay: smallShipParams[9].toNumber(),
+        //     minRotationDelay: smallShipParams[10].toNumber(),
+        //     maxRotationDelay: smallShipParams[11].toNumber(),
+        //     minCannons: smallShipParams[12].toNumber(),
+        //     maxCannons: smallShipParams[13].toNumber(),
+        //     minCannonsRange: smallShipParams[14].toNumber(),
+        //     maxCannonsRange: smallShipParams[15].toNumber(),
+        //     minCannonsDamage: smallShipParams[16].toNumber(),
+        //     maxCannonsDamage: smallShipParams[17].toNumber()
+        // };
 
-        this.middleShipStatsRange = {
-            minArmor: middleShipParams[0].toNumber(),
-            maxArmor: middleShipParams[1].toNumber(),
-            minHull: middleShipParams[2].toNumber(),
-            maxHull: smallShipParams[3].toNumber(),
-            minMaxSpeed: middleShipParams[4].toNumber(),
-            maxMaxSpeed: middleShipParams[5].toNumber(),
-            minAccelerationStep: middleShipParams[6].toNumber(),
-            maxAccelerationStep: middleShipParams[7].toNumber(),
-            minAccelerationDelay: middleShipParams[8].toNumber(),
-            maxAccelerationDelay: middleShipParams[9].toNumber(),
-            minRotationDelay: middleShipParams[10].toNumber(),
-            maxRotationDelay: middleShipParams[11].toNumber(),
-            minCannons: middleShipParams[12].toNumber(),
-            maxCannons: middleShipParams[13].toNumber(),
-            minCannonsRange: middleShipParams[14].toNumber(),
-            maxCannonsRange: middleShipParams[15].toNumber(),
-            minCannonsDamage: middleShipParams[16].toNumber(),
-            maxCannonsDamage: middleShipParams[17].toNumber()
-        };
+        // this.middleShipStatsRange = {
+        //     minArmor: middleShipParams[0].toNumber(),
+        //     maxArmor: middleShipParams[1].toNumber(),
+        //     minHull: middleShipParams[2].toNumber(),
+        //     maxHull: smallShipParams[3].toNumber(),
+        //     minMaxSpeed: middleShipParams[4].toNumber(),
+        //     maxMaxSpeed: middleShipParams[5].toNumber(),
+        //     minAccelerationStep: middleShipParams[6].toNumber(),
+        //     maxAccelerationStep: middleShipParams[7].toNumber(),
+        //     minAccelerationDelay: middleShipParams[8].toNumber(),
+        //     maxAccelerationDelay: middleShipParams[9].toNumber(),
+        //     minRotationDelay: middleShipParams[10].toNumber(),
+        //     maxRotationDelay: middleShipParams[11].toNumber(),
+        //     minCannons: middleShipParams[12].toNumber(),
+        //     maxCannons: middleShipParams[13].toNumber(),
+        //     minCannonsRange: middleShipParams[14].toNumber(),
+        //     maxCannonsRange: middleShipParams[15].toNumber(),
+        //     minCannonsDamage: middleShipParams[16].toNumber(),
+        //     maxCannonsDamage: middleShipParams[17].toNumber()
+        // };
+
+        // Fill cache
+        // this.updateFounderCollectionsInfo();
     }
 
     async rewardNVY(amount: number, recipient: string) {
@@ -367,16 +410,19 @@ export class CronosService implements OnModuleInit {
     }
 
     async getFounderCollectionsInfo() {
+        return this.founderCollectionsInfo;
+    }
+
+    private async updateFounderCollectionsInfo() {
         let captainsOnSale = await this.founderCaptainCollectionSaleContract.captainOnSaleTotal();
         captainsOnSale = captainsOnSale.toNumber();
         let shipsOnSale = await this.founderShipCollectionSaleContract.shipOnSaleTotal();
         shipsOnSale = shipsOnSale.toNumber();
         let islandsOnSale = await this.founderIslandCollectionSaleContract.islandOnSaleTotal();
         islandsOnSale = islandsOnSale.toNumber();
-        return {
-            captainsOnSale,
-            shipsOnSale,
-            islandsOnSale
-        }
+
+        this.founderCollectionsInfo.captainsOnSale = captainsOnSale;
+        this.founderCollectionsInfo.shipsOnSale = shipsOnSale;
+        this.founderCollectionsInfo.islandsOnSale = islandsOnSale;
     }
 }

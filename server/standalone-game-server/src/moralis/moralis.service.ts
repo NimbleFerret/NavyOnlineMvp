@@ -4,32 +4,9 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import Moralis from "moralis";
 import { CronosService } from 'src/cronos/cronos.service';
-import { PlayerShipEntity, ShipType } from 'src/shipyard/shipyard.ship.entity';
-
-export interface PlayerCaptainNFT {
-    id: string;
-    miningRewardNVY: string;
-    stakingRewardNVY: string;
-    traits: string;
-    level: string;
-    rarity: string;
-    bg: number;
-    acc: number;
-    head: number;
-    haircutOrHat: number;
-    clothes: number;
-}
-
-export interface PlayerIslandNFT {
-    id: string;
-    level: number;
-    rarity: number;
-    terrain: string;
-    miningRewardNVY: number;
-    shipAndCaptainFee: number;
-    maxMiners: number;
-    minersFee: number;
-}
+import { PlayerCaptainEntity } from 'src/user/asset/asset.captain.entity';
+import { PlayerIslandEntity } from 'src/user/asset/asset.island.entity';
+import { PlayerShipEntity, ShipType } from 'src/user/asset/asset.ship.entity';
 
 @Injectable()
 export class MoralisService implements OnModuleInit {
@@ -44,9 +21,9 @@ export class MoralisService implements OnModuleInit {
     }
 
     async loadUserNFTs(address: string) {
-        const captains = await this.getCaptainNFTsByOwnerAddress(address) as PlayerCaptainNFT[];
+        const captains = await this.getCaptainNFTsByOwnerAddress(address) as PlayerCaptainEntity[];
         const ships = await this.getShipNFTsByOwnerAddress(address) as PlayerShipEntity[];
-        const islands = await this.getIslandNFTsByOwnerAddress(address) as PlayerIslandNFT[];
+        const islands = await this.getIslandNFTsByOwnerAddress(address) as PlayerIslandEntity[];
         return {
             captains,
             ships,
@@ -77,7 +54,7 @@ export class MoralisService implements OnModuleInit {
         if (total > 0) {
             for (const entity of response.data.result) {
                 const metadataAttributes = JSON.parse(entity.metadata).attributes;
-                const playerCaptainNft = {
+                const playerCaptainEntity = {
                     id: entity.token_id,
                     miningRewardNVY: metadataAttributes[0]['miningRewardNVY'],
                     stakingRewardNVY: metadataAttributes[1]['stakingRewardNVY'],
@@ -89,8 +66,8 @@ export class MoralisService implements OnModuleInit {
                     head: metadataAttributes[7]['head'],
                     haircutOrHat: metadataAttributes[8]['haircutOrHat'],
                     clothes: metadataAttributes[9]['clothes'],
-                } as PlayerCaptainNFT;
-                result.push(playerCaptainNft);
+                } as PlayerCaptainEntity;
+                result.push(playerCaptainEntity);
             }
         }
         return result;
@@ -107,7 +84,7 @@ export class MoralisService implements OnModuleInit {
         if (total > 0) {
             for (const entity of response.data.result) {
                 const metadataAttributes = JSON.parse(entity.metadata).attributes;
-                const playerShipNft = {
+                const playerShipEntity = {
                     id: entity.token_id,
                     type: ShipType.COMMON,
                     hull: metadataAttributes[0]['hull'],
@@ -126,7 +103,7 @@ export class MoralisService implements OnModuleInit {
                     windows: metadataAttributes[13]['windows'],
                     anchor: metadataAttributes[14]['anchor'],
                 } as PlayerShipEntity;
-                result.push(playerShipNft);
+                result.push(playerShipEntity);
             }
         }
         return result;
@@ -143,7 +120,7 @@ export class MoralisService implements OnModuleInit {
         if (total > 0) {
             for (const entity of response.data.result) {
                 const metadataAttributes = JSON.parse(entity.metadata).attributes;
-                const playerIslandNFT = {
+                const playerIslandEntity = {
                     id: entity.token_id,
                     level: metadataAttributes[0]['level'],
                     rarity: metadataAttributes[1]['rarity'],
@@ -152,8 +129,8 @@ export class MoralisService implements OnModuleInit {
                     shipAndCaptainFee: metadataAttributes[4]['shipAndCaptainFee'],
                     maxMiners: metadataAttributes[5]['maxMiners'],
                     minersFee: metadataAttributes[6]['minersFee']
-                } as PlayerIslandNFT;
-                result.push(playerIslandNFT);
+                } as PlayerIslandEntity;
+                result.push(playerIslandEntity);
             }
         }
         return result;

@@ -2,6 +2,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+export interface PlayerIslandEntity {
+    id: string;
+    level: number;
+    rarity: number;
+    terrain: string;
+    miningRewardNVY: number;
+    shipAndCaptainFee: number;
+    maxMiners: number;
+    minersFee: number;
+}
+
 export type IslandDocument = Island & Document;
 
 @Schema()
@@ -25,7 +36,27 @@ export class Island {
     terrain: string;
 
     @Prop()
+    level: number;
+
+    // Mining 
+
+    @Prop()
     mining: boolean;
+
+    @Prop()
+    miningStartedAt: number;
+
+    @Prop()
+    miningDurationSeconds: number;
+
+    @Prop()
+    miningRewardNVY: number;
+
+    @Prop()
+    shipAndCaptainFee: number;
+
+    @Prop()
+    minersFee: number;
 }
 
 export const IslandSchema = SchemaFactory.createForClass(Island);

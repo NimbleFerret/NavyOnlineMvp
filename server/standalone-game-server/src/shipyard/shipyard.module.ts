@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Shipyard, ShipyardSchema } from './shipyard.entity';
-import { Ship, ShipSchema } from './shipyard.ship.entity';
 import { ShipyardService } from './shipyard.service';
-import { RandomModule } from 'src/random/random.module';
+import { RandomModule } from '../random/random.module';
+import { Shipyard, ShipyardSchema } from './shipyard.entity';
+import { Ship, ShipSchema } from '../user/asset/asset.ship.entity';
 
 @Module({
   imports: [

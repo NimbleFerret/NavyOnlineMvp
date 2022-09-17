@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createCanvas, loadImage } from "canvas";
 import { RandomService } from "src/random/random.service";
 import { MoralisService } from 'src/moralis/moralis.service';
-import { PlayerShipEntity } from 'src/shipyard/shipyard.ship.entity';
+import { PlayerShipEntity } from 'src/user/asset/asset.ship.entity';
 
 export class NftShipGenerator {
 

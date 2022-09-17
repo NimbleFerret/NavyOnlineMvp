@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { Island } from './island.entity';
+import { Island } from 'src/user/asset/asset.island.entity';
 
 export type SectorDocument = Sector & Document;
 
