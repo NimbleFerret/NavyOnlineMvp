@@ -6,12 +6,11 @@ import { InjectModel } from "@nestjs/mongoose";
 import { AppEvents, PlayerDisconnectedEvent } from "../app.events";
 import { User, UserDocument, UserWorldState } from "./user.entity";
 import { MoralisService } from "../moralis/moralis.service";
-import { ShipyardService } from "../shipyard/shipyard.service";
+import { AssetService } from "../asset/asset.service";
 import { WorldService } from "../world/world.service";
-import { Captain, CaptainDocument, PlayerCaptainEntity } from "../asset/asset.captain.entity";
 import { PlayerIslandEntity } from "../asset/asset.island.entity";
 import { PlayerShipEntity, ShipType } from "../asset/asset.ship.entity";
-import { AssetService } from "src/asset/asset.service";
+import { PlayerCaptainEntity } from "../asset/asset.captain.entity";
 
 export interface SignInOrUpResponse {
     ethAddress: string;
@@ -29,7 +28,6 @@ export class UserService {
     private readonly playersMap = new Map<string, any>();
 
     constructor(
-        private shipyardService: ShipyardService,
         private moralisService: MoralisService,
         private assetService: AssetService,
         @InjectModel(User.name) private userModel: Model<UserDocument>
@@ -55,7 +53,7 @@ export class UserService {
                 worldY: WorldService.BASE_POS_Y
             });
             this.playersMap.set(userModel.ethAddress, userModel);
-            const newFreeShip = await this.shipyardService.generateFreeShip();
+            const newFreeShip = await this.assetService.generateFreeShip();
             userModel.shipsOwned = [newFreeShip];
             user = await userModel.save();
         }
@@ -165,7 +163,7 @@ export class UserService {
         // Sync ships
         user.shipsOwned = [freeShip];
         for (const nftShip of nftBasicInfo.ships) {
-            const ship = await this.shipyardService.syncShipIfNeeded(nftShip);
+            const ship = await this.assetService.syncShipIfNeeded(nftShip);
             user.shipsOwned.push(ship)
         }
 
