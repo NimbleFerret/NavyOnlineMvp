@@ -114,11 +114,15 @@ class BattleHud extends BasicHud {
 	private final compassSouthWest:h2d.Tile;
 	private final compassSouth:h2d.Tile;
 	private final compassSouthEast:h2d.Tile;
-
 	private final compassBmp:h2d.Bitmap;
+
+	// Water
+	public final waterBg:WaterBg;
 
 	public function new(leaveCallback:Void->Void) {
 		super();
+
+		waterBg = new WaterBg(this, 0, 0, 4);
 
 		// Compass
 		compassEast = hxd.Res.compass.compass_e.toTile();
@@ -185,6 +189,7 @@ class BattleHud extends BasicHud {
 	}
 
 	public function update(dt:Float) {
+		waterBg.update(dt);
 		latencyText.text = "Latency:" + Socket.instance.latency;
 	}
 

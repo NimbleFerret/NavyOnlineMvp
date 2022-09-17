@@ -183,20 +183,9 @@ class SceneGlobalMode extends Scene {
 					if (Player.instance.playerData.worldX != x || Player.instance.playerData.worldY != y) {
 						if (checkDistance(x, y)) {
 							movePlayer(x, y);
-						} else {
-							trace("Too far");
-							// TODO show dialog
 						}
 					} else if (Player.instance.playerData.worldX == x && Player.instance.playerData.worldY == y) {
-						// TODO show dialog
-
 						enterSector(x, y);
-						// Game.CurrentSectorX = x;
-						// Game.CurrentSectorY = y;
-
-						// if (enterSectorCallback != null) {
-						// 	enterSectorCallback(new SectorDescription(x, y));
-						// }
 					}
 				}
 				gameWorldSectors.push(sectorRectObject);
@@ -222,8 +211,6 @@ class SceneGlobalMode extends Scene {
 					if (enterSectorCallback != null) {
 						enterSectorCallback(new EnterSectorCallback(response));
 					}
-				} else {
-					trace(response.reason);
 				}
 			});
 		}

@@ -14,7 +14,7 @@ class ClientCharacter extends ClientBaseGameEntity {
 	var leftAnim:h2d.Anim;
 	var rightAnim:h2d.Anim;
 
-	public function new(s2d:h2d.Scene, engineCharacterEntity:EngineCharacterEntity) {
+	public function new(s2d:h2d.Scene, name:String, engineCharacterEntity:EngineCharacterEntity) {
 		super();
 
 		initiateEngineEntity(engineCharacterEntity);
@@ -103,7 +103,7 @@ class ClientCharacter extends ClientBaseGameEntity {
 		rightAnim.alpha = 0;
 
 		final nickname = new h2d.Text(hxd.res.DefaultFont.get(), this);
-		nickname.text = 'Justin';
+		nickname.text = name;
 		nickname.setPosition(20, 0);
 
 		s2d.addChild(this);

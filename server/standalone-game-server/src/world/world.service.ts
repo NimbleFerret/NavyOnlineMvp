@@ -10,7 +10,6 @@ import { GameplayIslandService } from 'src/gameplay/island/gameplay.island.servi
 import { GameplayBattleService } from 'src/gameplay/battle/gameplay.battle.service';
 import { User, UserDocument } from 'src/user/user.entity';
 import { AssetService } from 'src/asset/asset.service';
-import { IslandDocument } from 'src/asset/asset.island.entity';
 import { Rarity } from 'src/random/random.entity';
 
 export interface SectorInfo {
@@ -82,8 +81,9 @@ export class WorldService implements OnModuleInit {
             content = SectorContent.PVP;
           }
           let sector = await this.createSector(x, y, content);
+
           if (content == SectorContent.BASE) {
-            const baseIsland = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, 'ADMIN', 4, 4, 'Green', true);
+            const baseIsland = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, 'ADMIN', x, y, 'Green', true);
             sector.island = baseIsland;
             sector = await sector.save();
           }
@@ -109,7 +109,7 @@ export class WorldService implements OnModuleInit {
       const mockedSector2Y = 7;
 
       const mockedSector3X = 4;
-      const mockedSector3Y = 4;
+      const mockedSector3Y = 5;
 
       let hasMockedSectors = false;
 
@@ -125,11 +125,24 @@ export class WorldService implements OnModuleInit {
         const island2 = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, mockedUserAddress, mockedSector2X, mockedSector2Y, 'Dark');
         const island3 = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, mockedUserAddress, mockedSector3X, mockedSector3Y, 'Snow');
 
-        const sector1 = await this.createSector(mockedSector1X, mockedSector1Y, SectorContent.ISLAND, island1);
-        const sector2 = await this.createSector(mockedSector2X, mockedSector2Y, SectorContent.ISLAND, island2);
-        const sector3 = await this.createSector(mockedSector3X, mockedSector3Y, SectorContent.ISLAND, island3);
+        for (let sector of this.world.sectors) {
+          if (sector.x == mockedSector1X && sector.y == mockedSector1Y) {
+            sector.content = SectorContent.ISLAND;
+            sector.island = island1;
+            sector = await sector.save();
+          }
+          if (sector.x == mockedSector2X && sector.y == mockedSector2Y) {
+            sector.content = SectorContent.ISLAND;
+            sector.island = island2;
+            sector = await sector.save();
+          }
+          if (sector.x == mockedSector3X && sector.y == mockedSector3Y) {
+            sector.content = SectorContent.ISLAND;
+            sector.island = island3;
+            sector = await sector.save();
+          }
+        }
 
-        this.world.sectors.push(...[sector1, sector2, sector3]);
         this.world = await this.world.save();
 
         user.islandsOwned = [island1, island2, island3];
@@ -156,10 +169,12 @@ export class WorldService implements OnModuleInit {
               result.instanceId = joinResult.instanceId;
               result.sectorType = sector.content;
 
-              result.islandId = sector.island.tokenId;
-              result.islandOwner = sector.island.owner;
-              result.islandTerrain = sector.island.terrain;
-              result.islandMining = sector.island.mining;
+              const populatedSector = await this.findSector(sector.id);
+
+              result.islandId = populatedSector.island.tokenId;
+              result.islandOwner = populatedSector.island.owner;
+              result.islandTerrain = populatedSector.island.terrain;
+              result.islandMining = populatedSector.island.mining;
             }
             break;
           }
@@ -202,16 +217,13 @@ export class WorldService implements OnModuleInit {
     return result;
   }
 
-  private async createSector(x: number, y: number, sectorContent: SectorContent, island?: IslandDocument) {
+  private async createSector(x: number, y: number, sectorContent: SectorContent) {
     const sector = new this.sectorModel({
       x,
       y,
       content: sectorContent
     });
-    if (island) {
-      sector.island = island;
-    }
-    return sector.save();
+    return await sector.save();
   }
 
   private async createWorld() {
@@ -221,6 +233,10 @@ export class WorldService implements OnModuleInit {
 
   private async findWorld() {
     return this.worldModel.findOne().populate('sectors');
+  }
+
+  private async findSector(id: string) {
+    return this.sectorModel.findOne({ _id: id }).populate('island');
   }
 
   async findUserByEthAddress(ethAddress: string) {

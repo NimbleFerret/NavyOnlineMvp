@@ -97,7 +97,7 @@ class SceneMainHud extends BasicHud {
 	}
 
 	public function initiateWeb3(userName:String) {
-		userNameText.text = userName.substring(0, 4) + '...' + userName.substring(userName.length - 4, userName.length);
+		userNameText.text = Utils.MaskEthAddress(userName);
 
 		loginPlate.removeChild(loginBtn);
 		addBuyNFTsStuff();

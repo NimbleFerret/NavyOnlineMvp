@@ -232,8 +232,7 @@ export class AssetService {
         island.minersFee = 5;
         island.miners = 0;
         island.maxMiners = 3;
-
-        return island.save();
+        return await island.save();
     }
 
 }

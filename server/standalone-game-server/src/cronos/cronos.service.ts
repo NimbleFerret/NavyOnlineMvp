@@ -254,8 +254,6 @@ export class CronosService implements OnModuleInit {
                     terrain = 'Snow';
                 }
 
-                // TODO add island coords
-
                 const islandStats = {
                     level: 0,
                     rarity: Rarity.LEGENDARY,

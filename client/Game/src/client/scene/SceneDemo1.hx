@@ -16,7 +16,7 @@ class SceneDemo1 extends Scene {
 
 		camera.setViewport(width / 2, height / 2, 0, 0);
 
-		islandsManager = new IslandsManager(this, 'Green');
+		// islandsManager = new IslandsManager(this, 'Green');
 	}
 
 	public function start() {

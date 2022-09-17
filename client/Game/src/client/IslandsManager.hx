@@ -24,7 +24,7 @@ class CoinAnimationTween {
 	public function new(tweeningObject:Dynamic) {
 		this.tweeningObject = tweeningObject;
 
-		final max_rnd = 150;
+		final max_rnd = 100;
 
 		final rnd_x_dir = Std.random(2);
 		final rnd_x_offset = rnd_x_dir == 0 ? Std.random(-max_rnd) : Std.random(max_rnd);
@@ -57,7 +57,7 @@ class IslandsManager {
 	private final tweenAnimations:Array<CoinAnimationTween> = [];
 	private final s2d:h2d.Scene;
 
-	public function new(s2d:h2d.Scene, terrain:String, offsetX:Float = 1700, offsetY:Float = -200) {
+	public function new(s2d:h2d.Scene, terrain:String, mining:Bool, offsetX:Float = 1000, offsetY:Float = 400) {
 		this.s2d = s2d;
 
 		var islandCompositeTile = hxd.Res.island_green_composite.toTile().center();
@@ -68,38 +68,42 @@ class IslandsManager {
 		}
 
 		final islandCompositeBmp = new h2d.Bitmap(islandCompositeTile, s2d);
-		islandCompositeBmp.setScale(4);
+		islandCompositeBmp.setScale(3);
 		islandCompositeBmp.setPosition(offsetX, offsetY);
 
-		final miningAnimation1 = hxd.Res.mine_anims._1.toTile();
-		final miningAnimation2 = hxd.Res.mine_anims._2.toTile();
-		final miningAnimation3 = hxd.Res.mine_anims._3.toTile();
-		final miningAnimation4 = hxd.Res.mine_anims._4.toTile();
-		final miningAnimation5 = hxd.Res.mine_anims._5.toTile();
-		final miningAnimation6 = hxd.Res.mine_anims._6.toTile();
-		final miningAnimation7 = hxd.Res.mine_anims._7.toTile();
-		final miningAnimation8 = hxd.Res.mine_anims._8.toTile();
+		if (mining) {
+			final miningAnimation1 = hxd.Res.mine_anims._1.toTile();
+			final miningAnimation2 = hxd.Res.mine_anims._2.toTile();
+			final miningAnimation3 = hxd.Res.mine_anims._3.toTile();
+			final miningAnimation4 = hxd.Res.mine_anims._4.toTile();
+			final miningAnimation5 = hxd.Res.mine_anims._5.toTile();
+			final miningAnimation6 = hxd.Res.mine_anims._6.toTile();
+			final miningAnimation7 = hxd.Res.mine_anims._7.toTile();
+			final miningAnimation8 = hxd.Res.mine_anims._8.toTile();
 
-		final miningAnimation = new h2d.Anim([
-			miningAnimation1,
-			miningAnimation2,
-			miningAnimation3,
-			miningAnimation4,
-			miningAnimation5,
-			miningAnimation6,
-			miningAnimation7,
-			miningAnimation8
-		]);
-		miningAnimation.setScale(5);
-		miningAnimation.setPosition(1246, -115);
+			final miningAnimation = new h2d.Anim([
+				miningAnimation1,
+				miningAnimation2,
+				miningAnimation3,
+				miningAnimation4,
+				miningAnimation5,
+				miningAnimation6,
+				miningAnimation7,
+				miningAnimation8
+			]);
 
-		s2d.addChild(miningAnimation);
+			miningAnimation.setScale(4);
+			miningAnimation.setPosition(656, 460);
 
-		// loop(1000);
-		// loop(2000);
-		// loop(3000);
-		// loop(4000);
-		// loop(5000);
+			s2d.addChild(miningAnimation);
+
+			loop(1000);
+			loop(1000);
+			loop(1000);
+			loop(2000);
+			loop(2000);
+			loop(2000);
+		}
 	}
 
 	private function loop(delay:Int) {
@@ -146,8 +150,8 @@ class IslandsManager {
 			coinAnimation7,
 			coinAnimation8
 		]);
-		coinAnimation.setScale(4);
-		coinAnimation.setPosition(1246, -115);
+		coinAnimation.setScale(3);
+		coinAnimation.setPosition(656, 460);
 
 		return coinAnimation;
 	}

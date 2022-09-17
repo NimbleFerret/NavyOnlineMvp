@@ -50,8 +50,8 @@ abstract class BasicGameplay {
 
 			final playerEntity = getPlayerEntity();
 			if (playerEntity != null) {
-				// scene.camera.x = hxd.Math.lerp(scene.camera.x, playerEntity.x, 0.1);
-				// scene.camera.y = hxd.Math.lerp(scene.camera.y, playerEntity.y, 0.1);
+				scene.camera.x = hxd.Math.lerp(scene.camera.x, playerEntity.x, 0.1);
+				scene.camera.y = hxd.Math.lerp(scene.camera.y, playerEntity.y, 0.1);
 			}
 		}
 	}
@@ -224,7 +224,7 @@ abstract class BasicGameplay {
 			final islandEngine = cast(baseEngine, IslandEngine);
 			final newEngineEnity = islandEngine.createEntity(entity.x, entity.y, entity.id, entity.ownerId);
 
-			newClientEntity = new ClientCharacter(scene, newEngineEnity);
+			newClientEntity = new ClientCharacter(scene, Utils.MaskEthAddress(entity.ownerId), newEngineEnity);
 		}
 
 		if (newClientEntity != null) {

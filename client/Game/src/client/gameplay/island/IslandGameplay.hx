@@ -1,5 +1,6 @@
 package client.gameplay.island;
 
+import client.entity.ClientCharacter;
 import client.network.Socket;
 import client.gameplay.BasicGameplay.GameState;
 import engine.IslandEngine;
@@ -25,19 +26,19 @@ class Contour {
 
 class IslandGameplay extends BasicGameplay {
 	private final islandsManager:IslandsManager;
+	private final waterBg:WaterBg;
 
 	// UI
 	public var hud:IslandHud;
 
-	public final waterBg:WaterBg;
-
-	public function new(scene:h2d.Scene, leaveCallback:Void->Void, engineMode = EngineMode.Server) {
+	public function new(scene:h2d.Scene, islandId:String, islandOwner:String, islandTerrain:String, islandMining:Bool, leaveCallback:Void->Void,
+			engineMode = EngineMode.Server) {
 		super(scene, new IslandEngine(engineMode));
 
 		waterBg = new WaterBg(scene, -Main.ScreenWidth / 3.5, -Main.ScreenHeight / 3.5);
 
 		// Pass additional island info here.
-		islandsManager = new IslandsManager(scene, 'Green');
+		islandsManager = new IslandsManager(scene, islandTerrain, islandMining);
 
 		final islandEngine = cast(baseEngine, IslandEngine);
 
@@ -45,17 +46,13 @@ class IslandGameplay extends BasicGameplay {
 			addLineCollider(scene, lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2);
 		}
 
-		hud = new IslandHud(function callback() {
+		hud = new IslandHud(islandId, islandOwner, function callback() {
 			destroy();
 			Socket.instance.leaveGame({playerId: playerId});
 			if (leaveCallback != null) {
 				leaveCallback();
 			}
 		});
-
-		if (engineMode == EngineMode.Client) {
-			gameState = GameState.Playing;
-		}
 	}
 
 	// --------------------------------------
@@ -117,6 +114,7 @@ class IslandGameplay extends BasicGameplay {
 	// --------------------------------------
 
 	public function customUpdate(dt:Float, fps:Float) {
+		islandsManager.update();
 		waterBg.update(dt);
 
 		for (character in clientMainEntities) {
@@ -172,8 +170,23 @@ class IslandGameplay extends BasicGameplay {
 	// Singleplayer
 	// --------------------------------------
 
-	public function startGameByClient(playerId:String) {
+	public function addCharacterByClient(x:Int, y:Int, charId:String, ownerId:String) {
+		final islandEngine = cast(baseEngine, IslandEngine);
+		return islandEngine.createEntity(x, y, charId, ownerId);
+	}
+
+	public function startGameByClient(playerId:String, characters:Array<EngineCharacterEntity>) {
 		if (gameState == GameState.Init) {
+			for (character in characters) {
+				var characterName = Utils.MaskEthAddress(character.ownerId);
+				if (character.ownerId == playerId) {
+					playerEntityId = character.id;
+					characterName = 'You';
+				}
+
+				final newClientCharacter = new ClientCharacter(scene, characterName, character);
+				clientMainEntities.set(character.id, newClientCharacter);
+			}
 			this.playerId = playerId;
 			gameState = GameState.Playing;
 		}

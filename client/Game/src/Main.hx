@@ -1,3 +1,4 @@
+import client.network.RestProtocol.JoinSectorResponse;
 import client.network.RestProtocol.GameWorldData;
 import client.scene.SceneGlobalMode;
 import client.scene.SceneIsland;
@@ -75,7 +76,7 @@ class Main extends GuiApp {
 				currentScene = SceneIsland;
 
 				sceneIsland.instanceId = sector.joinSectorResponse.instanceId;
-				sceneIsland.start();
+				sceneIsland.start(sector.joinSectorResponse);
 				if (!islandHudAdded) {
 					sevents.addScene(sceneIsland.getHud());
 					islandHudAdded = true;
@@ -115,7 +116,8 @@ class Main extends GuiApp {
 			case SceneShipsDemo:
 				setScene2D(sceneShipsDemo);
 			case SceneIsland:
-				sceneIsland.start();
+				final response = new JoinSectorResponse(true, null, 0, 'instance', 1, 'islandId', '0x87400A03678dd03c8BF536404B5B14C609a23b79', 'Green', true);
+				sceneIsland.start(response);
 				sevents.addScene(sceneIsland.getHud());
 				setScene2D(sceneIsland);
 			case SceneGlobalMode:
