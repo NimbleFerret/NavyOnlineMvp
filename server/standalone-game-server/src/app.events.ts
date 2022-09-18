@@ -8,6 +8,8 @@ export enum AppEvents {
     PlayerKilledBot = 'PlayerKilledBot',
     PlayerKilledBoss = 'PlayerKilledBoss',
 
+    MintIngameReward = 'MintIngameReward',
+
     // ---------------------------------
     // Socket events
     // ---------------------------------
@@ -22,14 +24,17 @@ export enum AppEvents {
     NotifyPlayer = 'NotifyPlayer',
     NotifyEachPlayer = 'NotifyEachPlayer',
     PlayerJoined = "PlayerJoined",
-
-    // PlayerKilledShipEvent = "PlayerKilledShipEvent",
-    // SocketServerEventDailyTaskUpdate = "SocketServerEventDailyTaskUpdate"
 }
 
 // ---------------------------------
 // Internal event msg
 // ---------------------------------
+
+export interface MintIngameReward {
+    playerId: string;
+    nvy: number;
+    aks: number;
+}
 
 export interface PlayerKilledShip {
     playerId: string;

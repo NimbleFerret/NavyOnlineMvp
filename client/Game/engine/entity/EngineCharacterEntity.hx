@@ -23,16 +23,16 @@ class EngineCharacterEntity extends EngineBaseGameEntity {
 		rectOffsetX = 60;
 		rectOffsetY = 60;
 
-		speedStep = 20;
+		acc = 20;
 	}
 
 	public function moveUp(revert = false) {
 		if (revert) {
-			y += speedStep;
+			y += acc;
 			return true;
 		} else {
 			if (checkMovementInput()) {
-				y -= speedStep;
+				y -= acc;
 				return true;
 			} else {
 				return false;
@@ -42,11 +42,11 @@ class EngineCharacterEntity extends EngineBaseGameEntity {
 
 	public function moveDown(revert = false) {
 		if (revert) {
-			y -= speedStep;
+			y -= acc;
 			return true;
 		} else {
 			if (checkMovementInput()) {
-				y += speedStep;
+				y += acc;
 				return true;
 			} else {
 				return false;
@@ -56,11 +56,11 @@ class EngineCharacterEntity extends EngineBaseGameEntity {
 
 	public function moveLeft(revert = false) {
 		if (revert) {
-			x += speedStep;
+			x += acc;
 			return true;
 		} else {
 			if (checkMovementInput()) {
-				x -= speedStep;
+				x -= acc;
 				return true;
 			} else {
 				return false;
@@ -70,11 +70,11 @@ class EngineCharacterEntity extends EngineBaseGameEntity {
 
 	public function moveRight(revert = false) {
 		if (revert) {
-			x -= speedStep;
+			x -= acc;
 			return true;
 		} else {
 			if (checkMovementInput()) {
-				x += speedStep;
+				x += acc;
 				return true;
 			} else {
 				return false;

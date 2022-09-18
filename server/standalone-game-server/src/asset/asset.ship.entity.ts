@@ -18,6 +18,7 @@ export interface PlayerShipEntity {
     accelerationStep: number;
     accelerationDelay: number;
     rotationDelay: number;
+    fireDelay: number;
     cannons: number;
     cannonsRange: number;
     cannonsDamage: number;
@@ -57,6 +58,9 @@ export class Ship {
 
     @Prop()
     rotationDelay: number;
+
+    @Prop()
+    fireDelay: number;
 
     @Prop()
     cannons: number;

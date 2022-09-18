@@ -15,12 +15,13 @@ import { BaseGameplayEntity } from "../gameplay.base.entity";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayShipEntity } from "./gameplay.battle.ship.entity.js";
 import { GameplayType } from "../gameplay.base.service";
-
+import { Model } from "mongoose";
+import { ShipDocument } from "../../asset/asset.ship.entity.js";
 
 export class GameplayBattleInstance extends BaseGameplayInstance {
 
-    constructor(eventEmitter: EventEmitter2, public worldX: number, public worldY: number, sectorContent: SectorContent) {
-        super(eventEmitter, GameplayType.Battle, new engine.GameEngine());
+    constructor(shipModel: Model<ShipDocument>, eventEmitter: EventEmitter2, public worldX: number, public worldY: number, sectorContent: SectorContent) {
+        super(shipModel, eventEmitter, GameplayType.Battle, new engine.GameEngine());
 
         this.gameEngine.deleteMainEntityCallback = (ship: object) => {
             const jsShip = this.converJsEntityToTypeScript(ship) as GameplayShipEntity;
@@ -66,13 +67,17 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
 
         switch (sectorContent) {
             case SectorContent.BOSS: {
-                this.gameEngine.createEntity('Boss', 200, 500, 'MEDIUM', 'TWO', 'FOUR', undefined, undefined);
+                this.gameEngine.createEntity('Boss', 200, 500, 'MEDIUM', 'TWO', 'FOUR',
+                    2000, 80, 5000, 5000, 200, 100, 100 / 1000, 200 / 1000, 200 / 1000,
+                    undefined, undefined);
                 break;
             }
             case SectorContent.PVE: {
-                this.gameEngine.createEntity('Bot', 500, 500, 'Small', 'NONE', 'TWO', undefined, undefined);
-                this.gameEngine.createEntity('Bot', 700, 500, 'Small', 'NONE', 'TWO', undefined, undefined);
-                this.gameEngine.createEntity('Bot', 900, 500, 'Small', 'NONE', 'TWO', undefined, undefined);
+                this.gameEngine.createEntity('Bot', 200, -200, 'Small', 'NONE', 'TWO',
+                    600, 30, 300, 300, 200, 100, 100 / 1000, 200 / 1000, 200 / 1000,
+                    undefined, undefined);
+                // this.gameEngine.createEntity('Bot', 700, 500, 'Small', 'NONE', 'TWO', undefined, undefined);
+                // this.gameEngine.createEntity('Bot', 900, 500, 'Small', 'NONE', 'TWO', undefined, undefined);
                 break;
             }
             case SectorContent.PVP: {
@@ -152,7 +157,16 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             ownerId: jsEntity.ownerId,
             shipHullSize,
             shipWindows,
-            shipGuns
+            shipGuns,
+            cannonsRange: jsEntity.cannonsRange,
+            cannonsDamage: jsEntity.cannonsDamage,
+            armor: jsEntity.armor,
+            hull: jsEntity.hull,
+            maxSpeed: jsEntity.maxSpeed,
+            acc: jsEntity.acc,
+            accDelay: jsEntity.accDelay,
+            turnDelay: jsEntity.turnDelay,
+            fireDelay: jsEntity.fireDelay,
         } as GameplayShipEntity;
         return result;
     }

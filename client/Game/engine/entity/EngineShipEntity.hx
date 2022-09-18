@@ -108,34 +108,47 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// -----------------------
 	// Health and damage stuff
 	// -----------------------
-	public final baseHull = 1000;
-	public final baseArmor = 1000;
-
+	public var hull = 1000;
+	public var armor = 1000;
 	public var currentHull = 1000;
 	public var currentArmor = 1000;
+
+	public var cannonsRange = 600;
+	public var cannonsDamage = 50;
 
 	// -----------------------
 	// Input
 	// -----------------------
+	public var accDelay = 1.0;
+	public var turnDelay = 1.0;
+	public var fireDelay = 0.200;
+
 	private var timeSinceLastShipsPosUpdate = 0.0;
 	private var lastMovementInputCheck = 0.0;
-	private var inputMovementCheckDelayMS = 1.0;
 	private var lastRotationInputCheck = 0.0;
-	private var inputRotationCheckDelayMS = 1.0;
 	private var lastLeftShootInputCheck = 0.0;
 	private var lastRightShootInputCheck = 0.0;
-	private var inputShootCheckDelayMS = 0.200;
 
 	// Bot stuff
 	public var allowShoot = false;
 
-	public function new(role = Role.General, x:Float, y:Float, shipHullSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns, ?id:String,
-			?ownerId:String) {
+	public function new(role = Role.General, x:Float, y:Float, shipHullSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns, cannonsRange:Int,
+			cannonsDamage:Int, armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float, ?id:String, ?ownerId:String) {
 		super(GameEntityType.Ship, x, y, 0, id, ownerId);
 		this.role = role;
 		this.shipHullSize = shipHullSize;
 		this.shipWindows = shipWindows;
 		this.shipGuns = shipGuns;
+
+		this.hull = hull;
+		this.armor = armor;
+		this.maxSpeed = maxSpeed;
+		this.acc = acc;
+		this.accDelay = accDelay;
+		this.turnDelay = turnDelay;
+		this.fireDelay = fireDelay;
+		this.cannonsRange = cannonsRange;
+		this.cannonsDamage = cannonsDamage;
 
 		if (shipHullSize == ShipHullSize.MEDIUM) {
 			shapeWidth = 300;
@@ -150,7 +163,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	private function checkMovementInput() {
 		final now = haxe.Timer.stamp();
 
-		if (lastMovementInputCheck == 0 || lastMovementInputCheck + inputMovementCheckDelayMS < now) {
+		if (lastMovementInputCheck == 0 || lastMovementInputCheck + accDelay < now) {
 			lastMovementInputCheck = now;
 			return true;
 		} else {
@@ -161,7 +174,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	private function checkRotationInput() {
 		final now = haxe.Timer.stamp();
 
-		if (lastRotationInputCheck == 0 || lastRotationInputCheck + inputRotationCheckDelayMS < now) {
+		if (lastRotationInputCheck == 0 || lastRotationInputCheck + turnDelay < now) {
 			lastRotationInputCheck = now;
 			return true;
 		} else {
@@ -171,7 +184,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 
 	public function accelerate() {
 		if (checkMovementInput()) {
-			currentSpeed += speedStep;
+			currentSpeed += acc;
 			if (currentSpeed > maxSpeed)
 				currentSpeed = maxSpeed;
 			if (speedChangeCallback != null) {
@@ -185,7 +198,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 
 	public function decelerate() {
 		if (checkMovementInput()) {
-			currentSpeed -= speedStep;
+			currentSpeed -= acc;
 			if (currentSpeed < minSpeed)
 				currentSpeed = minSpeed;
 			if (speedChangeCallback != null) {
@@ -264,16 +277,16 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	public function shootAllowanceBySide(side:Side) {
 		final now = haxe.Timer.stamp();
 		if (side == Right) {
-			return lastRightShootInputCheck == 0 || lastRightShootInputCheck + inputShootCheckDelayMS < now;
+			return lastRightShootInputCheck == 0 || lastRightShootInputCheck + fireDelay < now;
 		} else {
-			return lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + inputShootCheckDelayMS < now;
+			return lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + fireDelay < now;
 		}
 	}
 
 	public function tryShoot(side:Side) {
 		final now = haxe.Timer.stamp();
 		if (side == Right) {
-			if (lastRightShootInputCheck == 0 || lastRightShootInputCheck + inputShootCheckDelayMS < now) {
+			if (lastRightShootInputCheck == 0 || lastRightShootInputCheck + fireDelay < now) {
 				lastRightShootInputCheck = now;
 				if (shootRightCallback != null) {
 					shootRightCallback();
@@ -283,7 +296,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 				return false;
 			}
 		} else {
-			if (lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + inputShootCheckDelayMS < now) {
+			if (lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + fireDelay < now) {
 				lastLeftShootInputCheck = now;
 				if (shootLeftCallback != null) {
 					shootLeftCallback();

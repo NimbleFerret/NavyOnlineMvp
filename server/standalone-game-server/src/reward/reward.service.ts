@@ -4,7 +4,7 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Model } from 'mongoose';
-import { AppEvents, NotifyPlayerEventMsg, PlayerKilledShip } from '../app.events';
+import { AppEvents, MintIngameReward, NotifyPlayerEventMsg, PlayerKilledShip } from '../app.events';
 import { User, UserDocument } from '../user/user.entity';
 import { DailyTaskType, SocketServerDailyTaskChange, SocketServerDailyTaskComplete, WsProtocol } from '../ws/ws.protocol';
 
@@ -115,6 +115,12 @@ export class RewardService {
                 } as SocketServerDailyTaskComplete
             } as NotifyPlayerEventMsg;
             this.eventEmitter.emit(AppEvents.NotifyPlayer, notifyPlayerEventMsg);
+
+            this.eventEmitter.emit(AppEvents.MintIngameReward, {
+                playerId: player.ethAddress,
+                nvy: rewardNVY,
+                aks: rewardAKS
+            } as MintIngameReward);
         }
     }
 

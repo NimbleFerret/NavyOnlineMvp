@@ -11,4 +11,13 @@ export interface GameplayShipEntity extends BaseGameplayEntity {
     shipWindows: number;
     shipGuns: number;
     killerId: string;
+    cannonsRange: number;
+    cannonsDamage: number;
+    armor: number;
+    hull: number;
+    maxSpeed: number;
+    acc: number;
+    accDelay: number;
+    turnDelay: number;
+    fireDelay: number;
 }

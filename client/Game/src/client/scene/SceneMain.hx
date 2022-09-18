@@ -72,6 +72,29 @@ class SceneMain extends Scene {
 		baseShipY = Main.ScreenHeight / 2 + 30;
 	}
 
+	public override function render(e:Engine) {
+		hud.render(e);
+		super.render(e);
+	}
+
+	public function getHud() {
+		return hud;
+	}
+
+	public function start() {
+		if (hud != null) {
+			hud.addOrUpdateDailyTasks();
+			updateBalances();
+		}
+	}
+
+	public function updateBalances() {
+		if (nvyTokens != null && aksTokens != null && client.Player.instance.playerData != null) {
+			nvyTokens.setText(Std.string(client.Player.instance.playerData.nvy));
+			aksTokens.setText(Std.string(client.Player.instance.playerData.aks));
+		}
+	}
+
 	private function signInOrUp() {
 		Rest.instance.signInOrUp(client.Player.instance.ethAddress, function callback(player:PlayerData) {
 			client.Player.instance.playerData = player;
@@ -162,6 +185,8 @@ class SceneMain extends Scene {
 			addChild(currentShip);
 
 			hud.updateShipUi(newShipInfo);
+
+			client.Player.instance.currentShipId = newShipInfo.type == 1 ? 'free' : newShipInfo.id;
 		}
 	}
 
@@ -205,17 +230,6 @@ class SceneMain extends Scene {
 		}
 	}
 
-	public override function render(e:Engine) {
-		hud.render(e);
-		super.render(e);
-	}
-
-	public function getHud() {
-		return hud;
-	}
-
-	public function start() {}
-
 	// ---------------------------------
 	// UI parts
 	// ---------------------------------
@@ -229,6 +243,8 @@ class SceneMain extends Scene {
 
 		addChild(nvyTokens);
 		addChild(aksTokens);
+
+		updateBalances();
 	}
 
 	private function initiateCaptains() {

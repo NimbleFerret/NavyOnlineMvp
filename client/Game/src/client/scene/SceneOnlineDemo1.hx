@@ -38,9 +38,12 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 			}
 		});
 
-		// Refactor, no need sector type for real
-		Socket.instance.joinGame({playerId: Player.instance.ethAddress, instanceId: instanceId, sectorType: 1});
-		// Socket.instance.joinGame({playerId: Player.instance.playerData.ethAddress, instanceId: instanceId, sectorType: 1});
+		Socket.instance.joinGame({
+			playerId: Player.instance.ethAddress,
+			instanceId: instanceId,
+			sectorType: 1,
+			shipId: Player.instance.currentShipId
+		});
 
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddEntity, this);
@@ -95,12 +98,10 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				game.shipShoot(message);
 			case SocketProtocol.SocketServerEventSync:
 				game.sync(message);
-
 			case SocketProtocol.SocketServerEventDailyTaskUpdate:
-				trace(1);
+				game.updateDailyTasks();
 			case SocketProtocol.SocketServerEventDailyTaskReward:
-				trace(1);
-
+				game.dailyTaskComplete(message);
 			default:
 				trace('Unknown socket message');
 		}

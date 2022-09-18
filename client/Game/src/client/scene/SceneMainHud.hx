@@ -44,11 +44,15 @@ class SceneMainHud extends BasicHud {
 	private var shipRarityText:h2d.Text;
 	private var shipSizeText:h2d.Text;
 	private var shipCannonsText:h2d.Text;
-	private var shipTrait1Text:h2d.Text;
-	private var shipTrait2Text:h2d.Text;
-	private var shipTrait3Text:h2d.Text;
-	private var shipTrait4Text:h2d.Text;
-	private var shipTrait5Text:h2d.Text;
+	private var shipCannonsDamageText:h2d.Text;
+
+	private var shipArmorText:h2d.Text;
+	private var shipHullText:h2d.Text;
+	private var shipMaxSpeedText:h2d.Text;
+	private var shipAccText:h2d.Text;
+	private var shipAccDelayText:h2d.Text;
+	private var shipTurnDelayText:h2d.Text;
+
 	private var shipIntegrityText:h2d.Text;
 
 	// Island UI
@@ -196,37 +200,35 @@ class SceneMainHud extends BasicHud {
 			shipDescCollectiblePlate.alpha = 0;
 
 			shipTypeText.text = 'Free';
-			shipLevelText.text = '0/0';
+			shipLevelText.text = 'Level: 0/0';
 			shipRarityText.text = 'Rarity: Common';
 			shipSizeText.text = 'Size: Small';
 			shipCannonsText.text = 'Cannons: 2';
 
-			shipTrait1Text.alpha = 0;
-			shipTrait2Text.alpha = 0;
-			shipTrait3Text.alpha = 0;
-			shipTrait4Text.alpha = 0;
-			shipTrait5Text.alpha = 0;
+			shipArmorText.text = 'Armor: 1000';
+			shipHullText.text = 'Hull: 1000';
+			shipMaxSpeedText.text = 'Max speed: 100';
+			shipAccText.text = 'Acceleration: 50';
+			shipAccDelayText.text = 'Acc. delay: 100';
+			shipTurnDelayText.text = 'Turn delay: 200';
+
 			shipIntegrityText.alpha = 0;
 		} else {
 			shipDescFreePlate.alpha = 0;
 			shipDescCollectiblePlate.alpha = 1;
 
-			shipTypeText.text = 'Collectible';
-			shipLevelText.text = shipEntity.level + '/' + 10;
+			shipTypeText.text = 'Collectible ' + shipEntity.id + '/500';
+			shipLevelText.text = 'Level: ' + shipEntity.level + '/' + 10;
 			shipRarityText.text = 'Rarity: ' + shipEntity.rarity;
-			shipSizeText.text = 'Size: ' + shipEntity.size;
+			shipSizeText.text = 'Size: ' + (shipEntity.size == 1 ? 'Small' : 'Middle');
 			shipCannonsText.text = 'Cannons: ' + shipEntity.cannons;
-			shipTrait1Text.text = 'Trait 1: -';
-			shipTrait2Text.text = 'Trait 2: -';
-			shipTrait3Text.text = 'Trait 3: -';
-			shipTrait4Text.text = 'Trait 4: -';
-			shipTrait5Text.text = 'Trait 5: -';
+			shipArmorText.text = 'Armor: 1000';
+			shipHullText.text = 'Hull: 1000';
+			shipMaxSpeedText.text = 'Max speed: 100';
+			shipAccText.text = 'Acceleration: 50';
+			shipAccDelayText.text = 'Acc. delay: 100';
+			shipTurnDelayText.text = 'Turn delay: 200';
 
-			shipTrait1Text.alpha = 1;
-			shipTrait2Text.alpha = 1;
-			shipTrait3Text.alpha = 1;
-			shipTrait4Text.alpha = 1;
-			shipTrait5Text.alpha = 1;
 			shipIntegrityText.alpha = 1;
 		}
 	}
@@ -246,6 +248,44 @@ class SceneMainHud extends BasicHud {
 		} else {
 			islandCollectRewardButton.alpha = 0;
 			islandStartMiningButton.alpha = 1;
+		}
+	}
+
+	public function addOrUpdateDailyTasks() {
+		if (dailyTasksFui == null) {
+			dailyTasksFui = new h2d.Flow(this);
+			dailyTasksFui.layout = Vertical;
+			dailyTasksFui.verticalSpacing = 5;
+			dailyTasksFui.padding = 10;
+			dailyTasksFui.y = 555;
+			dailyTasksFui.alpha = 0;
+
+			final dailyTasksPlate = newCustomPlate(dailyTasksFui, 6, 4);
+			dailyTasksPlate.setPosition(5, 5);
+
+			final dailyTasksDescription = addText2(dailyTasksPlate, 'Daily tasks:');
+
+			playersToKillText = addText2(dailyTasksPlate, 'Players killed: 0/10');
+			playersToKillText.setPosition(dailyTasksDescription.x, 106);
+			botsToKillText = addText2(dailyTasksPlate, 'Bots killed: 0/10');
+			botsToKillText.setPosition(playersToKillText.x, 186);
+			bossesToKillText = addText2(dailyTasksPlate, 'Bosses killed: 0/10');
+			bossesToKillText.setPosition(botsToKillText.x, 266);
+		}
+
+		if (Player.instance.playerData != null) {
+			final playersCurrent = Player.instance.playerData.dailyPlayersKilledCurrent;
+			final playersMax = Player.instance.playerData.dailyPlayersKilledMax;
+			final botsCurrent = Player.instance.playerData.dailyBotsKilledCurrent;
+			final botsMax = Player.instance.playerData.dailyBotsKilledMax;
+			final bossesCurrent = Player.instance.playerData.dailyBossesKilledCurrent;
+			final bossesMax = Player.instance.playerData.dailyBossesKilledMax;
+
+			playersToKillText.text = 'Players killed: ' + playersCurrent + '/' + playersMax;
+			botsToKillText.text = 'Pirates killed: ' + botsCurrent + '/' + botsMax;
+			bossesToKillText.text = 'Bosses killed: ' + bossesCurrent + '/' + bossesMax;
+
+			dailyTasksFui.alpha = 1;
 		}
 	}
 
@@ -355,48 +395,49 @@ class SceneMainHud extends BasicHud {
 
 			final shipPlatesContainer = new h2d.Object(shipDescFui);
 
-			shipDescFreePlate = newCustomPlate(shipPlatesContainer, 5, 4);
+			shipDescFreePlate = newCustomPlate(shipPlatesContainer, 5, 9);
 			shipDescFreePlate.setPosition(5, 5);
 
-			shipDescCollectiblePlate = newCustomPlate(shipPlatesContainer, 5, 9);
+			shipDescCollectiblePlate = newCustomPlate(shipPlatesContainer, 5, 10);
 			shipDescCollectiblePlate.setPosition(5, 5);
 			shipDescCollectiblePlate.alpha = 0;
 
-			shipTypeText = addText2(shipPlatesContainer, "Free");
-			shipLevelText = addText2(shipPlatesContainer, "Level: 0/0");
+			shipTypeText = addText2(shipPlatesContainer, 'Free');
+			shipLevelText = addText2(shipPlatesContainer, 'Level: 0/0');
 			shipLevelText.setPosition(shipTypeText.x, shipTypeText.y + 70);
 
-			shipRarityText = addText2(shipPlatesContainer, "Rarity: Common");
+			shipRarityText = addText2(shipPlatesContainer, 'Rarity: Common');
 			shipRarityText.setPosition(shipLevelText.x, shipLevelText.y + 70);
 
-			shipSizeText = addText2(shipPlatesContainer, "Size: Small");
+			shipSizeText = addText2(shipPlatesContainer, 'Size: Small');
 			shipSizeText.setPosition(shipRarityText.x, shipRarityText.y + 70);
 
-			shipCannonsText = addText2(shipPlatesContainer, "Cannons: 2");
+			shipCannonsText = addText2(shipPlatesContainer, 'Cannons: 2');
 			shipCannonsText.setPosition(shipSizeText.x, shipSizeText.y + 70);
 
-			shipTrait1Text = addText2(shipPlatesContainer, "Trait 1: -");
-			shipTrait1Text.setPosition(shipCannonsText.x, shipCannonsText.y + 70);
-			shipTrait1Text.alpha = 0;
+			shipCannonsDamageText = addText2(shipPlatesContainer, 'Damage: 50');
+			shipCannonsDamageText.setPosition(shipCannonsText.x, shipCannonsText.y + 70);
 
-			shipTrait2Text = addText2(shipPlatesContainer, "Trait 2: -");
-			shipTrait2Text.setPosition(shipTrait1Text.x, shipTrait1Text.y + 70);
-			shipTrait2Text.alpha = 0;
+			shipArmorText = addText2(shipPlatesContainer, 'Armor: 1000');
+			shipArmorText.setPosition(shipCannonsDamageText.x, shipCannonsDamageText.y + 70);
 
-			shipTrait3Text = addText2(shipPlatesContainer, "Trait 3: -");
-			shipTrait3Text.setPosition(shipTrait2Text.x, shipTrait2Text.y + 70);
-			shipTrait3Text.alpha = 0;
+			shipHullText = addText2(shipPlatesContainer, 'Hull: 1000');
+			shipHullText.setPosition(shipArmorText.x, shipArmorText.y + 70);
 
-			shipTrait4Text = addText2(shipPlatesContainer, "Trait 4: -");
-			shipTrait4Text.setPosition(shipTrait3Text.x, shipTrait3Text.y + 70);
-			shipTrait4Text.alpha = 0;
+			shipMaxSpeedText = addText2(shipPlatesContainer, 'Max speed: 100');
+			shipMaxSpeedText.setPosition(shipHullText.x, shipHullText.y + 70);
 
-			shipTrait5Text = addText2(shipPlatesContainer, "Trait 5: -");
-			shipTrait5Text.setPosition(shipTrait4Text.x, shipTrait4Text.y + 70);
-			shipTrait5Text.alpha = 0;
+			shipAccText = addText2(shipPlatesContainer, 'Acceleration: 50');
+			shipAccText.setPosition(shipMaxSpeedText.x, shipMaxSpeedText.y + 70);
 
-			shipIntegrityText = addText2(shipPlatesContainer, "Integrity: 10/10");
-			shipIntegrityText.setPosition(shipTrait5Text.x, shipTrait5Text.y + 70);
+			shipAccDelayText = addText2(shipPlatesContainer, 'Acc. delay: 100');
+			shipAccDelayText.setPosition(shipAccText.x, shipAccText.y + 70);
+
+			shipTurnDelayText = addText2(shipPlatesContainer, 'Turn delay: 200');
+			shipTurnDelayText.setPosition(shipAccDelayText.x, shipAccDelayText.y + 70);
+
+			shipIntegrityText = addText2(shipPlatesContainer, 'Integrity: 10/10');
+			shipIntegrityText.setPosition(shipTurnDelayText.x, shipTurnDelayText.y + 70);
 			shipIntegrityText.alpha = 0;
 
 			// ---------------------------------
@@ -440,43 +481,10 @@ class SceneMainHud extends BasicHud {
 
 			// Play button
 			final startGameButton = addGuiButton(this, "Start game", false, startGameCallback);
-			startGameButton.setPosition(Main.ScreenWidth / 2 - 300, Main.ScreenHeight - 200);
+			startGameButton.setPosition(Main.ScreenWidth / 2 - 300, Main.ScreenHeight - 100);
 
-			addDailyTasksStuff();
+			addOrUpdateDailyTasks();
 		}
-	}
-
-	private function addDailyTasksStuff() {
-		if (dailyTasksFui == null) {
-			dailyTasksFui = new h2d.Flow(this);
-			dailyTasksFui.layout = Vertical;
-			dailyTasksFui.verticalSpacing = 5;
-			dailyTasksFui.padding = 10;
-			dailyTasksFui.y = 555;
-
-			final dailyTasksPlate = newCustomPlate(dailyTasksFui, 6, 4);
-			dailyTasksPlate.setPosition(5, 5);
-
-			final dailyTasksDescription = addText2(dailyTasksPlate, 'Daily tasks:');
-
-			playersToKillText = addText2(dailyTasksPlate, 'Players killed: 0/10');
-			playersToKillText.setPosition(dailyTasksDescription.x, 106);
-			botsToKillText = addText2(dailyTasksPlate, 'Bots killed: 0/10');
-			botsToKillText.setPosition(playersToKillText.x, 186);
-			bossesToKillText = addText2(dailyTasksPlate, 'Bosses killed: 0/10');
-			bossesToKillText.setPosition(botsToKillText.x, 266);
-		}
-
-		final playersCurrent = Player.instance.playerData.dailyPlayersKilledCurrent;
-		final playersMax = Player.instance.playerData.dailyPlayersKilledMax;
-		final botsCurrent = Player.instance.playerData.dailyBotsKilledCurrent;
-		final botsMax = Player.instance.playerData.dailyBotsKilledMax;
-		final bossesCurrent = Player.instance.playerData.dailyBossesKilledCurrent;
-		final bossesMax = Player.instance.playerData.dailyBossesKilledMax;
-
-		playersToKillText.text = 'Players killed: ' + playersCurrent + '/' + playersMax;
-		botsToKillText.text = 'Pirates killed: ' + botsCurrent + '/' + botsMax;
-		bossesToKillText.text = 'Bosses killed: ' + bossesCurrent + '/' + bossesMax;
 	}
 
 	private function addBuyNFTsStuff() {

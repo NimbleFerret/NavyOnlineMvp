@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { EvmChain } from '@moralisweb3/evm-utils';
-import { Injectable, OnModuleInit } from '@nestjs/common';
-
 import Moralis from "moralis";
+import { EvmChain } from '@moralisweb3/evm-utils';
+import { ethers } from 'ethers';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { AssetType } from 'src/asset/asset.service';
 import { PlayerCaptainEntity } from '../asset/asset.captain.entity';
 import { PlayerIslandEntity } from '../asset/asset.island.entity';
@@ -21,17 +21,6 @@ export class MoralisService implements OnModuleInit {
         });
     }
 
-    async loadUserNFTs(address: string) {
-        const captains = await this.getCaptainNFTsByOwnerAddress(address) as PlayerCaptainEntity[];
-        const ships = await this.getShipNFTsByOwnerAddress(address) as PlayerShipEntity[];
-        const islands = await this.getIslandNFTsByOwnerAddress(address) as PlayerIslandEntity[];
-        return {
-            captains,
-            ships,
-            islands
-        }
-    }
-
     public static async UploadFile(path: string, content: string) {
         const abi = [
             {
@@ -42,6 +31,37 @@ export class MoralisService implements OnModuleInit {
         return await Moralis.EvmApi.ipfs.uploadFolder({
             abi
         });
+    }
+
+    async loadUserTokenBalances(address: string) {
+        let nvy = 0;
+        let aks = 0;
+        const response = await Moralis.EvmApi.token.getWalletTokenBalances({
+            address,
+            chain: this.chain,
+        }) as any;
+        response.data.forEach(f => {
+            if (f.token_address == CronosService.NvyContractAddress.toLowerCase()) {
+                nvy = Number(ethers.utils.formatEther(f.balance));
+            }
+            if (f.token_address == CronosService.AksContractAddress.toLowerCase()) {
+                aks = Number(ethers.utils.formatEther(f.balance));
+            }
+        });
+        return {
+            nvy, aks
+        }
+    }
+
+    async loadUserNFTs(address: string) {
+        const captains = await this.getCaptainNFTsByOwnerAddress(address) as PlayerCaptainEntity[];
+        const ships = await this.getShipNFTsByOwnerAddress(address) as PlayerShipEntity[];
+        const islands = await this.getIslandNFTsByOwnerAddress(address) as PlayerIslandEntity[];
+        return {
+            captains,
+            ships,
+            islands
+        }
     }
 
     private async getCaptainNFTsByOwnerAddress(address: string) {

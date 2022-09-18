@@ -81,7 +81,7 @@ class EngineBaseGameEntity {
 	public var dx = 0.0;
 	public var dy = 0.0;
 	public var currentSpeed = 0.0;
-	public var speedStep = 50;
+	public var acc = 50;
 	public var minSpeed = -50;
 	public var maxSpeed = 150;
 	public var canMove = true;

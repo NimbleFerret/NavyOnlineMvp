@@ -81,6 +81,7 @@ export interface SocketClientMessageJoinGame {
     playerId: string;
     instanceId: string;
     sectorType: SectorContent;
+    shipId: string;
 }
 
 export interface SocketClientMessageLeaveGame {

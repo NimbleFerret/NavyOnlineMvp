@@ -100,9 +100,9 @@ class ClientShip extends ClientBaseGameEntity {
 	public function getStats() {
 		final shipEntity = cast(engineEntity, EngineShipEntity);
 		return {
-			baseHull: shipEntity.baseHull,
+			hull: shipEntity.hull,
 			currentHull: shipEntity.currentHull,
-			baseArmor: shipEntity.baseArmor,
+			armor: shipEntity.armor,
 			currentArmor: shipEntity.currentArmor,
 			currentSpeed: shipEntity.currentSpeed,
 			maxSpeed: shipEntity.maxSpeed,

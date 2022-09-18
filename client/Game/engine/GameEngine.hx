@@ -74,9 +74,9 @@ class GameEngine extends BaseEngine {
 						shell.collides(true);
 						final engineShipEntity = cast(ship, EngineShipEntity);
 						final engineShellEntity = cast(shell, EngineShellEntity);
-						engineShipEntity.inflictDamage(engineShellEntity.baseDamage);
+						engineShipEntity.inflictDamage(engineShellEntity.damage);
 						if (shipHitByShellCallback != null) {
-							shipHitByShellCallback({ship: engineShipEntity, damage: engineShellEntity.baseDamage});
+							shipHitByShellCallback({ship: engineShipEntity, damage: engineShellEntity.damage});
 						}
 						if (!engineShipEntity.isAlive) {
 							engineShipEntity.killerId = shell.ownerId;
@@ -114,8 +114,10 @@ class GameEngine extends BaseEngine {
 		shipHitByShellCallback = null;
 	}
 
-	public function createEntity(role = Role.General, x:Float, y:Float, size:ShipHullSize, windows:ShipWindows, cannons:ShipGuns, id:String, ?ownerId:String) {
-		final entity = new EngineShipEntity(role, x, y, size, windows, cannons, id, ownerId);
+	public function createEntity(role = Role.General, x:Float, y:Float, size:ShipHullSize, windows:ShipWindows, cannons:ShipGuns, cannonsRange:Int,
+			cannonsDamage:Int, armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float, id:String, ?ownerId:String) {
+		final entity = new EngineShipEntity(role, x, y, size, windows, cannons, cannonsRange, cannonsDamage, armor, hull, maxSpeed, acc, accDelay, turnDelay,
+			fireDelay, id, ownerId);
 		createMainEntity(entity, true);
 		return entity;
 	}
@@ -167,9 +169,12 @@ class GameEngine extends BaseEngine {
 			final pos2 = ship.getCanonOffsetBySideAndIndex(side, 1);
 			final pos3 = ship.getCanonOffsetBySideAndIndex(side, 2);
 
-			final shell1 = addShell(side, 0, pos1.x, pos1.y, shipSideRadRotation, ship.id, (shellRnd != null && shellRnd[0] != null) ? shellRnd[0] : null);
-			final shell2 = addShell(side, 1, pos2.x, pos2.y, shipSideRadRotation, ship.id, (shellRnd != null && shellRnd[1] != null) ? shellRnd[1] : null);
-			final shell3 = addShell(side, 2, pos3.x, pos3.y, shipSideRadRotation, ship.id, (shellRnd != null && shellRnd[2] != null) ? shellRnd[2] : null);
+			final shell1 = addShell(side, 0, pos1.x, pos1.y, ship.cannonsDamage, ship.cannonsRange, shipSideRadRotation, ship.id,
+				(shellRnd != null && shellRnd[0] != null) ? shellRnd[0] : null);
+			final shell2 = addShell(side, 1, pos2.x, pos2.y, ship.cannonsDamage, ship.cannonsRange, shipSideRadRotation, ship.id,
+				(shellRnd != null && shellRnd[1] != null) ? shellRnd[1] : null);
+			final shell3 = addShell(side, 2, pos3.x, pos3.y, ship.cannonsDamage, ship.cannonsRange, shipSideRadRotation, ship.id,
+				(shellRnd != null && shellRnd[2] != null) ? shellRnd[2] : null);
 
 			shell1.serverSide = serverSide;
 			shell2.serverSide = serverSide;
@@ -189,8 +194,9 @@ class GameEngine extends BaseEngine {
 	// Shell game object
 	// --------------------------------------
 
-	public function addShell(side:Side, pos:Int, x:Float, y:Float, rotation:Float, ownerId:String, ?shellRnd:ShellRnd):EngineShellEntity {
-		final newShell = new EngineShellEntity(side, pos, x, y, rotation, ownerId, shellRnd);
+	public function addShell(side:Side, pos:Int, x:Float, y:Float, damage:Int, range:Int, rotation:Float, ownerId:String,
+			?shellRnd:ShellRnd):EngineShellEntity {
+		final newShell = new EngineShellEntity(side, pos, x, y, rotation, damage, range, ownerId, shellRnd);
 		shellManager.add(newShell);
 		return newShell;
 	}

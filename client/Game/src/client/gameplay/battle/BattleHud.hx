@@ -118,16 +118,24 @@ class BattleHud extends BasicHud {
 	private final compassSouthEast:h2d.Tile;
 	private final compassBmp:h2d.Bitmap;
 
+	private final leaveButton:h2d.Object;
+
 	// Daily tasks
+	private final dailyTasksFui:h2d.Flow;
 	private final killPlayersText:h2d.Text;
 	private final killBotsText:h2d.Text;
 	private final killBossesText:h2d.Text;
 
+	// Callbacks
+	private final leaveCallback:Void->Void;
+
 	public function new(leaveCallback:Void->Void) {
 		super();
 
+		this.leaveCallback = leaveCallback;
+
 		// Daily tasks
-		final dailyTasksFui = new h2d.Flow(this);
+		dailyTasksFui = new h2d.Flow(this);
 		dailyTasksFui.layout = Vertical;
 		dailyTasksFui.verticalSpacing = 5;
 		dailyTasksFui.padding = 10;
@@ -166,8 +174,8 @@ class BattleHud extends BasicHud {
 		dirText = addText();
 		dirText.setScale(4);
 
-		positionText = addText();
-		positionText.setScale(4);
+		// positionText = addText();
+		// positionText.setScale(4);
 
 		leftCannonsText = addText("Left side cannons READY");
 		leftCannonsText.setScale(4);
@@ -184,7 +192,7 @@ class BattleHud extends BasicHud {
 		latencyText = addText();
 		latencyText.setScale(4);
 
-		final leaveButton = addButton('Leave sector', function callback() {
+		leaveButton = addButton('Leave sector', function callback() {
 			if (leaveCallback != null) {
 				leaveCallback();
 			}
@@ -197,7 +205,13 @@ class BattleHud extends BasicHud {
 	public function show(show:Bool) {
 		armorBar.show(show);
 		hullBar.show(show);
+		compassBmp.alpha = 0;
 
+		leaveButton.alpha = show ? 1 : 0;
+		dailyTasksFui.alpha = show ? 1 : 0;
+
+		systemText.alpha = show ? 1 : 0;
+		latencyText.alpha = show ? 1 : 0;
 		movementText.alpha = show ? 1 : 0;
 		dirText.alpha = show ? 1 : 0;
 		leftCannonsText.alpha = show ? 1 : 0;
@@ -208,6 +222,11 @@ class BattleHud extends BasicHud {
 		latencyText.text = "Latency:" + Socket.instance.latency;
 	}
 
+	public function showDieDialog(freeShip:Bool) {
+		final additionalText = freeShip ? 'Dont worry, free ship has no any penalties, just try again.' : 'Ship damaged, it may require maintenance soon! ';
+		alertDialog('You died, the ship sank and the crew went to feed the fish !\n' + additionalText, leaveCallback);
+	}
+
 	public function updateSystemInfo(fps:Float) {
 		systemText.text = "FPS: " + fps;
 	}
@@ -215,8 +234,8 @@ class BattleHud extends BasicHud {
 	public function updatePlayerParams(playerShip:ClientShip) {
 		final shipStats = playerShip.getStats();
 
-		armorBar.updateBar(shipStats.baseArmor, shipStats.currentArmor);
-		hullBar.updateBar(shipStats.baseHull, shipStats.currentHull);
+		armorBar.updateBar(shipStats.armor, shipStats.currentArmor);
+		hullBar.updateBar(shipStats.hull, shipStats.currentHull);
 
 		movementText.text = "Speed: " + shipStats.currentSpeed + " / " + shipStats.maxSpeed;
 		dirText.text = "Direction: " + shipStats.dir;
@@ -240,8 +259,8 @@ class BattleHud extends BasicHud {
 				compassBmp.tile = compassSouthEast;
 		}
 
-		positionText.text = "Sector: " + BattleGameplay.CurrentSectorX + " / " + BattleGameplay.CurrentSectorY + ", Pos: " + Std.int(shipStats.x) + " / "
-			+ Std.int(shipStats.y);
+		// positionText.text = "Sector: " + BattleGameplay.CurrentSectorX + " / " + BattleGameplay.CurrentSectorY + ", Pos: " + Std.int(shipStats.x) + " / "
+		// + Std.int(shipStats.y);
 
 		if (shipStats.allowShootLeft) {
 			leftCannonsText.text = "Left side cannons READY!";
@@ -257,16 +276,18 @@ class BattleHud extends BasicHud {
 	}
 
 	public function updateDailyTasks() {
-		final playersCurrent = Player.instance.playerData.dailyPlayersKilledCurrent;
-		final playersMax = Player.instance.playerData.dailyPlayersKilledMax;
-		final botsCurrent = Player.instance.playerData.dailyBotsKilledCurrent;
-		final botsMax = Player.instance.playerData.dailyBotsKilledMax;
-		final bossesCurrent = Player.instance.playerData.dailyBossesKilledCurrent;
-		final bossesMax = Player.instance.playerData.dailyBossesKilledMax;
+		if (Player.instance.playerData != null) {
+			final playersCurrent = Player.instance.playerData.dailyPlayersKilledCurrent;
+			final playersMax = Player.instance.playerData.dailyPlayersKilledMax;
+			final botsCurrent = Player.instance.playerData.dailyBotsKilledCurrent;
+			final botsMax = Player.instance.playerData.dailyBotsKilledMax;
+			final bossesCurrent = Player.instance.playerData.dailyBossesKilledCurrent;
+			final bossesMax = Player.instance.playerData.dailyBossesKilledMax;
 
-		killPlayersText.text = 'Players killed: ' + playersCurrent + '/' + playersMax;
-		killBotsText.text = 'Pirates killed: ' + botsCurrent + '/' + botsMax;
-		killBossesText.text = 'Bosses killed: ' + bossesCurrent + '/' + bossesMax;
+			killPlayersText.text = 'Players killed: ' + playersCurrent + '/' + playersMax;
+			killBotsText.text = 'Pirates killed: ' + botsCurrent + '/' + botsMax;
+			killBossesText.text = 'Bosses killed: ' + bossesCurrent + '/' + bossesMax;
+		}
 	}
 
 	public function dailyTaskComplete(message:SocketServerDailyTaskComplete) {

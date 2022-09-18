@@ -19,32 +19,6 @@ typedef SocketServerDailyTaskComplete = {
 	rewardAKS:Int,
 }
 
-typedef EntityShip = {
-	currentArmor:Int,
-	currentHull:Int,
-	baseArmor:Int,
-	baseHull:Int,
-	canMove:Bool,
-	maxSpeed:Int,
-	minSpeed:Int,
-	speedStep:Int,
-	currentSpeed:Int,
-	dy:Int,
-	dx:Int,
-	y:Int,
-	x:Int,
-	rotation:Int,
-	direction:String,
-	isCollides:Bool,
-	isAlive:Bool,
-	shapeWidth:Int,
-	shapeHeight:Int,
-	shapeWidthHalf:Int,
-	shapeHeightHalf:Int,
-	id:String,
-	ownerId:String
-}
-
 typedef EntityCharacter = {
 	y:Int,
 	x:Int,
@@ -95,7 +69,8 @@ typedef SocketServerMessageSync = {
 typedef SocketClientMessageJoinGame = {
 	playerId:String,
 	instanceId:String,
-	sectorType:Int
+	sectorType:Int,
+	?shipId:String
 }
 
 typedef SocketClientMessageLeaveGame = {

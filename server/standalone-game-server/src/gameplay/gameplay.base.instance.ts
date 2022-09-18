@@ -18,6 +18,8 @@ import {
 import { BaseGameplayEntity } from './gameplay.base.entity';
 import { GameplayType } from './gameplay.base.service';
 import { Logger } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { ShipDocument } from 'src/asset/asset.ship.entity';
 
 export abstract class BaseGameplayInstance {
 
@@ -28,14 +30,18 @@ export abstract class BaseGameplayInstance {
     readonly entityPlayerMap: Map<string, string> = new Map();
     notifyGameWorldStateTimer: NodeJS.Timer;
 
-    constructor(public eventEmitter: EventEmitter2, public gameplayType: GameplayType, public gameEngine: any) {
+    constructor(
+        private shipModel: Model<ShipDocument>,
+        public eventEmitter: EventEmitter2,
+        public gameplayType: GameplayType,
+        public gameEngine: any) {
     }
 
     // -------------------------------------
     // General
     // -------------------------------------
 
-    addPlayer(playerId: string) {
+    async addPlayer(playerId: string, shipId?: string) {
         let engineEntity: any;
         if (this.gameplayType == GameplayType.Battle) {
 
@@ -57,8 +63,42 @@ export abstract class BaseGameplayInstance {
             //     FOUR;
             // }
 
-            // TODO Set specific params...
-            engineEntity = this.gameEngine.createEntity('Player', 100, (this.playerEntityMap.size) * 500, 'SMALL', 'NONE', 'THREE', undefined, playerId);
+            const ship = await this.shipModel.findOne({ tokenId: shipId });
+
+            let windows = 'NONE';
+            if (ship.windows == 0) {
+                windows = 'ONE';
+            } else if (ship.windows == 1) {
+                windows = 'TWO';
+            }
+
+            let cannons = 'ONE';
+            if (ship.cannons == 2) {
+                cannons = 'TWO';
+            } else if (ship.cannons == 3) {
+                cannons = 'THREE';
+            } else if (ship.cannons == 4) {
+                cannons = 'FOUR';
+            }
+
+            engineEntity = this.gameEngine.createEntity(
+                'Player',
+                100,
+                (this.playerEntityMap.size) * 500,
+                ship.size == 1 ? 'SMALL' : 'MEDIUM',
+                windows,
+                cannons,
+                ship.cannonsRange,
+                ship.cannonsDamage,
+                ship.armor,
+                ship.hull,
+                ship.maxSpeed,
+                ship.accelerationStep,
+                ship.accelerationDelay / 1000,
+                ship.rotationDelay / 1000,
+                ship.fireDelay / 1000,
+                undefined,
+                playerId);
         } else {
             engineEntity = this.gameEngine.createEntity(350, 290, undefined, playerId);
         }
@@ -111,7 +151,7 @@ export abstract class BaseGameplayInstance {
     // -------------------------------------
 
     async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
-        this.addPlayer(data.playerId);
+        await this.addPlayer(data.playerId, data.shipId);
 
         const socketServerMessageGameInit = {
             instanceId: this.instanceId,

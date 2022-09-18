@@ -18,18 +18,21 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 	public final side:Side;
 	public final pos:Int;
 	public final shellRnd:ShellRnd;
-	public final baseDamage = 50;
+	public final damage:Int;
+	public final range:Int;
+
 	public var dieEffect = DieEffect.Splash;
 
-	final maxTravelDistance = 600;
 	var distanceTraveled = 0.0;
 
-	public function new(side:Side, pos:Int, x:Float, y:Float, rotation:Float, ownerId:String, ?shellRnd:ShellRnd) {
+	public function new(side:Side, pos:Int, x:Float, y:Float, rotation:Float, damage:Int, range:Int, ownerId:String, ?shellRnd:ShellRnd) {
 		super(GameEntityType.Shell, x, y, rotation, null, ownerId);
 
 		customUpdate = this;
 		customCollide = this;
 
+		this.damage = damage;
+		this.range = range;
 		this.side = side;
 		this.pos = pos;
 
@@ -51,7 +54,7 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 
 	public function onUpdate() {
 		distanceTraveled += Math.abs(dx) + Math.abs(dy);
-		if (distanceTraveled >= maxTravelDistance) {
+		if (distanceTraveled >= range) {
 			isAlive = false;
 		}
 	}

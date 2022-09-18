@@ -87,6 +87,7 @@ export class NftShipGenerator {
                 { accelerationStep: shipStats.accelerationStep },
                 { accelerationDelay: shipStats.accelerationDelay },
                 { rotationDelay: shipStats.rotationDelay },
+                { fireDelay: shipStats.fireDelay },
                 { cannons: shipStats.cannons },
                 { cannonsRange: shipStats.cannonsRange },
                 { cannonsDamage: shipStats.cannonsDamage },

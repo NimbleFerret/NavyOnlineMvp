@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { v4 as uuidv4 } from 'uuid';
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Captain, CaptainDocument, PlayerCaptainEntity } from './asset.captain.entity';
@@ -17,7 +17,7 @@ export enum AssetType {
 }
 
 @Injectable()
-export class AssetService {
+export class AssetService implements OnModuleInit {
 
     private nftShipGenerator = new NftShipGenerator()
 
@@ -27,6 +27,15 @@ export class AssetService {
         @InjectModel(Ship.name) private shipModel: Model<ShipDocument>,
         @InjectModel(Island.name) private islandModel: Model<IslandDocument>,
     ) {
+    }
+
+    async onModuleInit() {
+        const captain = await this.captainModel.findOne();
+        const ship = await this.shipModel.findOne();
+        if (!captain && !ship) {
+            await this.generateFreeCaptain();
+            await this.generateFreeShip();
+        }
     }
 
     // Captain
@@ -50,10 +59,10 @@ export class AssetService {
         return captain;
     }
 
-    async generateFreeCaptain(owner: string) {
+    async generateFreeCaptain() {
         return await this.saveNewCaptain(AssetType.FREE, {
-            id: uuidv4(),
-            owner,
+            id: 'Free',
+            owner: '',
             miningRewardNVY: 0,
             stakingRewardNVY: 0,
             miningStartedAt: 0,
@@ -97,6 +106,12 @@ export class AssetService {
         });
         // Save ship if not exists
         if (!ship) {
+            // Qfix
+            if (playerShipEntity.size == 1) {
+                playerShipEntity.size = 2;
+            }
+            // Qfix 2
+            playerShipEntity.fireDelay = 300;
             ship = await this.saveNewShip(AssetType.COMMON, playerShipEntity);
         } else {
             // Update ship stats
@@ -117,16 +132,17 @@ export class AssetService {
         return ship;
     }
 
-    async generateFreeShip(owner: string) {
+    async generateFreeShip() {
         return await this.saveNewShip(AssetType.FREE, {
-            id: uuidv4(),
-            owner,
+            id: 'Free',
+            owner: '',
             armor: 300,
             hull: 300,
             maxSpeed: 150,
             accelerationStep: 50,
             accelerationDelay: 200,
             rotationDelay: 200,
+            fireDelay: 500,
             cannons: 2,
             cannonsRange: 500,
             cannonsDamage: 20,
@@ -146,15 +162,23 @@ export class AssetService {
         smallShipStatsRange: ShipStatsRange,
         middleShipStatsRange: ShipStatsRange,
         shipStatsStep: ShipStatsStep,
-        preferredSize?: ShipSize) {
+        preferredSize?: ShipSize
+    ) {
         const shipAttributes = await this.generateShipAttributes(smallShipStatsRange, middleShipStatsRange, shipStatsStep, preferredSize);
-
         shipAttributes.id = shipCurrentIndex.toString();
         shipAttributes.owner = owner;
 
         await this.saveNewShip(AssetType.COMMON, shipAttributes);
 
         return await this.nftShipGenerator.generateFounderShip(shipCurrentIndex, shipMaxIndex, shipAttributes);
+    }
+
+    async getFreeCaptain() {
+        return this.captainModel.findOne({ tokenId: 'Free' });
+    }
+
+    async getFreeShip() {
+        return this.shipModel.findOne({ tokenId: 'Free' });
     }
 
     private async saveNewShip(assetType: AssetType, shipEntity: PlayerShipEntity) {
@@ -168,6 +192,7 @@ export class AssetService {
         newShip.accelerationStep = shipEntity.accelerationStep;
         newShip.accelerationDelay = shipEntity.accelerationDelay;
         newShip.rotationDelay = shipEntity.rotationDelay;
+        newShip.fireDelay = shipEntity.fireDelay;
         newShip.cannons = shipEntity.cannons;
         newShip.cannonsRange = shipEntity.cannonsRange;
         newShip.cannonsDamage = shipEntity.cannonsDamage;
@@ -192,6 +217,7 @@ export class AssetService {
             accelerationStep: this.calculateShipAttribute(shipStatsRange.minAccelerationStep, shipStatsRange.maxAccelerationStep, shipStatsStep.speedAndAccelerationStep),
             accelerationDelay: this.calculateShipAttribute(shipStatsRange.minAccelerationDelay, shipStatsRange.maxAccelerationDelay, shipStatsStep.inputdelayStep),
             rotationDelay: this.calculateShipAttribute(shipStatsRange.minRotationDelay, shipStatsRange.maxRotationDelay, shipStatsStep.inputdelayStep),
+            fireDelay: this.calculateShipAttribute(shipStatsRange.minFireDelay, shipStatsRange.maxFireDelay, shipStatsStep.inputdelayStep),
             cannons,
             cannonsRange: this.calculateShipAttribute(shipStatsRange.minCannonsRange, shipStatsRange.maxCannonsRange, shipStatsStep.cannonsRangeStep),
             cannonsDamage: this.calculateShipAttribute(shipStatsRange.minCannonsDamage, shipStatsRange.maxCannonsDamage, shipStatsStep.cannonsDamageStep),

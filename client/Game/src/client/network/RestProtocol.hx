@@ -95,6 +95,8 @@ class PlayerData {
 
 	public var worldX:Int;
 	public var worldY:Int;
+	public var nvy:Float;
+	public var aks:Float;
 
 	public var dailyPlayersKilledCurrent:Int;
 	public var dailyPlayersKilledMax:Int;
@@ -103,13 +105,15 @@ class PlayerData {
 	public var dailyBossesKilledCurrent:Int;
 	public var dailyBossesKilledMax:Int;
 
-	public function new(ethAddress:String, nickname:String, worldX:Int, worldY:Int, ownedCaptains:Array<CaptainEntity>, ownedShips:Array<ShipEntity>,
-			ownedIslands:Array<IslandEntity>, dailyPlayersKilledCurrent:Int, dailyPlayersKilledMax:Int, dailyBotsKilledCurrent:Int, dailyBotsKilledMax:Int,
-			dailyBossesKilledCurrent:Int, dailyBossesKilledMax:Int) {
+	public function new(ethAddress:String, nickname:String, worldX:Int, worldY:Int, nvy:Float, aks:Float, ownedCaptains:Array<CaptainEntity>,
+			ownedShips:Array<ShipEntity>, ownedIslands:Array<IslandEntity>, dailyPlayersKilledCurrent:Int, dailyPlayersKilledMax:Int,
+			dailyBotsKilledCurrent:Int, dailyBotsKilledMax:Int, dailyBossesKilledCurrent:Int, dailyBossesKilledMax:Int) {
 		this.ethAddress = ethAddress;
 		this.nickname = nickname;
 		this.worldX = worldX;
 		this.worldY = worldY;
+		this.nvy = nvy;
+		this.aks = aks;
 
 		this.ownedCaptains = ownedCaptains;
 		this.ownedShips = ownedShips;

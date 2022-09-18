@@ -16,6 +16,8 @@ import { RewardService } from "src/reward/reward.service";
 export interface SignInOrUpResponse {
     ethAddress: string;
     nickname: string;
+    nvy: number;
+    aks: number;
     worldX: number;
     worldY: number;
 
@@ -54,7 +56,7 @@ export class UserService {
         }).populate('shipsOwned').populate('captainsOwned').populate('islandsOwned');
         if (user) {
             this.playersMap.set(user.ethAddress, user);
-            user = await this.syncPlayerNFTs(user);
+            user = await this.syncPlayer(user);
         } else {
             const userModel = new this.userModel({
                 ethAddress,
@@ -62,10 +64,8 @@ export class UserService {
                 worldY: WorldService.BASE_POS_Y
             });
             this.playersMap.set(userModel.ethAddress, userModel);
-            const newFreeCaptain = await this.assetService.generateFreeCaptain(userModel.ethAddress);
-            const newFreeShip = await this.assetService.generateFreeShip(userModel.ethAddress);
-            userModel.captainsOwned = [newFreeCaptain];
-            userModel.shipsOwned = [newFreeShip];
+            userModel.captainsOwned = [await this.assetService.getFreeCaptain()];
+            userModel.shipsOwned = [await this.assetService.generateFreeShip()];
             user = await userModel.save();
         }
 
@@ -100,6 +100,7 @@ export class UserService {
                 accelerationStep: f.accelerationStep,
                 accelerationDelay: f.accelerationDelay,
                 rotationDelay: f.rotationDelay,
+                fireDelay: f.fireDelay,
                 cannons: f.cannons,
                 cannonsRange: f.cannonsRange,
                 cannonsDamage: f.cannonsDamage,
@@ -140,6 +141,8 @@ export class UserService {
             nickname: user.nickname,
             worldX: user.worldX,
             worldY: user.worldY,
+            nvy: user.nvyBalance,
+            aks: user.aksBalance,
             ownedCaptains,
             ownedShips,
             ownedIslands,
@@ -218,7 +221,11 @@ export class UserService {
         return this.userModel.findOne({ ethAddress });
     }
 
-    async syncPlayerNFTs(user: UserDocument): Promise<any> {
+    async syncPlayer(user: UserDocument): Promise<any> {
+        const tokenBalances = await this.moralisService.loadUserTokenBalances(user.ethAddress);
+        user.nvyBalance = tokenBalances.nvy;
+        user.aksBalance = tokenBalances.aks;
+
         const nftBasicInfo = await this.moralisService.loadUserNFTs(user.ethAddress);
         const freeCaptain = user.captainsOwned.filter(f => f.type == AssetType.FREE)[0];
         const freeShip = user.shipsOwned.filter(f => f.type == AssetType.FREE)[0];
@@ -239,7 +246,6 @@ export class UserService {
 
         // Sync islands
         // const islands = user.islandsOwned.filter(f => f.type == AssetType.COMMON)[0];
-
 
         user = await user.save();
         return user;

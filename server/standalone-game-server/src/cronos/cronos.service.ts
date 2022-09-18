@@ -17,6 +17,8 @@ import { Rarity } from '../random/random.entity';
 import { NftIslandGenerator } from '../nft/nft.island.generator';
 import { RandomService } from '../random/random.service';
 import { AssetService } from 'src/asset/asset.service';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { AppEvents, MintIngameReward } from 'src/app.events';
 
 // ------------------------------------
 // Captain stats
@@ -52,6 +54,8 @@ export interface ShipStatsRange {
     maxAccelerationDelay: number;
     minRotationDelay: number;
     maxRotationDelay: number;
+    minFireDelay: number;
+    maxFireDelay: number;
     minCannons: number;
     maxCannons: number;
     minCannonsRange: number;
@@ -131,7 +135,7 @@ export class CronosService implements OnModuleInit {
 
     private founderCollectionsInfo: FounderCollectionsInfo;
 
-    constructor(private assetService: AssetService) {
+    constructor(private assetService: AssetService, private eventEmitter: EventEmitter2) {
         this.nftCaptainGenerator = new NftCaptainGenerator();
         this.nftIslandGenerator = new NftIslandGenerator();
 
@@ -145,8 +149,8 @@ export class CronosService implements OnModuleInit {
     }
 
     async onModuleInit() {
-        this.aksContract = new ethers.Contract(this.AksContractAddress, Aks, this.ethersProvider).connect(this.backendWallet);
-        this.nvyContract = new ethers.Contract(this.NvyContractAddress, Nvy, this.ethersProvider).connect(this.backendWallet);
+        this.aksContract = new ethers.Contract(CronosService.AksContractAddress, Aks, this.ethersProvider).connect(this.backendWallet);
+        this.nvyContract = new ethers.Contract(CronosService.NvyContractAddress, Nvy, this.ethersProvider).connect(this.backendWallet);
 
         this.captainContract = new ethers.Contract(CronosService.CaptainContractAddress, Captain, this.ethersProvider).connect(this.backendWallet);
         this.shipContract = new ethers.Contract(CronosService.ShipContractAddress, Ship, this.ethersProvider).connect(this.backendWallet);
@@ -327,12 +331,14 @@ export class CronosService implements OnModuleInit {
         //     maxAccelerationDelay: smallShipParams[9].toNumber(),
         //     minRotationDelay: smallShipParams[10].toNumber(),
         //     maxRotationDelay: smallShipParams[11].toNumber(),
-        //     minCannons: smallShipParams[12].toNumber(),
-        //     maxCannons: smallShipParams[13].toNumber(),
-        //     minCannonsRange: smallShipParams[14].toNumber(),
-        //     maxCannonsRange: smallShipParams[15].toNumber(),
-        //     minCannonsDamage: smallShipParams[16].toNumber(),
-        //     maxCannonsDamage: smallShipParams[17].toNumber()
+        //     minFireDelay: smallShipParams[12].toNumber(),
+        //     maxFireDelay: smallShipParams[13].toNumber(),
+        //     minCannons: smallShipParams[14].toNumber(),
+        //     maxCannons: smallShipParams[15].toNumber(),
+        //     minCannonsRange: smallShipParams[16].toNumber(),
+        //     maxCannonsRange: smallShipParams[17].toNumber(),
+        //     minCannonsDamage: smallShipParams[18].toNumber(),
+        //     maxCannonsDamage: smallShipParams[19].toNumber()
         // };
 
         // this.middleShipStatsRange = {
@@ -348,12 +354,14 @@ export class CronosService implements OnModuleInit {
         //     maxAccelerationDelay: middleShipParams[9].toNumber(),
         //     minRotationDelay: middleShipParams[10].toNumber(),
         //     maxRotationDelay: middleShipParams[11].toNumber(),
-        //     minCannons: middleShipParams[12].toNumber(),
-        //     maxCannons: middleShipParams[13].toNumber(),
-        //     minCannonsRange: middleShipParams[14].toNumber(),
-        //     maxCannonsRange: middleShipParams[15].toNumber(),
-        //     minCannonsDamage: middleShipParams[16].toNumber(),
-        //     maxCannonsDamage: middleShipParams[17].toNumber()
+        //     minRotationDelay: middleShipParams[12].toNumber(),
+        //     maxRotationDelay: middleShipParams[13].toNumber(),
+        //     minCannons: middleShipParams[14].toNumber(),
+        //     maxCannons: middleShipParams[15].toNumber(),
+        //     minCannonsRange: middleShipParams[16].toNumber(),
+        //     maxCannonsRange: middleShipParams[17].toNumber(),
+        //     minCannonsDamage: middleShipParams[18].toNumber(),
+        //     maxCannonsDamage: middleShipParams[19].toNumber()
         // };
 
         // Fill cache
@@ -394,4 +402,24 @@ export class CronosService implements OnModuleInit {
         this.founderCollectionsInfo.shipsOnSale = shipsOnSale;
         this.founderCollectionsInfo.islandsOnSale = islandsOnSale;
     }
+
+    // Events handling
+
+    @OnEvent(AppEvents.MintIngameReward)
+    async playerKilledPlayer(data: MintIngameReward) {
+        try {
+            Logger.log(`Mint ${data.nvy} NVY and ${data.aks} AKS to player ${data.playerId}`);
+            if (data.nvy > 0) {
+                await this.nvyContract.mintRewardIngame(data.playerId, ethers.BigNumber.from(data.nvy));
+            }
+            if (data.aks > 0) {
+                await this.aksContract.mintReward(data.playerId, ethers.BigNumber.from(data.aks));
+            }
+        } catch (e) {
+            Logger.log(`Error during reward mint for player ${data.playerId}`, e);
+        }
+    }
+
+    // TODO damage ship event
+
 }
