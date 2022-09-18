@@ -70,6 +70,7 @@ class EngineBaseGameEntity {
 	public var isAlive = true;
 	public var isCollides = true;
 	public var serverSide = true;
+	public var killerId:String;
 	// ----------------------
 	// Movement
 	// ----------------------
@@ -87,10 +88,10 @@ class EngineBaseGameEntity {
 	// ----------------------
 	// Geom shape
 	// ----------------------
-	public final shapeWidth:Float;
-	public final shapeHeight:Float;
-	public final shapeWidthHalf:Float;
-	public final shapeHeightHalf:Float;
+	public var shapeWidth:Float;
+	public var shapeHeight:Float;
+	public var shapeWidthHalf:Float;
+	public var shapeHeightHalf:Float;
 
 	public var rectOffsetX = 0;
 	public var rectOffsetY = 0;

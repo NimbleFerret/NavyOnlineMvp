@@ -79,6 +79,7 @@ class GameEngine extends BaseEngine {
 							shipHitByShellCallback({ship: engineShipEntity, damage: engineShellEntity.baseDamage});
 						}
 						if (!engineShipEntity.isAlive) {
+							engineShipEntity.killerId = shell.ownerId;
 							shipsToDelete.push(engineShipEntity.id);
 						}
 					}

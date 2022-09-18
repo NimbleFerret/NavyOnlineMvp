@@ -41,6 +41,6 @@ export class GameplayBattleService extends GameplayBaseService {
     // Impl
 
     public customInstanceInit(instance: BaseGameplayInstance) {
-        console.log();
+        console.log(1);
     }
 }

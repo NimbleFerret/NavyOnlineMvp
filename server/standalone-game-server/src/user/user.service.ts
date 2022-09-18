@@ -11,15 +11,24 @@ import { WorldService } from "../world/world.service";
 import { PlayerIslandEntity } from "../asset/asset.island.entity";
 import { PlayerShipEntity } from "../asset/asset.ship.entity";
 import { PlayerCaptainEntity } from "../asset/asset.captain.entity";
+import { RewardService } from "src/reward/reward.service";
 
 export interface SignInOrUpResponse {
     ethAddress: string;
     nickname: string;
     worldX: number;
     worldY: number;
+
     ownedCaptains?: PlayerCaptainEntity[];
     ownedShips?: PlayerShipEntity[];
     ownedIslands?: PlayerIslandEntity[];
+
+    dailyPlayersKilledCurrent: number;
+    dailyPlayersKilledMax: number;
+    dailyBotsKilledCurrent: number;
+    dailyBotsKilledMax: number;
+    dailyBossesKilledCurrent: number;
+    dailyBossesKilledMax: number;
 }
 
 @Injectable()
@@ -34,10 +43,10 @@ export class UserService {
     ) {
     }
 
-    @OnEvent(AppEvents.PlayerDisconnected)
-    async handlePlayerDisconnected(data: PlayerDisconnectedEvent) {
-        this.playersMap.delete(data.playerId);
-    }
+    // @OnEvent(AppEvents.PlayerDisconnected)
+    // async handlePlayerDisconnected(data: PlayerDisconnectedEvent) {
+    //     this.playersMap.delete(data.playerId);
+    // }
 
     async signInOrUp(ethAddress: string) {
         let user = await this.userModel.findOne({
@@ -119,6 +128,13 @@ export class UserService {
             } as PlayerIslandEntity;
         });
 
+        const dailyPlayersKilledCurrent = user.dailyPlayersKilled;
+        const dailyPlayersKilledMax = RewardService.DailyPlayersKillTask;
+        const dailyBotsKilledCurrent = user.dailyBotsKilled;
+        const dailyBotsKilledMax = RewardService.DailyBotsKillTask;
+        const dailyBossesKilledCurrent = user.dailyBossesKilled;
+        const dailyBossesKilledMax = RewardService.DailyBossesKillTask;
+
         const signInOrUpResponse = {
             ethAddress: user.ethAddress,
             nickname: user.nickname,
@@ -126,7 +142,13 @@ export class UserService {
             worldY: user.worldY,
             ownedCaptains,
             ownedShips,
-            ownedIslands
+            ownedIslands,
+            dailyPlayersKilledCurrent,
+            dailyPlayersKilledMax,
+            dailyBotsKilledCurrent,
+            dailyBotsKilledMax,
+            dailyBossesKilledCurrent,
+            dailyBossesKilledMax
         } as SignInOrUpResponse;
 
         return signInOrUpResponse;
@@ -190,6 +212,10 @@ export class UserService {
 
     async findAll() {
         return this.userModel.find().exec();
+    }
+
+    async findByEthAddress(ethAddress: string) {
+        return this.userModel.findOne({ ethAddress });
     }
 
     async syncPlayerNFTs(user: UserDocument): Promise<any> {

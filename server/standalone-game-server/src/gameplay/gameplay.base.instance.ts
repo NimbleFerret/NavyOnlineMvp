@@ -25,6 +25,7 @@ export abstract class BaseGameplayInstance {
     public readonly instanceId = uuidv4();
 
     readonly playerEntityMap: Map<string, string> = new Map();
+    readonly entityPlayerMap: Map<string, string> = new Map();
     notifyGameWorldStateTimer: NodeJS.Timer;
 
     constructor(public eventEmitter: EventEmitter2, public gameplayType: GameplayType, public gameEngine: any) {
@@ -63,6 +64,7 @@ export abstract class BaseGameplayInstance {
         }
         if (engineEntity) {
             this.playerEntityMap.set(engineEntity.ownerId, engineEntity.id);
+            this.entityPlayerMap.set(engineEntity.id, engineEntity.ownerId);
             return engineEntity;
         } else {
             return undefined;
@@ -97,6 +99,7 @@ export abstract class BaseGameplayInstance {
         try {
             clearInterval(this.notifyGameWorldStateTimer);
             this.playerEntityMap.clear();
+            this.entityPlayerMap.clear();
             this.gameEngine.destroy();
         } catch (e) {
             Logger.error(e);
@@ -124,6 +127,7 @@ export abstract class BaseGameplayInstance {
         const entity = this.playerEntityMap.get(data.playerId);
         if (entity) {
             this.playerEntityMap.delete(data.playerId);
+            this.entityPlayerMap.delete(entity);
             this.gameEngine.removeMainEntity(entity);
 
             const socketServerMessageRemoveEntity = {

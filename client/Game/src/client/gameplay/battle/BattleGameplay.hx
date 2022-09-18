@@ -22,7 +22,7 @@ enum InputType {
 
 class BattleGameplay extends BasicGameplay {
 	// Global config
-	public static var DebugDraw = false;
+	public static var DebugDraw = true;
 
 	public static var CurrentSectorX = 0;
 	public static var CurrentSectorY = 0;
@@ -33,7 +33,8 @@ class BattleGameplay extends BasicGameplay {
 	private var inputType = InputType.Game;
 
 	// UI
-	public var hud:BattleHud;
+	public final hud:BattleHud;
+	public final waterScene:WaterScene;
 
 	private var leaveCallback:Void->Void;
 
@@ -122,6 +123,8 @@ class BattleGameplay extends BasicGameplay {
 				leaveCallback();
 			}
 		});
+
+		waterScene = new WaterScene();
 	}
 
 	public function debugDraw() {
@@ -252,6 +255,14 @@ class BattleGameplay extends BasicGameplay {
 	// Multiplayer
 	// --------------------------------------
 
+	public function updateDailyTasks() {
+		hud.updateDailyTasks();
+	}
+
+	public function dailyTaskComplete(message:SocketServerDailyTaskComplete) {
+		hud.dailyTaskComplete(message);
+	}
+
 	public function shipShoot(message:SocketServerMessageShipShoot) {
 		if (gameState == GameState.Playing && playerId != message.playerId) {
 			final side = message.left ? Side.Left : Side.Right;
@@ -295,6 +306,7 @@ class BattleGameplay extends BasicGameplay {
 
 	public function customUpdate(dt:Float, fps:Float) {
 		hud.update(dt);
+		waterScene.update(dt);
 
 		if (gameState == GameState.Playing) {
 			hud.updateSystemInfo(fps);

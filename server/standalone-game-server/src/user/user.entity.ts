@@ -41,13 +41,14 @@ export class User {
     @Prop({ default: UserWorldState.WORLD })
     worldState: number;
 
+    @Prop({ default: 0 })
     dailyPlayersKilled: number;
-    dailyBotsKilled: number;
-    dailyBossesKilled: number;
 
-    weeklyPlayersKilled: number;
-    weeklyBotsKilled: number;
-    weeklyBossesKilled: number;
+    @Prop({ default: 0 })
+    dailyBotsKilled: number;
+
+    @Prop({ default: 0 })
+    dailyBossesKilled: number;
 
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Captain' }] })
     captainsOwned: Captain[];

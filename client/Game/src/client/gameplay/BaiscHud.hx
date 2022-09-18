@@ -1,5 +1,6 @@
 package client.gameplay;
 
+import client.ui.UiToken;
 import h2d.Object;
 
 class BasicHud extends h2d.Scene {
@@ -284,6 +285,27 @@ class BasicHud extends h2d.Scene {
 		this.addChild(dialog);
 	}
 
+	function tokensRewardAlert(nvy:Int, aks:Int) {
+		final plate = newCustomPlate(this, 7, 4);
+
+		plate.setPosition(Main.ScreenWidth / 2 - plate.getBounds().width / 2, 100);
+
+		final titleText = addText2(plate, "You've been rewarded!");
+
+		final nvyToken = new UiToken(TokenType.NVY, null);
+		nvyToken.setText(Std.string(nvy));
+		nvyToken.setPosition(titleText.x, titleText.y + 80);
+
+		final aksToken = new UiToken(TokenType.AKS, null);
+		aksToken.setText(Std.string(aks));
+		aksToken.setPosition(nvyToken.x, nvyToken.y + 100);
+
+		plate.addChild(nvyToken);
+		plate.addChild(aksToken);
+
+		return plate;
+	}
+
 	function yesNoDialog(title:String) {
 		final dialog = new h2d.Object(this);
 
@@ -554,6 +576,21 @@ class BasicHud extends h2d.Scene {
 			dy: 0.5,
 			color: 0x000000,
 			alpha: 0.8
+		};
+		return tf;
+	}
+
+	public function addText3(parent:h2d.Object, text = "") {
+		final tf = new h2d.Text(getFont(), parent);
+		tf.text = text;
+		tf.setPosition(32, 24);
+		tf.setScale(4);
+		tf.textColor = 0xFBF0DD;
+		tf.dropShadow = {
+			dx: 0.5,
+			dy: 0.5,
+			color: 0x000000,
+			alpha: 0.9
 		};
 		return tf;
 	}

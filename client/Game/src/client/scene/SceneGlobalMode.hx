@@ -113,13 +113,6 @@ class SceneGlobalMode extends Scene {
 			playerBmp = null;
 		}
 
-		// Rest.instance.signInOrUp(Player.instance.ethAddress, function callback(player:PlayerData) {
-		// 	if (!playerInitialized) {
-		// 		Player.instance.playerData = player;
-		// 		playerInitialized = true;
-		// 		initOrUpdateGameWorld();
-		// 	}
-		// });
 		playerInitialized = true;
 		initOrUpdateGameWorld();
 	}
@@ -156,11 +149,7 @@ class SceneGlobalMode extends Scene {
 
 	private function initOrUpdateGameWorld() {
 		Rest.instance.getWorldInfo(function callback(world:GameWorldData) {
-			if (!gameWorldInitialized) {
-				initiateGameWorld(world);
-			} else {
-				trace('update game world');
-			}
+			initiateGameWorld(world);
 		});
 	}
 

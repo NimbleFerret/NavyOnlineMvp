@@ -2,9 +2,15 @@
 export enum AppEvents {
 
     // ---------------------------------
+    // Internal events
+    // ---------------------------------
+    PlayerKilledPlayer = 'PlayerKilledPlayer',
+    PlayerKilledBot = 'PlayerKilledBot',
+    PlayerKilledBoss = 'PlayerKilledBoss',
+
+    // ---------------------------------
     // Socket events
     // ---------------------------------
-
     PlayerJoinedInstance = 'PlayerJoinedInstance',
     PlayerLeave = 'PlayerLeave',
     PlayerDisconnected = 'PlayerDisconnected',
@@ -15,7 +21,18 @@ export enum AppEvents {
 
     NotifyPlayer = 'NotifyPlayer',
     NotifyEachPlayer = 'NotifyEachPlayer',
-    PlayerJoined = "PlayerJoined"
+    PlayerJoined = "PlayerJoined",
+
+    // PlayerKilledShipEvent = "PlayerKilledShipEvent",
+    // SocketServerEventDailyTaskUpdate = "SocketServerEventDailyTaskUpdate"
+}
+
+// ---------------------------------
+// Internal event msg
+// ---------------------------------
+
+export interface PlayerKilledShip {
+    playerId: string;
 }
 
 // ---------------------------------

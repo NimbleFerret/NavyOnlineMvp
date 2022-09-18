@@ -92,18 +92,35 @@ class PlayerData {
 	public final ownedCaptains:Array<CaptainEntity>;
 	public final ownedShips:Array<ShipEntity>;
 	public final ownedIslands:Array<IslandEntity>;
+
 	public var worldX:Int;
 	public var worldY:Int;
 
+	public var dailyPlayersKilledCurrent:Int;
+	public var dailyPlayersKilledMax:Int;
+	public var dailyBotsKilledCurrent:Int;
+	public var dailyBotsKilledMax:Int;
+	public var dailyBossesKilledCurrent:Int;
+	public var dailyBossesKilledMax:Int;
+
 	public function new(ethAddress:String, nickname:String, worldX:Int, worldY:Int, ownedCaptains:Array<CaptainEntity>, ownedShips:Array<ShipEntity>,
-			ownedIslands:Array<IslandEntity>) {
+			ownedIslands:Array<IslandEntity>, dailyPlayersKilledCurrent:Int, dailyPlayersKilledMax:Int, dailyBotsKilledCurrent:Int, dailyBotsKilledMax:Int,
+			dailyBossesKilledCurrent:Int, dailyBossesKilledMax:Int) {
 		this.ethAddress = ethAddress;
 		this.nickname = nickname;
 		this.worldX = worldX;
 		this.worldY = worldY;
+
 		this.ownedCaptains = ownedCaptains;
 		this.ownedShips = ownedShips;
 		this.ownedIslands = ownedIslands;
+
+		this.dailyPlayersKilledCurrent = dailyPlayersKilledCurrent;
+		this.dailyPlayersKilledMax = dailyPlayersKilledMax;
+		this.dailyBotsKilledCurrent = dailyBotsKilledCurrent;
+		this.dailyBotsKilledMax = dailyBotsKilledMax;
+		this.dailyBossesKilledCurrent = dailyBossesKilledCurrent;
+		this.dailyBossesKilledMax = dailyBossesKilledMax;
 	}
 }
 

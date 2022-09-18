@@ -1,5 +1,11 @@
 /* eslint-disable prettier/prettier */
 
+export enum DailyTaskType {
+    KILL_PLAYERS = 1,
+    KILL_BOTS = 2,
+    KILL_BOSSES = 3,
+}
+
 export enum SectorContent {
     EMPTY = 1,
     BASE = 2,
@@ -12,6 +18,21 @@ export enum SectorContent {
 // -------------------------------------
 // WebSocket server messages
 // -------------------------------------
+
+export interface SocketServerDailyTaskChange {
+    dailyPlayersKilledCurrent: number;
+    dailyPlayersKilledMax: number;
+    dailyBotsKilledCurrent: number;
+    dailyBotsKilledMax: number;
+    dailyBossesKilledCurrent: number
+    dailyBossesKilledMax: number;
+}
+
+export interface SocketServerDailyTaskComplete {
+    dailyTaskType: DailyTaskType;
+    rewardNVY: number;
+    rewardAKS: number;
+}
 
 export interface SocketServerMessageGameInit {
     tickRate: number;
@@ -105,6 +126,9 @@ export class WsProtocol {
     public static readonly SocketServerEventEntityMove = 'SocketServerEventEntityMove';
     public static readonly SocketServerEventShipShoot = 'SocketServerEventShipShoot';
     public static readonly SocketServerEventSync = 'SocketServerEventSync';
+
+    public static readonly SocketServerEventDailyTaskUpdate = 'SocketServerEventDailyTaskUpdate';
+    public static readonly SocketServerEventDailyTaskReward = 'SocketServerEventDailyTaskReward';
 
     // Client -> Server events
     public static readonly SocketClientEventPing = 'SocketClientEventPing';

@@ -17,7 +17,9 @@ class Rest {
 		req.onData = function onData(data:String) {
 			if (callback != null) {
 				final json = haxe.Json.parse(data);
-				callback(new PlayerData(json.ethAddress, json.nickname, json.worldX, json.worldY, json.ownedCaptains, json.ownedShips, json.ownedIslands));
+				callback(new PlayerData(json.ethAddress, json.nickname, json.worldX, json.worldY, json.ownedCaptains, json.ownedShips, json.ownedIslands,
+					json.dailyPlayersKilledCurrent, json.dailyPlayersKilledMax, json.dailyBotsKilledCurrent, json.dailyBotsKilledMax,
+					json.dailyBossesKilledCurrent, json.dailyBossesKilledMax));
 			}
 		};
 	}

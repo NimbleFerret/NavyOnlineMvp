@@ -9,8 +9,8 @@ class WaterBg {
 	private final waterBgbatch:h2d.SpriteBatch;
 	private final displacementTile:h2d.Tile;
 
-	var playerDX = 0.0;
-	var playerDY = 0.0;
+	public var playerDX = 0.0;
+	public var playerDY = 0.0;
 
 	public function new(s2d:h2d.Scene, offsetX:Float = 0, offsetY:Float = 0, scale:Float = 4) {
 		if (DrawWaterBg) {

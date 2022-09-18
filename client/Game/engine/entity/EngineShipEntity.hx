@@ -5,6 +5,7 @@ import engine.MathUtils;
 
 enum Role {
 	Bot;
+	Boss;
 	Player;
 	General;
 }
@@ -135,6 +136,11 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		this.shipHullSize = shipHullSize;
 		this.shipWindows = shipWindows;
 		this.shipGuns = shipGuns;
+
+		if (shipHullSize == ShipHullSize.MEDIUM) {
+			shapeWidth = 300;
+			shapeHeight = 120;
+		}
 	}
 
 	// -----------------------

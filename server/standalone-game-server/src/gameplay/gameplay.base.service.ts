@@ -52,7 +52,7 @@ export abstract class GameplayBaseService {
             if (this.gameplayType == GameplayType.Island) {
                 instance = new GameplayIslandInstance(this.eventEmitter, x, y);
             } else {
-                instance = new GameplayBattleInstance(this.eventEmitter, x, y);
+                instance = new GameplayBattleInstance(this.eventEmitter, x, y, sectorContent);
             }
             if (instance) {
                 this.customInstanceInit(instance);

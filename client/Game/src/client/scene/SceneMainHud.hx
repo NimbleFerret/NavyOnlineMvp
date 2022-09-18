@@ -1,5 +1,6 @@
 package client.scene;
 
+import haxe.Timer;
 import client.network.RestProtocol.IslandEntity;
 import client.network.RestProtocol.ShipEntity;
 import client.network.RestProtocol.CaptainEntity;
@@ -63,24 +64,36 @@ class SceneMainHud extends BasicHud {
 
 	private var refreshMyNFTsButton:h2d.Object;
 
+	// Daily tasks
+	private var dailyTasksFui:h2d.Flow;
+	private var playersToKillText:h2d.Text;
+	private var botsToKillText:h2d.Text;
+	private var bossesToKillText:h2d.Text;
+
 	private final metamaskLoginCallback:String->Void;
 	private final startGameCallback:Void->Void;
 	private final refreshNFTsCallback:Void->Void;
+	private final collectRewardCallback:Void->Void;
+	private final startMiningCallback:Void->Void;
 
 	private var uiInitiated = false;
 
-	public function new(metamaskLoginCallback:String->Void, unloggedInitCallback:Void->Void, startGameCallback:Void->Void, refreshNFTsCallback:Void->Void) {
+	public function new(metamaskLoginCallback:String->Void, unloggedInitCallback:Void->Void, startGameCallback:Void->Void, refreshNFTsCallback:Void->Void,
+			collectRewardCallback:Void->Void, startMiningCallback:Void->Void) {
 		super();
 
 		this.metamaskLoginCallback = metamaskLoginCallback;
 		this.startGameCallback = startGameCallback;
 		this.refreshNFTsCallback = refreshNFTsCallback;
+		this.collectRewardCallback = collectRewardCallback;
+		this.startMiningCallback = startMiningCallback;
 
 		Main.IsWeb3Available = Moralis.isEthereumBrowser();
 
 		if (!Main.IsWeb3Available) {
 			Player.instance.ethAddress = '0x87400A03678dd03c8BF536404B5B14C609a23b79';
 			// Player.instance.ethAddress = Uuid.short();
+
 			showMetamaskError(function callback() {
 				if (unloggedInitCallback != null) {
 					unloggedInitCallback();
@@ -282,7 +295,7 @@ class SceneMainHud extends BasicHud {
 			captainDescFui.layout = Vertical;
 			captainDescFui.verticalSpacing = 5;
 			captainDescFui.padding = 10;
-			captainDescFui.x = 435;
+			captainDescFui.x = 635;
 			captainDescFui.y = 550;
 
 			final captainPlatesContainer = new h2d.Object(captainDescFui);
@@ -337,7 +350,7 @@ class SceneMainHud extends BasicHud {
 			shipDescFui.layout = Vertical;
 			shipDescFui.verticalSpacing = 5;
 			shipDescFui.padding = 10;
-			shipDescFui.x = 1350;
+			shipDescFui.x = 1550;
 			shipDescFui.y = 790;
 
 			final shipPlatesContainer = new h2d.Object(shipDescFui);
@@ -394,7 +407,7 @@ class SceneMainHud extends BasicHud {
 			islandDescFui.layout = Vertical;
 			islandDescFui.verticalSpacing = 5;
 			islandDescFui.padding = 10;
-			islandDescFui.x = 2510;
+			islandDescFui.x = 2710;
 			islandDescFui.y = 690;
 			islandDescFui.alpha = 0;
 
@@ -418,17 +431,52 @@ class SceneMainHud extends BasicHud {
 
 			final islandButtonsContainer = new h2d.Object(islandDescPlate);
 
-			islandCollectRewardButton = addGuiButton(islandButtonsContainer, "Collect reward", false, null, 5, 4);
+			islandCollectRewardButton = addGuiButton(islandButtonsContainer, "Collect reward", false, collectRewardCallback, 5, 4);
 			islandCollectRewardButton.setPosition(islandIncomeText.x - 15, islandIncomeText.y + 90);
 			islandCollectRewardButton.alpha = 0;
 
-			islandStartMiningButton = addGuiButton(islandButtonsContainer, "Start mining", false, null, 5, 4);
+			islandStartMiningButton = addGuiButton(islandButtonsContainer, "Start mining", false, startMiningCallback, 5, 4);
 			islandStartMiningButton.setPosition(islandIncomeText.x - 15, islandIncomeText.y + 90);
 
 			// Play button
 			final startGameButton = addGuiButton(this, "Start game", false, startGameCallback);
-			startGameButton.setPosition(Main.ScreenWidth / 2 - 500, Main.ScreenHeight - 200);
+			startGameButton.setPosition(Main.ScreenWidth / 2 - 300, Main.ScreenHeight - 200);
+
+			addDailyTasksStuff();
 		}
+	}
+
+	private function addDailyTasksStuff() {
+		if (dailyTasksFui == null) {
+			dailyTasksFui = new h2d.Flow(this);
+			dailyTasksFui.layout = Vertical;
+			dailyTasksFui.verticalSpacing = 5;
+			dailyTasksFui.padding = 10;
+			dailyTasksFui.y = 555;
+
+			final dailyTasksPlate = newCustomPlate(dailyTasksFui, 6, 4);
+			dailyTasksPlate.setPosition(5, 5);
+
+			final dailyTasksDescription = addText2(dailyTasksPlate, 'Daily tasks:');
+
+			playersToKillText = addText2(dailyTasksPlate, 'Players killed: 0/10');
+			playersToKillText.setPosition(dailyTasksDescription.x, 106);
+			botsToKillText = addText2(dailyTasksPlate, 'Bots killed: 0/10');
+			botsToKillText.setPosition(playersToKillText.x, 186);
+			bossesToKillText = addText2(dailyTasksPlate, 'Bosses killed: 0/10');
+			bossesToKillText.setPosition(botsToKillText.x, 266);
+		}
+
+		final playersCurrent = Player.instance.playerData.dailyPlayersKilledCurrent;
+		final playersMax = Player.instance.playerData.dailyPlayersKilledMax;
+		final botsCurrent = Player.instance.playerData.dailyBotsKilledCurrent;
+		final botsMax = Player.instance.playerData.dailyBotsKilledMax;
+		final bossesCurrent = Player.instance.playerData.dailyBossesKilledCurrent;
+		final bossesMax = Player.instance.playerData.dailyBossesKilledMax;
+
+		playersToKillText.text = 'Players killed: ' + playersCurrent + '/' + playersMax;
+		botsToKillText.text = 'Pirates killed: ' + botsCurrent + '/' + botsMax;
+		bossesToKillText.text = 'Bosses killed: ' + bossesCurrent + '/' + bossesMax;
 	}
 
 	private function addBuyNFTsStuff() {

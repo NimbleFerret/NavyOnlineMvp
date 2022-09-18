@@ -1,5 +1,7 @@
 package client.gameplay.battle;
 
+import haxe.Timer;
+import client.network.SocketProtocol.SocketServerDailyTaskComplete;
 import h2d.Bitmap;
 import h2d.Object;
 import client.gameplay.BaiscHud.BasicHud;
@@ -116,13 +118,27 @@ class BattleHud extends BasicHud {
 	private final compassSouthEast:h2d.Tile;
 	private final compassBmp:h2d.Bitmap;
 
-	// Water
-	public final waterBg:WaterBg;
+	// Daily tasks
+	private final killPlayersText:h2d.Text;
+	private final killBotsText:h2d.Text;
+	private final killBossesText:h2d.Text;
 
 	public function new(leaveCallback:Void->Void) {
 		super();
 
-		waterBg = new WaterBg(this, 0, 0, 4);
+		// Daily tasks
+		final dailyTasksFui = new h2d.Flow(this);
+		dailyTasksFui.layout = Vertical;
+		dailyTasksFui.verticalSpacing = 5;
+		dailyTasksFui.padding = 10;
+		dailyTasksFui.y = 10;
+		dailyTasksFui.x = Main.ScreenWidth - 490;
+
+		addText3(dailyTasksFui, 'Daily tasks');
+		killPlayersText = addText3(dailyTasksFui, 'Kill players: 0/0');
+		killBotsText = addText3(dailyTasksFui, 'Kill pirates: 0/0');
+		killBossesText = addText3(dailyTasksFui, 'Kill bosses: 0/0');
+		updateDailyTasks();
 
 		// Compass
 		compassEast = hxd.Res.compass.compass_e.toTile();
@@ -137,7 +153,7 @@ class BattleHud extends BasicHud {
 		compassBmp = new h2d.Bitmap(compassEast);
 		compassBmp.setScale(0.5);
 		compassBmp.setPosition(500, 500);
-		compassBmp.alpha = 0;
+		compassBmp.alpha = 1;
 
 		addChild(compassBmp);
 
@@ -189,7 +205,6 @@ class BattleHud extends BasicHud {
 	}
 
 	public function update(dt:Float) {
-		waterBg.update(dt);
 		latencyText.text = "Latency:" + Socket.instance.latency;
 	}
 
@@ -239,5 +254,26 @@ class BattleHud extends BasicHud {
 		} else {
 			rightCannonsText.text = "Right side cannons RELOADING...";
 		}
+	}
+
+	public function updateDailyTasks() {
+		final playersCurrent = Player.instance.playerData.dailyPlayersKilledCurrent;
+		final playersMax = Player.instance.playerData.dailyPlayersKilledMax;
+		final botsCurrent = Player.instance.playerData.dailyBotsKilledCurrent;
+		final botsMax = Player.instance.playerData.dailyBotsKilledMax;
+		final bossesCurrent = Player.instance.playerData.dailyBossesKilledCurrent;
+		final bossesMax = Player.instance.playerData.dailyBossesKilledMax;
+
+		killPlayersText.text = 'Players killed: ' + playersCurrent + '/' + playersMax;
+		killBotsText.text = 'Pirates killed: ' + botsCurrent + '/' + botsMax;
+		killBossesText.text = 'Bosses killed: ' + bossesCurrent + '/' + bossesMax;
+	}
+
+	public function dailyTaskComplete(message:SocketServerDailyTaskComplete) {
+		final tokensAlert = tokensRewardAlert(message.rewardNVY, message.rewardAKS);
+		addChild(tokensAlert);
+		Timer.delay(function callback() {
+			tokensAlert.alpha = 0;
+		}, 3000);
 	}
 }

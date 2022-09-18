@@ -32,6 +32,8 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityMove, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventShipShoot, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventSync, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskUpdate, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskReward, this);
 				leaveCallback();
 			}
 		});
@@ -47,9 +49,12 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityMove, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventShipShoot, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventDailyTaskUpdate, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventDailyTaskReward, this);
 	}
 
 	public override function render(e:Engine) {
+		game.waterScene.render(e);
 		game.hud.render(e);
 		super.render(e);
 		game.debugDraw();
@@ -90,6 +95,12 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				game.shipShoot(message);
 			case SocketProtocol.SocketServerEventSync:
 				game.sync(message);
+
+			case SocketProtocol.SocketServerEventDailyTaskUpdate:
+				trace(1);
+			case SocketProtocol.SocketServerEventDailyTaskReward:
+				trace(1);
+
 			default:
 				trace('Unknown socket message');
 		}

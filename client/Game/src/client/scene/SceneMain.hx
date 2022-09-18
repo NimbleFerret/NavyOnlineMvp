@@ -45,6 +45,7 @@ class SceneMain extends Scene {
 		hud = new SceneMainHud(function metamaskLoginCallback(address:String) {
 			client.Player.instance.ethAddress = address;
 			hud.initiateWeb3(address);
+			initiateBalances();
 			signInOrUp();
 		}, function unloggedInitCallback() {
 			signInOrUp();
@@ -52,10 +53,22 @@ class SceneMain extends Scene {
 			if (startCallback != null) {
 				startCallback();
 			}
-		}, function refreshNFTsCallback() {});
+		}, function refreshNFTsCallback() {
+			trace('refreshNFTsCallback');
+		}, function collectRewardCallback() {
+			if (islands[currentIslandIndex].mining) {
+				// TODO send request
+			}
+			trace('collectRewardCallback');
+		}, function startMining() {
+			if (islands[currentIslandIndex].mining) {
+				// TODO send request
+			}
+			trace('startMining');
+		});
 
 		// Basic ship position
-		baseShipX = Main.ScreenWidth / 2 - 230;
+		baseShipX = Main.ScreenWidth / 2 - 230 + 200;
 		baseShipY = Main.ScreenHeight / 2 + 30;
 	}
 
@@ -185,7 +198,7 @@ class SceneMain extends Scene {
 				}
 				newIslandByIndex(currentIslandIndex);
 			}
-			currentIsland.setPosition(2600, 200);
+			currentIsland.setPosition(2800, 200);
 			addChild(currentIsland);
 			addChild(miningAnimation);
 			hud.updateIslandUi(islands[currentIslandIndex]);
@@ -208,8 +221,8 @@ class SceneMain extends Scene {
 	// ---------------------------------
 
 	private function initiateBalances() {
-		nvyTokens = new UiToken(hud.widePlate(3));
-		aksTokens = new UiToken(hud.widePlate(3));
+		nvyTokens = new UiToken(TokenType.NVY, hud.widePlate(3));
+		aksTokens = new UiToken(TokenType.AKS, hud.widePlate(3));
 
 		nvyTokens.setPosition(Main.ScreenWidth - nvyTokens.getBounds().width, 16);
 		aksTokens.setPosition(Main.ScreenWidth - aksTokens.getBounds().width, 134);
@@ -220,7 +233,7 @@ class SceneMain extends Scene {
 
 	private function initiateCaptains() {
 		currentCaptain = new UiAvatar();
-		currentCaptain.setPosition(600, 330);
+		currentCaptain.setPosition(800, 330);
 		addChild(currentCaptain);
 
 		final arrowCaptainLeft = hud.buttonArrowLeft(function callback() {
@@ -230,8 +243,8 @@ class SceneMain extends Scene {
 			changeCaptain(1);
 		}, true);
 
-		arrowCaptainLeft.setPosition(450, 350);
-		arrowCaptainRight.setPosition(800, 350);
+		arrowCaptainLeft.setPosition(650, 350);
+		arrowCaptainRight.setPosition(1000, 350);
 
 		addChild(arrowCaptainLeft);
 		addChild(arrowCaptainRight);
@@ -278,7 +291,7 @@ class SceneMain extends Scene {
 				miningAnimation8
 			]);
 			miningAnimation.setScale(5);
-			miningAnimation.setPosition(2716, 400);
+			miningAnimation.setPosition(2916, 400);
 			miningAnimation.alpha = 1;
 
 			final arrowLeftIsland = hud.buttonArrowLeft(function callback() {
@@ -287,8 +300,8 @@ class SceneMain extends Scene {
 			final arrowRightIsland = hud.buttonArrowRight(function callback() {
 				changeIsland(1);
 			}, false);
-			arrowLeftIsland.setPosition(2400, 350);
-			arrowRightIsland.setPosition(3100, 350);
+			arrowLeftIsland.setPosition(2600, 350);
+			arrowRightIsland.setPosition(3300, 350);
 
 			changeIsland(0);
 		}

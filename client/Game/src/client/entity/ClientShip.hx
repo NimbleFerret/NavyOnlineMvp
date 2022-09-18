@@ -9,12 +9,12 @@ import engine.MathUtils;
 final RippleOffsetByDir:Map<GameEntityDirection, PosOffset> = [
 	GameEntityDirection.East => new PosOffset(-20, 0, 90),
 	GameEntityDirection.North => new PosOffset(0, 59, 3.5),
-	GameEntityDirection.NorthEast => new PosOffset(-31, 44, 60),
-	GameEntityDirection.NorthWest => new PosOffset(15, 40, -56),
-	GameEntityDirection.South => new PosOffset(-6, -15, 181),
-	GameEntityDirection.SouthEast => new PosOffset(-57, 6, 117),
-	GameEntityDirection.SouthWest => new PosOffset(48, 10, 246),
-	GameEntityDirection.West => new PosOffset(40, 15, 261),
+	GameEntityDirection.NorthEast => new PosOffset(-31, 35, 60),
+	GameEntityDirection.NorthWest => new PosOffset(30, 35, -56),
+	GameEntityDirection.South => new PosOffset(5, -15, 181),
+	GameEntityDirection.SouthEast => new PosOffset(-45, -20, 117),
+	GameEntityDirection.SouthWest => new PosOffset(40, -10, 246),
+	GameEntityDirection.West => new PosOffset(40, 0, 270),
 ];
 
 class ClientShip extends ClientBaseGameEntity {
@@ -33,13 +33,13 @@ class ClientShip extends ClientBaseGameEntity {
 	public function new(s2d:h2d.Scene, engineShipEntity:EngineShipEntity) {
 		super();
 
-		// engineShipEntity.speedChangeCallback = function callback(speed) {
-		// 	if (speed != 0) {
-		// 		rippleAnim.alpha = 0.55;
-		// 	} else {
-		// 		rippleAnim.alpha = 0;
-		// 	}
-		// };
+		engineShipEntity.speedChangeCallback = function callback(speed) {
+			if (speed != 0) {
+				rippleAnim.alpha = 1;
+			} else {
+				rippleAnim.alpha = 0;
+			}
+		};
 		engineShipEntity.directionChangeCallbackLeft = function callback(dir) {
 			shipTemplate.changeDirLeft();
 
@@ -77,7 +77,7 @@ class ClientShip extends ClientBaseGameEntity {
 		rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		rippleAnim.scaleX = 1.5;
 		rippleAnim.scaleY = 0.9;
-		rippleAnim.alpha = 0.0;
+		rippleAnim.alpha = 0;
 
 		shipTemplate = new ShipTemplate(engineShipEntity.shipHullSize, engineShipEntity.shipWindows, engineShipEntity.shipGuns);
 		addChild(shipTemplate);

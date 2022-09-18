@@ -49,6 +49,7 @@ class Main extends GuiApp {
 
 		sceneMain = new SceneMain(function startCallback() {
 			currentScene = SceneGlobalMode;
+			sevents.addScene(sceneGlobalMode.getHud());
 			sceneGlobalMode.start();
 			setScene2D(sceneGlobalMode);
 		});
@@ -59,12 +60,14 @@ class Main extends GuiApp {
 		sceneOnlineDemo1 = new SceneOnlineDemo1(engine.width, engine.height, function leaveCallback() {
 			currentScene = SceneGlobalMode;
 			sceneGlobalMode.start();
+
 			setScene2D(sceneGlobalMode);
 		});
 
 		sceneShipsDemo = new SceneShipsDemo();
 		sceneIsland = new SceneIsland(engine.width, engine.height, function leaveCallback() {
 			currentScene = SceneGlobalMode;
+			sevents.addScene(sceneGlobalMode.getHud());
 			sceneGlobalMode.start();
 			setScene2D(sceneGlobalMode);
 		});
@@ -77,8 +80,9 @@ class Main extends GuiApp {
 
 				sceneIsland.instanceId = sector.joinSectorResponse.instanceId;
 				sceneIsland.start(sector.joinSectorResponse);
+				sevents.addScene(sceneIsland.getHud());
+
 				if (!islandHudAdded) {
-					sevents.addScene(sceneIsland.getHud());
 					islandHudAdded = true;
 				}
 				setScene2D(sceneIsland);
@@ -87,8 +91,9 @@ class Main extends GuiApp {
 
 				sceneOnlineDemo1.instanceId = sector.joinSectorResponse.instanceId;
 				sceneOnlineDemo1.start();
+				sevents.addScene(sceneOnlineDemo1.getHud());
+
 				if (!battleHudAdded) {
-					sevents.addScene(sceneOnlineDemo1.getHud());
 					battleHudAdded = true;
 				}
 				setScene2D(sceneOnlineDemo1);
@@ -98,7 +103,6 @@ class Main extends GuiApp {
 			sceneMain.start();
 			setScene2D(sceneMain);
 		});
-		sevents.addScene(sceneGlobalMode.getHud());
 
 		// TODO refactor scene load and unload
 		switch (defaultScene) {

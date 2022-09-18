@@ -2,6 +2,7 @@
 import { BaseGameplayEntity } from "../gameplay.base.entity";
 
 export interface GameplayShipEntity extends BaseGameplayEntity {
+    role: string;
     currentArmor: number;
     currentHull: number;
     currentSpeed: number;
@@ -9,4 +10,5 @@ export interface GameplayShipEntity extends BaseGameplayEntity {
     shipHullSize: number;
     shipWindows: number;
     shipGuns: number;
+    killerId: string;
 }

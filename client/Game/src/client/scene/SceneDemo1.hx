@@ -29,7 +29,7 @@ class SceneDemo1 extends Scene {
 		final playerId = 'Player1';
 		final ship1 = game.addShipByClient(Role.Player, -200, 100, ShipHullSize.SMALL, ShipWindows.NONE, ShipGuns.THREE, null, playerId);
 
-		final ship2 = game.addShipByClient(Role.General, -200, -400, ShipHullSize.SMALL, ShipWindows.NONE, ShipGuns.THREE, null, null);
+		final ship2 = game.addShipByClient(Role.Boss, -200, -400, ShipHullSize.MEDIUM, ShipWindows.TWO, ShipGuns.FOUR, null, null);
 		// final ship3 = game.addShipByClient(Role.Bot, 100, -100, null, null);
 		// final ship4 = game.addShipByClient(Role.Bot, 300, -100, null, null);
 		// final ship5 = game.addShipByClient(Role.Bot, 300, -600, null, null);
@@ -41,24 +41,25 @@ class SceneDemo1 extends Scene {
 	}
 
 	public override function render(e:Engine) {
-		// game.hud.render(e);
-		// super.render(e);
-		// game.debugDraw();
-		game.hud.render(e);
+		game.waterScene.render(e);
 		super.render(e);
+		game.hud.render(e);
+		game.debugDraw();
 	}
 
 	public function update(dt:Float, fps:Float) {
-		final c = camera;
+		if (game != null) {
+			final c = camera;
 
-		if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))
-			c.scale(1.25, 1.25);
-		if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_DOWN))
-			c.scale(0.8, 0.8);
+			if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))
+				c.scale(1.25, 1.25);
+			if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_DOWN))
+				c.scale(0.8, 0.8);
 
-		game.update(dt, fps);
+			game.update(dt, fps);
 
-		islandsManager.update();
+			// islandsManager.update();
+		}
 	}
 
 	public function getHud() {

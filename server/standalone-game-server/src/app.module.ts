@@ -6,11 +6,12 @@ import { MoralisModule } from './moralis/moralis.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AppController } from './app.controller';
 import { UserModule } from './user/user.module';
 import { WorldModule } from './world/world.module';
 import { GameplayModule } from './gameplay/gameplay.module';
-import { AppController } from './app.controller';
 import { CronosModule } from './cronos/cronos.module';
+import { RewardModule } from './reward/reward.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { CronosModule } from './cronos/cronos.module';
         UserModule,
         GameplayModule,
         WorldModule,
+        RewardModule,
         EventEmitterModule.forRoot(),
         ScheduleModule.forRoot(),
         MongooseModule.forRoot('mongodb://localhost/navy')

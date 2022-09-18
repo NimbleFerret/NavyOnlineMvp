@@ -97,13 +97,11 @@ class ShipTemplate extends h2d.Object {
 			leftSideGun3.setPosition(canonsInitialPosLeft.three.x, canonsInitialPosLeft.three.y);
 		}
 
-		// TODO qfix
 		if (shipGuns == FOUR && shipSize != SMALL) {
 			leftSideGun4 = new ShipGun(shipSize, direction, Left);
 			leftSideGun4.setPosition(canonsInitialPosLeft.four.x, canonsInitialPosLeft.four.y);
 		}
 
-		// TODO qfix
 		if (rightSideGun4 != null)
 			layers.add(rightSideGun4, 4);
 		if (rightSideGun3 != null)

@@ -4,6 +4,21 @@ package client.network;
 // WebSocket server messages
 // -------------------------------------
 
+typedef SocketServerDailyTaskChange = {
+	dailyPlayersKilledCurrent:Int,
+	dailyPlayersKilledMax:Int,
+	dailyBotsKilledCurrent:Int,
+	dailyBotsKilledMax:Int,
+	dailyBossesKilledCurrent:Int,
+	dailyBossesKilledMax:Int
+}
+
+typedef SocketServerDailyTaskComplete = {
+	dailyTaskType:Int,
+	rewardNVY:Int,
+	rewardAKS:Int,
+}
+
 typedef EntityShip = {
 	currentArmor:Int,
 	currentHull:Int,
@@ -125,6 +140,9 @@ class SocketProtocol {
 	public static final SocketServerEventEntityMove = 'SocketServerEventEntityMove';
 	public static final SocketServerEventShipShoot = 'SocketServerEventShipShoot';
 	public static final SocketServerEventSync = 'SocketServerEventSync';
+
+	public static final SocketServerEventDailyTaskUpdate = 'SocketServerEventDailyTaskUpdate';
+	public static final SocketServerEventDailyTaskReward = 'SocketServerEventDailyTaskReward';
 
 	// Client -> Server events
 	public static final SocketClientEventPing = 'SocketClientEventPing';

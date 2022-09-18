@@ -1,5 +1,7 @@
 package client;
 
+import client.ui.UiToken.TokenType;
+import client.ui.UiToken.TokenAnimation;
 import haxe.Timer;
 
 using tweenxcore.Tools;
@@ -131,28 +133,6 @@ class IslandsManager {
 
 	// Make it component
 	private function addCoinAnim() {
-		final coinAnimation1 = hxd.Res.coin_anims._1.toTile();
-		final coinAnimation2 = hxd.Res.coin_anims._2.toTile();
-		final coinAnimation3 = hxd.Res.coin_anims._3.toTile();
-		final coinAnimation4 = hxd.Res.coin_anims._4.toTile();
-		final coinAnimation5 = hxd.Res.coin_anims._5.toTile();
-		final coinAnimation6 = hxd.Res.coin_anims._6.toTile();
-		final coinAnimation7 = hxd.Res.coin_anims._7.toTile();
-		final coinAnimation8 = hxd.Res.coin_anims._8.toTile();
-
-		final coinAnimation = new h2d.Anim([
-			coinAnimation1,
-			coinAnimation2,
-			coinAnimation3,
-			coinAnimation4,
-			coinAnimation5,
-			coinAnimation6,
-			coinAnimation7,
-			coinAnimation8
-		]);
-		coinAnimation.setScale(3);
-		coinAnimation.setPosition(656, 460);
-
-		return coinAnimation;
+		return new TokenAnimation(TokenType.NVY, 3, 656, 460);
 	}
 }

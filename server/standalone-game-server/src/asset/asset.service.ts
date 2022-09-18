@@ -40,6 +40,7 @@ export class AssetService {
             captain = await this.saveNewCaptain(AssetType.COMMON, playerCaptainEntity);
         } else {
             // Update captain stats
+            captain.owner = playerCaptainEntity.owner;
             captain.miningRewardNVY = playerCaptainEntity.miningRewardNVY;
             captain.stakingRewardNVY = playerCaptainEntity.stakingRewardNVY;
             captain.traits = playerCaptainEntity.traits;
@@ -100,6 +101,7 @@ export class AssetService {
         } else {
             // Update ship stats
             ship.hull = playerShipEntity.hull;
+            ship.owner = playerShipEntity.owner;
             ship.armor = playerShipEntity.armor;
             ship.maxSpeed = playerShipEntity.maxSpeed;
             ship.accelerationStep = playerShipEntity.accelerationStep;
