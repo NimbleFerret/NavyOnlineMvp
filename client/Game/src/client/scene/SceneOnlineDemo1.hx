@@ -14,15 +14,17 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 
 	private var game:BattleGameplay;
 	private var leaveCallback:Void->Void;
+	private var diedCallback:Void->Void;
 
-	public function new(width:Int, height:Int, leaveCallback:Void->Void) {
+	public function new(width:Int, height:Int, leaveCallback:Void->Void, diedCallback:Void->Void) {
 		super();
 		this.leaveCallback = leaveCallback;
+		this.diedCallback = diedCallback;
 		camera.setViewport(width / 2, height / 2, 0, 0);
 	}
 
 	public function start() {
-		game = new BattleGameplay(this, EngineMode.Server, function callback() {
+		game = new BattleGameplay(this, EngineMode.Server, function callbackLeave() {
 			if (leaveCallback != null) {
 				game = null;
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventGameInit, this);
@@ -35,6 +37,10 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskUpdate, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskReward, this);
 				leaveCallback();
+			}
+		}, function callbackDied() {
+			if (diedCallback != null) {
+				diedCallback();
 			}
 		});
 
@@ -58,8 +64,8 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 
 	public override function render(e:Engine) {
 		game.waterScene.render(e);
-		game.hud.render(e);
 		super.render(e);
+		game.hud.render(e);
 		game.debugDraw();
 	}
 

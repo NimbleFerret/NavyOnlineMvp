@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-import { v4 as uuidv4 } from 'uuid';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -112,6 +111,8 @@ export class AssetService implements OnModuleInit {
             }
             // Qfix 2
             playerShipEntity.fireDelay = 300;
+            playerShipEntity.currentIntegrity = 10;
+            playerShipEntity.maxIntegrity = 10;
             ship = await this.saveNewShip(AssetType.COMMON, playerShipEntity);
         } else {
             // Update ship stats
@@ -151,7 +152,9 @@ export class AssetService implements OnModuleInit {
             size: ShipSize.SMALL,
             rarity: Rarity.COMMON,
             windows: 0,
-            anchor: 0
+            anchor: 0,
+            currentIntegrity: 0,
+            maxIntegrity: 0
         } as PlayerShipEntity);
     }
 
@@ -174,11 +177,11 @@ export class AssetService implements OnModuleInit {
     }
 
     async getFreeCaptain() {
-        return this.captainModel.findOne({ tokenId: 'Free' });
+        return this.captainModel.findOne({ tokenId: 'free' });
     }
 
     async getFreeShip() {
-        return this.shipModel.findOne({ tokenId: 'Free' });
+        return this.shipModel.findOne({ tokenId: 'free' });
     }
 
     private async saveNewShip(assetType: AssetType, shipEntity: PlayerShipEntity) {
@@ -202,6 +205,8 @@ export class AssetService implements OnModuleInit {
         newShip.level = shipEntity.level;
         newShip.windows = shipEntity.windows;
         newShip.anchor = shipEntity.anchor;
+        newShip.currentIntegrity = shipEntity.currentIntegrity;
+        newShip.maxIntegrity = shipEntity.maxIntegrity;
 
         return await newShip.save();
     }

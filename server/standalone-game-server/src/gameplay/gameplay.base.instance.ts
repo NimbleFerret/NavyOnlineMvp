@@ -82,6 +82,8 @@ export abstract class BaseGameplayInstance {
             }
 
             engineEntity = this.gameEngine.createEntity(
+                shipId,
+                ship.tokenId == 'free',
                 'Player',
                 100,
                 (this.playerEntityMap.size) * 500,

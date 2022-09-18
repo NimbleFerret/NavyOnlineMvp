@@ -88,6 +88,12 @@ class EffectsManager {
 		explosion3Tile = explosion3Tile.center();
 	}
 
+	public function clear() {
+		for (i in 0...tweenAnimations.length) {
+			s2d.removeChild(tweenAnimations[i].tweeningObject);
+		}
+	}
+
 	public function update() {
 		final tweensToDelete:Array<TextDamageTween> = [];
 		for (tween in tweenAnimations) {

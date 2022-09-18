@@ -127,11 +127,13 @@ class BattleHud extends BasicHud {
 
 	// Callbacks
 	private final leaveCallback:Void->Void;
+	private final diedCallback:Void->Void;
 
-	public function new(leaveCallback:Void->Void) {
+	public function new(leaveCallback:Void->Void, diedCallback:Void->Void) {
 		super();
 
 		this.leaveCallback = leaveCallback;
+		this.diedCallback = diedCallback;
 
 		// Daily tasks
 		dailyTasksFui = new h2d.Flow(this);
@@ -214,7 +216,7 @@ class BattleHud extends BasicHud {
 
 	public function showDieDialog(freeShip:Bool) {
 		final additionalText = freeShip ? 'Dont worry, free ship has no any penalties, just try again.' : 'Ship damaged, it may require maintenance soon! ';
-		alertDialog('You died, the ship sank and the crew went to feed the fish !\n' + additionalText, leaveCallback);
+		alertDialog('You died, the ship sank and the crew went to feed the fish !\n' + additionalText, diedCallback);
 	}
 
 	public function updateSystemInfo(fps:Float) {

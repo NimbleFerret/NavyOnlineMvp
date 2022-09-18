@@ -28,6 +28,8 @@ export interface PlayerShipEntity {
     rarity: number;
     windows: number;
     anchor: number;
+    currentIntegrity: number;
+    maxIntegrity: number;
 }
 
 export type ShipDocument = Ship & Document;
@@ -92,6 +94,11 @@ export class Ship {
     @Prop()
     anchor: number;
 
+    @Prop()
+    currentIntegrity: number;
+
+    @Prop()
+    maxIntegrity: number;
 }
 
 export const ShipSchema = SchemaFactory.createForClass(Ship);

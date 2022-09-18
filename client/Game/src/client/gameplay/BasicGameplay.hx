@@ -216,9 +216,9 @@ abstract class BasicGameplay {
 			final gameEngine = cast(baseEngine, GameEngine);
 			final shipEntity = cast(entity, EngineShipEntity);
 
-			final newEngineEnity = gameEngine.createEntity(shipEntity.role, shipEntity.x, shipEntity.y, shipEntity.shipHullSize, shipEntity.shipWindows,
-				shipEntity.shipGuns, shipEntity.cannonsRange, shipEntity.cannonsDamage, shipEntity.armor, shipEntity.hull, shipEntity.maxSpeed,
-				shipEntity.acc, shipEntity.accDelay, shipEntity.turnDelay, shipEntity.fireDelay, shipEntity.id, shipEntity.ownerId);
+			final newEngineEnity = gameEngine.createEntity('', shipEntity.free, shipEntity.role, shipEntity.x, shipEntity.y, shipEntity.shipHullSize,
+				shipEntity.shipWindows, shipEntity.shipGuns, shipEntity.cannonsRange, shipEntity.cannonsDamage, shipEntity.armor, shipEntity.hull,
+				shipEntity.maxSpeed, shipEntity.acc, shipEntity.accDelay, shipEntity.turnDelay, shipEntity.fireDelay, shipEntity.id, shipEntity.ownerId);
 
 			newClientEntity = new ClientShip(scene, newEngineEnity);
 		} else if (baseEngine.mainEntityType == GameEntityType.Character) {

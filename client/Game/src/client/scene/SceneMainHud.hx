@@ -1,6 +1,5 @@
 package client.scene;
 
-import haxe.Timer;
 import client.network.RestProtocol.IslandEntity;
 import client.network.RestProtocol.ShipEntity;
 import client.network.RestProtocol.CaptainEntity;
@@ -229,6 +228,7 @@ class SceneMainHud extends BasicHud {
 			shipAccDelayText.text = 'Acc. delay: 100';
 			shipTurnDelayText.text = 'Turn delay: 200';
 
+			shipIntegrityText.text = 'Integrity: ' + shipEntity.currentIntegrity + '/' + shipEntity.maxIntegrity;
 			shipIntegrityText.alpha = 1;
 		}
 	}

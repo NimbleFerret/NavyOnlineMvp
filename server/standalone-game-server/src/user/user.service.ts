@@ -65,7 +65,7 @@ export class UserService {
             });
             this.playersMap.set(userModel.ethAddress, userModel);
             userModel.captainsOwned = [await this.assetService.getFreeCaptain()];
-            userModel.shipsOwned = [await this.assetService.generateFreeShip()];
+            userModel.shipsOwned = [await this.assetService.getFreeShip()];
             user = await userModel.save();
         }
 
@@ -110,6 +110,8 @@ export class UserService {
                 rarity: f.rarity,
                 windows: f.windows,
                 anchor: f.anchor,
+                currentIntegrity: f.currentIntegrity,
+                maxIntegrity: f.maxIntegrity
             } as PlayerShipEntity;
         });
 

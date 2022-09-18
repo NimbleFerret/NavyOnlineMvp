@@ -60,8 +60,11 @@ class Main extends GuiApp {
 		sceneOnlineDemo1 = new SceneOnlineDemo1(engine.width, engine.height, function leaveCallback() {
 			currentScene = SceneGlobalMode;
 			sceneGlobalMode.start();
-
 			setScene2D(sceneGlobalMode);
+		}, function diedCallback() {
+			currentScene = SceneMain;
+			sceneMain.start();
+			setScene2D(sceneMain);
 		});
 
 		sceneShipsDemo = new SceneShipsDemo();

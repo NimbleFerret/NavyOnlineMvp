@@ -3,6 +3,8 @@ import { BaseGameplayEntity } from "../gameplay.base.entity";
 
 export interface GameplayShipEntity extends BaseGameplayEntity {
     role: string;
+    serverShipRef: string;
+    free: boolean;
     currentArmor: number;
     currentHull: number;
     currentSpeed: number;
@@ -20,4 +22,6 @@ export interface GameplayShipEntity extends BaseGameplayEntity {
     accDelay: number;
     turnDelay: number;
     fireDelay: number;
+    currentIntegrity: number;
+    maxIntegrity: number;
 }

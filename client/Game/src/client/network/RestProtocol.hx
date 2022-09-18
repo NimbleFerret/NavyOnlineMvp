@@ -52,7 +52,9 @@ typedef ShipEntity = {
 	size:Int,
 	windows:Int,
 	anchor:Int,
-	level:Int
+	level:Int,
+	currentIntegrity:Int,
+	maxIntegrity:Int
 }
 
 typedef IslandEntity = {

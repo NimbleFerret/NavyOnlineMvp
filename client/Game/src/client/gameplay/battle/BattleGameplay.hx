@@ -38,7 +38,7 @@ class BattleGameplay extends BasicGameplay {
 
 	private var leaveCallback:Void->Void;
 
-	public function new(scene:h2d.Scene, engineMode:EngineMode, leaveCallback:Void->Void) {
+	public function new(scene:h2d.Scene, engineMode:EngineMode, leaveCallback:Void->Void, diedCallback:Void->Void) {
 		super(scene, new GameEngine(engineMode));
 
 		this.leaveCallback = leaveCallback;
@@ -97,14 +97,15 @@ class BattleGameplay extends BasicGameplay {
 					clientShip.clearDebugGraphics(scene);
 					scene.removeChild(clientShip);
 
-					if (engineShipEntity.ownerId == playerId) {
-						hud.show(false);
-						hud.showDieDialog(client.Player.instance.isCurrentShipIsFree);
-						gameState = GameState.Died;
-					}
-
 					clientMainEntities.remove(engineShipEntity.id);
 					clientMainEntitiesCount--;
+
+					if (engineShipEntity.ownerId == playerId) {
+						gameState = GameState.Died;
+						hud.show(false);
+						hud.showDieDialog(client.Player.instance.isCurrentShipIsFree);
+						clearObjects();
+					}
 				}
 			}
 		};
@@ -124,11 +125,17 @@ class BattleGameplay extends BasicGameplay {
 		// UI
 		// --------------------------------------
 
-		hud = new BattleHud(function callback() {
+		hud = new BattleHud(function callbackLeave() {
 			destroy();
 			Socket.instance.leaveGame({playerId: playerId});
 			if (leaveCallback != null) {
+				clearObjects();
 				leaveCallback();
+			}
+		}, function callbackDied() {
+			if (diedCallback != null) {
+				clearObjects();
+				diedCallback();
 			}
 		});
 
@@ -306,8 +313,8 @@ class BattleGameplay extends BasicGameplay {
 	public function addShipByClient(role:Role, x:Int, y:Int, size:ShipHullSize, windows:ShipWindows, cannons:ShipGuns, cannonsRange:Int, cannonsDamage:Int,
 			armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float, shipId:String, ?ownerId:String) {
 		final gameEngine = cast(baseEngine, GameEngine);
-		return gameEngine.createEntity(role, x, y, size, windows, cannons, cannonsRange, cannonsDamage, armor, hull, maxSpeed, acc, accDelay, turnDelay,
-			fireDelay, shipId, ownerId);
+		return gameEngine.createEntity('', true, role, x, y, size, windows, cannons, cannonsRange, cannonsDamage, armor, hull, maxSpeed, acc, accDelay,
+			turnDelay, fireDelay, shipId, ownerId);
 	}
 
 	// --------------------------------------
@@ -408,9 +415,9 @@ class BattleGameplay extends BasicGameplay {
 			role = Role.Boss;
 		}
 
-		return new EngineShipEntity(role, message.entity.x, message.entity.y, shipHullSize, shipWindows, shipGuns, message.entity.cannonsRange,
-			message.entity.cannonsDamage, message.entity.armor, message.entity.hull, message.entity.maxSpeed, message.entity.acc, message.entity.accDelay,
-			message.entity.turnDelay, message.entity.fireDelay, message.entity.id, message.entity.ownerId);
+		return new EngineShipEntity('', message.entity.free, role, message.entity.x, message.entity.y, shipHullSize, shipWindows, shipGuns,
+			message.entity.cannonsRange, message.entity.cannonsDamage, message.entity.armor, message.entity.hull, message.entity.maxSpeed, message.entity.acc,
+			message.entity.accDelay, message.entity.turnDelay, message.entity.fireDelay, message.entity.id, message.entity.ownerId);
 	}
 
 	public function jsEntitiesToEngineEntities(entities:Dynamic):Array<EngineBaseGameEntity> {
@@ -426,8 +433,20 @@ class BattleGameplay extends BasicGameplay {
 				role = Role.Boss;
 			}
 
-			return new EngineShipEntity(role, entity.x, entity.y, shipHullSize, shipWindows, shipGuns, entity.cannonsRange, entity.cannonsDamage,
-				entity.armor, entity.hull, entity.maxSpeed, entity.acc, entity.accDelay, entity.turnDelay, entity.fireDelay, entity.id, entity.ownerId);
+			return new EngineShipEntity('', entity.free, role, entity.x, entity.y, shipHullSize, shipWindows, shipGuns, entity.cannonsRange,
+				entity.cannonsDamage, entity.armor, entity.hull, entity.maxSpeed, entity.acc, entity.accDelay, entity.turnDelay, entity.fireDelay, entity.id,
+				entity.ownerId);
 		});
+	}
+
+	private function clearObjects() {
+		effectsManager.clear();
+
+		for (value in clientMainEntities) {
+			scene.removeChild(value);
+		}
+		for (value in clientShells) {
+			scene.removeChild(value);
+		}
 	}
 }

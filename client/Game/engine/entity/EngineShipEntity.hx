@@ -86,6 +86,8 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	];
 
 	public var role:Role;
+	public var free:Bool;
+	public var serverShipRef:String;
 
 	// -----------------------
 	// Callbacks
@@ -131,9 +133,12 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// Bot stuff
 	public var allowShoot = false;
 
-	public function new(role:Role, x:Float, y:Float, shipHullSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns, cannonsRange:Int,
-			cannonsDamage:Int, armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float, ?id:String, ?ownerId:String) {
+	public function new(serverShipRef:String, free:Bool, role:Role, x:Float, y:Float, shipHullSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns,
+			cannonsRange:Int, cannonsDamage:Int, armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float, ?id:String,
+			?ownerId:String) {
 		super(GameEntityType.Ship, x, y, 0, id, ownerId);
+		this.serverShipRef = serverShipRef;
+		this.free = free;
 		this.role = role;
 		this.shipHullSize = shipHullSize;
 		this.shipWindows = shipWindows;
