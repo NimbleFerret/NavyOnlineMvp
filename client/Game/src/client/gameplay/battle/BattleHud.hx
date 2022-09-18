@@ -50,12 +50,12 @@ class HorizontalStatsBar {
 	public function updateBar(maxValue:Float, currentValue:Float) {
 		var extraZeroes = "";
 
-		if (currentValue < 1000) {
+		if (currentValue < maxValue) {
 			if (currentValue < 10) {
 				extraZeroes = "000";
 			} else if (currentValue < 100) {
 				extraZeroes = "00";
-			} else {
+			} else if (maxValue >= 1000) {
 				extraZeroes = "0";
 			}
 		}
@@ -159,7 +159,7 @@ class BattleHud extends BasicHud {
 
 		compassBmp = new h2d.Bitmap(compassEast);
 		compassBmp.setScale(0.5);
-		compassBmp.setPosition(500, 500);
+		compassBmp.setPosition(Main.ScreenWidth / 2 - compassBmp.getBounds().width / 2, Main.ScreenHeight - 410);
 		compassBmp.alpha = 1;
 
 		addChild(compassBmp);
@@ -188,12 +188,8 @@ class BattleHud extends BasicHud {
 		latencyText = addText();
 		latencyText.setScale(4);
 
-		leaveButton = addButton('Leave sector', function callback() {
-			if (leaveCallback != null) {
-				leaveCallback();
-			}
-		});
-		leaveButton.setScale(3);
+		leaveButton = addGuiButton(this, 'Leave sector', false, leaveCallback);
+		leaveButton.setPosition(0, 450);
 
 		show(true);
 	}

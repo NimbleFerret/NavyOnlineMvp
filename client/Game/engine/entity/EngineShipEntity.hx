@@ -140,7 +140,9 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		this.shipGuns = shipGuns;
 
 		this.hull = hull;
+		this.currentHull = hull;
 		this.armor = armor;
+		this.currentArmor = armor;
 		this.maxSpeed = maxSpeed;
 		this.acc = acc;
 		this.accDelay = accDelay;
