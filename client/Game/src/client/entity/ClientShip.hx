@@ -6,7 +6,7 @@ import engine.entity.EngineBaseGameEntity;
 import engine.entity.EngineShipEntity;
 import engine.MathUtils;
 
-final RippleOffsetByDir:Map<GameEntityDirection, PosOffset> = [
+final RippleOffsetByDirSmall:Map<GameEntityDirection, PosOffset> = [
 	GameEntityDirection.East => new PosOffset(-20, 0, 90),
 	GameEntityDirection.North => new PosOffset(0, 59, 3.5),
 	GameEntityDirection.NorthEast => new PosOffset(-31, 35, 60),
@@ -15,6 +15,17 @@ final RippleOffsetByDir:Map<GameEntityDirection, PosOffset> = [
 	GameEntityDirection.SouthEast => new PosOffset(-45, -20, 117),
 	GameEntityDirection.SouthWest => new PosOffset(40, -10, 246),
 	GameEntityDirection.West => new PosOffset(40, 0, 270),
+];
+
+final RippleOffsetByDirMiddle:Map<GameEntityDirection, PosOffset> = [
+	GameEntityDirection.East => new PosOffset(-65, 20, 90),
+	GameEntityDirection.North => new PosOffset(-20, 75, 3.5),
+	GameEntityDirection.NorthEast => new PosOffset(-41, 45, 60),
+	GameEntityDirection.NorthWest => new PosOffset(0, 55, -56),
+	GameEntityDirection.South => new PosOffset(-20, -45, 181),
+	GameEntityDirection.SouthEast => new PosOffset(-65, 0, 117),
+	GameEntityDirection.SouthWest => new PosOffset(40, -10, 246),
+	GameEntityDirection.West => new PosOffset(40, 20, 270),
 ];
 
 class ClientShip extends ClientBaseGameEntity {
@@ -43,14 +54,14 @@ class ClientShip extends ClientBaseGameEntity {
 		engineShipEntity.directionChangeCallbackLeft = function callback(dir) {
 			shipTemplate.changeDirLeft();
 
-			final rippleOffsetByDir = RippleOffsetByDir.get(dir);
+			final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
 			rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
 			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
 		engineShipEntity.directionChangeCallbackRight = function callback(dir) {
 			shipTemplate.changeDirRight();
 
-			final rippleOffsetByDir = RippleOffsetByDir.get(dir);
+			final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
 			rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
 			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
@@ -71,12 +82,12 @@ class ClientShip extends ClientBaseGameEntity {
 
 		rippleAnim = new h2d.Anim([rippleTile1, rippleTile2, rippleTile3, rippleTile4, rippleTile5], this);
 
-		final rippleOffsetByDir = RippleOffsetByDir.get(engineShipEntity.direction);
+		final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(engineShipEntity.direction) : RippleOffsetByDirMiddle.get(engineShipEntity.direction);
 
 		rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
 		rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
-		rippleAnim.scaleX = 1.5;
-		rippleAnim.scaleY = 0.9;
+		rippleAnim.scaleX = 1.5 * (engineShipEntity.shipHullSize == SMALL ? 1 : 1.5);
+		rippleAnim.scaleY = 0.9 * (engineShipEntity.shipHullSize == SMALL ? 1 : 1.5);
 		rippleAnim.alpha = 0;
 
 		shipTemplate = new ShipTemplate(engineShipEntity.shipHullSize, engineShipEntity.shipWindows, engineShipEntity.shipGuns);
