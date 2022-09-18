@@ -7,7 +7,6 @@ enum Role {
 	Bot;
 	Boss;
 	Player;
-	General;
 }
 
 enum ShipHullSize {
@@ -132,7 +131,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// Bot stuff
 	public var allowShoot = false;
 
-	public function new(role = Role.General, x:Float, y:Float, shipHullSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns, cannonsRange:Int,
+	public function new(role:Role, x:Float, y:Float, shipHullSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns, cannonsRange:Int,
 			cannonsDamage:Int, armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float, ?id:String, ?ownerId:String) {
 		super(GameEntityType.Ship, x, y, 0, id, ownerId);
 		this.role = role;

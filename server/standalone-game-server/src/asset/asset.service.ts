@@ -61,7 +61,7 @@ export class AssetService implements OnModuleInit {
 
     async generateFreeCaptain() {
         return await this.saveNewCaptain(AssetType.FREE, {
-            id: 'Free',
+            id: 'free',
             owner: '',
             miningRewardNVY: 0,
             stakingRewardNVY: 0,
@@ -134,7 +134,7 @@ export class AssetService implements OnModuleInit {
 
     async generateFreeShip() {
         return await this.saveNewShip(AssetType.FREE, {
-            id: 'Free',
+            id: 'free',
             owner: '',
             armor: 300,
             hull: 300,

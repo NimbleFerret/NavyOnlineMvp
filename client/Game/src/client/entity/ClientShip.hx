@@ -82,6 +82,34 @@ class ClientShip extends ClientBaseGameEntity {
 		shipTemplate = new ShipTemplate(engineShipEntity.shipHullSize, engineShipEntity.shipWindows, engineShipEntity.shipGuns);
 		addChild(shipTemplate);
 
+		final nickname = new h2d.Text(hxd.res.DefaultFont.get(), this);
+		if (engineShipEntity.role == Role.Player) {
+			if (engineShipEntity.ownerId == client.Player.instance.ethAddress || engineShipEntity.ownerId == 'Player1') {
+				nickname.text = 'You';
+			} else {
+				nickname.text = Utils.MaskEthAddress(engineShipEntity.ownerId);
+			}
+			nickname.textColor = 0xFBF0DD;
+		} else if (engineShipEntity.role == Role.Bot) {
+			nickname.text = 'Pirate';
+			nickname.textColor = 0xFD7D7D;
+		} else if (engineShipEntity.role == Role.Boss) {
+			nickname.text = 'BOSS Pirate';
+			nickname.textColor = 0xFF0000;
+		}
+		if (engineShipEntity.shipHullSize == ShipHullSize.SMALL) {
+			nickname.setPosition(-50, -180);
+		} else {
+			nickname.setPosition(-60, -220);
+		}
+		nickname.setScale(4);
+		nickname.dropShadow = {
+			dx: 0.5,
+			dy: 0.5,
+			color: 0x000000,
+			alpha: 0.9
+		};
+
 		s2d.addChild(this);
 	}
 

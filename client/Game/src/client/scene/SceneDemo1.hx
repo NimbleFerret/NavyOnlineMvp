@@ -29,7 +29,7 @@ class SceneDemo1 extends Scene {
 		// cannonsRange:Int, cannonsDamage:Int, armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float
 
 		final playerId = 'Player1';
-		final ship1 = game.addShipByClient(Role.Player, -200, 100, ShipHullSize.SMALL, ShipWindows.NONE, ShipGuns.THREE, 300, 20, 500, 500, 300, 50, 0.500,
+		final ship1 = game.addShipByClient(Role.Player, -200, 100, ShipHullSize.MEDIUM, ShipWindows.NONE, ShipGuns.THREE, 300, 20, 500, 500, 300, 50, 0.500,
 			0.500, 0.500, null, playerId);
 
 		// final ship2 = game.addShipByClient(Role.Bot, -200, -400, ShipHullSize.MEDIUM, ShipWindows.TWO, ShipGuns.FOUR, null, null);

@@ -114,8 +114,8 @@ class GameEngine extends BaseEngine {
 		shipHitByShellCallback = null;
 	}
 
-	public function createEntity(role = Role.General, x:Float, y:Float, size:ShipHullSize, windows:ShipWindows, cannons:ShipGuns, cannonsRange:Int,
-			cannonsDamage:Int, armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float, id:String, ?ownerId:String) {
+	public function createEntity(role:Role, x:Float, y:Float, size:ShipHullSize, windows:ShipWindows, cannons:ShipGuns, cannonsRange:Int, cannonsDamage:Int,
+			armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float, id:String, ?ownerId:String) {
 		final entity = new EngineShipEntity(role, x, y, size, windows, cannons, cannonsRange, cannonsDamage, armor, hull, maxSpeed, acc, accDelay, turnDelay,
 			fireDelay, id, ownerId);
 		createMainEntity(entity, true);

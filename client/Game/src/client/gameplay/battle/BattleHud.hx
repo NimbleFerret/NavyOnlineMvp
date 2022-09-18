@@ -92,7 +92,6 @@ class RetryDialog {
 
 class BattleHud extends BasicHud {
 	private var movementText:h2d.Text;
-	private var dirText:h2d.Text;
 	private var systemText:h2d.Text;
 	private var latencyText:h2d.Text;
 	private var positionText:h2d.Text;
@@ -165,14 +164,11 @@ class BattleHud extends BasicHud {
 
 		addChild(compassBmp);
 
-		armorBar = new HorizontalStatsBar(fui, 0, 0, "Armor", "1000", 65);
-		hullBar = new HorizontalStatsBar(fui, 0, 0, "Hull", "1000", 65);
+		armorBar = new HorizontalStatsBar(fui, 0, 0, 'Armor', '1000', 65);
+		hullBar = new HorizontalStatsBar(fui, 0, 0, 'Hull', '1000', 65);
 
 		movementText = addText();
 		movementText.setScale(4);
-
-		dirText = addText();
-		dirText.setScale(4);
 
 		// positionText = addText();
 		// positionText.setScale(4);
@@ -205,15 +201,13 @@ class BattleHud extends BasicHud {
 	public function show(show:Bool) {
 		armorBar.show(show);
 		hullBar.show(show);
-		compassBmp.alpha = 0;
 
+		compassBmp.alpha = show ? 1 : 0;
 		leaveButton.alpha = show ? 1 : 0;
 		dailyTasksFui.alpha = show ? 1 : 0;
-
 		systemText.alpha = show ? 1 : 0;
 		latencyText.alpha = show ? 1 : 0;
 		movementText.alpha = show ? 1 : 0;
-		dirText.alpha = show ? 1 : 0;
 		leftCannonsText.alpha = show ? 1 : 0;
 		rightCannonsText.alpha = show ? 1 : 0;
 	}
@@ -238,7 +232,6 @@ class BattleHud extends BasicHud {
 		hullBar.updateBar(shipStats.hull, shipStats.currentHull);
 
 		movementText.text = "Speed: " + shipStats.currentSpeed + " / " + shipStats.maxSpeed;
-		dirText.text = "Direction: " + shipStats.dir;
 
 		switch (shipStats.dir) {
 			case East:

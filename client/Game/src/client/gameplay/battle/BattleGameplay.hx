@@ -401,7 +401,14 @@ class BattleGameplay extends BasicGameplay {
 		final shipWindows = ShipWindows.createByIndex(message.entity.shipWindows);
 		final shipGuns = ShipGuns.createByIndex(message.entity.shipGuns);
 
-		return new EngineShipEntity(Role.General, message.entity.x, message.entity.y, shipHullSize, shipWindows, shipGuns, message.entity.cannonsRange,
+		var role = Role.Player;
+		if (message.entity.role == 'Bot') {
+			role = Role.Bot;
+		} else if (message.entity.role == 'Boss') {
+			role = Role.Boss;
+		}
+
+		return new EngineShipEntity(role, message.entity.x, message.entity.y, shipHullSize, shipWindows, shipGuns, message.entity.cannonsRange,
 			message.entity.cannonsDamage, message.entity.armor, message.entity.hull, message.entity.maxSpeed, message.entity.acc, message.entity.accDelay,
 			message.entity.turnDelay, message.entity.fireDelay, message.entity.id, message.entity.ownerId);
 	}
@@ -412,7 +419,14 @@ class BattleGameplay extends BasicGameplay {
 			final shipWindows = ShipWindows.createByIndex(entity.shipWindows);
 			final shipGuns = ShipGuns.createByIndex(entity.shipGuns);
 
-			return new EngineShipEntity(Role.General, entity.x, entity.y, shipHullSize, shipWindows, shipGuns, entity.cannonsRange, entity.cannonsDamage,
+			var role = Role.Player;
+			if (entity.role == 'Bot') {
+				role = Role.Bot;
+			} else if (entity.role == 'Boss') {
+				role = Role.Boss;
+			}
+
+			return new EngineShipEntity(role, entity.x, entity.y, shipHullSize, shipWindows, shipGuns, entity.cannonsRange, entity.cannonsDamage,
 				entity.armor, entity.hull, entity.maxSpeed, entity.acc, entity.accDelay, entity.turnDelay, entity.fireDelay, entity.id, entity.ownerId);
 		});
 	}
