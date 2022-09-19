@@ -34,3 +34,5 @@ function changeSlide(direction) {
 
   slider.style.transform = `translateX(-${activeSlideIndex * width}px`;
 }
+
+history.pushState("", document.title, window.location.pathname); //https://www.navy.online
