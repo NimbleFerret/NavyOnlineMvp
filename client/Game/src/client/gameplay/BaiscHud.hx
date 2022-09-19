@@ -287,22 +287,22 @@ class BasicHud extends h2d.Scene {
 	}
 
 	function tokensRewardAlert(nvy:Int, aks:Int) {
-		final plate = newCustomPlate(this, 7, 4);
-
-		plate.setPosition(Main.ScreenWidth / 2 - plate.getBounds().width / 2, 100);
+		final plate = newCustomPlate(this, 5, 4);
 
 		final titleText = addText2(plate, "You've been rewarded!");
 
 		final nvyToken = new UiToken(TokenType.NVY, null);
 		nvyToken.setText(Std.string(nvy));
-		nvyToken.setPosition(titleText.x, titleText.y + 80);
+		nvyToken.setPosition(titleText.x, titleText.y + 40);
 
 		final aksToken = new UiToken(TokenType.AKS, null);
 		aksToken.setText(Std.string(aks));
-		aksToken.setPosition(nvyToken.x, nvyToken.y + 100);
+		aksToken.setPosition(nvyToken.x, nvyToken.y + 80);
 
 		plate.addChild(nvyToken);
 		plate.addChild(aksToken);
+
+		plate.setPosition(Main.ScreenWidth / 2, 100);
 
 		return plate;
 	}

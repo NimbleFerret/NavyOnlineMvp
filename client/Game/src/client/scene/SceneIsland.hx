@@ -51,7 +51,7 @@ class SceneIsland extends Scene implements EventListener {
 			game.startGameByClient('0x87400A03678dd03c8BF536404B5B14C609a23b79', [char1]);
 		}
 
-		camera.scale(2.5, 2.5);
+		// camera.scale(2., 2.5);
 	}
 
 	public override function render(e:Engine) {

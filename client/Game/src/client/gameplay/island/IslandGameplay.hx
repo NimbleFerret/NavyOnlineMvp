@@ -35,7 +35,7 @@ class IslandGameplay extends BasicGameplay {
 			engineMode = EngineMode.Server) {
 		super(scene, new IslandEngine(engineMode));
 
-		waterBg = new WaterBg(scene, -Main.ScreenWidth / 3.5, -Main.ScreenHeight / 3.5);
+		waterBg = new WaterBg(scene, -1650, -600, 5, 18, 9);
 
 		// Pass additional island info here.
 		islandsManager = new IslandsManager(scene, islandTerrain, islandMining);
@@ -53,6 +53,9 @@ class IslandGameplay extends BasicGameplay {
 				leaveCallback();
 			}
 		});
+
+		maxDragX = 200;
+		maxDragY = 100;
 	}
 
 	// --------------------------------------

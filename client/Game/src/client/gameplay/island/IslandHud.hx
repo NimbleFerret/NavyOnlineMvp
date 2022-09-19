@@ -11,12 +11,12 @@ class IslandHud extends BasicHud {
 		mainFui.verticalSpacing = 5;
 		mainFui.padding = 10;
 
-		final islandInfoPlate = newCustomPlate(mainFui, 7, 2);
+		final islandInfoPlate = newCustomPlate(mainFui, 6, 2);
 		islandInfoPlate.setPosition(5, 5);
 
 		final idText = addText2(islandInfoPlate, 'Island id: ' + islandId);
 		final ownerText = addText2(islandInfoPlate, 'Island owner: ' + Utils.MaskEthAddress(islandOwner));
-		ownerText.setPosition(idText.x, idText.y + 70);
+		ownerText.setPosition(idText.x, idText.y + 40);
 
 		addGuiButton(mainFui, 'Repair ship', false, function callback() {}, 2, 2);
 		addGuiButton(mainFui, 'Upgrade ship', false, function callback() {}, 2, 2);

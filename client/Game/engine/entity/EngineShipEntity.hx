@@ -338,25 +338,97 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	public function getCanonOffsetBySideAndIndex(side:Side, index:Int) {
 		var offset:PosOffsetArray;
 
+		// In order to correct position
+		var additionalOffsetX = 0;
+		var additionalOffsetY = 0;
+
+		if (side == Side.Left) {
+			if (direction == East) {
+				additionalOffsetX = 0;
+				additionalOffsetY = 20;
+			}
+			if (direction == NorthEast) {
+				additionalOffsetX = 14;
+				additionalOffsetY = 8;
+			}
+			if (direction == North) {
+				additionalOffsetX = 20;
+				additionalOffsetY = 0;
+			}
+			if (direction == NorthWest) {
+				additionalOffsetX = 14;
+				additionalOffsetY = -8;
+			}
+			if (direction == West) {
+				additionalOffsetX = 0;
+				additionalOffsetY = -20;
+			}
+			if (direction == SouthWest) {
+				additionalOffsetX = -14;
+				additionalOffsetY = -8;
+			}
+			if (direction == SouthEast) {
+				additionalOffsetX = -14;
+				additionalOffsetY = 8;
+			}
+			if (direction == South) {
+				additionalOffsetX = -20;
+				additionalOffsetY = 0;
+			}
+		} else {
+			if (direction == East) {
+				additionalOffsetX = 0;
+				additionalOffsetY = -20;
+			}
+			if (direction == NorthEast) {
+				additionalOffsetX = -14;
+				additionalOffsetY = -8;
+			}
+			if (direction == North) {
+				additionalOffsetX = -20;
+				additionalOffsetY = 0;
+			}
+			if (direction == NorthWest) {
+				additionalOffsetX = -14;
+				additionalOffsetY = 8;
+			}
+			if (direction == West) {
+				additionalOffsetX = 0;
+				additionalOffsetY = 20;
+			}
+			if (direction == SouthWest) {
+				additionalOffsetX = 14;
+				additionalOffsetY = 8;
+			}
+			if (direction == SouthEast) {
+				additionalOffsetX = 14;
+				additionalOffsetY = -8;
+			}
+			if (direction == South) {
+				additionalOffsetX = 20;
+				additionalOffsetY = 0;
+			}
+		}
+
 		if (shipHullSize == ShipHullSize.MEDIUM) {
 			offset = side == Side.Left ? EngineShipEntity.LeftCanonsOffsetByDirMid.get(direction) : EngineShipEntity.RightCanonsOffsetByDirMid.get(direction);
 		} else {
 			offset = side == Side.Left ? EngineShipEntity.LeftCanonsOffsetByDirSm.get(direction) : EngineShipEntity.RightCanonsOffsetByDirSm.get(direction);
 		}
 
-		var offsetX = offset.one.x;
-		var offsetY = offset.one.y;
+		var offsetX = offset.one.x - additionalOffsetX;
+		var offsetY = offset.one.y - additionalOffsetY;
 
 		if (index == 1) {
-			offsetX = offset.two.x;
-			offsetY = offset.two.y;
+			offsetX = offset.two.x - additionalOffsetX;
+			offsetY = offset.two.y - additionalOffsetY;
 		} else if (index == 2) {
-			offsetX = offset.three.x;
-			offsetY = offset.three.y;
+			offsetX = offset.three.x - additionalOffsetX;
+			offsetY = offset.three.y - additionalOffsetY;
+		} else if (index == 3) {
+			offsetX = offset.four.x - additionalOffsetX;
+			offsetY = offset.four.y - additionalOffsetY;
 		}
-
-		final resultX = x + offsetX;
-		final resultY = y + offsetY;
 
 		return {
 			x: x + offsetX,

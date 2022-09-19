@@ -46,6 +46,7 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 			};
 		}
 
+		// currentSpeed = 0;
 		currentSpeed = 380;
 		currentSpeed += this.shellRnd.speed;
 

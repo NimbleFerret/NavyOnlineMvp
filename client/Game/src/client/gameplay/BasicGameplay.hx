@@ -11,6 +11,8 @@ import engine.IslandEngine;
 import engine.entity.EngineBaseGameEntity;
 import engine.entity.EngineShipEntity;
 import hxd.Key in K;
+import hxd.Window;
+import h2d.col.Point;
 
 enum GameState {
 	Init;
@@ -28,10 +30,17 @@ abstract class BasicGameplay {
 	public var playerId:String;
 	public var playerEntityId:String;
 
+	public var maxDragX = 300;
+	public var maxDragY = 300;
+
 	final clientMainEntities = new Map<String, ClientBaseGameEntity>();
 	var clientMainEntitiesCount = 0;
 
 	private final scene:h2d.Scene;
+
+	private var isDragging = false;
+	private var dragMousePosStart:Point;
+	private var currentDrag = new Point(0, 0);
 
 	public function new(scene:h2d.Scene, baseEngine:BaseEngine) {
 		this.scene = scene;
@@ -50,8 +59,8 @@ abstract class BasicGameplay {
 
 			final playerEntity = getPlayerEntity();
 			if (playerEntity != null) {
-				scene.camera.x = hxd.Math.lerp(scene.camera.x, playerEntity.x, 0.1);
-				scene.camera.y = hxd.Math.lerp(scene.camera.y, playerEntity.y, 0.1);
+				scene.camera.x = hxd.Math.lerp(scene.camera.x, playerEntity.x, 0.1) - (currentDrag.x * 0.5);
+				scene.camera.y = hxd.Math.lerp(scene.camera.y, playerEntity.y, 0.1) - (currentDrag.y * 0.5);
 			}
 		}
 	}
@@ -61,6 +70,34 @@ abstract class BasicGameplay {
 	}
 
 	private function updateInput() {
+		if (isDragging) {
+			final newMousePos = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
+			currentDrag.x = newMousePos.x - dragMousePosStart.x;
+			currentDrag.y = newMousePos.y - dragMousePosStart.y;
+
+			final currentDragX = Math.abs(currentDrag.x);
+			final currentDragY = Math.abs(currentDrag.y);
+			if (currentDragX > maxDragX) {
+				currentDrag.x = currentDrag.x > 0 ? maxDragX : -maxDragX;
+			}
+			if (currentDragY > maxDragY) {
+				currentDrag.y = currentDrag.y > 0 ? maxDragY : -maxDragY;
+			}
+		}
+
+		if (!isDragging && hxd.Key.isDown(hxd.Key.MOUSE_RIGHT)) {
+			isDragging = true;
+			dragMousePosStart = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
+			currentDrag.x = 0;
+			currentDrag.y = 0;
+		}
+
+		if (isDragging && !hxd.Key.isDown(hxd.Key.MOUSE_RIGHT)) {
+			isDragging = false;
+			currentDrag.x = 0;
+			currentDrag.y = 0;
+		}
+
 		final left = K.isDown(K.LEFT);
 		final right = K.isDown(K.RIGHT);
 		final up = K.isDown(K.UP);
