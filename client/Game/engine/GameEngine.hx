@@ -1,6 +1,5 @@
 package engine;
 
-import client.entity.ship.ShipGun;
 import engine.BaseEngine;
 import engine.entity.EngineBaseGameEntity;
 import engine.entity.EngineBaseGameEntity.Side;

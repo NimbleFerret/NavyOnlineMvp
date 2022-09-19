@@ -441,12 +441,6 @@ class BattleGameplay extends BasicGameplay {
 
 	private function clearObjects() {
 		effectsManager.clear();
-
-		for (value in clientMainEntities) {
-			scene.removeChild(value);
-		}
-		for (value in clientShells) {
-			scene.removeChild(value);
-		}
+		scene.removeChildren();
 	}
 }

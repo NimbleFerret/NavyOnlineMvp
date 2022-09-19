@@ -16,7 +16,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 	private var leaveCallback:Void->Void;
 	private var diedCallback:Void->Void;
 
-	public function new(width:Int, height:Int, leaveCallback:Void->Void, diedCallback:Void->Void) {
+	public function new(leaveCallback:Void->Void, diedCallback:Void->Void) {
 		super();
 		this.leaveCallback = leaveCallback;
 		this.diedCallback = diedCallback;
