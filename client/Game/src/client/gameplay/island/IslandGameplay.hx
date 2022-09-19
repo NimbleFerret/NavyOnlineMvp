@@ -35,7 +35,7 @@ class IslandGameplay extends BasicGameplay {
 			engineMode = EngineMode.Server) {
 		super(scene, new IslandEngine(engineMode));
 
-		waterBg = new WaterBg(scene, -1650, -600, 5, 18, 9);
+		waterBg = new WaterBg(scene, -1650, -600, 5, 19, 9);
 
 		// Pass additional island info here.
 		islandsManager = new IslandsManager(scene, islandTerrain, islandMining);
@@ -43,7 +43,7 @@ class IslandGameplay extends BasicGameplay {
 		final islandEngine = cast(baseEngine, IslandEngine);
 
 		for (lineCollider in islandEngine.lineColliders) {
-			addLineCollider(scene, lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2);
+			// addLineCollider(scene, lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2);
 		}
 
 		hud = new IslandHud(islandId, islandOwner, function callback() {
@@ -123,30 +123,30 @@ class IslandGameplay extends BasicGameplay {
 		for (character in clientMainEntities) {
 			character.update(dt);
 
-			if (character.debugRect == null) {
-				character.debugRect = new h2d.Graphics(scene);
-			}
-			if (character.debugRect != null) {
-				character.debugRect.clear();
-			}
+			// if (character.debugRect == null) {
+			// 	character.debugRect = new h2d.Graphics(scene);
+			// }
+			// if (character.debugRect != null) {
+			// 	character.debugRect.clear();
+			// }
 
-			final graphics = character.debugRect;
-			final rect = character.getEngineEntityRect();
+			// final graphics = character.debugRect;
+			// final rect = character.getEngineEntityRect();
 
-			graphics.lineStyle(3, character.shapeColor);
+			// graphics.lineStyle(3, character.shapeColor);
 
-			// Top line
-			graphics.lineTo(rect.getTopLeftPoint().x, rect.getTopLeftPoint().y);
-			graphics.lineTo(rect.getTopRightPoint().x, rect.getTopRightPoint().y);
+			// // Top line
+			// graphics.lineTo(rect.getTopLeftPoint().x, rect.getTopLeftPoint().y);
+			// graphics.lineTo(rect.getTopRightPoint().x, rect.getTopRightPoint().y);
 
-			// Right line
-			graphics.lineTo(rect.getBottomRightPoint().x, rect.getBottomRightPoint().y);
+			// // Right line
+			// graphics.lineTo(rect.getBottomRightPoint().x, rect.getBottomRightPoint().y);
 
-			// Bottom line
-			graphics.lineTo(rect.getBottomLeftPoint().x, rect.getBottomLeftPoint().y);
+			// // Bottom line
+			// graphics.lineTo(rect.getBottomLeftPoint().x, rect.getBottomLeftPoint().y);
 
-			// Left line
-			graphics.lineTo(rect.getTopLeftPoint().x, rect.getTopLeftPoint().y);
+			// // Left line
+			// graphics.lineTo(rect.getTopLeftPoint().x, rect.getTopLeftPoint().y);
 		}
 	}
 

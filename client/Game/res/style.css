@@ -1,0 +1,52 @@
+.mybox {
+    background: #080;
+    padding: -10;
+}
+
+view.mybox {
+    padding: 10;
+}
+
+StartGameDialog {
+    max-width: 400;
+    layout: horizontal;
+}
+
+RetryDialog {
+    background: #333;
+    max-width: 400;
+    layout: vertical;
+}
+
+button {
+    background: #333;
+    fill-width: true;
+    height: 90;
+    transition: background 0.5;
+}
+
+button.highlight {
+    background: #a33;
+}
+
+button text {
+    align: middle middle;
+}
+
+button:hover {
+    background: #444;
+}
+
+button text {
+    align: middle middle;
+    color: #aaa;
+    transition: color;
+}
+
+button:hover text {
+    color: white;
+}
+
+button:active {
+    background: #666;
+}

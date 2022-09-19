@@ -111,7 +111,11 @@ class ClientShip extends ClientBaseGameEntity {
 		if (engineShipEntity.shipHullSize == ShipHullSize.SMALL) {
 			nickname.setPosition(-50, -180);
 		} else {
-			nickname.setPosition(-60, -220);
+			if (engineShipEntity.role == Role.Player) {
+				nickname.setPosition(-60, -220);
+			} else {
+				nickname.setPosition(-150, -220);
+			}
 		}
 		nickname.setScale(4);
 		nickname.dropShadow = {

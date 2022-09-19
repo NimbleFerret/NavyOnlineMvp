@@ -3,13 +3,15 @@ package client.network;
 import client.network.RestProtocol;
 import haxe.http.HttpJs;
 
+final ServerUrl = 'http://localhost:3000';
+
 class Rest {
 	public static final instance:Rest = new Rest();
 
 	private function new() {}
 
 	public function signInOrUp(ethAddress:String, callback:PlayerData->Void) {
-		final req = new HttpJs("http://localhost:3000/app/signInOrUp");
+		final req = new HttpJs(ServerUrl + "/app/signInOrUp");
 		final body = {ethAddress: ethAddress};
 		req.setPostData(haxe.Json.stringify(body));
 		req.addHeader("Content-type", "application/json");
@@ -25,7 +27,7 @@ class Rest {
 	}
 
 	public function getWorldInfo(callback:GameWorldData->Void) {
-		final req = new HttpJs("http://localhost:3000/app/world");
+		final req = new HttpJs(ServerUrl + "/app/world");
 		req.request();
 		req.onData = function onData(data:String) {
 			if (callback != null) {
@@ -36,7 +38,7 @@ class Rest {
 	}
 
 	public function worldMove(ethAddress:String, x:Int, y:Int, callback:Bool->Void) {
-		final req = new HttpJs("http://localhost:3000/app/world/move");
+		final req = new HttpJs(ServerUrl + "/app/world/move");
 		final body = {
 			ethAddress: ethAddress,
 			x: x,
@@ -54,7 +56,7 @@ class Rest {
 	}
 
 	public function worldEnter(ethAddress:String, x:Int, y:Int, callback:JoinSectorResponse->Void) {
-		final req = new HttpJs("http://localhost:3000/app/world/enter");
+		final req = new HttpJs(ServerUrl + "/app/world/enter");
 		final body = {
 			ethAddress: ethAddress,
 			x: x,
@@ -73,7 +75,7 @@ class Rest {
 	}
 
 	public function getFounderCollections(callback:FounderCollections->Void) {
-		final req = new HttpJs("http://localhost:3000/app/founders");
+		final req = new HttpJs(ServerUrl + "/app/founders");
 		req.request();
 		req.onData = function onData(data:String) {
 			if (callback != null) {
@@ -84,7 +86,7 @@ class Rest {
 	}
 
 	public function getNfts(ethAddress:String, callback:NFTs->Void) {
-		final req = new HttpJs('http://localhost:3000/app/nfts/' + ethAddress);
+		final req = new HttpJs(ServerUrl + '/app/nfts/' + ethAddress);
 		req.request();
 		req.onData = function onData(data:String) {
 			if (callback != null) {
@@ -92,5 +94,13 @@ class Rest {
 				callback(new NFTs(json.captains, json.ships, json.islands));
 			}
 		};
+	}
+
+	public function startMining(ethAddress:String, islandId:String) {
+		final req = new HttpJs(ServerUrl + "/app/startMining");
+		final body = {ethAddress: ethAddress, islandId: islandId};
+		req.setPostData(haxe.Json.stringify(body));
+		req.addHeader("Content-type", "application/json");
+		req.request(true);
 	}
 }

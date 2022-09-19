@@ -47,8 +47,9 @@ class SceneMainHud extends BasicHud {
 	private var shipAccText:h2d.Text;
 	private var shipAccDelayText:h2d.Text;
 	private var shipTurnDelayText:h2d.Text;
-
+	private var shipFireDelayText:h2d.Text;
 	private var shipIntegrityText:h2d.Text;
+	private var shipRepairButton:h2d.Object;
 
 	// Island UI
 	private var islandDescFui:h2d.Flow;
@@ -74,11 +75,12 @@ class SceneMainHud extends BasicHud {
 	private final refreshNFTsCallback:Void->Void;
 	private final collectRewardCallback:Void->Void;
 	private final startMiningCallback:Void->Void;
+	private final repairCallback:Void->Void;
 
 	private var uiInitiated = false;
 
 	public function new(metamaskLoginCallback:String->Void, unloggedInitCallback:Void->Void, startGameCallback:Void->Void, refreshNFTsCallback:Void->Void,
-			collectRewardCallback:Void->Void, startMiningCallback:Void->Void) {
+			collectRewardCallback:Void->Void, startMiningCallback:Void->Void, repairCallback:Void->Void) {
 		super();
 
 		this.metamaskLoginCallback = metamaskLoginCallback;
@@ -86,12 +88,15 @@ class SceneMainHud extends BasicHud {
 		this.refreshNFTsCallback = refreshNFTsCallback;
 		this.collectRewardCallback = collectRewardCallback;
 		this.startMiningCallback = startMiningCallback;
+		this.repairCallback = repairCallback;
 
 		Main.IsWeb3Available = Moralis.isEthereumBrowser();
 
 		if (!Main.IsWeb3Available) {
-			Player.instance.ethAddress = '0x87400A03678dd03c8BF536404B5B14C609a23b79';
-			// Player.instance.ethAddress = Uuid.short();
+			// Player.instance.ethAddress = '0xd6d6EE855ADDB';
+			// Player.instance.ethAddress = '0xd6d6ee855addb';
+			Player.instance.ethAddress = '0xc69d232ec38662ab51b334c48f2e8be625d55095';
+			// Player.instance.ethAddress = Uuid.short().toLowerCase();
 
 			showMetamaskError(function callback() {
 				if (unloggedInitCallback != null) {
@@ -106,8 +111,6 @@ class SceneMainHud extends BasicHud {
 				}
 			});
 		}
-
-		addBuyNFTsStuff();
 	}
 
 	public function initiateWeb3(userName:String) {
@@ -152,31 +155,31 @@ class SceneMainHud extends BasicHud {
 	}
 
 	public function updateCaptainUi(captainEntity:CaptainEntity) {
-		// if (captainEntity.type == 1 ? true : false) {
-		// 	captainDescFreePlate.alpha = 1;
-		// 	captainDescCollectiblePlate.alpha = 0;
+		if (captainEntity.type == 1 ? true : false) {
+			captainDescFreePlate.alpha = 1;
+			captainDescCollectiblePlate.alpha = 0;
 
-		// 	captainTypeText.text = 'Free';
-		// 	captainLevelText.text = 'Level: 0/0';
-		// 	captainRarityText.text = 'Rarity: Common';
-		// 	captainTraitsText.alpha = 0;
-		// 	stakingIncomeText.alpha = 0;
-		// 	miningIncomeText.alpha = 0;
-		// } else {
-		// 	captainDescFreePlate.alpha = 0;
-		// 	captainDescCollectiblePlate.alpha = 1;
+			captainTypeText.text = 'Free';
+			captainLevelText.text = 'Level: 0/0';
+			captainRarityText.text = 'Rarity: Common';
+			captainTraitsText.alpha = 0;
+			stakingIncomeText.alpha = 0;
+			miningIncomeText.alpha = 0;
+		} else {
+			captainDescFreePlate.alpha = 0;
+			captainDescCollectiblePlate.alpha = 1;
 
-		// 	captainTypeText.text = 'Collectible';
-		// 	captainLevelText.text = 'Level: ' + captainEntity.level + '/' + 10;
-		// 	captainRarityText.text = 'Rarity: ' + captainEntity.rarity;
-		// 	captainTraitsText.text = 'Traits: -';
-		// 	stakingIncomeText.text = 'Staking: ' + captainEntity.stakingRewardNVY + ' NVY/day';
-		// 	miningIncomeText.text = 'Mining: ' + captainEntity.miningRewardNVY + ' NVY/day';
+			captainTypeText.text = 'Collectible';
+			captainLevelText.text = 'Level: ' + captainEntity.level + '/' + 10;
+			captainRarityText.text = 'Rarity: ' + (captainEntity.rarity == 3 ? 'Legendary' : 'Common');
+			captainTraitsText.text = 'Traits: -';
+			stakingIncomeText.text = 'Staking: ' + captainEntity.stakingRewardNVY + ' NVY/day';
+			miningIncomeText.text = 'Mining: ' + captainEntity.miningRewardNVY + ' NVY/day';
 
-		// 	captainTraitsText.alpha = 1;
-		// 	stakingIncomeText.alpha = 1;
-		// 	miningIncomeText.alpha = 1;
-		// }
+			captainTraitsText.alpha = 1;
+			stakingIncomeText.alpha = 1;
+			miningIncomeText.alpha = 1;
+		}
 	}
 
 	public function updateShipUi(shipEntity:ShipEntity) {
@@ -190,32 +193,39 @@ class SceneMainHud extends BasicHud {
 			shipSizeText.text = 'Size: Small';
 			shipCannonsText.text = 'Cannons: 2';
 
-			shipArmorText.text = 'Armor: 1000';
-			shipHullText.text = 'Hull: 1000';
-			shipMaxSpeedText.text = 'Max speed: 100';
+			shipArmorText.text = 'Armor: 300';
+			shipHullText.text = 'Hull: 300';
+			shipMaxSpeedText.text = 'Max speed: 150';
 			shipAccText.text = 'Acceleration: 50';
-			shipAccDelayText.text = 'Acc. delay: 100';
+			shipAccDelayText.text = 'Acc. delay: 200';
 			shipTurnDelayText.text = 'Turn delay: 200';
+			shipFireDelayText.text = 'Fire delay: 500';
 
 			shipIntegrityText.alpha = 0;
+			// shipRepairButton.alpha = 0;
 		} else {
 			shipDescFreePlate.alpha = 0;
 			shipDescCollectiblePlate.alpha = 1;
 
 			shipTypeText.text = 'Collectible ' + shipEntity.id + '/500';
 			shipLevelText.text = 'Level: ' + shipEntity.level + '/' + 10;
-			shipRarityText.text = 'Rarity: ' + shipEntity.rarity;
+			shipRarityText.text = 'Rarity: ' + (shipEntity.rarity == 3 ? 'Legendary' : 'Common');
 			shipSizeText.text = 'Size: ' + (shipEntity.size == 1 ? 'Small' : 'Middle');
 			shipCannonsText.text = 'Cannons: ' + shipEntity.cannons;
-			shipArmorText.text = 'Armor: 1000';
-			shipHullText.text = 'Hull: 1000';
-			shipMaxSpeedText.text = 'Max speed: 100';
-			shipAccText.text = 'Acceleration: 50';
-			shipAccDelayText.text = 'Acc. delay: 100';
-			shipTurnDelayText.text = 'Turn delay: 200';
+			shipArmorText.text = 'Armor: ' + shipEntity.armor;
+			shipHullText.text = 'Hull: ' + shipEntity.hull;
+			shipMaxSpeedText.text = 'Max speed: ' + shipEntity.maxSpeed;
+			shipAccText.text = 'Acceleration: ' + shipEntity.accelerationStep;
+			shipAccDelayText.text = 'Acc. delay: ' + shipEntity.accelerationDelay;
+			shipTurnDelayText.text = 'Turn delay: ' + shipEntity.rotationDelay;
+			shipFireDelayText.text = 'Fire delay: ' + shipEntity.fireDelay;
 
 			shipIntegrityText.text = 'Integrity: ' + shipEntity.currentIntegrity + '/' + shipEntity.maxIntegrity;
 			shipIntegrityText.alpha = 1;
+
+			if (shipEntity.currentIntegrity == 0) {
+				// shipRepairButton.alpha = 1;
+			}
 		}
 	}
 
@@ -229,7 +239,7 @@ class SceneMainHud extends BasicHud {
 		islandIncomeText.text = 'Income: ' + islandEntity.miningRewardNVY + ' NVY/day';
 
 		if (islandEntity.mining) {
-			islandCollectRewardButton.alpha = 1;
+			islandCollectRewardButton.alpha = 0;
 			islandStartMiningButton.alpha = 0;
 		} else {
 			islandCollectRewardButton.alpha = 0;
@@ -286,6 +296,10 @@ class SceneMainHud extends BasicHud {
 
 	public function showMetamaskLogin(callback:Void->Void) {
 		alertDialog('You have Web3 plugin installed !\nPlease login and enjoy all game features !', callback);
+	}
+
+	public function showShipRepairDialog(?parent:h2d.Object) {
+		alertDialog('Your ship is a Hole Trough, you must repair it for future use !\nRepair cost is 2 NVY and 55 AKS.', null, parent);
 	}
 
 	// ----------------------------------
@@ -372,10 +386,10 @@ class SceneMainHud extends BasicHud {
 
 			final shipPlatesContainer = new h2d.Object(shipDescFui);
 
-			shipDescFreePlate = newCustomPlate(shipPlatesContainer, 5, 8);
+			shipDescFreePlate = newCustomPlate(shipPlatesContainer, 5, 9);
 			shipDescFreePlate.setPosition(5, 5);
 
-			shipDescCollectiblePlate = newCustomPlate(shipPlatesContainer, 5, 9);
+			shipDescCollectiblePlate = newCustomPlate(shipPlatesContainer, 5, 10);
 			shipDescCollectiblePlate.setPosition(5, 5);
 			shipDescCollectiblePlate.alpha = 0;
 
@@ -413,9 +427,22 @@ class SceneMainHud extends BasicHud {
 			shipTurnDelayText = addText2(shipPlatesContainer, 'Turn delay: 200');
 			shipTurnDelayText.setPosition(shipAccDelayText.x, shipAccDelayText.y + 40);
 
+			shipFireDelayText = addText2(shipPlatesContainer, 'Fire delay: 200');
+			shipFireDelayText.setPosition(shipTurnDelayText.x, shipTurnDelayText.y + 40);
+
 			shipIntegrityText = addText2(shipPlatesContainer, 'Integrity: 10/10');
-			shipIntegrityText.setPosition(shipTurnDelayText.x, shipTurnDelayText.y + 40);
+			shipIntegrityText.setPosition(shipFireDelayText.x, shipFireDelayText.y + 40);
 			shipIntegrityText.alpha = 0;
+
+			// shipRepairButton = addGuiButton(shipPlatesContainer, "Repair", false, function clarify() {
+			// 	yesNoDialog('Repair ship ?\nCost: 2 NVY, 55 AKS', function positive() {
+			// 		if (repairCallback != null) {
+			// 			repairCallback();
+			// 		}
+			// 	}, function negative() {});
+			// }, 2, 2);
+			// shipRepairButton.setPosition(shipIntegrityText.x - 15, shipIntegrityText.y + 40);
+			// shipRepairButton.alpha = 0;
 
 			// ---------------------------------
 			// Island UI stuff
@@ -459,8 +486,6 @@ class SceneMainHud extends BasicHud {
 			// Play button
 			final startGameButton = addGuiButton(this, "Start game", false, startGameCallback, 2, 2);
 			startGameButton.setPosition(Main.ScreenWidth / 2 - 300, Main.ScreenHeight - 100);
-
-			addOrUpdateDailyTasks();
 		}
 	}
 
@@ -489,23 +514,23 @@ class SceneMainHud extends BasicHud {
 
 		addGuiButton(buyButtonsFui, "Buy captain", true, function callback() {
 			Moralis.buyFounderCaptain(function successCallback() {
-				alertDialog('You have bought founder edition captain !\nStay a while and listen...while Cronos processing it.', callback);
+				alertDialog('You have bought founder edition captain !\nStay a while and listen...while Cronos processing it.', null);
 			}, function errorCallback() {
-				alertDialog('Error occured during captain buying !\nPlease report to us or try again !', callback);
+				alertDialog('Error occured during captain buying !\nPlease report to us or try again !', null);
 			});
 		}, 2, 2);
 		addGuiButton(buyButtonsFui, "Buy ship", true, function callback() {
 			Moralis.buyFounderShip(function successCallback() {
-				alertDialog('You have bought founder edition ship !\nStay a while and listen...while Cronos processing it.', callback);
+				alertDialog('You have bought founder edition ship !\nStay a while and listen...while Cronos processing it.', null);
 			}, function errorCallback() {
-				alertDialog('Error occured during ship buying !\nPlease report to us or try again !', callback);
+				alertDialog('Error occured during ship buying !\nPlease report to us or try again !', null);
 			});
 		}, 2, 2);
 		addGuiButton(buyButtonsFui, "Buy island", true, function callback() {
 			Moralis.buyFounderIsland(function successCallback() {
-				alertDialog('You have bought founder edition island !\nStay a while and listen...while Cronos processing it.', callback);
+				alertDialog('You have bought founder edition island !\nStay a while and listen...while Cronos processing it.', null);
 			}, function errorCallback() {
-				alertDialog('Error occured during island buying !\nPlease report to us or try again !', callback);
+				alertDialog('Error occured during island buying !\nPlease report to us or try again !', null);
 			});
 		}, 2, 2);
 	}

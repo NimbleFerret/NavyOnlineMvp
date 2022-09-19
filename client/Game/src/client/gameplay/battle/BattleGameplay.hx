@@ -94,6 +94,14 @@ class BattleGameplay extends BasicGameplay {
 				if (clientEntity != null) {
 					final clientShip = cast(clientEntity, ClientShip);
 
+					for (i in 0...7) {
+						final dirX = Std.random(2);
+						final dirY = Std.random(2);
+						final offsetX = Std.random(50);
+						final offsetY = Std.random(50);
+						effectsManager.addShipExplosion(clientShip.x + (dirX == 1 ? offsetX : -offsetX), clientShip.y + (dirY == 1 ? offsetY : -offsetY));
+					}
+
 					clientShip.clearDebugGraphics(scene);
 					scene.removeChild(clientShip);
 
@@ -404,20 +412,20 @@ class BattleGameplay extends BasicGameplay {
 	// Utils
 
 	public function jsEntityToEngineEntity(message:Dynamic):EngineBaseGameEntity {
-		final shipHullSize = ShipHullSize.createByIndex(message.entity.shipHullSize);
-		final shipWindows = ShipWindows.createByIndex(message.entity.shipWindows);
-		final shipGuns = ShipGuns.createByIndex(message.entity.shipGuns);
+		final shipHullSize = ShipHullSize.createByIndex(message.shipHullSize);
+		final shipWindows = ShipWindows.createByIndex(message.shipWindows);
+		final shipGuns = ShipGuns.createByIndex(message.shipGuns);
 
 		var role = Role.Player;
-		if (message.entity.role == 'Bot') {
+		if (message.role == 'Bot') {
 			role = Role.Bot;
-		} else if (message.entity.role == 'Boss') {
+		} else if (message.role == 'Boss') {
 			role = Role.Boss;
 		}
 
-		return new EngineShipEntity('', message.entity.free, role, message.entity.x, message.entity.y, shipHullSize, shipWindows, shipGuns,
-			message.entity.cannonsRange, message.entity.cannonsDamage, message.entity.armor, message.entity.hull, message.entity.maxSpeed, message.entity.acc,
-			message.entity.accDelay, message.entity.turnDelay, message.entity.fireDelay, message.entity.id, message.entity.ownerId);
+		return new EngineShipEntity('', message.free, role, message.x, message.y, shipHullSize, shipWindows, shipGuns, message.cannonsRange,
+			message.cannonsDamage, message.armor, message.hull, message.maxSpeed, message.acc, message.accDelay, message.turnDelay, message.fireDelay,
+			message.id, message.ownerId);
 	}
 
 	public function jsEntitiesToEngineEntities(entities:Dynamic):Array<EngineBaseGameEntity> {

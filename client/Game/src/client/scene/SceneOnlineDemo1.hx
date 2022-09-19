@@ -20,7 +20,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		super();
 		this.leaveCallback = leaveCallback;
 		this.diedCallback = diedCallback;
-		scaleMode = LetterBox(1920, 1080, false, Center, Center);
+		scaleMode = LetterBox(1920, 1080, true, Center, Center);
 		camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
 	}
 
@@ -92,7 +92,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 	public function notify(event:String, message:Dynamic) {
 		switch (event) {
 			case SocketProtocol.SocketServerEventGameInit:
-				game.startGame(Player.instance.playerData.ethAddress, message);
+				game.startGame(Player.instance.playerData.ethAddress.toLowerCase(), message);
 			case SocketProtocol.SocketServerEventAddEntity:
 				game.addEntity(message);
 			case SocketProtocol.SocketServerEventRemoveEntity:

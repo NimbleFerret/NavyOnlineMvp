@@ -52,8 +52,12 @@ class SceneMain extends Scene {
 		}, function unloggedInitCallback() {
 			signInOrUp();
 		}, function startGameCallback() {
-			if (startCallback != null) {
-				startCallback();
+			if (ships[currentShipIndex].type == 2 && ships[currentShipIndex].currentIntegrity == 0) {
+				hud.showShipRepairDialog(this);
+			} else {
+				if (startCallback != null) {
+					startCallback();
+				}
 			}
 		}, function refreshNFTsCallback() {
 			trace('refreshNFTsCallback');
@@ -63,17 +67,28 @@ class SceneMain extends Scene {
 			}
 			trace('collectRewardCallback');
 		}, function startMining() {
-			if (islands[currentIslandIndex].mining) {
-				// TODO send request
+			if (!islands[currentIslandIndex].mining) {
+				trace(islands[currentIslandIndex]);
+				trace('mining started 1');
+				Moralis.startIslandMining(islands[currentIslandIndex].id, function miningStarted() {
+					Rest.instance.startMining(client.Player.instance.ethAddress, islands[currentIslandIndex].id);
+					trace('mining started');
+				}, function miningErrir() {
+					trace('minint start error');
+				});
 			}
 			trace('startMining');
+		}, function repairCallback() {
+			Moralis.repairShip(ships[currentShipIndex].id, function repairSuccess() {
+				trace('repair success');
+			}, function repairError() {
+				trace('repair error');
+			});
 		});
 
 		// Basic ship position
 		baseShipX = Main.ScreenWidth / 2 - 230 + 200;
 		baseShipY = Main.ScreenHeight / 2 + 30;
-
-		initiateBalances();
 	}
 
 	public override function render(e:Engine) {
@@ -87,35 +102,56 @@ class SceneMain extends Scene {
 
 	public function start() {
 		if (hud != null) {
-			hud.addOrUpdateDailyTasks();
 			updateBalances();
+
+			if (signedInOrUpBefore) {
+				signInOrUp();
+			}
 		}
 	}
 
 	public function updateBalances() {
+		trace(client.Player.instance.playerData);
 		if (nvyTokens != null && aksTokens != null && client.Player.instance.playerData != null) {
 			nvyTokens.setText(Std.string(client.Player.instance.playerData.nvy));
 			aksTokens.setText(Std.string(client.Player.instance.playerData.aks));
 		}
 	}
 
+	private var signedInOrUpBefore = false;
+
 	private function signInOrUp() {
 		Rest.instance.signInOrUp(client.Player.instance.ethAddress, function callback(player:PlayerData) {
 			client.Player.instance.playerData = player;
 
-			currentCaptainIndex = 0;
-			currentShipIndex = 0;
-			currentIslandIndex = 0;
+			if (client.Player.instance.ethAddress.length >= 42) {
+				hud.addOrUpdateDailyTasks();
+			}
 
 			captains = player.ownedCaptains;
 			ships = player.ownedShips;
 			islands = player.ownedIslands;
 
-			hud.initiate();
+			if (!signedInOrUpBefore) {
+				currentCaptainIndex = 0;
+				currentShipIndex = 0;
+				currentIslandIndex = 0;
+				hud.initiate();
+				initiateCaptains();
+				initiateShips();
+				initiateIslands();
+			} else {
+				if (!islandsAdded && islands.length > 0) {
+					initiateIslands();
+				}
+				changeCaptain(0);
+				changeShip(0);
+				changeIsland(0);
+			}
 
-			initiateCaptains();
-			initiateShips();
-			initiateIslands();
+			updateBalances();
+
+			signedInOrUpBefore = true;
 		});
 	}
 
@@ -131,8 +167,6 @@ class SceneMain extends Scene {
 				if (currentCaptainIndex < 0) {
 					currentCaptainIndex = captains.length - 1;
 				}
-			} else {
-				currentCaptainIndex = 0;
 			}
 			final newCaptainInfo = captains[currentCaptainIndex];
 			currentCaptain.setVisuals(newCaptainInfo.head, newCaptainInfo.haircutOrHat, newCaptainInfo.clothes, newCaptainInfo.bg, newCaptainInfo.acc);
@@ -153,8 +187,6 @@ class SceneMain extends Scene {
 				if (currentShipIndex < 0) {
 					currentShipIndex = ships.length - 1;
 				}
-			} else {
-				currentShipIndex = 0;
 			}
 
 			final newShipInfo = ships[currentShipIndex];
@@ -191,6 +223,7 @@ class SceneMain extends Scene {
 			hud.updateShipUi(newShipInfo);
 
 			client.Player.instance.currentShipId = newShipInfo.type == 1 ? 'free' : newShipInfo.id;
+			client.Player.instance.isCurrentShipIsFree = newShipInfo.type == 1;
 		}
 	}
 
@@ -203,7 +236,7 @@ class SceneMain extends Scene {
 				terrainType = IslandTerrainType.SNOW;
 			}
 			currentIsland = new UiIsland(terrainType);
-			// miningAnimation.alpha = islands[index].mining ? 1 : 0;
+			miningAnimation.alpha = islands[index].mining ? 1 : 0;
 		}
 
 		if (islands.length > 1 || dir == 0) {
@@ -239,11 +272,11 @@ class SceneMain extends Scene {
 	// ---------------------------------
 
 	private function initiateBalances() {
-		nvyTokens = new UiToken(TokenType.NVY, hud.widePlate(2));
-		aksTokens = new UiToken(TokenType.AKS, hud.widePlate(2));
+		nvyTokens = new UiToken(TokenType.NVY, null);
+		aksTokens = new UiToken(TokenType.AKS, null);
 
-		nvyTokens.setPosition(Main.ScreenWidth + 30, 16);
-		aksTokens.setPosition(Main.ScreenWidth + 30, 134);
+		nvyTokens.setPosition(300, 32);
+		aksTokens.setPosition(500, 32);
 
 		addChild(nvyTokens);
 		addChild(aksTokens);
@@ -289,8 +322,13 @@ class SceneMain extends Scene {
 		changeShip(0);
 	}
 
+	// TODO removeMeInFuturePls
+	private var islandsAdded = false;
+
 	private function initiateIslands() {
 		if (islands.length > 0) {
+			islandsAdded = true;
+
 			final miningAnimation1 = hxd.Res.mine_anims._1.toTile();
 			final miningAnimation2 = hxd.Res.mine_anims._2.toTile();
 			final miningAnimation3 = hxd.Res.mine_anims._3.toTile();

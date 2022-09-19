@@ -44,6 +44,7 @@ typedef ShipEntity = {
 	accelerationStep:Int,
 	accelerationDelay:Int,
 	rotationDelay:Int,
+	fireDelay:Int,
 	cannons:Int,
 	cannonsRange:Int,
 	cannonsDamage:Int,

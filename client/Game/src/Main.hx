@@ -53,7 +53,16 @@ class Main extends GuiApp {
 		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
 
 		sceneShipsDemo = new SceneShipsDemo();
-		sceneIsland = new SceneIsland(engine.width, engine.height, function leaveCallback() {});
+		sceneIsland = new SceneIsland(engine.width, engine.height, function leaveCallback() {
+			currentScene = SceneGlobalMode;
+			sceneGlobalMode.start();
+
+			sevents.removeScene(lastAddedIteractiveScene);
+			lastAddedIteractiveScene = sceneGlobalMode.getHud();
+			sevents.addScene(lastAddedIteractiveScene);
+
+			setScene2D(sceneGlobalMode);
+		});
 
 		// TODO refactor scene load and unload
 		switch (defaultScene) {
@@ -96,6 +105,11 @@ class Main extends GuiApp {
 		}, function diedCallback() {
 			currentScene = SceneMain;
 			sceneMain.start();
+
+			sevents.removeScene(lastAddedIteractiveScene);
+			lastAddedIteractiveScene = sceneMain.getHud();
+			sevents.addScene(lastAddedIteractiveScene);
+
 			setScene2D(sceneMain);
 		});
 

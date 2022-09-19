@@ -13,4 +13,8 @@ extern class Moralis {
 	static function buyFounderIsland(successCallback:Void->Void, errorCallback:Void->Void):Void;
 
 	static function buyFounderCaptain(successCallback:Void->Void, errorCallback:Void->Void):Void;
+
+	static function repairShip(shipId:String, successCallback:Void->Void, errorCallback:Void->Void):Void;
+
+	static function startIslandMining(islandId:String, successCallback:Void->Void, errorCallback:Void->Void):Void;
 }

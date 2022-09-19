@@ -223,8 +223,8 @@ class BasicHud extends h2d.Scene {
 		return plate;
 	}
 
-	function alertDialog(title:String, callback:Void->Void) {
-		final dialog = new h2d.Object(this);
+	function alertDialog(title:String, callback:Void->Void, ?parent:h2d.Object) {
+		final dialog = new h2d.Object(parent != null ? parent : this);
 
 		final group = new h2d.TileGroup(paperUiTileImage, dialog);
 		final tileScale = 3;
@@ -279,11 +279,11 @@ class BasicHud extends h2d.Scene {
 					callback();
 				}
 				interaction.remove();
-				this.removeChild(dialog);
+				(parent != null ? parent : this).removeChild(dialog);
 			}, 50);
 		};
 
-		this.addChild(dialog);
+			(parent != null ? parent : this).addChild(dialog);
 	}
 
 	function tokensRewardAlert(nvy:Int, aks:Int) {
@@ -307,85 +307,82 @@ class BasicHud extends h2d.Scene {
 		return plate;
 	}
 
-	function yesNoDialog(title:String) {
+	function yesNoDialog(title:String, positiveCallback:Void->Void, negativeCallback:Void->Void) {
 		final dialog = new h2d.Object(this);
 
 		var group = new h2d.TileGroup(paperUiTileImage, dialog);
 		group.setScale(3);
 
-		final dialogTilesWidth = 5;
-		final dialogTilesHeight = 3;
-
-		for (x in 0...dialogTilesWidth) {
-			for (y in 0...dialogTilesHeight) {
-				var tile:h2d.Tile;
-				if (y == 0) {
-					// Top
-					if (x == 0) {
-						tile = dialogTopLeftTile;
-					} else if (x == dialogTilesWidth - 1) {
-						tile = dialogTopRightTile;
-					} else {
-						tile = dialogTopMiddleTile;
-					}
-				} else if (y == dialogTilesHeight - 1) {
-					// Bottom
-					if (x == 0) {
-						tile = dialogBottomLeftTile;
-					} else if (x == dialogTilesWidth - 1) {
-						tile = dialogBottomRightTile;
-					} else {
-						tile = dialogBottomMiddleTile;
-					}
-				} else {
-					// Middle
-					if (x == 0) {
-						tile = dialogMiddleLeftTile;
-					} else if (x == dialogTilesWidth - 1) {
-						tile = dialogMiddleRightTile;
-					} else {
-						tile = dialogMiddleMiddleTile;
-					}
-				}
-
-				if (tile != null) {
-					group.add(x * 32, y * 32, tile);
-				}
-			}
-		}
+		buildDialogBackground(group, 5, 3);
 
 		final positiveBmp = new h2d.Bitmap(positiveTile);
-		positiveBmp.setScale(4);
-		positiveBmp.setPosition(32, 128);
+		positiveBmp.setScale(3);
+		positiveBmp.setPosition(32, 158);
 		dialog.addChild(positiveBmp);
 
 		final interactionPositive = new h2d.Interactive(30, 30, positiveBmp);
+
 		interactionPositive.onClick = function(event:hxd.Event) {};
 		interactionPositive.onMove = function(event:hxd.Event) {
-			positiveBmp.setScale(3.5);
+			positiveBmp.alpha = 0.80;
 		};
 		interactionPositive.onOut = function(event:hxd.Event) {
-			positiveBmp.setScale(4);
+			positiveBmp.alpha = 1;
+		};
+		interactionPositive.onPush = function(event:hxd.Event) {
+			positiveBmp.setScale(2.5);
+		};
+		interactionPositive.onRelease = function(event:hxd.Event) {
+			positiveBmp.setScale(3);
+
+			interactionPositive.cancelEvents = true;
+			interactionPositive.blur();
+
+			haxe.Timer.delay(function() {
+				if (positiveCallback != null) {
+					positiveCallback();
+				}
+				interactionPositive.remove();
+				this.removeChild(dialog);
+			}, 50);
 		};
 
 		final negativeBmp = new h2d.Bitmap(negativeTile);
-		negativeBmp.setScale(4);
-		negativeBmp.setPosition(320, 128);
+		negativeBmp.setScale(3);
+		negativeBmp.setPosition(340, 158);
 		dialog.addChild(negativeBmp);
 
 		final interactionNegative = new h2d.Interactive(30, 30, negativeBmp);
+
 		interactionNegative.onClick = function(event:hxd.Event) {};
 		interactionNegative.onMove = function(event:hxd.Event) {
-			negativeBmp.setScale(3.5);
+			negativeBmp.alpha = 0.80;
 		};
 		interactionNegative.onOut = function(event:hxd.Event) {
-			negativeBmp.setScale(4);
+			negativeBmp.alpha = 1;
+		};
+		interactionNegative.onPush = function(event:hxd.Event) {
+			negativeBmp.setScale(2.5);
+		};
+		interactionNegative.onRelease = function(event:hxd.Event) {
+			negativeBmp.setScale(3);
+
+			interactionNegative.cancelEvents = true;
+			interactionNegative.blur();
+
+			haxe.Timer.delay(function() {
+				if (negativeCallback != null) {
+					negativeCallback();
+				}
+				interactionNegative.remove();
+				this.removeChild(dialog);
+			}, 50);
 		};
 
 		var tf = new h2d.Text(getFont(), dialog);
 		tf.text = title;
 		tf.setPosition(64, 32);
-		tf.setScale(4);
+		tf.setScale(3);
 		tf.textColor = 0x82590E;
 		tf.dropShadow = {
 			dx: 0.5,

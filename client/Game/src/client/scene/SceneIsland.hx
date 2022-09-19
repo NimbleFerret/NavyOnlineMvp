@@ -24,6 +24,7 @@ class SceneIsland extends Scene implements EventListener {
 	}
 
 	public function start(response:JoinSectorResponse) {
+		trace(response);
 		game = new IslandGameplay(this, response.islandId, response.islandOwner, response.islandTerrain, response.islandMining, function callback() {
 			if (leaveCallback != null) {
 				game = null;
@@ -50,8 +51,6 @@ class SceneIsland extends Scene implements EventListener {
 			final char1 = game.addCharacterByClient(350, 290, '123', '0x87400A03678dd03c8BF536404B5B14C609a23b79');
 			game.startGameByClient('0x87400A03678dd03c8BF536404B5B14C609a23b79', [char1]);
 		}
-
-		// camera.scale(2., 2.5);
 	}
 
 	public override function render(e:Engine) {
@@ -61,13 +60,11 @@ class SceneIsland extends Scene implements EventListener {
 
 	public function update(dt:Float, fps:Float) {
 		if (game != null) {
-			final c = camera;
-
-			if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))
-				c.scale(1.25, 1.25);
-			if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_DOWN))
-				c.scale(0.8, 0.8);
-
+			// final c = camera;
+			// if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))
+			// 	c.scale(1.25, 1.25);
+			// if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_DOWN))
+			// 	c.scale(0.8, 0.8);
 			game.update(dt, fps);
 		}
 	}
@@ -75,7 +72,7 @@ class SceneIsland extends Scene implements EventListener {
 	public function notify(event:String, message:Dynamic) {
 		switch (event) {
 			case SocketProtocol.SocketServerEventGameInit:
-				game.startGame(Player.instance.playerData.ethAddress, message);
+				game.startGame(Player.instance.playerData.ethAddress.toLowerCase(), message);
 			case SocketProtocol.SocketServerEventAddEntity:
 				game.addEntity(message);
 			case SocketProtocol.SocketServerEventRemoveEntity:

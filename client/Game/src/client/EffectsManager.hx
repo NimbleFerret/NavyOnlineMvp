@@ -57,6 +57,7 @@ class EffectsManager {
 	final s2d:h2d.Scene;
 
 	final splashTexture:h3d.mat.Texture;
+	final explosionTexture:h3d.mat.Texture;
 
 	final fire1Tile:h2d.Tile;
 	final fire2Tile:h2d.Tile;
@@ -71,6 +72,7 @@ class EffectsManager {
 		this.s2d = s2d;
 
 		splashTexture = hxd.Res.Splash.toTexture();
+		explosionTexture = hxd.Res.explosion.toTexture();
 
 		fire1Tile = hxd.Res.fire1.toTile();
 		fire1Tile = fire1Tile.center();
@@ -137,6 +139,21 @@ class EffectsManager {
 		], s2d);
 		anim.setPosition(x - 22, y - 15);
 		anim.scale(1.5);
+		anim.loop = false;
+		anim.fading = true;
+	}
+
+	public function addShipExplosion(x:Float, y:Float) {
+		var anim = new h2d.Anim([
+			h2d.Tile.fromTexture(explosionTexture).sub(0, 0, 32, explosionTexture.height),
+			h2d.Tile.fromTexture(explosionTexture).sub(32, 0, 32, explosionTexture.height),
+			h2d.Tile.fromTexture(explosionTexture).sub(64, 0, 32, explosionTexture.height),
+			h2d.Tile.fromTexture(explosionTexture).sub(96, 0, 32, explosionTexture.height),
+			h2d.Tile.fromTexture(explosionTexture).sub(128, 0, 32, explosionTexture.height),
+			h2d.Tile.fromTexture(explosionTexture).sub(160, 0, 32, explosionTexture.height)
+		], s2d);
+		anim.setPosition(x - 100, y - 50);
+		anim.scale(5);
 		anim.loop = false;
 		anim.fading = true;
 	}

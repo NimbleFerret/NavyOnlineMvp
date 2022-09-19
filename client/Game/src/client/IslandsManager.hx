@@ -133,6 +133,6 @@ class IslandsManager {
 
 	// Make it component
 	private function addCoinAnim() {
-		return new TokenAnimation(TokenType.NVY, 3, 656, 460);
+		return new TokenAnimation(TokenType.NVY, 3, 720, 520);
 	}
 }

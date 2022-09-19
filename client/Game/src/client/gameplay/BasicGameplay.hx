@@ -147,7 +147,7 @@ abstract class BasicGameplay {
 			for (entity in entities) {
 				createNewEntity(entity);
 
-				if (entity.ownerId == playerId) {
+				if (entity.ownerId.toLowerCase() == playerId) {
 					playerEntityId = entity.id;
 				}
 			}
@@ -160,7 +160,7 @@ abstract class BasicGameplay {
 
 	public function addEntity(message:SocketServerMessageAddEntity) {
 		if (gameState == GameState.Playing) {
-			final entity = jsEntityToEngineEntity(message.entitiy);
+			final entity = jsEntityToEngineEntity(message.entity);
 
 			if (!clientMainEntities.exists(entity.id)) {
 				createNewEntity(entity);

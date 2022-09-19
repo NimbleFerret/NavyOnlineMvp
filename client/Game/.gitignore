@@ -1,7 +1,6 @@
 # compiled output
 /dist
 /node_modules
-*.js
 *.js.map
 
 # Logs
@@ -37,4 +36,3 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # Game resources
-/res

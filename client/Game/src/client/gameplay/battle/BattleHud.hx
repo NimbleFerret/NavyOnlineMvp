@@ -162,8 +162,7 @@ class BattleHud extends BasicHud {
 		updateDailyTasks();
 
 		dailyTasksFui.y = 10;
-		dailyTasksFui.x = Main.ScreenWidth - 70;
-		// dailyTasksFui.x = Main.ScreenWidth - dailyTasksFui.getBounds().width;
+		dailyTasksFui.x = Main.ScreenWidth - 130;
 
 		// Compass
 		compassEast = hxd.Res.compass.compass_e.toTile();
@@ -182,8 +181,8 @@ class BattleHud extends BasicHud {
 
 		addChild(compassBmp);
 
-		armorBar = new HorizontalStatsBar(fui, 0, 0, 'Armor', '1000', 65);
-		hullBar = new HorizontalStatsBar(fui, 0, 0, 'Hull', '1000', 65);
+		armorBar = new HorizontalStatsBar(fui, 0, 0, 'Armor', '300', 65);
+		hullBar = new HorizontalStatsBar(fui, 0, 0, 'Hull', '300', 65);
 
 		movementText = addText();
 		movementText.setScale(3);
@@ -210,12 +209,21 @@ class BattleHud extends BasicHud {
 	}
 
 	public function show(show:Bool) {
+		if (show) {
+			if (Player.instance.ethAddress.length >= 42) {
+				dailyTasksFui.alpha = 1;
+			} else {
+				dailyTasksFui.alpha = 0;
+			}
+		} else {
+			dailyTasksFui.alpha = 0;
+		}
+
 		armorBar.show(show);
 		hullBar.show(show);
 
 		compassBmp.alpha = show ? 1 : 0;
 		leaveButton.alpha = show ? 1 : 0;
-		dailyTasksFui.alpha = show ? 1 : 0;
 		systemText.alpha = show ? 1 : 0;
 		latencyText.alpha = show ? 1 : 0;
 		movementText.alpha = show ? 1 : 0;

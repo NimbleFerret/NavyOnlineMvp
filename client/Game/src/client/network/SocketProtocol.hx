@@ -37,7 +37,7 @@ typedef SocketServerMessageUpdateWorldState = {
 }
 
 typedef SocketServerMessageAddEntity = {
-	entitiy:Dynamic
+	entity:Dynamic
 }
 
 typedef SocketServerMessageRemoveEntity = {
