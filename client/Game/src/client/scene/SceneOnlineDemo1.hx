@@ -20,7 +20,8 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		super();
 		this.leaveCallback = leaveCallback;
 		this.diedCallback = diedCallback;
-		camera.setViewport(width / 2, height / 2, 0, 0);
+		scaleMode = LetterBox(1920, 1080, false, Center, Center);
+		camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
 	}
 
 	public function start() {

@@ -13,10 +13,8 @@ class SceneDemo1 extends Scene {
 
 	public function new(width:Int, height:Int) {
 		super();
-
-		camera.setViewport(width / 2, height / 2, 0, 0);
-
-		// islandsManager = new IslandsManager(this, 'Green');
+		scaleMode = LetterBox(1920, 1080, true, Center, Center);
+		camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
 	}
 
 	public function start() {
@@ -41,7 +39,7 @@ class SceneDemo1 extends Scene {
 		game.startGameByClient(playerId, [ship1]);
 		// game.startGameByClient(playerId, [ship1, ship2, ship3, ship4, ship5]);
 
-		camera.scale(2, 2);
+		// camera.scale(2, 2);
 	}
 
 	public override function render(e:Engine) {

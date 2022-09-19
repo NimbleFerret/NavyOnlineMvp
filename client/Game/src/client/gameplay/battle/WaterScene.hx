@@ -6,6 +6,8 @@ class WaterScene extends h2d.Scene {
 	public function new() {
 		super();
 
+		scaleMode = Stretch(1920, 1080);
+
 		waterBg = new WaterBg(this, 0, 0, 4);
 	}
 

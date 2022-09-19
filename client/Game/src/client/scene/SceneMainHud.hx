@@ -26,11 +26,7 @@ class SceneMainHud extends BasicHud {
 	private var captainTypeText:h2d.Text;
 	private var captainLevelText:h2d.Text;
 	private var captainRarityText:h2d.Text;
-	private var captainTrait1Text:h2d.Text;
-	private var captainTrait2Text:h2d.Text;
-	private var captainTrait3Text:h2d.Text;
-	private var captainTrait4Text:h2d.Text;
-	private var captainTrait5Text:h2d.Text;
+	private var captainTraitsText:h2d.Text;
 	private var stakingIncomeText:h2d.Text;
 	private var miningIncomeText:h2d.Text;
 
@@ -110,6 +106,8 @@ class SceneMainHud extends BasicHud {
 				}
 			});
 		}
+
+		addBuyNFTsStuff();
 	}
 
 	public function initiateWeb3(userName:String) {
@@ -154,43 +152,31 @@ class SceneMainHud extends BasicHud {
 	}
 
 	public function updateCaptainUi(captainEntity:CaptainEntity) {
-		if (captainEntity.type == 1 ? true : false) {
-			captainDescFreePlate.alpha = 1;
-			captainDescCollectiblePlate.alpha = 0;
+		// if (captainEntity.type == 1 ? true : false) {
+		// 	captainDescFreePlate.alpha = 1;
+		// 	captainDescCollectiblePlate.alpha = 0;
 
-			captainTypeText.text = 'Free';
-			captainLevelText.text = '0/0';
-			captainRarityText.text = 'Rarity: Common';
-			captainTrait1Text.alpha = 0;
-			captainTrait2Text.alpha = 0;
-			captainTrait3Text.alpha = 0;
-			captainTrait4Text.alpha = 0;
-			captainTrait5Text.alpha = 0;
-			stakingIncomeText.alpha = 0;
-			miningIncomeText.alpha = 0;
-		} else {
-			captainDescFreePlate.alpha = 0;
-			captainDescCollectiblePlate.alpha = 1;
+		// 	captainTypeText.text = 'Free';
+		// 	captainLevelText.text = 'Level: 0/0';
+		// 	captainRarityText.text = 'Rarity: Common';
+		// 	captainTraitsText.alpha = 0;
+		// 	stakingIncomeText.alpha = 0;
+		// 	miningIncomeText.alpha = 0;
+		// } else {
+		// 	captainDescFreePlate.alpha = 0;
+		// 	captainDescCollectiblePlate.alpha = 1;
 
-			captainTypeText.text = 'Collectible';
-			captainLevelText.text = captainEntity.level + '/' + 10;
-			captainRarityText.text = 'Rarity: ' + captainEntity.rarity;
-			captainTrait1Text.text = 'Trait 1: -';
-			captainTrait2Text.text = 'Trait 2: -';
-			captainTrait3Text.text = 'Trait 3: -';
-			captainTrait4Text.text = 'Trait 4: -';
-			captainTrait5Text.text = 'Trait 5: -';
-			stakingIncomeText.text = 'Staking: ' + captainEntity.stakingRewardNVY + ' NVY/day';
-			miningIncomeText.text = 'Mining: ' + captainEntity.miningRewardNVY + ' NVY/day';
+		// 	captainTypeText.text = 'Collectible';
+		// 	captainLevelText.text = 'Level: ' + captainEntity.level + '/' + 10;
+		// 	captainRarityText.text = 'Rarity: ' + captainEntity.rarity;
+		// 	captainTraitsText.text = 'Traits: -';
+		// 	stakingIncomeText.text = 'Staking: ' + captainEntity.stakingRewardNVY + ' NVY/day';
+		// 	miningIncomeText.text = 'Mining: ' + captainEntity.miningRewardNVY + ' NVY/day';
 
-			captainTrait1Text.alpha = 1;
-			captainTrait2Text.alpha = 1;
-			captainTrait3Text.alpha = 1;
-			captainTrait4Text.alpha = 1;
-			captainTrait5Text.alpha = 1;
-			stakingIncomeText.alpha = 1;
-			miningIncomeText.alpha = 1;
-		}
+		// 	captainTraitsText.alpha = 1;
+		// 	stakingIncomeText.alpha = 1;
+		// 	miningIncomeText.alpha = 1;
+		// }
 	}
 
 	public function updateShipUi(shipEntity:ShipEntity) {
@@ -238,7 +224,7 @@ class SceneMainHud extends BasicHud {
 
 		islandLevelText.text = 'Level: ' + islandEntity.level + '/' + 3;
 		islandRarityText.text = 'Rarity: ' + islandEntity.rarity;
-		islandSizeText.text = 'Size: ' + islandEntity.size;
+		islandSizeText.text = 'Size: Small';
 		islandTerrainText.text = 'Terrain: ' + islandEntity.terrain;
 		islandIncomeText.text = 'Income: ' + islandEntity.miningRewardNVY + ' NVY/day';
 
@@ -257,20 +243,21 @@ class SceneMainHud extends BasicHud {
 			dailyTasksFui.layout = Vertical;
 			dailyTasksFui.verticalSpacing = 5;
 			dailyTasksFui.padding = 10;
-			dailyTasksFui.y = 555;
+			dailyTasksFui.x = 10;
+			dailyTasksFui.y = 150;
 			dailyTasksFui.alpha = 0;
 
-			final dailyTasksPlate = newCustomPlate(dailyTasksFui, 6, 4);
+			final dailyTasksPlate = newCustomPlate(dailyTasksFui, 5, 3);
 			dailyTasksPlate.setPosition(5, 5);
 
 			final dailyTasksDescription = addText2(dailyTasksPlate, 'Daily tasks:');
 
 			playersToKillText = addText2(dailyTasksPlate, 'Players killed: 0/10');
-			playersToKillText.setPosition(dailyTasksDescription.x, 106);
+			playersToKillText.setPosition(dailyTasksDescription.x, 56);
 			botsToKillText = addText2(dailyTasksPlate, 'Bots killed: 0/10');
-			botsToKillText.setPosition(playersToKillText.x, 186);
+			botsToKillText.setPosition(playersToKillText.x, 86);
 			bossesToKillText = addText2(dailyTasksPlate, 'Bosses killed: 0/10');
-			bossesToKillText.setPosition(botsToKillText.x, 266);
+			bossesToKillText.setPosition(botsToKillText.x, 116);
 		}
 
 		if (Player.instance.playerData != null) {
@@ -313,18 +300,23 @@ class SceneMainHud extends BasicHud {
 			loginFui.layout = Vertical;
 			loginFui.verticalSpacing = 5;
 			loginFui.padding = 10;
+			loginFui.x = 10;
+			loginFui.y = 10;
 
-			loginPlate = newCustomPlate(loginFui, Main.IsWeb3Available ? 6 : 5, Main.IsWeb3Available ? 3 : 2);
+			Main.IsWeb3Available = true;
+
+			loginPlate = newCustomPlate(loginFui, Main.IsWeb3Available ? 4 : 3, Main.IsWeb3Available ? 2 : 1);
 			loginPlate.setPosition(5, 5);
 
-			userNameText = addText2(loginPlate, "Guest");
+			userNameText = addText2(this, "Guest");
+			userNameText.setPosition(46, 32);
 			if (Main.IsWeb3Available) {
-				loginBtn = addGuiButton(loginPlate, "Login", true, function callback() {
+				loginBtn = addGuiButton(this, "Login", true, function callback() {
 					if (metamaskLoginCallback != null) {
 						Moralis.initMoralis(metamaskLoginCallback);
 					}
-				});
-				loginBtn.setPosition(userNameText.x - 10, 100);
+				}, 2, 2);
+				loginBtn.setPosition(userNameText.x - 10, 70);
 			}
 
 			// ---------------------------------
@@ -335,52 +327,37 @@ class SceneMainHud extends BasicHud {
 			captainDescFui.layout = Vertical;
 			captainDescFui.verticalSpacing = 5;
 			captainDescFui.padding = 10;
-			captainDescFui.x = 635;
-			captainDescFui.y = 550;
+			captainDescFui.x = 440;
+			captainDescFui.y = 330;
 
 			final captainPlatesContainer = new h2d.Object(captainDescFui);
 
-			captainDescFreePlate = newCustomPlate(captainPlatesContainer, 5, 3);
+			captainDescFreePlate = newCustomPlate(captainPlatesContainer, 4, 3);
 			captainDescFreePlate.setPosition(5, 5);
+			captainDescFreePlate.alpha = 0;
 
-			captainDescCollectiblePlate = newCustomPlate(captainPlatesContainer, 5, 8);
+			captainDescCollectiblePlate = newCustomPlate(captainPlatesContainer, 4, 4);
 			captainDescCollectiblePlate.setPosition(5, 5);
-			captainDescCollectiblePlate.alpha = 0;
+			captainDescCollectiblePlate.alpha = 1;
 
 			captainTypeText = addText2(captainPlatesContainer, "Free");
 			captainLevelText = addText2(captainPlatesContainer, "Level: 0/0");
-			captainLevelText.setPosition(captainTypeText.x, 90);
+			captainLevelText.setPosition(captainTypeText.x, 60);
 
 			captainRarityText = addText2(captainPlatesContainer, "Rarity: Common");
-			captainRarityText.setPosition(captainLevelText.x, captainLevelText.y + 70);
+			captainRarityText.setPosition(captainLevelText.x, captainLevelText.y + 40);
 
-			captainTrait1Text = addText2(captainPlatesContainer, "Trait 1: -");
-			captainTrait1Text.setPosition(captainRarityText.x, captainRarityText.y + 70);
-			captainTrait1Text.alpha = 0;
-
-			captainTrait2Text = addText2(captainPlatesContainer, "Trait 2: -");
-			captainTrait2Text.setPosition(captainTrait1Text.x, captainTrait1Text.y + 70);
-			captainTrait2Text.alpha = 0;
-
-			captainTrait3Text = addText2(captainPlatesContainer, "Trait 3: -");
-			captainTrait3Text.setPosition(captainTrait2Text.x, captainTrait2Text.y + 70);
-			captainTrait3Text.alpha = 0;
-
-			captainTrait4Text = addText2(captainPlatesContainer, "Trait 4: -");
-			captainTrait4Text.setPosition(captainTrait3Text.x, captainTrait3Text.y + 70);
-			captainTrait4Text.alpha = 0;
-
-			captainTrait5Text = addText2(captainPlatesContainer, "Trait 5: -");
-			captainTrait5Text.setPosition(captainTrait4Text.x, captainTrait4Text.y + 70);
-			captainTrait5Text.alpha = 0;
+			captainTraitsText = addText2(captainPlatesContainer, "Traits: -");
+			captainTraitsText.setPosition(captainRarityText.x, captainRarityText.y + 40);
+			captainTraitsText.alpha = 1;
 
 			stakingIncomeText = addText2(captainPlatesContainer, "Staking: 5 NVY/day");
-			stakingIncomeText.setPosition(captainTrait5Text.x, captainTrait5Text.y + 70);
-			stakingIncomeText.alpha = 0;
+			stakingIncomeText.setPosition(captainTraitsText.x, captainTraitsText.y + 40);
+			stakingIncomeText.alpha = 1;
 
 			miningIncomeText = addText2(captainPlatesContainer, "Mining: 15 NVY/day");
-			miningIncomeText.setPosition(stakingIncomeText.x, stakingIncomeText.y + 70);
-			miningIncomeText.alpha = 0;
+			miningIncomeText.setPosition(stakingIncomeText.x, stakingIncomeText.y + 40);
+			miningIncomeText.alpha = 1;
 
 			// ---------------------------------
 			// Ship UI stuff
@@ -390,54 +367,54 @@ class SceneMainHud extends BasicHud {
 			shipDescFui.layout = Vertical;
 			shipDescFui.verticalSpacing = 5;
 			shipDescFui.padding = 10;
-			shipDescFui.x = 1550;
-			shipDescFui.y = 790;
+			shipDescFui.x = 980;
+			shipDescFui.y = 400;
 
 			final shipPlatesContainer = new h2d.Object(shipDescFui);
 
-			shipDescFreePlate = newCustomPlate(shipPlatesContainer, 5, 9);
+			shipDescFreePlate = newCustomPlate(shipPlatesContainer, 5, 8);
 			shipDescFreePlate.setPosition(5, 5);
 
-			shipDescCollectiblePlate = newCustomPlate(shipPlatesContainer, 5, 10);
+			shipDescCollectiblePlate = newCustomPlate(shipPlatesContainer, 5, 9);
 			shipDescCollectiblePlate.setPosition(5, 5);
 			shipDescCollectiblePlate.alpha = 0;
 
 			shipTypeText = addText2(shipPlatesContainer, 'Free');
 			shipLevelText = addText2(shipPlatesContainer, 'Level: 0/0');
-			shipLevelText.setPosition(shipTypeText.x, shipTypeText.y + 70);
+			shipLevelText.setPosition(shipTypeText.x, shipTypeText.y + 40);
 
 			shipRarityText = addText2(shipPlatesContainer, 'Rarity: Common');
-			shipRarityText.setPosition(shipLevelText.x, shipLevelText.y + 70);
+			shipRarityText.setPosition(shipLevelText.x, shipLevelText.y + 40);
 
 			shipSizeText = addText2(shipPlatesContainer, 'Size: Small');
-			shipSizeText.setPosition(shipRarityText.x, shipRarityText.y + 70);
+			shipSizeText.setPosition(shipRarityText.x, shipRarityText.y + 40);
 
 			shipCannonsText = addText2(shipPlatesContainer, 'Cannons: 2');
-			shipCannonsText.setPosition(shipSizeText.x, shipSizeText.y + 70);
+			shipCannonsText.setPosition(shipSizeText.x, shipSizeText.y + 40);
 
 			shipCannonsDamageText = addText2(shipPlatesContainer, 'Damage: 50');
-			shipCannonsDamageText.setPosition(shipCannonsText.x, shipCannonsText.y + 70);
+			shipCannonsDamageText.setPosition(shipCannonsText.x, shipCannonsText.y + 40);
 
 			shipArmorText = addText2(shipPlatesContainer, 'Armor: 1000');
-			shipArmorText.setPosition(shipCannonsDamageText.x, shipCannonsDamageText.y + 70);
+			shipArmorText.setPosition(shipCannonsDamageText.x, shipCannonsDamageText.y + 40);
 
 			shipHullText = addText2(shipPlatesContainer, 'Hull: 1000');
-			shipHullText.setPosition(shipArmorText.x, shipArmorText.y + 70);
+			shipHullText.setPosition(shipArmorText.x, shipArmorText.y + 40);
 
 			shipMaxSpeedText = addText2(shipPlatesContainer, 'Max speed: 100');
-			shipMaxSpeedText.setPosition(shipHullText.x, shipHullText.y + 70);
+			shipMaxSpeedText.setPosition(shipHullText.x, shipHullText.y + 40);
 
 			shipAccText = addText2(shipPlatesContainer, 'Acceleration: 50');
-			shipAccText.setPosition(shipMaxSpeedText.x, shipMaxSpeedText.y + 70);
+			shipAccText.setPosition(shipMaxSpeedText.x, shipMaxSpeedText.y + 40);
 
 			shipAccDelayText = addText2(shipPlatesContainer, 'Acc. delay: 100');
-			shipAccDelayText.setPosition(shipAccText.x, shipAccText.y + 70);
+			shipAccDelayText.setPosition(shipAccText.x, shipAccText.y + 40);
 
 			shipTurnDelayText = addText2(shipPlatesContainer, 'Turn delay: 200');
-			shipTurnDelayText.setPosition(shipAccDelayText.x, shipAccDelayText.y + 70);
+			shipTurnDelayText.setPosition(shipAccDelayText.x, shipAccDelayText.y + 40);
 
 			shipIntegrityText = addText2(shipPlatesContainer, 'Integrity: 10/10');
-			shipIntegrityText.setPosition(shipTurnDelayText.x, shipTurnDelayText.y + 70);
+			shipIntegrityText.setPosition(shipTurnDelayText.x, shipTurnDelayText.y + 40);
 			shipIntegrityText.alpha = 0;
 
 			// ---------------------------------
@@ -448,39 +425,39 @@ class SceneMainHud extends BasicHud {
 			islandDescFui.layout = Vertical;
 			islandDescFui.verticalSpacing = 5;
 			islandDescFui.padding = 10;
-			islandDescFui.x = 2710;
-			islandDescFui.y = 690;
+			islandDescFui.x = 1680;
+			islandDescFui.y = 420;
 			islandDescFui.alpha = 0;
 
-			final islandDescPlate = newCustomPlate(islandDescFui, 6, 7);
+			final islandDescPlate = newCustomPlate(islandDescFui, 5, 6);
 
 			islandTypeText = addText2(islandDescPlate, "Collectible");
 			islandLevelText = addText2(islandDescPlate, "Level: 0/3");
-			islandLevelText.setPosition(islandTypeText.x, islandTypeText.y + 70);
+			islandLevelText.setPosition(islandTypeText.x, islandTypeText.y + 40);
 
 			islandRarityText = addText2(islandDescPlate, "Rarity: Legendary");
-			islandRarityText.setPosition(islandLevelText.x, islandLevelText.y + 70);
+			islandRarityText.setPosition(islandLevelText.x, islandLevelText.y + 40);
 
 			islandSizeText = addText2(islandDescPlate, "Size: Small");
-			islandSizeText.setPosition(islandRarityText.x, islandRarityText.y + 70);
+			islandSizeText.setPosition(islandRarityText.x, islandRarityText.y + 40);
 
 			islandTerrainText = addText2(islandDescPlate, "Terrain: Green");
-			islandTerrainText.setPosition(islandSizeText.x, islandSizeText.y + 70);
+			islandTerrainText.setPosition(islandSizeText.x, islandSizeText.y + 40);
 
 			islandIncomeText = addText2(islandDescPlate, "Income: 50 NVY/day");
-			islandIncomeText.setPosition(islandTerrainText.x, islandTerrainText.y + 70);
+			islandIncomeText.setPosition(islandTerrainText.x, islandTerrainText.y + 40);
 
 			final islandButtonsContainer = new h2d.Object(islandDescPlate);
 
-			islandCollectRewardButton = addGuiButton(islandButtonsContainer, "Collect reward", false, collectRewardCallback, 5, 4);
-			islandCollectRewardButton.setPosition(islandIncomeText.x - 15, islandIncomeText.y + 90);
+			islandCollectRewardButton = addGuiButton(islandButtonsContainer, "Collect reward", false, collectRewardCallback, 2, 2);
+			islandCollectRewardButton.setPosition(islandIncomeText.x - 15, islandIncomeText.y + 45);
 			islandCollectRewardButton.alpha = 0;
 
-			islandStartMiningButton = addGuiButton(islandButtonsContainer, "Start mining", false, startMiningCallback, 5, 4);
-			islandStartMiningButton.setPosition(islandIncomeText.x - 15, islandIncomeText.y + 90);
+			islandStartMiningButton = addGuiButton(islandButtonsContainer, "Start mining", false, startMiningCallback, 2, 2);
+			islandStartMiningButton.setPosition(islandIncomeText.x - 15, islandIncomeText.y + 45);
 
 			// Play button
-			final startGameButton = addGuiButton(this, "Start game", false, startGameCallback);
+			final startGameButton = addGuiButton(this, "Start game", false, startGameCallback, 2, 2);
 			startGameButton.setPosition(Main.ScreenWidth / 2 - 300, Main.ScreenHeight - 100);
 
 			addOrUpdateDailyTasks();
@@ -489,24 +466,26 @@ class SceneMainHud extends BasicHud {
 
 	private function addBuyNFTsStuff() {
 		// Refresh my NFTs button
-		refreshMyNFTsButton = addGuiButton(this, "Refresh my NFTs", false, refreshNFTsCallback, 5, 4);
-		refreshMyNFTsButton.setPosition(userNameText.x - 10, 100);
+		// refreshMyNFTsButton = addGuiButton(this, "Refresh my NFTs", false, refreshNFTsCallback, 4, 3);
+		// refreshMyNFTsButton.setPosition(userNameText.x - 10, 100);
 
 		final buyButtonsFui = new h2d.Flow(this);
 		buyButtonsFui.layout = Vertical;
 		buyButtonsFui.verticalSpacing = 5;
 		buyButtonsFui.padding = 10;
-		buyButtonsFui.y = Main.ScreenHeight - (32 * 4 * 6);
+		buyButtonsFui.x = 10;
+		buyButtonsFui.y = Main.ScreenHeight - 350;
 
 		// TODO add plate about how many tokens left
-		final salePlate = newCustomPlate(buyButtonsFui, 5, 3);
+		final salePlate = newCustomPlate(buyButtonsFui, 4, 2);
 		salePlate.setPosition(5, 5);
 
-		cptLeftText = addText2(salePlate, "Captains left: -");
-		shpLeftText = addText2(salePlate, "Ships left: -");
-		shpLeftText.setPosition(cptLeftText.x, 106);
-		islLeftText = addText2(salePlate, "Islands left: -");
-		islLeftText.setPosition(cptLeftText.x, 186);
+		cptLeftText = addText2(this, "Captains left: 500");
+		cptLeftText.setPosition(40, Main.ScreenHeight - 330);
+		shpLeftText = addText2(this, "Ships left: -");
+		shpLeftText.setPosition(cptLeftText.x, cptLeftText.y + 36);
+		islLeftText = addText2(this, "Islands left: -");
+		islLeftText.setPosition(shpLeftText.x, shpLeftText.y + 36);
 
 		addGuiButton(buyButtonsFui, "Buy captain", true, function callback() {
 			Moralis.buyFounderCaptain(function successCallback() {
@@ -514,20 +493,20 @@ class SceneMainHud extends BasicHud {
 			}, function errorCallback() {
 				alertDialog('Error occured during captain buying !\nPlease report to us or try again !', callback);
 			});
-		});
+		}, 2, 2);
 		addGuiButton(buyButtonsFui, "Buy ship", true, function callback() {
 			Moralis.buyFounderShip(function successCallback() {
 				alertDialog('You have bought founder edition ship !\nStay a while and listen...while Cronos processing it.', callback);
 			}, function errorCallback() {
 				alertDialog('Error occured during ship buying !\nPlease report to us or try again !', callback);
 			});
-		});
+		}, 2, 2);
 		addGuiButton(buyButtonsFui, "Buy island", true, function callback() {
 			Moralis.buyFounderIsland(function successCallback() {
 				alertDialog('You have bought founder edition island !\nStay a while and listen...while Cronos processing it.', callback);
 			}, function errorCallback() {
 				alertDialog('Error occured during island buying !\nPlease report to us or try again !', callback);
 			});
-		});
+		}, 2, 2);
 	}
 }

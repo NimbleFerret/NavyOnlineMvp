@@ -41,6 +41,8 @@ class SceneMain extends Scene {
 	public function new(startCallback:Void->Void) {
 		super();
 
+		scaleMode = LetterBox(1920, 1080, false, Left, Center);
+
 		// Init moralis
 		hud = new SceneMainHud(function metamaskLoginCallback(address:String) {
 			client.Player.instance.ethAddress = address;
@@ -70,6 +72,8 @@ class SceneMain extends Scene {
 		// Basic ship position
 		baseShipX = Main.ScreenWidth / 2 - 230 + 200;
 		baseShipY = Main.ScreenHeight / 2 + 30;
+
+		initiateBalances();
 	}
 
 	public override function render(e:Engine) {
@@ -177,11 +181,11 @@ class SceneMain extends Scene {
 			}
 			currentShip = new ShipTemplate(shipSize, shipWindows, shipCannons);
 			if (currentShip.shipSize == SMALL) {
-				currentShip.setPosition(baseShipX - 90, 500);
+				currentShip.setPosition(1150, 260);
 			} else {
-				currentShip.setPosition(baseShipX, 500);
+				currentShip.setPosition(1190, 260);
 			}
-			currentShip.setScale(3);
+			currentShip.setScale(1.5);
 			addChild(currentShip);
 
 			hud.updateShipUi(newShipInfo);
@@ -199,7 +203,7 @@ class SceneMain extends Scene {
 				terrainType = IslandTerrainType.SNOW;
 			}
 			currentIsland = new UiIsland(terrainType);
-			miningAnimation.alpha = islands[index].mining ? 1 : 0;
+			// miningAnimation.alpha = islands[index].mining ? 1 : 0;
 		}
 
 		if (islands.length > 1 || dir == 0) {
@@ -223,7 +227,7 @@ class SceneMain extends Scene {
 				}
 				newIslandByIndex(currentIslandIndex);
 			}
-			currentIsland.setPosition(2800, 200);
+			currentIsland.setPosition(1700, 100);
 			addChild(currentIsland);
 			addChild(miningAnimation);
 			hud.updateIslandUi(islands[currentIslandIndex]);
@@ -235,11 +239,11 @@ class SceneMain extends Scene {
 	// ---------------------------------
 
 	private function initiateBalances() {
-		nvyTokens = new UiToken(TokenType.NVY, hud.widePlate(3));
-		aksTokens = new UiToken(TokenType.AKS, hud.widePlate(3));
+		nvyTokens = new UiToken(TokenType.NVY, hud.widePlate(2));
+		aksTokens = new UiToken(TokenType.AKS, hud.widePlate(2));
 
-		nvyTokens.setPosition(Main.ScreenWidth - nvyTokens.getBounds().width, 16);
-		aksTokens.setPosition(Main.ScreenWidth - aksTokens.getBounds().width, 134);
+		nvyTokens.setPosition(Main.ScreenWidth + 30, 16);
+		aksTokens.setPosition(Main.ScreenWidth + 30, 134);
 
 		addChild(nvyTokens);
 		addChild(aksTokens);
@@ -249,7 +253,7 @@ class SceneMain extends Scene {
 
 	private function initiateCaptains() {
 		currentCaptain = new UiAvatar();
-		currentCaptain.setPosition(800, 330);
+		currentCaptain.setPosition(510, 180);
 		addChild(currentCaptain);
 
 		final arrowCaptainLeft = hud.buttonArrowLeft(function callback() {
@@ -259,8 +263,8 @@ class SceneMain extends Scene {
 			changeCaptain(1);
 		}, true);
 
-		arrowCaptainLeft.setPosition(650, 350);
-		arrowCaptainRight.setPosition(1000, 350);
+		arrowCaptainLeft.setPosition(400, 200);
+		arrowCaptainRight.setPosition(660, 200);
 
 		addChild(arrowCaptainLeft);
 		addChild(arrowCaptainRight);
@@ -276,8 +280,8 @@ class SceneMain extends Scene {
 			changeShip(1);
 		}, false);
 
-		arrowLeftShip.setPosition(baseShipX - 680, 350);
-		arrowRightShip.setPosition(baseShipX + 450, 350);
+		arrowLeftShip.setPosition(800, 200);
+		arrowRightShip.setPosition(1430, 200);
 
 		addChild(arrowLeftShip);
 		addChild(arrowRightShip);
@@ -307,7 +311,7 @@ class SceneMain extends Scene {
 				miningAnimation8
 			]);
 			miningAnimation.setScale(5);
-			miningAnimation.setPosition(2916, 400);
+			miningAnimation.setPosition(1764, 230);
 			miningAnimation.alpha = 1;
 
 			final arrowLeftIsland = hud.buttonArrowLeft(function callback() {
@@ -316,8 +320,8 @@ class SceneMain extends Scene {
 			final arrowRightIsland = hud.buttonArrowRight(function callback() {
 				changeIsland(1);
 			}, false);
-			arrowLeftIsland.setPosition(2600, 350);
-			arrowRightIsland.setPosition(3300, 350);
+			arrowLeftIsland.setPosition(Main.ScreenWidth - 340, 200);
+			arrowRightIsland.setPosition(Main.ScreenWidth + 100, 200);
 
 			changeIsland(0);
 		}

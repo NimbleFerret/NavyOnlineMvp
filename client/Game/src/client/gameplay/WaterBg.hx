@@ -20,8 +20,8 @@ class WaterBg {
 			final waterBgTile = hxd.Res.water_tile.toTile().center();
 			waterBgbatch = new h2d.SpriteBatch(waterBgTile, waterBgObject);
 
-			for (y in 0...15) // 8
-				for (x in 0...21) { // 15
+			for (y in 0...7) // 8
+				for (x in 0...11) { // 15
 					final batchElement = new h2d.BatchElement(waterBgTile);
 					batchElement.x = 48 * x;
 					batchElement.y = 48 * y;

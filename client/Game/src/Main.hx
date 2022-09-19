@@ -29,23 +29,23 @@ class Main extends GuiApp {
 	private var sceneIsland:SceneIsland;
 	private var sceneGlobalMode:SceneGlobalMode;
 
-	private final defaultScene = Scene.SceneMain;
+	private final defaultScene = Scene.SceneDemo1;
 	private var currentScene:Scene;
 
 	private var battleHudAdded = false;
 	private var islandHudAdded = false;
 
-	public static var ScreenWidth:Int;
-	public static var ScreenHeight:Int;
+	public static var ScreenWidth:Int = 1920;
+	public static var ScreenHeight:Int = 1080;
+
 	public static var IsWeb3Available = false;
 
 	override function init() {
 		super.init();
 
-		engine.backgroundColor = 0xFCDCA1;
+		// s2d.scaleMode = LetterBox(1920, 1080, true, Center, Center);
 
-		ScreenWidth = engine.width;
-		ScreenHeight = engine.height;
+		engine.backgroundColor = 0xFCDCA1;
 
 		sceneMain = new SceneMain(function startCallback() {
 			currentScene = SceneGlobalMode;

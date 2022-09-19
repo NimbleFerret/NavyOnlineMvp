@@ -28,8 +28,15 @@ class HorizontalStatsBar {
 		rectY = y + 15;
 
 		descriptionText = new h2d.Text(hxd.res.DefaultFont.get(), guiObject);
+		descriptionText.textColor = 0xFBF0DD;
+		descriptionText.dropShadow = {
+			dx: 0.5,
+			dy: 0.5,
+			color: 0x000000,
+			alpha: 0.9
+		};
 		descriptionText.text = desctiption;
-		descriptionText.setScale(4);
+		descriptionText.setScale(3);
 
 		borderRect = new h2d.Graphics(guiObject);
 		borderRect.lineStyle(3, 0xFFFFFF);
@@ -42,6 +49,13 @@ class HorizontalStatsBar {
 		fillRect.endFill();
 
 		valueText = new h2d.Text(hxd.res.DefaultFont.get(), guiObject);
+		valueText.textColor = 0xFBF0DD;
+		valueText.dropShadow = {
+			dx: 0.5,
+			dy: 0.5,
+			color: 0x000000,
+			alpha: 0.9
+		};
 		valueText.text = value + " / " + value;
 		valueText.setScale(3);
 		valueText.setPosition(x + 160 + additionalOffsetX, y + 9);
@@ -140,14 +154,16 @@ class BattleHud extends BasicHud {
 		dailyTasksFui.layout = Vertical;
 		dailyTasksFui.verticalSpacing = 5;
 		dailyTasksFui.padding = 10;
-		dailyTasksFui.y = 10;
-		dailyTasksFui.x = Main.ScreenWidth - 490;
 
-		addText3(dailyTasksFui, 'Daily tasks');
-		killPlayersText = addText3(dailyTasksFui, 'Kill players: 0/0');
-		killBotsText = addText3(dailyTasksFui, 'Kill pirates: 0/0');
-		killBossesText = addText3(dailyTasksFui, 'Kill bosses: 0/0');
+		addText3(dailyTasksFui, 'Daily tasks', 3);
+		killPlayersText = addText3(dailyTasksFui, 'Kill players: 0/0', 3);
+		killBotsText = addText3(dailyTasksFui, 'Kill pirates: 0/0', 3);
+		killBossesText = addText3(dailyTasksFui, 'Kill bosses: 0/0', 3);
 		updateDailyTasks();
+
+		dailyTasksFui.y = 10;
+		dailyTasksFui.x = Main.ScreenWidth - 70;
+		// dailyTasksFui.x = Main.ScreenWidth - dailyTasksFui.getBounds().width;
 
 		// Compass
 		compassEast = hxd.Res.compass.compass_e.toTile();
@@ -160,8 +176,8 @@ class BattleHud extends BasicHud {
 		compassSouthEast = hxd.Res.compass.compass_se.toTile();
 
 		compassBmp = new h2d.Bitmap(compassEast);
-		compassBmp.setScale(0.5);
-		compassBmp.setPosition(Main.ScreenWidth / 2 - compassBmp.getBounds().width / 2, Main.ScreenHeight - 410);
+		compassBmp.setScale(0.25);
+		compassBmp.setPosition(Main.ScreenWidth / 2, Main.ScreenHeight - compassBmp.getBounds().height - 32);
 		compassBmp.alpha = 1;
 
 		addChild(compassBmp);
@@ -170,28 +186,25 @@ class BattleHud extends BasicHud {
 		hullBar = new HorizontalStatsBar(fui, 0, 0, 'Hull', '1000', 65);
 
 		movementText = addText();
-		movementText.setScale(4);
-
-		// positionText = addText();
-		// positionText.setScale(4);
+		movementText.setScale(3);
 
 		leftCannonsText = addText("Left side cannons READY");
-		leftCannonsText.setScale(4);
+		leftCannonsText.setScale(3);
 
 		rightCannonsText = addText("Right side cannons READY");
-		rightCannonsText.setScale(4);
+		rightCannonsText.setScale(3);
 
 		systemText = addText();
-		systemText.setScale(4);
+		systemText.setScale(3);
 
 		latencyText = addText();
-		latencyText.setScale(4);
+		latencyText.setScale(3);
 
 		latencyText = addText();
-		latencyText.setScale(4);
+		latencyText.setScale(3);
 
-		leaveButton = addGuiButton(this, 'Leave sector', false, leaveCallback);
-		leaveButton.setPosition(0, 450);
+		leaveButton = addGuiButton(this, 'Leave sector', false, leaveCallback, 2, 2);
+		leaveButton.setPosition(0, 390);
 
 		show(true);
 	}

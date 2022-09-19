@@ -9,7 +9,7 @@ import h2d.Bitmap;
 import h2d.Tile;
 import h2d.Scene;
 
-final SectorSize = 96;
+final SectorSize = 64;
 
 class SectorRectObject {
 	public final object:h2d.Object;
@@ -45,8 +45,11 @@ class SectorRectObject {
 
 		if (contentBmp != null) {
 			if (isSkull) {
-				contentBmp.setScale(2);
-				contentBmp.setPosition(24, 24);
+				contentBmp.setScale(1.5);
+				contentBmp.setPosition(16, 16);
+			} else {
+				contentBmp.setScale(0.6);
+				contentBmp.setPosition(4, 4);
 			}
 			object.addChild(contentBmp);
 		}
@@ -81,6 +84,8 @@ class SceneGlobalMode extends Scene {
 
 	public function new(enterSectorCallback:EnterSectorCallback->Void, mainMenuCallback:Void->Void) {
 		super();
+
+		scaleMode = LetterBox(1920, 1080, false, Left, Center);
 
 		SceneGlobalMode.AcnhorTile = hxd.Res.anchor.toTile();
 		SceneGlobalMode.IslandTile = hxd.Res.small_palm.toTile();

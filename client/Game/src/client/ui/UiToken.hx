@@ -38,11 +38,11 @@ class UiToken extends h2d.Object {
 			addChild(plate);
 		}
 
-		addChild(new TokenAnimation(tokenType, 4, 54, 45));
+		addChild(new TokenAnimation(tokenType, 3, 54, 45));
 
 		text = new h2d.Text(hxd.res.DefaultFont.get(), this);
-		text.text = tokenType == TokenType.NVY ? 'NVY: 0' : 'AKS: 0';
-		text.setScale(6);
+		text.text = tokenType == TokenType.NVY ? '110' : '0';
+		text.setScale(5);
 		text.textColor = 0x82590E;
 		text.dropShadow = {
 			dx: 0.5,
@@ -50,11 +50,11 @@ class UiToken extends h2d.Object {
 			color: 0x000000,
 			alpha: 0.8
 		};
-		text.setPosition(288 - (text.textWidth * 3) - 32, -4);
+		text.setPosition(108 - text.textWidth, 4);
 	}
 
 	public function setText(text:String) {
 		// WAT ?
-		this.text.text = (tokenType == TokenType.NVY ? 'NVY: ' : 'AKS: ') + text;
+		// this.text.text = (tokenType == TokenType.NVY ? 'NVY: ' : 'AKS: ') + text;
 	}
 }

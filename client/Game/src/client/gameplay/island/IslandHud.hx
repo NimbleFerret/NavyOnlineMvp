@@ -18,13 +18,13 @@ class IslandHud extends BasicHud {
 		final ownerText = addText2(islandInfoPlate, 'Island owner: ' + Utils.MaskEthAddress(islandOwner));
 		ownerText.setPosition(idText.x, idText.y + 70);
 
-		addGuiButton(mainFui, 'Repair ship', false, function callback() {});
-		addGuiButton(mainFui, 'Upgrade ship', false, function callback() {});
-		addGuiButton(mainFui, 'Create ship', false, function callback() {});
+		addGuiButton(mainFui, 'Repair ship', false, function callback() {}, 2, 2);
+		addGuiButton(mainFui, 'Upgrade ship', false, function callback() {}, 2, 2);
+		addGuiButton(mainFui, 'Create ship', false, function callback() {}, 2, 2);
 		addGuiButton(mainFui, 'Leave island', false, function callback() {
 			if (leaveCallback != null) {
 				leaveCallback();
 			}
-		});
+		}, 2, 2);
 	}
 }
