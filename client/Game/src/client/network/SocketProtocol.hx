@@ -4,30 +4,19 @@ package client.network;
 // WebSocket server messages
 // -------------------------------------
 
-typedef EntityShip = {
-	currentArmor:Int,
-	currentHull:Int,
-	baseArmor:Int,
-	baseHull:Int,
-	canMove:Bool,
-	maxSpeed:Int,
-	minSpeed:Int,
-	speedStep:Int,
-	currentSpeed:Int,
-	dy:Int,
-	dx:Int,
-	y:Int,
-	x:Int,
-	rotation:Int,
-	direction:String,
-	isCollides:Bool,
-	isAlive:Bool,
-	shapeWidth:Int,
-	shapeHeight:Int,
-	shapeWidthHalf:Int,
-	shapeHeightHalf:Int,
-	id:String,
-	ownerId:String
+typedef SocketServerDailyTaskChange = {
+	dailyPlayersKilledCurrent:Int,
+	dailyPlayersKilledMax:Int,
+	dailyBotsKilledCurrent:Int,
+	dailyBotsKilledMax:Int,
+	dailyBossesKilledCurrent:Int,
+	dailyBossesKilledMax:Int
+}
+
+typedef SocketServerDailyTaskComplete = {
+	dailyTaskType:Int,
+	rewardNVY:Int,
+	rewardAKS:Int,
 }
 
 typedef EntityCharacter = {
@@ -80,7 +69,8 @@ typedef SocketServerMessageSync = {
 typedef SocketClientMessageJoinGame = {
 	playerId:String,
 	instanceId:String,
-	sectorType:Int
+	sectorType:Int,
+	?shipId:String
 }
 
 typedef SocketClientMessageLeaveGame = {
@@ -125,6 +115,9 @@ class SocketProtocol {
 	public static final SocketServerEventEntityMove = 'SocketServerEventEntityMove';
 	public static final SocketServerEventShipShoot = 'SocketServerEventShipShoot';
 	public static final SocketServerEventSync = 'SocketServerEventSync';
+
+	public static final SocketServerEventDailyTaskUpdate = 'SocketServerEventDailyTaskUpdate';
+	public static final SocketServerEventDailyTaskReward = 'SocketServerEventDailyTaskReward';
 
 	// Client -> Server events
 	public static final SocketClientEventPing = 'SocketClientEventPing';

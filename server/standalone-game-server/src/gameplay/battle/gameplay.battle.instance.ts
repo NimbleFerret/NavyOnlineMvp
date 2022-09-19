@@ -1,22 +1,101 @@
 /* eslint-disable prettier/prettier */
 import { Logger } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { AppEvents, PlayerKilledShip } from "../../app.events.js";
 import {
+    SectorContent,
     SocketClientMessageRespawn,
     SocketClientMessageShoot,
     SocketServerMessageAddEntity,
+    SocketServerMessageRemoveEntity,
     SocketServerMessageShipShoot, WsProtocol
 } from "src/ws/ws.protocol";
 import { engine } from "../../../GameEngine.js"
 import { BaseGameplayEntity } from "../gameplay.base.entity";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
-import { GameplayType } from "../gameplay.base.service";
 import { GameplayShipEntity } from "./gameplay.battle.ship.entity.js";
+import { GameplayType } from "../gameplay.base.service";
+import { Model } from "mongoose";
+import { ShipDocument } from "../../asset/asset.ship.entity.js";
 
 export class GameplayBattleInstance extends BaseGameplayInstance {
 
-    constructor(eventEmitter: EventEmitter2, public worldX: number, public worldY: number) {
-        super(eventEmitter, GameplayType.Battle, new engine.GameEngine());
+    constructor(shipModel: Model<ShipDocument>, eventEmitter: EventEmitter2, public worldX: number, public worldY: number, sectorContent: SectorContent) {
+        super(shipModel, eventEmitter, GameplayType.Battle, new engine.GameEngine());
+
+        this.gameEngine.deleteMainEntityCallback = async (ship: object) => {
+            const jsShip = this.converJsEntityToTypeScript(ship) as GameplayShipEntity;
+            if (jsShip.killerId) {
+                const killerId = this.entityPlayerMap.get(jsShip.killerId);
+                const killerShip = this.gameEngine.getMainEntityById(jsShip.id);
+
+                if (killerShip.role == 'Player') {
+                    if (killerId) {
+                        let eventType = AppEvents.PlayerKilledBot;
+                        if (jsShip.role == 'Boss') {
+                            eventType = AppEvents.PlayerKilledBoss;
+                        } else if (jsShip.role == 'Player') {
+                            eventType = AppEvents.PlayerKilledPlayer;
+                        }
+                        this.eventEmitter.emit(eventType, {
+                            playerId: killerId
+                        } as PlayerKilledShip);
+                    }
+                }
+
+                if (jsShip.role == 'Player' && !jsShip.free) {
+                    const shipToUpdate = await shipModel.findOne({ tokenId: jsShip.serverShipRef });
+                    shipToUpdate.currentIntegrity -= 1;
+                    await shipToUpdate.save();
+                }
+            }
+
+            const socketServerMessageRemoveEntity = {
+                entityId: jsShip.id
+            } as SocketServerMessageRemoveEntity;
+
+            this.notifyAllPlayers(socketServerMessageRemoveEntity, WsProtocol.SocketServerEventRemoveEntity);
+        };
+
+        this.gameEngine.createShellCallback = (shells: any) => {
+            const ship = this.gameEngine.getMainEntityById(shells[0].ownerId);
+            if (ship && ship.role != 'Player') {
+                const shotParams = shells.map(shell => {
+                    return {
+                        speed: shell.shellRnd.speed,
+                        dir: shell.shellRnd.dir,
+                        rotation: shell.shellRnd.rotation
+                    }
+                });
+                const socketServerMessageShipShoot = {
+                    playerId: ship.ownerId,
+                    left: shells[0].side == 'Left' ? true : false,
+                    shotParams
+                } as SocketServerMessageShipShoot;
+                this.notifyAllPlayers(socketServerMessageShipShoot, WsProtocol.SocketServerEventShipShoot);
+            }
+        };
+
+        switch (sectorContent) {
+            case SectorContent.BOSS: {
+                this.gameEngine.createEntity('', true, 'Boss', 200, 500, 'MEDIUM', 'TWO', 'FOUR',
+                    2000, 80, 5000, 5000, 200, 100, 100 / 1000, 200 / 1000, 200 / 1000,
+                    undefined, undefined);
+                break;
+            }
+            case SectorContent.PVE: {
+                this.gameEngine.createEntity('', true, 'Bot', 200, -200, 'Small', 'NONE', 'TWO',
+                    600, 300, 300, 300, 200, 100, 100 / 1000, 200 / 1000, 200 / 1000,
+                    undefined, undefined);
+                // this.gameEngine.createEntity('Bot', 700, 500, 'Small', 'NONE', 'TWO', undefined, undefined);
+                // this.gameEngine.createEntity('Bot', 900, 500, 'Small', 'NONE', 'TWO', undefined, undefined);
+                break;
+            }
+            case SectorContent.PVP: {
+                // TODO enable pvp damage
+                break;
+            }
+        }
     }
 
     public getTotalShipsCount() {
@@ -58,14 +137,12 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         if (jsEntity.shipHullSize == 'MEDIUM') {
             shipHullSize = 1;
         }
-
         if (jsEntity.shipWindows == 'ONE') {
             shipWindows = 0;
         }
         if (jsEntity.shipWindows == 'TWO') {
             shipWindows = 1;
         }
-
         if (jsEntity.shipGuns == 'ONE') {
             shipGuns = 0;
         }
@@ -77,6 +154,10 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         }
 
         const result = {
+            serverShipRef: jsEntity.serverShipRef,
+            free: jsEntity.free,
+            killerId: jsEntity.killerId,
+            role: jsEntity.role,
             currentArmor: jsEntity.currentArmor,
             currentHull: jsEntity.currentHull,
             y: jsEntity.y,
@@ -87,7 +168,18 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             ownerId: jsEntity.ownerId,
             shipHullSize,
             shipWindows,
-            shipGuns
+            shipGuns,
+            cannonsRange: jsEntity.cannonsRange,
+            cannonsDamage: jsEntity.cannonsDamage,
+            armor: jsEntity.armor,
+            hull: jsEntity.hull,
+            maxSpeed: jsEntity.maxSpeed,
+            acc: jsEntity.acc,
+            accDelay: jsEntity.accDelay,
+            turnDelay: jsEntity.turnDelay,
+            fireDelay: jsEntity.fireDelay,
+            currentIntegrity: jsEntity.currentIntegrity,
+            maxIntegrity: jsEntity.maxIntegrity
         } as GameplayShipEntity;
         return result;
     }

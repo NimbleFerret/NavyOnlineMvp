@@ -1,24 +1,36 @@
 /* eslint-disable prettier/prettier */
 import { Model } from "mongoose";
 import { Injectable, Logger } from "@nestjs/common";
-import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
+import { OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
-import { AppEvents, PlayerDisconnectedEvent } from "src/app.events";
+import { AppEvents, PlayerDisconnectedEvent } from "../app.events";
 import { User, UserDocument, UserWorldState } from "./user.entity";
-import { MoralisService, PlayerCaptainNFT, PlayerIslandNFT } from "src/moralis/moralis.service";
-import { ShipyardService } from "src/shipyard/shipyard.service";
-import { WorldService } from "src/world/world.service";
-import { PlayerShipEntity, ShipType } from "src/shipyard/shipyard.ship.entity";
-import { trace } from "console";
+import { MoralisService } from "../moralis/moralis.service";
+import { AssetService, AssetType } from "../asset/asset.service";
+import { WorldService } from "../world/world.service";
+import { PlayerIslandEntity } from "../asset/asset.island.entity";
+import { PlayerShipEntity } from "../asset/asset.ship.entity";
+import { PlayerCaptainEntity } from "../asset/asset.captain.entity";
+import { RewardService } from "src/reward/reward.service";
 
 export interface SignInOrUpResponse {
     ethAddress: string;
     nickname: string;
+    nvy: number;
+    aks: number;
     worldX: number;
     worldY: number;
-    captains?: PlayerCaptainNFT[];
+
+    ownedCaptains?: PlayerCaptainEntity[];
     ownedShips?: PlayerShipEntity[];
-    islands?: PlayerIslandNFT[];
+    ownedIslands?: PlayerIslandEntity[];
+
+    dailyPlayersKilledCurrent: number;
+    dailyPlayersKilledMax: number;
+    dailyBotsKilledCurrent: number;
+    dailyBotsKilledMax: number;
+    dailyBossesKilledCurrent: number;
+    dailyBossesKilledMax: number;
 }
 
 @Injectable()
@@ -27,24 +39,24 @@ export class UserService {
     private readonly playersMap = new Map<string, any>();
 
     constructor(
-        private shipyardService: ShipyardService,
         private moralisService: MoralisService,
+        private assetService: AssetService,
         @InjectModel(User.name) private userModel: Model<UserDocument>
     ) {
     }
 
-    @OnEvent(AppEvents.PlayerDisconnected)
-    async handlePlayerDisconnected(data: PlayerDisconnectedEvent) {
-        this.playersMap.delete(data.playerId);
-    }
+    // @OnEvent(AppEvents.PlayerDisconnected)
+    // async handlePlayerDisconnected(data: PlayerDisconnectedEvent) {
+    //     this.playersMap.delete(data.playerId);
+    // }
 
     async signInOrUp(ethAddress: string) {
         let user = await this.userModel.findOne({
             ethAddress
-        }).populate('shipsOwned');
+        }).populate('shipsOwned').populate('captainsOwned').populate('islandsOwned');
         if (user) {
             this.playersMap.set(user.ethAddress, user);
-            user = await this.syncPlayerNFTs(user);
+            user = await this.syncPlayer(user);
         } else {
             const userModel = new this.userModel({
                 ethAddress,
@@ -52,14 +64,35 @@ export class UserService {
                 worldY: WorldService.BASE_POS_Y
             });
             this.playersMap.set(userModel.ethAddress, userModel);
-            const newFreeShip = await this.shipyardService.generateFreeShip();
-            userModel.shipsOwned = [newFreeShip];
+            userModel.captainsOwned = [await this.assetService.getFreeCaptain()];
+            userModel.shipsOwned = [await this.assetService.getFreeShip()];
             user = await userModel.save();
         }
+
+        const ownedCaptains = user.captainsOwned.map(f => {
+            return {
+                id: f.tokenId,
+                owner: f.owner,
+                type: f.type,
+                level: f.level,
+                traits: f.traits,
+                miningRewardNVY: f.miningRewardNVY,
+                stakingRewardNVY: f.stakingRewardNVY,
+                miningStartedAt: f.miningStartedAt,
+                miningDurationSeconds: f.miningDurationSeconds,
+                rarity: f.rarity,
+                bg: f.bg,
+                acc: f.acc,
+                head: f.head,
+                haircutOrHat: f.haircutOrHat,
+                clothes: f.clothes,
+            } as PlayerCaptainEntity;
+        });
 
         const ownedShips = user.shipsOwned.map(f => {
             return {
                 id: f.tokenId,
+                owner: f.owner,
                 type: f.type,
                 armor: f.armor,
                 hull: f.hull,
@@ -67,6 +100,7 @@ export class UserService {
                 accelerationStep: f.accelerationStep,
                 accelerationDelay: f.accelerationDelay,
                 rotationDelay: f.rotationDelay,
+                fireDelay: f.fireDelay,
                 cannons: f.cannons,
                 cannonsRange: f.cannonsRange,
                 cannonsDamage: f.cannonsDamage,
@@ -76,21 +110,50 @@ export class UserService {
                 rarity: f.rarity,
                 windows: f.windows,
                 anchor: f.anchor,
+                currentIntegrity: f.currentIntegrity,
+                maxIntegrity: f.maxIntegrity
             } as PlayerShipEntity;
         });
 
-        // TODO Rename
         const ownedIslands = user.islandsOwned.map(f => {
-            trace(1);
-            return 1;
+            return {
+                id: f.tokenId,
+                owner: f.owner,
+                level: f.level,
+                rarity: f.rarity,
+                terrain: f.terrain,
+                size: f.size,
+                miningRewardNVY: f.miningRewardNVY,
+                shipAndCaptainFee: f.shipAndCaptainFee,
+                minersFee: f.minersFee,
+                maxMiners: f.maxMiners,
+                miners: f.miners
+            } as PlayerIslandEntity;
         });
+
+        const dailyPlayersKilledCurrent = user.dailyPlayersKilled;
+        const dailyPlayersKilledMax = RewardService.DailyPlayersKillTask;
+        const dailyBotsKilledCurrent = user.dailyBotsKilled;
+        const dailyBotsKilledMax = RewardService.DailyBotsKillTask;
+        const dailyBossesKilledCurrent = user.dailyBossesKilled;
+        const dailyBossesKilledMax = RewardService.DailyBossesKillTask;
 
         const signInOrUpResponse = {
             ethAddress: user.ethAddress,
             nickname: user.nickname,
             worldX: user.worldX,
             worldY: user.worldY,
-            ownedShips
+            nvy: user.nvyBalance,
+            aks: user.aksBalance,
+            ownedCaptains,
+            ownedShips,
+            ownedIslands,
+            dailyPlayersKilledCurrent,
+            dailyPlayersKilledMax,
+            dailyBotsKilledCurrent,
+            dailyBotsKilledMax,
+            dailyBossesKilledCurrent,
+            dailyBossesKilledMax
         } as SignInOrUpResponse;
 
         return signInOrUpResponse;
@@ -156,20 +219,38 @@ export class UserService {
         return this.userModel.find().exec();
     }
 
-    async syncPlayerNFTs(user: UserDocument): Promise<any> {
+    async findByEthAddress(ethAddress: string) {
+        return this.userModel.findOne({ ethAddress });
+    }
+
+    async syncPlayer(user: UserDocument): Promise<any> {
+        const tokenBalances = await this.moralisService.loadUserTokenBalances(user.ethAddress);
+        user.nvyBalance = tokenBalances.nvy;
+        user.aksBalance = tokenBalances.aks;
+
         const nftBasicInfo = await this.moralisService.loadUserNFTs(user.ethAddress);
-        const freeShip = user.shipsOwned.filter(f => f.type == ShipType.FREE)[0];
+        const freeCaptain = user.captainsOwned.filter(f => f.type == AssetType.FREE)[0];
+        const freeShip = user.shipsOwned.filter(f => f.type == AssetType.FREE)[0];
+
+        // Sync captains
+        user.captainsOwned = [freeCaptain];
+        for (const nftCaptain of nftBasicInfo.captains) {
+            const captain = await this.assetService.syncCaptainIfNeeded(nftCaptain);
+            user.captainsOwned.push(captain)
+        }
 
         // Sync ships
         user.shipsOwned = [freeShip];
         for (const nftShip of nftBasicInfo.ships) {
-            const ship = await this.shipyardService.syncShipIfNeeded(nftShip);
+            const ship = await this.assetService.syncShipIfNeeded(nftShip);
             user.shipsOwned.push(ship)
         }
 
         // Sync islands
+        // const islands = user.islandsOwned.filter(f => f.type == AssetType.COMMON)[0];
 
         user = await user.save();
         return user;
     }
+
 }

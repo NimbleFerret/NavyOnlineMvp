@@ -3,36 +3,28 @@ package client.gameplay.island;
 import client.gameplay.BaiscHud.BasicHud;
 
 class IslandHud extends BasicHud {
-	public function new(leaveCallback:Void->Void) {
+	public function new(islandId:String, islandOwner:String, leaveCallback:Void->Void) {
 		super();
 
-		// waterBg = new WaterBg(this);
+		final mainFui = new h2d.Flow(this);
+		mainFui.layout = Vertical;
+		mainFui.verticalSpacing = 5;
+		mainFui.padding = 10;
 
-		// final repairShipButton = addButton('Repair ship', function callback() {
-		// 	trace(1);
-		// });
-		// repairShipButton.setScale(3);
+		final islandInfoPlate = newCustomPlate(mainFui, 6, 2);
+		islandInfoPlate.setPosition(5, 5);
 
-		// final upgradeShipButton = addButton('Upgrade ship', function callback() {
-		// 	trace(1);
-		// });
-		// upgradeShipButton.setScale(3);
+		final idText = addText2(islandInfoPlate, 'Island id: ' + islandId);
+		final ownerText = addText2(islandInfoPlate, 'Island owner: ' + Utils.MaskEthAddress(islandOwner));
+		ownerText.setPosition(idText.x, idText.y + 40);
 
-		// final createShipButton = addButton('Create ship', function callback() {
-		// 	trace(1);
-		// });
-		// createShipButton.setScale(3);
-
-		// final leaveButton = addButton('Leave sector', function callback() {
-		// 	if (leaveCallback != null) {
-		// 		leaveCallback();
-		// 	}
-		// });
-		// leaveButton.setScale(3);
-
-		// addGuiButton("Repair ship");
-		// addGuiButton("Upgrade ship");
-		// addGuiButton("Create ship");
-		// addGuiButton("Leave sector");
+		addGuiButton(mainFui, 'Repair ship', false, function callback() {}, 2, 2);
+		addGuiButton(mainFui, 'Upgrade ship', false, function callback() {}, 2, 2);
+		addGuiButton(mainFui, 'Create ship', false, function callback() {}, 2, 2);
+		addGuiButton(mainFui, 'Leave island', false, function callback() {
+			if (leaveCallback != null) {
+				leaveCallback();
+			}
+		}, 2, 2);
 	}
 }

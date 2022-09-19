@@ -18,6 +18,8 @@ import {
 import { BaseGameplayEntity } from './gameplay.base.entity';
 import { GameplayType } from './gameplay.base.service';
 import { Logger } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { ShipDocument } from 'src/asset/asset.ship.entity';
 
 export abstract class BaseGameplayInstance {
 
@@ -25,16 +27,21 @@ export abstract class BaseGameplayInstance {
     public readonly instanceId = uuidv4();
 
     readonly playerEntityMap: Map<string, string> = new Map();
+    readonly entityPlayerMap: Map<string, string> = new Map();
     notifyGameWorldStateTimer: NodeJS.Timer;
 
-    constructor(public eventEmitter: EventEmitter2, public gameplayType: GameplayType, public gameEngine: any) {
+    constructor(
+        private shipModel: Model<ShipDocument>,
+        public eventEmitter: EventEmitter2,
+        public gameplayType: GameplayType,
+        public gameEngine: any) {
     }
 
     // -------------------------------------
     // General
     // -------------------------------------
 
-    addPlayer(playerId: string) {
+    async addPlayer(playerId: string, shipId?: string) {
         let engineEntity: any;
         if (this.gameplayType == GameplayType.Battle) {
 
@@ -56,13 +63,50 @@ export abstract class BaseGameplayInstance {
             //     FOUR;
             // }
 
-            // TODO Set specific params...
-            engineEntity = this.gameEngine.createEntity('Player', 100, (this.playerEntityMap.size) * 500, 'SMALL', 'NONE', 'THREE', undefined, playerId);
+            const ship = await this.shipModel.findOne({ tokenId: shipId });
+
+            let windows = 'NONE';
+            if (ship.windows == 0) {
+                windows = 'ONE';
+            } else if (ship.windows == 1) {
+                windows = 'TWO';
+            }
+
+            let cannons = 'ONE';
+            if (ship.cannons == 2) {
+                cannons = 'TWO';
+            } else if (ship.cannons == 3) {
+                cannons = 'THREE';
+            } else if (ship.cannons == 4) {
+                cannons = 'FOUR';
+            }
+
+            engineEntity = this.gameEngine.createEntity(
+                shipId,
+                ship.tokenId == 'free',
+                'Player',
+                100,
+                (this.playerEntityMap.size) * 500,
+                ship.size == 1 ? 'SMALL' : 'MEDIUM',
+                windows,
+                cannons,
+                ship.cannonsRange,
+                ship.cannonsDamage,
+                ship.armor,
+                ship.hull,
+                ship.maxSpeed,
+                ship.accelerationStep,
+                ship.accelerationDelay / 1000,
+                ship.rotationDelay / 1000,
+                ship.fireDelay / 1000,
+                undefined,
+                playerId);
         } else {
             engineEntity = this.gameEngine.createEntity(350, 290, undefined, playerId);
         }
         if (engineEntity) {
             this.playerEntityMap.set(engineEntity.ownerId, engineEntity.id);
+            this.entityPlayerMap.set(engineEntity.id, engineEntity.ownerId);
             return engineEntity;
         } else {
             return undefined;
@@ -97,6 +141,7 @@ export abstract class BaseGameplayInstance {
         try {
             clearInterval(this.notifyGameWorldStateTimer);
             this.playerEntityMap.clear();
+            this.entityPlayerMap.clear();
             this.gameEngine.destroy();
         } catch (e) {
             Logger.error(e);
@@ -108,7 +153,7 @@ export abstract class BaseGameplayInstance {
     // -------------------------------------
 
     async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
-        this.addPlayer(data.playerId);
+        await this.addPlayer(data.playerId, data.shipId);
 
         const socketServerMessageGameInit = {
             instanceId: this.instanceId,
@@ -124,6 +169,7 @@ export abstract class BaseGameplayInstance {
         const entity = this.playerEntityMap.get(data.playerId);
         if (entity) {
             this.playerEntityMap.delete(data.playerId);
+            this.entityPlayerMap.delete(entity);
             this.gameEngine.removeMainEntity(entity);
 
             const socketServerMessageRemoveEntity = {

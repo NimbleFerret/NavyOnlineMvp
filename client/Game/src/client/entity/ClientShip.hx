@@ -1,21 +1,31 @@
 package client.entity;
 
-import haxe.Template;
 import client.entity.ship.ShipTemplate;
 import client.gameplay.battle.BattleGameplay;
 import engine.entity.EngineBaseGameEntity;
 import engine.entity.EngineShipEntity;
 import engine.MathUtils;
 
-final RippleOffsetByDir:Map<GameEntityDirection, PosOffset> = [
-	GameEntityDirection.East => new PosOffset(90, -80, 20),
-	GameEntityDirection.North => new PosOffset(3.5, -10, 59),
-	GameEntityDirection.NorthEast => new PosOffset(60, -31, 44),
-	GameEntityDirection.NorthWest => new PosOffset(-56, 15, 52),
-	GameEntityDirection.South => new PosOffset(181, -6, -15),
-	GameEntityDirection.SouthEast => new PosOffset(117, -57, 6),
-	GameEntityDirection.SouthWest => new PosOffset(246, 48, 10),
-	GameEntityDirection.West => new PosOffset(261, 40, 15),
+final RippleOffsetByDirSmall:Map<GameEntityDirection, PosOffset> = [
+	GameEntityDirection.East => new PosOffset(-20, 0, 90),
+	GameEntityDirection.North => new PosOffset(0, 59, 3.5),
+	GameEntityDirection.NorthEast => new PosOffset(-31, 35, 60),
+	GameEntityDirection.NorthWest => new PosOffset(30, 35, -56),
+	GameEntityDirection.South => new PosOffset(5, -15, 181),
+	GameEntityDirection.SouthEast => new PosOffset(-45, -20, 117),
+	GameEntityDirection.SouthWest => new PosOffset(40, -10, 246),
+	GameEntityDirection.West => new PosOffset(40, 0, 270),
+];
+
+final RippleOffsetByDirMiddle:Map<GameEntityDirection, PosOffset> = [
+	GameEntityDirection.East => new PosOffset(-65, 20, 90),
+	GameEntityDirection.North => new PosOffset(-20, 75, 3.5),
+	GameEntityDirection.NorthEast => new PosOffset(-41, 45, 60),
+	GameEntityDirection.NorthWest => new PosOffset(0, 55, -56),
+	GameEntityDirection.South => new PosOffset(-20, -45, 181),
+	GameEntityDirection.SouthEast => new PosOffset(-65, 0, 117),
+	GameEntityDirection.SouthWest => new PosOffset(40, -10, 246),
+	GameEntityDirection.West => new PosOffset(40, 20, 270),
 ];
 
 class ClientShip extends ClientBaseGameEntity {
@@ -23,11 +33,6 @@ class ClientShip extends ClientBaseGameEntity {
 	// Ripple anim
 	// --------------------------------
 	var rippleAnim:h2d.Anim;
-
-	// Ripple config
-	public var ripple_angle:Float = 90;
-	public var ripple_x:Float = -20;
-	public var ripple_y:Float = 0;
 
 	// Shapes config
 	public var shape_angle:Float = 0;
@@ -41,16 +46,24 @@ class ClientShip extends ClientBaseGameEntity {
 
 		engineShipEntity.speedChangeCallback = function callback(speed) {
 			if (speed != 0) {
-				rippleAnim.alpha = 0.55;
+				rippleAnim.alpha = 1;
 			} else {
 				rippleAnim.alpha = 0;
 			}
 		};
 		engineShipEntity.directionChangeCallbackLeft = function callback(dir) {
 			shipTemplate.changeDirLeft();
+
+			final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
+			rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
+			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
 		engineShipEntity.directionChangeCallbackRight = function callback(dir) {
 			shipTemplate.changeDirRight();
+
+			final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
+			rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
+			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
 		engineShipEntity.shootLeftCallback = function callback() {
 			shipTemplate.shootLeft();
@@ -68,14 +81,45 @@ class ClientShip extends ClientBaseGameEntity {
 		final rippleTile5 = hxd.Res.water_ripple_big_004.toTile().center();
 
 		rippleAnim = new h2d.Anim([rippleTile1, rippleTile2, rippleTile3, rippleTile4, rippleTile5], this);
-		rippleAnim.rotation = MathUtils.degreeToRads(ripple_angle);
-		rippleAnim.setPosition(ripple_x, ripple_y);
-		rippleAnim.scaleX = 1.5;
-		rippleAnim.scaleY = 0.9;
-		rippleAnim.alpha = 0.0;
+
+		final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(engineShipEntity.direction) : RippleOffsetByDirMiddle.get(engineShipEntity.direction);
+
+		rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
+		rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
+		rippleAnim.scaleX = 1.5 * (engineShipEntity.shipHullSize == SMALL ? 1 : 1.5);
+		rippleAnim.scaleY = 0.9 * (engineShipEntity.shipHullSize == SMALL ? 1 : 1.5);
+		rippleAnim.alpha = 0;
 
 		shipTemplate = new ShipTemplate(engineShipEntity.shipHullSize, engineShipEntity.shipWindows, engineShipEntity.shipGuns);
 		addChild(shipTemplate);
+
+		final nickname = new h2d.Text(hxd.res.DefaultFont.get(), this);
+		if (engineShipEntity.role == Role.Player) {
+			if (engineShipEntity.ownerId == client.Player.instance.ethAddress || engineShipEntity.ownerId == 'Player1') {
+				nickname.text = 'You';
+			} else {
+				nickname.text = Utils.MaskEthAddress(engineShipEntity.ownerId);
+			}
+			nickname.textColor = 0xFBF0DD;
+		} else if (engineShipEntity.role == Role.Bot) {
+			nickname.text = 'Pirate';
+			nickname.textColor = 0xFD7D7D;
+		} else if (engineShipEntity.role == Role.Boss) {
+			nickname.text = 'BOSS Pirate';
+			nickname.textColor = 0xFF0000;
+		}
+		if (engineShipEntity.shipHullSize == ShipHullSize.SMALL) {
+			nickname.setPosition(-50, -180);
+		} else {
+			nickname.setPosition(-60, -220);
+		}
+		nickname.setScale(4);
+		nickname.dropShadow = {
+			dx: 0.5,
+			dy: 0.5,
+			color: 0x000000,
+			alpha: 0.9
+		};
 
 		s2d.addChild(this);
 	}
@@ -95,9 +139,9 @@ class ClientShip extends ClientBaseGameEntity {
 	public function getStats() {
 		final shipEntity = cast(engineEntity, EngineShipEntity);
 		return {
-			baseHull: shipEntity.baseHull,
+			hull: shipEntity.hull,
 			currentHull: shipEntity.currentHull,
-			baseArmor: shipEntity.baseArmor,
+			armor: shipEntity.armor,
 			currentArmor: shipEntity.currentArmor,
 			currentSpeed: shipEntity.currentSpeed,
 			maxSpeed: shipEntity.maxSpeed,

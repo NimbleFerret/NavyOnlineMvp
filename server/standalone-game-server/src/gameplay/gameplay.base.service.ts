@@ -2,7 +2,10 @@
 
 import { Logger } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 import { AppEvents, PlayerDisconnectedEvent } from "src/app.events";
+import { Ship, ShipDocument } from "src/asset/asset.ship.entity";
 import {
     SectorContent,
     SocketClientMessageJoinGame,
@@ -24,7 +27,10 @@ export abstract class GameplayBaseService {
     readonly sectorInstance = new Map<string, string>();
     readonly playerInstanceMap = new Map<string, string>();
 
-    constructor(public eventEmitter: EventEmitter2, private gameplayType: GameplayType) {
+    constructor(
+        @InjectModel(Ship.name) private shipModel: Model<ShipDocument>,
+        public eventEmitter: EventEmitter2,
+        private gameplayType: GameplayType) {
     }
 
     // -------------------------------------
@@ -52,10 +58,9 @@ export abstract class GameplayBaseService {
             if (this.gameplayType == GameplayType.Island) {
                 instance = new GameplayIslandInstance(this.eventEmitter, x, y);
             } else {
-                instance = new GameplayBattleInstance(this.eventEmitter, x, y);
+                instance = new GameplayBattleInstance(this.shipModel, this.eventEmitter, x, y, sectorContent);
             }
             if (instance) {
-                this.customInstanceInit(instance);
                 this.instances.set(instance.instanceId, instance);
                 this.sectorInstance.set(x + '+' + y, instance.instanceId);
                 return {
@@ -70,8 +75,6 @@ export abstract class GameplayBaseService {
             }
         }
     }
-
-    public abstract customInstanceInit(instance: BaseGameplayInstance);
 
     // -------------------------------------
     // Admin api

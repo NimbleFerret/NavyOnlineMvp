@@ -14,15 +14,18 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 
 	private var game:BattleGameplay;
 	private var leaveCallback:Void->Void;
+	private var diedCallback:Void->Void;
 
-	public function new(width:Int, height:Int, leaveCallback:Void->Void) {
+	public function new(leaveCallback:Void->Void, diedCallback:Void->Void) {
 		super();
 		this.leaveCallback = leaveCallback;
-		camera.setViewport(width / 2, height / 2, 0, 0);
+		this.diedCallback = diedCallback;
+		scaleMode = LetterBox(1920, 1080, false, Center, Center);
+		camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
 	}
 
 	public function start() {
-		game = new BattleGameplay(this, EngineMode.Server, function callback() {
+		game = new BattleGameplay(this, EngineMode.Server, function callbackLeave() {
 			if (leaveCallback != null) {
 				game = null;
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventGameInit, this);
@@ -32,13 +35,22 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityMove, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventShipShoot, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventSync, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskUpdate, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskReward, this);
 				leaveCallback();
+			}
+		}, function callbackDied() {
+			if (diedCallback != null) {
+				diedCallback();
 			}
 		});
 
-		// Refactor, no need sector type for real
-		Socket.instance.joinGame({playerId: Player.instance.ethAddress, instanceId: instanceId, sectorType: 1});
-		// Socket.instance.joinGame({playerId: Player.instance.playerData.ethAddress, instanceId: instanceId, sectorType: 1});
+		Socket.instance.joinGame({
+			playerId: Player.instance.ethAddress,
+			instanceId: instanceId,
+			sectorType: 1,
+			shipId: Player.instance.currentShipId
+		});
 
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddEntity, this);
@@ -47,11 +59,14 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityMove, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventShipShoot, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventDailyTaskUpdate, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventDailyTaskReward, this);
 	}
 
 	public override function render(e:Engine) {
-		game.hud.render(e);
+		game.waterScene.render(e);
 		super.render(e);
+		game.hud.render(e);
 		game.debugDraw();
 	}
 
@@ -90,6 +105,10 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				game.shipShoot(message);
 			case SocketProtocol.SocketServerEventSync:
 				game.sync(message);
+			case SocketProtocol.SocketServerEventDailyTaskUpdate:
+				game.updateDailyTasks();
+			case SocketProtocol.SocketServerEventDailyTaskReward:
+				game.dailyTaskComplete(message);
 			default:
 				trace('Unknown socket message');
 		}

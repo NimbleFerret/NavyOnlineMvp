@@ -33,13 +33,13 @@ class UiIsland extends h2d.Object {
 				batchElement.y = 24 * y;
 				bgBatch.add(batchElement);
 			}
-		bgBatch.setScale(3.5);
+		bgBatch.setScale(2.5);
 
 		mineTile = mineTile.sub(50, 100, 68, 68);
 		final mineBmp = new h2d.Bitmap(mineTile);
 
-		mineBmp.setPosition(32, 44);
-		mineBmp.setScale(5);
+		mineBmp.setPosition(12, 28);
+		mineBmp.setScale(4);
 
 		addChild(mineBmp);
 	}

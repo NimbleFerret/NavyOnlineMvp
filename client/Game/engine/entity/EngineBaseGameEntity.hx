@@ -31,7 +31,7 @@ class PosOffset {
 	public var x:Float;
 	public var y:Float;
 
-	public function new(x, y, r = 0) {
+	public function new(x:Float, y:Float, r:Float = 0) {
 		this.x = x;
 		this.y = y;
 		this.r = r;
@@ -70,6 +70,7 @@ class EngineBaseGameEntity {
 	public var isAlive = true;
 	public var isCollides = true;
 	public var serverSide = true;
+	public var killerId:String;
 	// ----------------------
 	// Movement
 	// ----------------------
@@ -80,17 +81,17 @@ class EngineBaseGameEntity {
 	public var dx = 0.0;
 	public var dy = 0.0;
 	public var currentSpeed = 0.0;
-	public var speedStep = 50;
+	public var acc = 50;
 	public var minSpeed = -50;
 	public var maxSpeed = 150;
 	public var canMove = true;
 	// ----------------------
 	// Geom shape
 	// ----------------------
-	public final shapeWidth:Float;
-	public final shapeHeight:Float;
-	public final shapeWidthHalf:Float;
-	public final shapeHeightHalf:Float;
+	public var shapeWidth:Float;
+	public var shapeHeight:Float;
+	public var shapeWidthHalf:Float;
+	public var shapeHeightHalf:Float;
 
 	public var rectOffsetX = 0;
 	public var rectOffsetY = 0;

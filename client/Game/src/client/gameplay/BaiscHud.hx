@@ -1,5 +1,6 @@
 package client.gameplay;
 
+import client.ui.UiToken;
 import h2d.Object;
 
 class BasicHud extends h2d.Scene {
@@ -37,10 +38,13 @@ class BasicHud extends h2d.Scene {
 	public function new() {
 		super();
 
+		scaleMode = LetterBox(1920, 1080, false, Left, Center);
+
 		fui = new h2d.Flow(this);
 		fui.layout = Vertical;
 		fui.verticalSpacing = 5;
 		fui.padding = 10;
+		fui.x = 10;
 		fui.y = 10;
 
 		// Ui stuff
@@ -76,7 +80,8 @@ class BasicHud extends h2d.Scene {
 		midButtonTile = paperUiTileImage.sub(416, 224, 64, 32);
 	}
 
-	function addGuiButton(parent:h2d.Object, text:String, isWeb3Related:Bool, callback:Void->Void, scaleX = 4, scaleY = 4) {
+	function addGuiButton(parent:h2d.Object, text:String, isWeb3Related:Bool, callback:Void->Void, scaleX:Int, scaleY:Int, textOffsetX = 16,
+			textOffsetY = 12) {
 		final button = new h2d.Object(parent);
 
 		final buttonBmp = new h2d.Bitmap(longButtonTile);
@@ -86,8 +91,8 @@ class BasicHud extends h2d.Scene {
 
 		var tf = new h2d.Text(getFont(), button);
 		tf.text = text;
-		tf.setPosition(32, 24);
-		tf.setScale(4);
+		tf.setPosition(textOffsetX, textOffsetY);
+		tf.setScale(2);
 		tf.textColor = 0x82590E;
 		tf.dropShadow = {
 			dx: 0.5,
@@ -97,7 +102,7 @@ class BasicHud extends h2d.Scene {
 		};
 
 		if (isWeb3Related && Main.IsWeb3Available != null || !isWeb3Related) {
-			final interaction = new h2d.Interactive(32 * 4 * 3, 32 * 4, button);
+			final interaction = new h2d.Interactive(32 * scaleX * 3, 32 * scaleX, button);
 			interaction.onClick = function(event:hxd.Event) {
 				if (callback != null) {
 					callback();
@@ -124,7 +129,7 @@ class BasicHud extends h2d.Scene {
 
 	function leftArrowButton(callback:Void->Void, isWeb3Related:Bool) {
 		final button = new h2d.Object(this);
-		button.setScale(4);
+		button.setScale(3);
 
 		final buttonBmp = new h2d.Bitmap(singleButtonTile);
 		final arrowBmp = new h2d.Bitmap(arrowLeftTile);
@@ -147,10 +152,10 @@ class BasicHud extends h2d.Scene {
 				button.alpha = 1;
 			};
 			interaction.onPush = function(event:hxd.Event) {
-				button.setScale(3.5);
+				button.setScale(2.5);
 			};
 			interaction.onRelease = function(event:hxd.Event) {
-				button.setScale(4);
+				button.setScale(3);
 			};
 		} else {
 			button.alpha = 0.8;
@@ -161,7 +166,7 @@ class BasicHud extends h2d.Scene {
 
 	function rightArrowButton(callback:Void->Void, isWeb3Related:Bool) {
 		final button = new h2d.Object(this);
-		button.setScale(4);
+		button.setScale(3);
 
 		final buttonBmp = new h2d.Bitmap(singleButtonTile);
 		final arrowBmp = new h2d.Bitmap(arrowRightTile);
@@ -184,10 +189,10 @@ class BasicHud extends h2d.Scene {
 				button.alpha = 1;
 			};
 			interaction.onPush = function(event:hxd.Event) {
-				button.setScale(3.5);
+				button.setScale(2.5);
 			};
 			interaction.onRelease = function(event:hxd.Event) {
-				button.setScale(4);
+				button.setScale(3);
 			};
 		} else {
 			button.alpha = 0.8;
@@ -211,7 +216,7 @@ class BasicHud extends h2d.Scene {
 		final plate = new h2d.Object(parent);
 
 		final group = new h2d.TileGroup(paperUiTileImage, plate);
-		final tileScale = 3;
+		final tileScale = 2;
 		group.setScale(tileScale);
 		buildDialogBackground(group, width, height);
 
@@ -230,9 +235,6 @@ class BasicHud extends h2d.Scene {
 
 		buildDialogBackground(group, width, height);
 
-		final dialogWidth = width * 32 * tileScale;
-		final dialogHeight = height * 32 * tileScale;
-
 		final tf = new h2d.Text(getFont(), dialog);
 		tf.text = title;
 		tf.setPosition(64, 32);
@@ -247,7 +249,7 @@ class BasicHud extends h2d.Scene {
 
 		dialog.addChild(tf);
 
-		dialog.setPosition((Main.ScreenWidth / 2) - (dialogWidth / 2), (Main.ScreenHeight / 2) - (dialogHeight / 2) - 100);
+		dialog.setPosition((Main.ScreenWidth / 2) - 550, (Main.ScreenHeight / 2) - 185);
 
 		final positiveBmp = new h2d.Bitmap(positiveTile);
 		positiveBmp.setScale(4);
@@ -282,6 +284,27 @@ class BasicHud extends h2d.Scene {
 		};
 
 		this.addChild(dialog);
+	}
+
+	function tokensRewardAlert(nvy:Int, aks:Int) {
+		final plate = newCustomPlate(this, 5, 4);
+
+		final titleText = addText2(plate, "You've been rewarded!");
+
+		final nvyToken = new UiToken(TokenType.NVY, null);
+		nvyToken.setText(Std.string(nvy));
+		nvyToken.setPosition(titleText.x, titleText.y + 40);
+
+		final aksToken = new UiToken(TokenType.AKS, null);
+		aksToken.setText(Std.string(aks));
+		aksToken.setPosition(nvyToken.x, nvyToken.y + 80);
+
+		plate.addChild(nvyToken);
+		plate.addChild(aksToken);
+
+		plate.setPosition(Main.ScreenWidth / 2, 100);
+
+		return plate;
 	}
 
 	function yesNoDialog(title:String) {
@@ -400,12 +423,22 @@ class BasicHud extends h2d.Scene {
 				var tile:h2d.Tile;
 				if (y == 0) {
 					// Top
-					if (x == 0) {
-						tile = dialogTopLeftTile;
-					} else if (x == dialogTilesWidth - 1) {
-						tile = dialogTopRightTile;
+					if (dialogTilesHeight == 1) {
+						if (x == 0) {
+							tile = dialogSingleLeftTile;
+						} else if (x == dialogTilesWidth - 1) {
+							tile = dialogSingleRightTile;
+						} else {
+							tile = dialogSingleMiddleTile;
+						}
 					} else {
-						tile = dialogTopMiddleTile;
+						if (x == 0) {
+							tile = dialogTopLeftTile;
+						} else if (x == dialogTilesWidth - 1) {
+							tile = dialogTopRightTile;
+						} else {
+							tile = dialogTopMiddleTile;
+						}
 					}
 				} else if (y == dialogTilesHeight - 1) {
 					// Bottom
@@ -445,8 +478,7 @@ class BasicHud extends h2d.Scene {
 		f.padding = 5;
 		f.paddingBottom = 7;
 		f.backgroundTile = h2d.Tile.fromColor(0x404040);
-		var tf = new h2d.Text(getFont(), f);
-		tf.text = label;
+		addText3(f, label);
 		f.enableInteractive = true;
 		f.interactive.cursor = Button;
 		f.interactive.onClick = function(_) onClick();
@@ -540,6 +572,13 @@ class BasicHud extends h2d.Scene {
 	public function addText(text = "") {
 		final tf = new h2d.Text(getFont(), fui);
 		tf.text = text;
+		tf.textColor = 0xFBF0DD;
+		tf.dropShadow = {
+			dx: 0.5,
+			dy: 0.5,
+			color: 0x000000,
+			alpha: 0.9
+		};
 		return tf;
 	}
 
@@ -547,13 +586,28 @@ class BasicHud extends h2d.Scene {
 		final tf = new h2d.Text(getFont(), parent);
 		tf.text = text;
 		tf.setPosition(32, 24);
-		tf.setScale(4);
+		tf.setScale(2);
 		tf.textColor = 0x82590E;
 		tf.dropShadow = {
 			dx: 0.5,
 			dy: 0.5,
 			color: 0x000000,
-			alpha: 0.8
+			alpha: 0.5
+		};
+		return tf;
+	}
+
+	public function addText3(parent:h2d.Object, text = "", scale = 2) {
+		final tf = new h2d.Text(getFont(), parent);
+		tf.text = text;
+		tf.setPosition(16, 16);
+		tf.setScale(scale);
+		tf.textColor = 0xFBF0DD;
+		tf.dropShadow = {
+			dx: 0.5,
+			dy: 0.5,
+			color: 0x000000,
+			alpha: 0.9
 		};
 		return tf;
 	}

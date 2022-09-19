@@ -7,6 +7,8 @@ class Player {
 
 	public var playerData:PlayerData;
 	public var ethAddress:String;
+	public var currentShipId:String;
+	public var isCurrentShipIsFree = true;
 
 	private function new() {}
 }

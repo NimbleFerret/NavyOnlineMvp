@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
-import { ShipyardModule } from 'src/shipyard/shipyard.module';
+import { AssetModule } from '../asset/asset.module';
 import { CronosService } from './cronos.service';
 
 @Module({
-  imports: [ShipyardModule],
+  imports: [AssetModule],
   providers: [CronosService],
   exports: [CronosService]
 })

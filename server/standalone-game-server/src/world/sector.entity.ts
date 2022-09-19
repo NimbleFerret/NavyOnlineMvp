@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
-import { Island } from './island.entity';
+import { Document } from 'mongoose';
+import { Island, IslandSchema } from '../asset/asset.island.entity';
 
 export type SectorDocument = Sector & Document;
 
@@ -16,7 +16,7 @@ export class Sector {
     @Prop()
     content: number;
 
-    @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Island' } })
+    @Prop({ type: IslandSchema })
     island: Island;
 }
 

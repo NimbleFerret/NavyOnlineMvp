@@ -11,11 +11,14 @@ import * as ShipTemplate from '../abi/ShipTemplate.json';
 import * as FounderCaptainCollectionSale from '../abi/FounderCaptainCollectionSale.json';
 import * as FounderShipCollectionSale from '../abi/FounderShipCollectionSale.json';
 import * as FounderIslandCollectionSale from '../abi/FounderIslandCollectionSale.json';
-import { ShipyardService } from 'src/shipyard/shipyard.service';
 import { NftCaptainGenerator } from 'src/nft/nft.captain.generator';
-import { Rarity } from 'src/random/random.entity';
-import { NftIslandGenerator } from 'src/nft/nft.island.generator';
-import { RandomService } from 'src/random/random.service';
+import { ShipSize } from '../asset/asset.ship.entity';
+import { Rarity } from '../random/random.entity';
+import { NftIslandGenerator } from '../nft/nft.island.generator';
+import { RandomService } from '../random/random.service';
+import { AssetService } from 'src/asset/asset.service';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { AppEvents, MintIngameReward } from 'src/app.events';
 
 // ------------------------------------
 // Captain stats
@@ -38,22 +41,6 @@ export interface CaptainStats {
 // Ship stats
 // ------------------------------------
 
-export interface ShipStats {
-    armor: number;
-    hull: number;
-    maxSpeed: number;
-    accelerationStep: number;
-    accelerationDelay: number;
-    rotationDelay: number;
-    cannons: number;
-    cannonsRange: number;
-    cannonsDamage: number;
-    level: number;
-    traits: number;
-    size: number;
-    rarity: number;
-}
-
 export interface ShipStatsRange {
     minArmor: number;
     maxArmor: number;
@@ -67,6 +54,8 @@ export interface ShipStatsRange {
     maxAccelerationDelay: number;
     minRotationDelay: number;
     maxRotationDelay: number;
+    minFireDelay: number;
+    maxFireDelay: number;
     minCannons: number;
     maxCannons: number;
     minCannonsRange: number;
@@ -102,8 +91,20 @@ export interface IslandStats {
     minersFee: number;
 }
 
+// ------------------------------------
+// Cache
+// ------------------------------------
+
+export interface FounderCollectionsInfo {
+    captainsOnSale: string;
+    shipsOnSale: string;
+    islandsOnSale: string;
+}
+
 @Injectable()
 export class CronosService implements OnModuleInit {
+
+    private readonly ethersProvider = new ethers.providers.JsonRpcProvider('https://evm-t3.cronos.org');
 
 
 
@@ -132,20 +133,30 @@ export class CronosService implements OnModuleInit {
     private readonly nftCaptainGenerator: NftCaptainGenerator;
     private readonly nftIslandGenerator: NftIslandGenerator;
 
-    constructor(private shipyardService: ShipyardService) {
+    private founderCollectionsInfo: FounderCollectionsInfo;
+
+    constructor(private assetService: AssetService, private eventEmitter: EventEmitter2) {
         this.nftCaptainGenerator = new NftCaptainGenerator();
         this.nftIslandGenerator = new NftIslandGenerator();
+
+        this.founderCollectionsInfo = {
+            captainsOnSale: '-',
+            shipsOnSale: '-',
+            islandsOnSale: '-',
+        }
+
+        // setInterval(() => this.updateFounderCollectionsInfo(), 1000 * 60 * 5);
     }
 
     async onModuleInit() {
-        this.aksContract = new ethers.Contract(this.AksContractAddress, Aks, this.ethersProvider).connect(this.backendWallet);
-        this.nvyContract = new ethers.Contract(this.NvyContractAddress, Nvy, this.ethersProvider).connect(this.backendWallet);
+        this.aksContract = new ethers.Contract(CronosService.AksContractAddress, Aks, this.ethersProvider).connect(this.backendWallet);
+        this.nvyContract = new ethers.Contract(CronosService.NvyContractAddress, Nvy, this.ethersProvider).connect(this.backendWallet);
 
         this.captainContract = new ethers.Contract(CronosService.CaptainContractAddress, Captain, this.ethersProvider).connect(this.backendWallet);
         this.shipContract = new ethers.Contract(CronosService.ShipContractAddress, Ship, this.ethersProvider).connect(this.backendWallet);
         this.islandContract = new ethers.Contract(CronosService.IslandContractAddress, Island, this.ethersProvider).connect(this.backendWallet);
 
-        const shipTemplateContract = new ethers.Contract(this.ShipTemplateContractAddress, ShipTemplate, this.ethersProvider);
+        // const shipTemplateContract = new ethers.Contract(this.ShipTemplateContractAddress, ShipTemplate, this.ethersProvider);
 
         this.founderCaptainCollectionSaleContract = new ethers.Contract(this.FounderCaptainCollectionSaleContractAddress, FounderCaptainCollectionSale, this.ethersProvider);
         this.founderShipCollectionSaleContract = new ethers.Contract(this.FounderShipCollectionSaleContractAddress, FounderShipCollectionSale, this.ethersProvider);
@@ -215,14 +226,16 @@ export class CronosService implements OnModuleInit {
                 let shipOnSale = await this.founderShipCollectionSaleContract.shipOnSaleTotal();
                 shipOnSale = shipOnSale.toNumber();
 
-                const generatedShip = await this.shipyardService.generateShip(
+                const newShipMetadata = await this.assetService.generateShipMetadata(
+                    sender,
                     shipOnSale,
                     this.founderShipsOnSaleTotal,
                     this.smallShipStatsRange,
                     this.middleShipStatsRange,
-                    this.shipStatsStep);
-                const tuple: [boolean, ethers.BigNumber, ethers.BigNumber] = [false, ethers.BigNumber.from(1), ethers.BigNumber.from(55)];
-                await this.shipContract.grantShip(sender, tuple, generatedShip.shipMetadata);
+                    this.shipStatsStep,
+                    ShipSize.MIDDLE);
+                const tuple: [ethers.BigNumber, ethers.BigNumber] = [ethers.BigNumber.from(1), ethers.BigNumber.from(55)];
+                await this.shipContract.grantShip(sender, tuple, newShipMetadata);
 
                 Logger.log('Ship for: ' + sender + ' generated !');
             } catch (e) {
@@ -292,60 +305,67 @@ export class CronosService implements OnModuleInit {
             }
         });
 
-        const shipStatsStep = await shipTemplateContract.getShipStatsStep();
-        const smallShipParams = await shipTemplateContract.getSmallShipStats();
-        const middleShipParams = await shipTemplateContract.getMiddleShipStats();
+        // const shipStatsStep = await shipTemplateContract.getShipStatsStep();
+        // const smallShipParams = await shipTemplateContract.getSmallShipStats();
+        // const middleShipParams = await shipTemplateContract.getMiddleShipStats();
 
-        this.shipStatsStep = {
-            armorAndHullStep: shipStatsStep[0].toNumber(),
-            speedAndAccelerationStep: shipStatsStep[1].toNumber(),
-            inputdelayStep: shipStatsStep[2].toNumber(),
-            cannonsStep: shipStatsStep[3].toNumber(),
-            cannonsRangeStep: shipStatsStep[4].toNumber(),
-            cannonsDamageStep: shipStatsStep[5].toNumber()
-        }
+        // this.shipStatsStep = {
+        //     armorAndHullStep: shipStatsStep[0].toNumber(),
+        //     speedAndAccelerationStep: shipStatsStep[1].toNumber(),
+        //     inputdelayStep: shipStatsStep[2].toNumber(),
+        //     cannonsStep: shipStatsStep[3].toNumber(),
+        //     cannonsRangeStep: shipStatsStep[4].toNumber(),
+        //     cannonsDamageStep: shipStatsStep[5].toNumber()
+        // }
 
-        this.smallShipStatsRange = {
-            minArmor: smallShipParams[0].toNumber(),
-            maxArmor: smallShipParams[1].toNumber(),
-            minHull: smallShipParams[2].toNumber(),
-            maxHull: smallShipParams[3].toNumber(),
-            minMaxSpeed: smallShipParams[4].toNumber(),
-            maxMaxSpeed: smallShipParams[5].toNumber(),
-            minAccelerationStep: smallShipParams[6].toNumber(),
-            maxAccelerationStep: smallShipParams[7].toNumber(),
-            minAccelerationDelay: smallShipParams[8].toNumber(),
-            maxAccelerationDelay: smallShipParams[9].toNumber(),
-            minRotationDelay: smallShipParams[10].toNumber(),
-            maxRotationDelay: smallShipParams[11].toNumber(),
-            minCannons: smallShipParams[12].toNumber(),
-            maxCannons: smallShipParams[13].toNumber(),
-            minCannonsRange: smallShipParams[14].toNumber(),
-            maxCannonsRange: smallShipParams[15].toNumber(),
-            minCannonsDamage: smallShipParams[16].toNumber(),
-            maxCannonsDamage: smallShipParams[17].toNumber()
-        };
+        // this.smallShipStatsRange = {
+        //     minArmor: smallShipParams[0].toNumber(),
+        //     maxArmor: smallShipParams[1].toNumber(),
+        //     minHull: smallShipParams[2].toNumber(),
+        //     maxHull: smallShipParams[3].toNumber(),
+        //     minMaxSpeed: smallShipParams[4].toNumber(),
+        //     maxMaxSpeed: smallShipParams[5].toNumber(),
+        //     minAccelerationStep: smallShipParams[6].toNumber(),
+        //     maxAccelerationStep: smallShipParams[7].toNumber(),
+        //     minAccelerationDelay: smallShipParams[8].toNumber(),
+        //     maxAccelerationDelay: smallShipParams[9].toNumber(),
+        //     minRotationDelay: smallShipParams[10].toNumber(),
+        //     maxRotationDelay: smallShipParams[11].toNumber(),
+        //     minFireDelay: smallShipParams[12].toNumber(),
+        //     maxFireDelay: smallShipParams[13].toNumber(),
+        //     minCannons: smallShipParams[14].toNumber(),
+        //     maxCannons: smallShipParams[15].toNumber(),
+        //     minCannonsRange: smallShipParams[16].toNumber(),
+        //     maxCannonsRange: smallShipParams[17].toNumber(),
+        //     minCannonsDamage: smallShipParams[18].toNumber(),
+        //     maxCannonsDamage: smallShipParams[19].toNumber()
+        // };
 
-        this.middleShipStatsRange = {
-            minArmor: middleShipParams[0].toNumber(),
-            maxArmor: middleShipParams[1].toNumber(),
-            minHull: middleShipParams[2].toNumber(),
-            maxHull: smallShipParams[3].toNumber(),
-            minMaxSpeed: middleShipParams[4].toNumber(),
-            maxMaxSpeed: middleShipParams[5].toNumber(),
-            minAccelerationStep: middleShipParams[6].toNumber(),
-            maxAccelerationStep: middleShipParams[7].toNumber(),
-            minAccelerationDelay: middleShipParams[8].toNumber(),
-            maxAccelerationDelay: middleShipParams[9].toNumber(),
-            minRotationDelay: middleShipParams[10].toNumber(),
-            maxRotationDelay: middleShipParams[11].toNumber(),
-            minCannons: middleShipParams[12].toNumber(),
-            maxCannons: middleShipParams[13].toNumber(),
-            minCannonsRange: middleShipParams[14].toNumber(),
-            maxCannonsRange: middleShipParams[15].toNumber(),
-            minCannonsDamage: middleShipParams[16].toNumber(),
-            maxCannonsDamage: middleShipParams[17].toNumber()
-        };
+        // this.middleShipStatsRange = {
+        //     minArmor: middleShipParams[0].toNumber(),
+        //     maxArmor: middleShipParams[1].toNumber(),
+        //     minHull: middleShipParams[2].toNumber(),
+        //     maxHull: smallShipParams[3].toNumber(),
+        //     minMaxSpeed: middleShipParams[4].toNumber(),
+        //     maxMaxSpeed: middleShipParams[5].toNumber(),
+        //     minAccelerationStep: middleShipParams[6].toNumber(),
+        //     maxAccelerationStep: middleShipParams[7].toNumber(),
+        //     minAccelerationDelay: middleShipParams[8].toNumber(),
+        //     maxAccelerationDelay: middleShipParams[9].toNumber(),
+        //     minRotationDelay: middleShipParams[10].toNumber(),
+        //     maxRotationDelay: middleShipParams[11].toNumber(),
+        //     minRotationDelay: middleShipParams[12].toNumber(),
+        //     maxRotationDelay: middleShipParams[13].toNumber(),
+        //     minCannons: middleShipParams[14].toNumber(),
+        //     maxCannons: middleShipParams[15].toNumber(),
+        //     minCannonsRange: middleShipParams[16].toNumber(),
+        //     maxCannonsRange: middleShipParams[17].toNumber(),
+        //     minCannonsDamage: middleShipParams[18].toNumber(),
+        //     maxCannonsDamage: middleShipParams[19].toNumber()
+        // };
+
+        // Fill cache
+        // this.updateFounderCollectionsInfo();
     }
 
     async rewardNVY(amount: number, recipient: string) {
@@ -367,16 +387,39 @@ export class CronosService implements OnModuleInit {
     }
 
     async getFounderCollectionsInfo() {
+        return this.founderCollectionsInfo;
+    }
+
+    private async updateFounderCollectionsInfo() {
         let captainsOnSale = await this.founderCaptainCollectionSaleContract.captainOnSaleTotal();
         captainsOnSale = captainsOnSale.toNumber();
         let shipsOnSale = await this.founderShipCollectionSaleContract.shipOnSaleTotal();
         shipsOnSale = shipsOnSale.toNumber();
         let islandsOnSale = await this.founderIslandCollectionSaleContract.islandOnSaleTotal();
         islandsOnSale = islandsOnSale.toNumber();
-        return {
-            captainsOnSale,
-            shipsOnSale,
-            islandsOnSale
+
+        this.founderCollectionsInfo.captainsOnSale = captainsOnSale;
+        this.founderCollectionsInfo.shipsOnSale = shipsOnSale;
+        this.founderCollectionsInfo.islandsOnSale = islandsOnSale;
+    }
+
+    // Events handling
+
+    @OnEvent(AppEvents.MintIngameReward)
+    async playerKilledPlayer(data: MintIngameReward) {
+        try {
+            Logger.log(`Mint ${data.nvy} NVY and ${data.aks} AKS to player ${data.playerId}`);
+            if (data.nvy > 0) {
+                await this.nvyContract.mintRewardIngame(data.playerId, ethers.BigNumber.from(data.nvy));
+            }
+            if (data.aks > 0) {
+                await this.aksContract.mintReward(data.playerId, ethers.BigNumber.from(data.aks));
+            }
+        } catch (e) {
+            Logger.log(`Error during reward mint for player ${data.playerId}`, e);
         }
     }
+
+    // TODO damage ship event
+
 }

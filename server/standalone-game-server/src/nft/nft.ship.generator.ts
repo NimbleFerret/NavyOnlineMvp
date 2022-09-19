@@ -2,9 +2,9 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { createCanvas, loadImage } from "canvas";
-import { RandomService } from "src/random/random.service";
-import { MoralisService } from 'src/moralis/moralis.service';
-import { PlayerShipEntity } from 'src/shipyard/shipyard.ship.entity';
+import { RandomService } from "../random/random.service";
+import { MoralisService } from '../moralis/moralis.service';
+import { PlayerShipEntity } from '../asset/asset.ship.entity';
 
 export class NftShipGenerator {
 
@@ -87,6 +87,7 @@ export class NftShipGenerator {
                 { accelerationStep: shipStats.accelerationStep },
                 { accelerationDelay: shipStats.accelerationDelay },
                 { rotationDelay: shipStats.rotationDelay },
+                { fireDelay: shipStats.fireDelay },
                 { cannons: shipStats.cannons },
                 { cannonsRange: shipStats.cannonsRange },
                 { cannonsDamage: shipStats.cannonsDamage },

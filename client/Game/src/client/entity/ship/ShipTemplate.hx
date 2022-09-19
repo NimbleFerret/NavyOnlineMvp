@@ -37,6 +37,8 @@ class ShipTemplate extends h2d.Object {
 	// 2 - 1 > 2 > 3 > 4
 	private var gunsDrawingOrder = 1;
 
+	private var decorWasChanged = false;
+
 	public function new(shipSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns) {
 		super();
 
@@ -75,7 +77,8 @@ class ShipTemplate extends h2d.Object {
 			rightSideGun3.setPosition(canonsInitialPosRight.three.x, canonsInitialPosRight.three.y);
 		}
 
-		if (shipGuns == FOUR) {
+		// TODO qfix
+		if (shipGuns == FOUR && shipSize != SMALL) {
 			rightSideGun4 = new ShipGun(shipSize, direction, Right);
 			rightSideGun4.setPosition(canonsInitialPosRight.four.x, canonsInitialPosRight.four.y);
 		}
@@ -96,7 +99,7 @@ class ShipTemplate extends h2d.Object {
 			leftSideGun3.setPosition(canonsInitialPosLeft.three.x, canonsInitialPosLeft.three.y);
 		}
 
-		if (shipGuns == FOUR) {
+		if (shipGuns == FOUR && shipSize != SMALL) {
 			leftSideGun4 = new ShipGun(shipSize, direction, Left);
 			leftSideGun4.setPosition(canonsInitialPosLeft.four.x, canonsInitialPosLeft.four.y);
 		}
@@ -174,6 +177,7 @@ class ShipTemplate extends h2d.Object {
 				direction = SouthWest;
 				changeGunsDrawingOrder();
 				decor.changeDrawingOrder();
+				decorWasChanged = true;
 			case SouthWest:
 				direction = South;
 			case South:
@@ -182,13 +186,22 @@ class ShipTemplate extends h2d.Object {
 				direction = East;
 				changeGunsDrawingOrder();
 				decor.changeDrawingOrder();
+				decorWasChanged = true;
 		}
 		hanldeDirectionChange();
 	}
 
 	private function changeGunsDrawingOrder() {
+		var length = 1;
+		if (shipGuns == ShipGuns.TWO) {
+			length = 2;
+		} else if (shipGuns == ShipGuns.THREE) {
+			length = 3;
+		} else if (shipGuns == ShipGuns.FOUR) {
+			length = 4;
+		}
+
 		// Right side guns
-		var length = shipGuns == ShipGuns.THREE ? 3 : 4;
 		final removedRightGuns = new Array<h2d.Object>();
 		for (i in 0...length) {
 			final rightGun = layers.getChildAtLayer(0, 4);
@@ -202,7 +215,6 @@ class ShipTemplate extends h2d.Object {
 		}
 
 		// Left side guns
-		length = shipGuns == ShipGuns.THREE ? 3 : 4;
 		final removedLeftGuns = new Array<h2d.Object>();
 		for (i in 0...length) {
 			final leftGun = layers.getChildAtLayer(0, 5);

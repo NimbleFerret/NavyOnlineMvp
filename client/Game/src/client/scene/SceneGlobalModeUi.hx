@@ -9,54 +9,55 @@ class SceneGlobalModeUi extends BasicHud {
 		// Map background
 
 		final mapPlate = newCustomPlate(this, 16, 16);
-		mapPlate.setPosition(45, 45);
+		mapPlate.setPosition(32, 36);
 
 		// Menu
 
-		final mainMenuBtn = addGuiButton(this, "Main menu", false, mainMenuCallback);
-		mainMenuBtn.x = 1600;
+		final mainMenuBtn = addGuiButton(this, "Main menu", false, mainMenuCallback, 2, 2);
+		mainMenuBtn.x = 1080;
 		mainMenuBtn.y = 32;
 
 		final menuPlate = newCustomPlate(this, 5, 6);
-		menuPlate.setPosition(1615, 185);
+		menuPlate.setPosition(1086, 128);
 
 		final sanctuaryIcon = new h2d.Bitmap(SceneGlobalMode.AcnhorTile);
-		sanctuaryIcon.setPosition(menuPlate.x + 10, menuPlate.y + 20);
+		sanctuaryIcon.setScale(0.75);
+		sanctuaryIcon.setPosition(menuPlate.x + 20, menuPlate.y + 20);
 		this.addChild(sanctuaryIcon);
 
 		final sanctuaryText = addText2(this, "Sanctuary");
-		sanctuaryText.setPosition(menuPlate.x + 120, menuPlate.y + 40);
+		sanctuaryText.setPosition(menuPlate.x + 100, menuPlate.y + 40);
 
 		final islandIcon = new h2d.Bitmap(SceneGlobalMode.IslandTile);
-		islandIcon.setPosition(menuPlate.x + 10, menuPlate.y + 120);
+		islandIcon.setScale(0.75);
+		islandIcon.setPosition(menuPlate.x + 20, menuPlate.y + 90);
 		this.addChild(islandIcon);
 
 		final islandText = addText2(this, "Island");
-		islandText.setPosition(menuPlate.x + 120, menuPlate.y + 130);
+		islandText.setPosition(menuPlate.x + 100, menuPlate.y + 110);
 
 		final pinkSkullIcon = new h2d.Bitmap(SceneGlobalMode.PinkSkullTile);
-		pinkSkullIcon.setPosition(menuPlate.x + 10, menuPlate.y + 210);
+		pinkSkullIcon.setPosition(menuPlate.x + 10, menuPlate.y + 150);
 
 		final pvpText = addText2(this, "PVP");
-		pvpText.setPosition(menuPlate.x + 120, menuPlate.y + 220);
+		pvpText.setPosition(menuPlate.x + 100, menuPlate.y + 175);
 
 		final blueSkullIcon = new h2d.Bitmap(SceneGlobalMode.BlueSkullTile);
-		blueSkullIcon.setPosition(menuPlate.x + 10, menuPlate.y + 300);
+		blueSkullIcon.setPosition(menuPlate.x + 10, menuPlate.y + 210);
 
 		final bossText = addText2(this, "BOSS");
-		bossText.setPosition(menuPlate.x + 120, menuPlate.y + 310);
+		bossText.setPosition(menuPlate.x + 100, menuPlate.y + 235);
 
 		final commonSkullIcon = new h2d.Bitmap(SceneGlobalMode.CommonSkullTile);
-		commonSkullIcon.setPosition(menuPlate.x + 10, menuPlate.y + 390);
+		commonSkullIcon.setPosition(menuPlate.x + 10, menuPlate.y + 270);
 
 		final piratesText = addText2(this, "Pirates");
-		piratesText.setPosition(menuPlate.x + 120, menuPlate.y + 400);
-
-		pinkSkullIcon.setScale(2);
+		piratesText.setPosition(menuPlate.x + 100, menuPlate.y + 295);
+		pinkSkullIcon.setScale(1.5);
 		pinkSkullIcon.setPosition(pinkSkullIcon.x + 24, pinkSkullIcon.y + 24);
-		blueSkullIcon.setScale(2);
+		blueSkullIcon.setScale(1.5);
 		blueSkullIcon.setPosition(blueSkullIcon.x + 24, blueSkullIcon.y + 24);
-		commonSkullIcon.setScale(2);
+		commonSkullIcon.setScale(1.5);
 		commonSkullIcon.setPosition(commonSkullIcon.x + 24, commonSkullIcon.y + 24);
 
 		this.addChild(pinkSkullIcon);

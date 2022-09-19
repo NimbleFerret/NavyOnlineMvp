@@ -33,11 +33,12 @@ class BattleGameplay extends BasicGameplay {
 	private var inputType = InputType.Game;
 
 	// UI
-	public var hud:BattleHud;
+	public final hud:BattleHud;
+	public final waterScene:WaterScene;
 
 	private var leaveCallback:Void->Void;
 
-	public function new(scene:h2d.Scene, engineMode:EngineMode, leaveCallback:Void->Void) {
+	public function new(scene:h2d.Scene, engineMode:EngineMode, leaveCallback:Void->Void, diedCallback:Void->Void) {
 		super(scene, new GameEngine(engineMode));
 
 		this.leaveCallback = leaveCallback;
@@ -50,34 +51,36 @@ class BattleGameplay extends BasicGameplay {
 
 		gameEngine.createMainEntityCallback = function callback(engineShipEntity:EngineBaseGameEntity) {}
 		gameEngine.createShellCallback = function callback(engineShellEntities:Array<EngineShellEntity>) {
-			final ownerEntity = clientMainEntities.get(engineShellEntities[0].ownerId);
-			final shotParams = new Array<ShotParams>();
-			if (ownerEntity != null) {
-				final ownerShip = cast(ownerEntity, ClientShip);
-				for (engineShell in engineShellEntities) {
-					final clientShell = new ClientShell(scene, engineShell, ownerShip);
-					clientShells.set(engineShell.id, clientShell);
-					shotParams.push({
-						speed: engineShell.shellRnd.speed,
-						dir: engineShell.shellRnd.dir,
-						rotation: engineShell.shellRnd.rotation
+			if (gameState == GameState.Playing) {
+				final ownerEntity = clientMainEntities.get(engineShellEntities[0].ownerId);
+				final shotParams = new Array<ShotParams>();
+				if (ownerEntity != null) {
+					final ownerShip = cast(ownerEntity, ClientShip);
+					for (engineShell in engineShellEntities) {
+						final clientShell = new ClientShell(scene, engineShell, ownerShip);
+						clientShells.set(engineShell.id, clientShell);
+						shotParams.push({
+							speed: engineShell.shellRnd.speed,
+							dir: engineShell.shellRnd.dir,
+							rotation: engineShell.shellRnd.rotation
+						});
+					}
+				}
+				if (engineShellEntities[0].serverSide) {
+					trace('server side shells');
+				} else {
+					trace('client side shells');
+				}
+				if (gameEngine.engineMode == EngineMode.Server && !engineShellEntities[0].serverSide) {
+					Socket.instance.shoot({
+						playerId: playerId,
+						left: engineShellEntities[0].side == Side.Left ? true : false,
+						shotParams: shotParams
 					});
 				}
-			}
-			if (engineShellEntities[0].serverSide) {
-				trace('server side shells');
-			} else {
-				trace('client side shells');
-			}
-			if (gameEngine.engineMode == EngineMode.Server && !engineShellEntities[0].serverSide) {
-				Socket.instance.shoot({
-					playerId: playerId,
-					left: engineShellEntities[0].side == Side.Left ? true : false,
-					shotParams: shotParams
-				});
-			}
-			if (ownerEntity.getId() == playerEntityId) {
-				// TODO update UI
+				if (ownerEntity.getId() == playerEntityId) {
+					// TODO update UI
+				}
 			}
 		};
 
@@ -86,26 +89,33 @@ class BattleGameplay extends BasicGameplay {
 		};
 
 		gameEngine.deleteMainEntityCallback = function callback(engineShipEntity:EngineBaseGameEntity) {
-			final clientEntity = clientMainEntities.get(engineShipEntity.id);
-			if (clientEntity != null) {
-				final clientShip = cast(clientEntity, ClientShip);
+			if (gameState == GameState.Playing) {
+				final clientEntity = clientMainEntities.get(engineShipEntity.id);
+				if (clientEntity != null) {
+					final clientShip = cast(clientEntity, ClientShip);
 
-				clientShip.clearDebugGraphics(scene);
-				scene.removeChild(clientShip);
+					clientShip.clearDebugGraphics(scene);
+					scene.removeChild(clientShip);
 
-				if (engineShipEntity.ownerId == playerId) {
-					hud.show(false);
+					clientMainEntities.remove(engineShipEntity.id);
+					clientMainEntitiesCount--;
+
+					if (engineShipEntity.ownerId == playerId) {
+						gameState = GameState.Died;
+						hud.show(false);
+						hud.showDieDialog(client.Player.instance.isCurrentShipIsFree);
+						clearObjects();
+					}
 				}
-
-				clientMainEntities.remove(engineShipEntity.id);
-				clientMainEntitiesCount--;
 			}
 		};
 
 		gameEngine.shipHitByShellCallback = function callback(params:ShipHitByShellCallbackParams) {
-			final clientShip = clientMainEntities.get(params.ship.id);
-			if (clientShip != null) {
-				effectsManager.addDamageText(clientShip.x, clientShip.y, params.damage);
+			if (gameState == GameState.Playing) {
+				final clientShip = clientMainEntities.get(params.ship.id);
+				if (clientShip != null) {
+					effectsManager.addDamageText(clientShip.x, clientShip.y, params.damage);
+				}
 			}
 		};
 
@@ -115,13 +125,21 @@ class BattleGameplay extends BasicGameplay {
 		// UI
 		// --------------------------------------
 
-		hud = new BattleHud(function callback() {
+		hud = new BattleHud(function callbackLeave() {
 			destroy();
 			Socket.instance.leaveGame({playerId: playerId});
 			if (leaveCallback != null) {
+				clearObjects();
 				leaveCallback();
 			}
+		}, function callbackDied() {
+			if (diedCallback != null) {
+				clearObjects();
+				diedCallback();
+			}
 		});
+
+		waterScene = new WaterScene();
 	}
 
 	public function debugDraw() {
@@ -252,6 +270,14 @@ class BattleGameplay extends BasicGameplay {
 	// Multiplayer
 	// --------------------------------------
 
+	public function updateDailyTasks() {
+		hud.updateDailyTasks();
+	}
+
+	public function dailyTaskComplete(message:SocketServerDailyTaskComplete) {
+		hud.dailyTaskComplete(message);
+	}
+
 	public function shipShoot(message:SocketServerMessageShipShoot) {
 		if (gameState == GameState.Playing && playerId != message.playerId) {
 			final side = message.left ? Side.Left : Side.Right;
@@ -284,9 +310,11 @@ class BattleGameplay extends BasicGameplay {
 		}
 	}
 
-	public function addShipByClient(role:Role, x:Int, y:Int, size:ShipHullSize, windows:ShipWindows, cannons:ShipGuns, shipId:String, ?ownerId:String) {
+	public function addShipByClient(role:Role, x:Int, y:Int, size:ShipHullSize, windows:ShipWindows, cannons:ShipGuns, cannonsRange:Int, cannonsDamage:Int,
+			armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float, shipId:String, ?ownerId:String) {
 		final gameEngine = cast(baseEngine, GameEngine);
-		return gameEngine.createEntity(role, x, y, size, windows, cannons, shipId, ownerId);
+		return gameEngine.createEntity('', true, role, x, y, size, windows, cannons, cannonsRange, cannonsDamage, armor, hull, maxSpeed, acc, accDelay,
+			turnDelay, fireDelay, shipId, ownerId);
 	}
 
 	// --------------------------------------
@@ -295,6 +323,7 @@ class BattleGameplay extends BasicGameplay {
 
 	public function customUpdate(dt:Float, fps:Float) {
 		hud.update(dt);
+		waterScene.update(dt);
 
 		if (gameState == GameState.Playing) {
 			hud.updateSystemInfo(fps);
@@ -379,8 +408,16 @@ class BattleGameplay extends BasicGameplay {
 		final shipWindows = ShipWindows.createByIndex(message.entity.shipWindows);
 		final shipGuns = ShipGuns.createByIndex(message.entity.shipGuns);
 
-		return new EngineShipEntity(Role.General, message.entity.x, message.entity.y, shipHullSize, shipWindows, shipGuns, message.entity.id,
-			message.entity.ownerId);
+		var role = Role.Player;
+		if (message.entity.role == 'Bot') {
+			role = Role.Bot;
+		} else if (message.entity.role == 'Boss') {
+			role = Role.Boss;
+		}
+
+		return new EngineShipEntity('', message.entity.free, role, message.entity.x, message.entity.y, shipHullSize, shipWindows, shipGuns,
+			message.entity.cannonsRange, message.entity.cannonsDamage, message.entity.armor, message.entity.hull, message.entity.maxSpeed, message.entity.acc,
+			message.entity.accDelay, message.entity.turnDelay, message.entity.fireDelay, message.entity.id, message.entity.ownerId);
 	}
 
 	public function jsEntitiesToEngineEntities(entities:Dynamic):Array<EngineBaseGameEntity> {
@@ -389,7 +426,21 @@ class BattleGameplay extends BasicGameplay {
 			final shipWindows = ShipWindows.createByIndex(entity.shipWindows);
 			final shipGuns = ShipGuns.createByIndex(entity.shipGuns);
 
-			return new EngineShipEntity(Role.General, entity.x, entity.y, shipHullSize, shipWindows, shipGuns, entity.id, entity.ownerId);
+			var role = Role.Player;
+			if (entity.role == 'Bot') {
+				role = Role.Bot;
+			} else if (entity.role == 'Boss') {
+				role = Role.Boss;
+			}
+
+			return new EngineShipEntity('', entity.free, role, entity.x, entity.y, shipHullSize, shipWindows, shipGuns, entity.cannonsRange,
+				entity.cannonsDamage, entity.armor, entity.hull, entity.maxSpeed, entity.acc, entity.accDelay, entity.turnDelay, entity.fireDelay, entity.id,
+				entity.ownerId);
 		});
+	}
+
+	private function clearObjects() {
+		effectsManager.clear();
+		scene.removeChildren();
 	}
 }

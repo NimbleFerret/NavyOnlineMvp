@@ -1,5 +1,7 @@
 package client.gameplay.battle;
 
+import haxe.Timer;
+import client.network.SocketProtocol.SocketServerDailyTaskComplete;
 import h2d.Bitmap;
 import h2d.Object;
 import client.gameplay.BaiscHud.BasicHud;
@@ -26,8 +28,15 @@ class HorizontalStatsBar {
 		rectY = y + 15;
 
 		descriptionText = new h2d.Text(hxd.res.DefaultFont.get(), guiObject);
+		descriptionText.textColor = 0xFBF0DD;
+		descriptionText.dropShadow = {
+			dx: 0.5,
+			dy: 0.5,
+			color: 0x000000,
+			alpha: 0.9
+		};
 		descriptionText.text = desctiption;
-		descriptionText.setScale(4);
+		descriptionText.setScale(3);
 
 		borderRect = new h2d.Graphics(guiObject);
 		borderRect.lineStyle(3, 0xFFFFFF);
@@ -40,6 +49,13 @@ class HorizontalStatsBar {
 		fillRect.endFill();
 
 		valueText = new h2d.Text(hxd.res.DefaultFont.get(), guiObject);
+		valueText.textColor = 0xFBF0DD;
+		valueText.dropShadow = {
+			dx: 0.5,
+			dy: 0.5,
+			color: 0x000000,
+			alpha: 0.9
+		};
 		valueText.text = value + " / " + value;
 		valueText.setScale(3);
 		valueText.setPosition(x + 160 + additionalOffsetX, y + 9);
@@ -48,12 +64,12 @@ class HorizontalStatsBar {
 	public function updateBar(maxValue:Float, currentValue:Float) {
 		var extraZeroes = "";
 
-		if (currentValue < 1000) {
+		if (currentValue < maxValue) {
 			if (currentValue < 10) {
 				extraZeroes = "000";
 			} else if (currentValue < 100) {
 				extraZeroes = "00";
-			} else {
+			} else if (maxValue >= 1000) {
 				extraZeroes = "0";
 			}
 		}
@@ -90,7 +106,6 @@ class RetryDialog {
 
 class BattleHud extends BasicHud {
 	private var movementText:h2d.Text;
-	private var dirText:h2d.Text;
 	private var systemText:h2d.Text;
 	private var latencyText:h2d.Text;
 	private var positionText:h2d.Text;
@@ -114,11 +129,41 @@ class BattleHud extends BasicHud {
 	private final compassSouthWest:h2d.Tile;
 	private final compassSouth:h2d.Tile;
 	private final compassSouthEast:h2d.Tile;
-
 	private final compassBmp:h2d.Bitmap;
 
-	public function new(leaveCallback:Void->Void) {
+	private final leaveButton:h2d.Object;
+
+	// Daily tasks
+	private final dailyTasksFui:h2d.Flow;
+	private final killPlayersText:h2d.Text;
+	private final killBotsText:h2d.Text;
+	private final killBossesText:h2d.Text;
+
+	// Callbacks
+	private final leaveCallback:Void->Void;
+	private final diedCallback:Void->Void;
+
+	public function new(leaveCallback:Void->Void, diedCallback:Void->Void) {
 		super();
+
+		this.leaveCallback = leaveCallback;
+		this.diedCallback = diedCallback;
+
+		// Daily tasks
+		dailyTasksFui = new h2d.Flow(this);
+		dailyTasksFui.layout = Vertical;
+		dailyTasksFui.verticalSpacing = 5;
+		dailyTasksFui.padding = 10;
+
+		addText3(dailyTasksFui, 'Daily tasks', 3);
+		killPlayersText = addText3(dailyTasksFui, 'Kill players: 0/0', 3);
+		killBotsText = addText3(dailyTasksFui, 'Kill pirates: 0/0', 3);
+		killBossesText = addText3(dailyTasksFui, 'Kill bosses: 0/0', 3);
+		updateDailyTasks();
+
+		dailyTasksFui.y = 10;
+		dailyTasksFui.x = Main.ScreenWidth - 70;
+		// dailyTasksFui.x = Main.ScreenWidth - dailyTasksFui.getBounds().width;
 
 		// Compass
 		compassEast = hxd.Res.compass.compass_e.toTile();
@@ -131,45 +176,35 @@ class BattleHud extends BasicHud {
 		compassSouthEast = hxd.Res.compass.compass_se.toTile();
 
 		compassBmp = new h2d.Bitmap(compassEast);
-		compassBmp.setScale(0.5);
-		compassBmp.setPosition(500, 500);
-		compassBmp.alpha = 0;
+		compassBmp.setScale(0.25);
+		compassBmp.setPosition(Main.ScreenWidth / 2, Main.ScreenHeight - compassBmp.getBounds().height - 32);
+		compassBmp.alpha = 1;
 
 		addChild(compassBmp);
 
-		armorBar = new HorizontalStatsBar(fui, 0, 0, "Armor", "1000", 65);
-		hullBar = new HorizontalStatsBar(fui, 0, 0, "Hull", "1000", 65);
+		armorBar = new HorizontalStatsBar(fui, 0, 0, 'Armor', '1000', 65);
+		hullBar = new HorizontalStatsBar(fui, 0, 0, 'Hull', '1000', 65);
 
 		movementText = addText();
-		movementText.setScale(4);
-
-		dirText = addText();
-		dirText.setScale(4);
-
-		positionText = addText();
-		positionText.setScale(4);
+		movementText.setScale(3);
 
 		leftCannonsText = addText("Left side cannons READY");
-		leftCannonsText.setScale(4);
+		leftCannonsText.setScale(3);
 
 		rightCannonsText = addText("Right side cannons READY");
-		rightCannonsText.setScale(4);
+		rightCannonsText.setScale(3);
 
 		systemText = addText();
-		systemText.setScale(4);
+		systemText.setScale(3);
 
 		latencyText = addText();
-		latencyText.setScale(4);
+		latencyText.setScale(3);
 
 		latencyText = addText();
-		latencyText.setScale(4);
+		latencyText.setScale(3);
 
-		final leaveButton = addButton('Leave sector', function callback() {
-			if (leaveCallback != null) {
-				leaveCallback();
-			}
-		});
-		leaveButton.setScale(3);
+		leaveButton = addGuiButton(this, 'Leave sector', false, leaveCallback, 2, 2);
+		leaveButton.setPosition(0, 390);
 
 		show(true);
 	}
@@ -178,14 +213,23 @@ class BattleHud extends BasicHud {
 		armorBar.show(show);
 		hullBar.show(show);
 
+		compassBmp.alpha = show ? 1 : 0;
+		leaveButton.alpha = show ? 1 : 0;
+		dailyTasksFui.alpha = show ? 1 : 0;
+		systemText.alpha = show ? 1 : 0;
+		latencyText.alpha = show ? 1 : 0;
 		movementText.alpha = show ? 1 : 0;
-		dirText.alpha = show ? 1 : 0;
 		leftCannonsText.alpha = show ? 1 : 0;
 		rightCannonsText.alpha = show ? 1 : 0;
 	}
 
 	public function update(dt:Float) {
 		latencyText.text = "Latency:" + Socket.instance.latency;
+	}
+
+	public function showDieDialog(freeShip:Bool) {
+		final additionalText = freeShip ? 'Dont worry, free ship has no any penalties, just try again.' : 'Ship damaged, it may require maintenance soon! ';
+		alertDialog('You died, the ship sank and the crew went to feed the fish !\n' + additionalText, diedCallback);
 	}
 
 	public function updateSystemInfo(fps:Float) {
@@ -195,11 +239,10 @@ class BattleHud extends BasicHud {
 	public function updatePlayerParams(playerShip:ClientShip) {
 		final shipStats = playerShip.getStats();
 
-		armorBar.updateBar(shipStats.baseArmor, shipStats.currentArmor);
-		hullBar.updateBar(shipStats.baseHull, shipStats.currentHull);
+		armorBar.updateBar(shipStats.armor, shipStats.currentArmor);
+		hullBar.updateBar(shipStats.hull, shipStats.currentHull);
 
 		movementText.text = "Speed: " + shipStats.currentSpeed + " / " + shipStats.maxSpeed;
-		dirText.text = "Direction: " + shipStats.dir;
 
 		switch (shipStats.dir) {
 			case East:
@@ -220,8 +263,8 @@ class BattleHud extends BasicHud {
 				compassBmp.tile = compassSouthEast;
 		}
 
-		positionText.text = "Sector: " + BattleGameplay.CurrentSectorX + " / " + BattleGameplay.CurrentSectorY + ", Pos: " + Std.int(shipStats.x) + " / "
-			+ Std.int(shipStats.y);
+		// positionText.text = "Sector: " + BattleGameplay.CurrentSectorX + " / " + BattleGameplay.CurrentSectorY + ", Pos: " + Std.int(shipStats.x) + " / "
+		// + Std.int(shipStats.y);
 
 		if (shipStats.allowShootLeft) {
 			leftCannonsText.text = "Left side cannons READY!";
@@ -234,5 +277,28 @@ class BattleHud extends BasicHud {
 		} else {
 			rightCannonsText.text = "Right side cannons RELOADING...";
 		}
+	}
+
+	public function updateDailyTasks() {
+		if (Player.instance.playerData != null) {
+			final playersCurrent = Player.instance.playerData.dailyPlayersKilledCurrent;
+			final playersMax = Player.instance.playerData.dailyPlayersKilledMax;
+			final botsCurrent = Player.instance.playerData.dailyBotsKilledCurrent;
+			final botsMax = Player.instance.playerData.dailyBotsKilledMax;
+			final bossesCurrent = Player.instance.playerData.dailyBossesKilledCurrent;
+			final bossesMax = Player.instance.playerData.dailyBossesKilledMax;
+
+			killPlayersText.text = 'Players killed: ' + playersCurrent + '/' + playersMax;
+			killBotsText.text = 'Pirates killed: ' + botsCurrent + '/' + botsMax;
+			killBossesText.text = 'Bosses killed: ' + bossesCurrent + '/' + bossesMax;
+		}
+	}
+
+	public function dailyTaskComplete(message:SocketServerDailyTaskComplete) {
+		final tokensAlert = tokensRewardAlert(message.rewardNVY, message.rewardAKS);
+		addChild(tokensAlert);
+		Timer.delay(function callback() {
+			tokensAlert.alpha = 0;
+		}, 3000);
 	}
 }

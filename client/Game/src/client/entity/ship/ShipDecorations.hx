@@ -46,8 +46,7 @@ class ShipDecorations extends ShipVisualComponent {
 	private final westCaptainTile:h2d.Tile;
 
 	private final bmp_wheel:h2d.Bitmap;
-
-	public static var bmp_captain:h2d.Bitmap;
+	private final bmp_captain:h2d.Bitmap;
 
 	private final size:ShipHullSize;
 

@@ -2,11 +2,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export enum ShipType {
-    FREE = 1,
-    COMMON = 2
-}
-
 export enum ShipSize {
     SMALL = 1,
     MIDDLE = 2,
@@ -15,6 +10,7 @@ export enum ShipSize {
 
 export interface PlayerShipEntity {
     id: string;
+    owner: string;
     type: number;
     armor: number;
     hull: number;
@@ -22,6 +18,7 @@ export interface PlayerShipEntity {
     accelerationStep: number;
     accelerationDelay: number;
     rotationDelay: number;
+    fireDelay: number;
     cannons: number;
     cannonsRange: number;
     cannonsDamage: number;
@@ -31,6 +28,8 @@ export interface PlayerShipEntity {
     rarity: number;
     windows: number;
     anchor: number;
+    currentIntegrity: number;
+    maxIntegrity: number;
 }
 
 export type ShipDocument = Ship & Document;
@@ -63,6 +62,9 @@ export class Ship {
     rotationDelay: number;
 
     @Prop()
+    fireDelay: number;
+
+    @Prop()
     cannons: number;
 
     @Prop()
@@ -92,6 +94,11 @@ export class Ship {
     @Prop()
     anchor: number;
 
+    @Prop()
+    currentIntegrity: number;
+
+    @Prop()
+    maxIntegrity: number;
 }
 
 export const ShipSchema = SchemaFactory.createForClass(Ship);

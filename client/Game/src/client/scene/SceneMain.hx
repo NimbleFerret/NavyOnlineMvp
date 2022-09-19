@@ -1,9 +1,10 @@
 package client.scene;
 
 import client.network.RestProtocol.PlayerData;
-import client.network.RestProtocol.NFTs;
+import client.network.RestProtocol.CaptainEntity;
+import client.network.RestProtocol.ShipEntity;
+import client.network.RestProtocol.IslandEntity;
 import client.network.Rest;
-import client.Player;
 import client.ui.UiIsland;
 import client.ui.UiToken;
 import client.ui.UiAvatar;
@@ -11,53 +12,6 @@ import client.entity.ship.ShipTemplate;
 import engine.entity.EngineShipEntity;
 import h3d.Engine;
 import h2d.Scene;
-
-typedef CaptainInfo = {
-	free:Bool,
-	currentLevel:Int,
-	maxLevel:Int,
-	rarity:String,
-	trait1:String,
-	trait2:String,
-	trait3:String,
-	trait4:String,
-	trait5:String,
-	stakingIncome:Int,
-	miningIncome:Int,
-	secondsTillReward:Int,
-	head:Int,
-	haircutOrHat:Int,
-	clothes:Int,
-	bg:Int,
-	acc:Int
-}
-
-typedef ShipInfo = {
-	free:Bool,
-	currentLevel:Int,
-	maxLevel:Int,
-	rarity:String,
-	size:String,
-	cannons:Int,
-	windows:Int,
-	maintenance:Bool,
-	trait1:String,
-	trait2:String,
-	trait3:String,
-	trait4:String,
-	trait5:String
-}
-
-typedef IslandInfo = {
-	currentLevel:Int,
-	maxLevel:Int,
-	rarity:String,
-	terrain:String,
-	size:String,
-	income:Int,
-	mining:Bool,
-	secondsTillReward:Int
-}
 
 class SceneMain extends Scene {
 	public final hud:SceneMainHud;
@@ -80,103 +34,88 @@ class SceneMain extends Scene {
 	private var miningAnimation:h2d.Anim;
 
 	// Collections info
-	private var captains = new Array<CaptainInfo>();
-	private var ships = new Array<ShipInfo>();
-	private var islands = new Array<IslandInfo>();
+	private var captains = new Array<CaptainEntity>();
+	private var ships = new Array<ShipEntity>();
+	private var islands = new Array<IslandEntity>();
 
 	public function new(startCallback:Void->Void) {
 		super();
 
-		// Rest.instance.getNfts(address, function callback(nfts:NFTs) {
+		scaleMode = LetterBox(1920, 1080, false, Left, Center);
 
 		// Init moralis
 		hud = new SceneMainHud(function metamaskLoginCallback(address:String) {
 			client.Player.instance.ethAddress = address;
 			hud.initiateWeb3(address);
-
-			// TODO signInOrUp
-
-			currentCaptainIndex = 0;
-			currentShipIndex = 0;
-			currentIslandIndex = 0;
-
-			captains = new Array<CaptainInfo>();
-			ships = new Array<ShipInfo>();
-			islands = new Array<IslandInfo>();
-
-			// Reinit captain
-			captains.push({
-				free: true,
-				currentLevel: 0,
-				maxLevel: 0,
-				rarity: 'Common',
-				trait1: '-',
-				trait2: '-',
-				trait3: '-',
-				trait4: '-',
-				trait5: '-',
-				stakingIncome: 0,
-				miningIncome: 0,
-				secondsTillReward: 0,
-				head: 3,
-				haircutOrHat: 3,
-				clothes: 3,
-				bg: 1,
-				acc: 0
-			});
-
-			// for (value in nfts.captains) {
-			// 	captains.push();
-			// }
-
-			// Reinit ships
-
-			// for (value in nfts.ships) {
-			//
-			// }
-			// changeShip(0);
-			// initiateBalances();
-			// initiateIslands();
+			initiateBalances();
+			signInOrUp();
 		}, function unloggedInitCallback() {
 			signInOrUp();
 		}, function startGameCallback() {
 			if (startCallback != null) {
 				startCallback();
 			}
-		}, function refreshNFTsCallback() {});
+		}, function refreshNFTsCallback() {
+			trace('refreshNFTsCallback');
+		}, function collectRewardCallback() {
+			if (islands[currentIslandIndex].mining) {
+				// TODO send request
+			}
+			trace('collectRewardCallback');
+		}, function startMining() {
+			if (islands[currentIslandIndex].mining) {
+				// TODO send request
+			}
+			trace('startMining');
+		});
 
 		// Basic ship position
-		baseShipX = Main.ScreenWidth / 2 - 230;
+		baseShipX = Main.ScreenWidth / 2 - 230 + 200;
 		baseShipY = Main.ScreenHeight / 2 + 30;
+
+		initiateBalances();
+	}
+
+	public override function render(e:Engine) {
+		hud.render(e);
+		super.render(e);
+	}
+
+	public function getHud() {
+		return hud;
+	}
+
+	public function start() {
+		if (hud != null) {
+			hud.addOrUpdateDailyTasks();
+			updateBalances();
+		}
+	}
+
+	public function updateBalances() {
+		if (nvyTokens != null && aksTokens != null && client.Player.instance.playerData != null) {
+			nvyTokens.setText(Std.string(client.Player.instance.playerData.nvy));
+			aksTokens.setText(Std.string(client.Player.instance.playerData.aks));
+		}
 	}
 
 	private function signInOrUp() {
 		Rest.instance.signInOrUp(client.Player.instance.ethAddress, function callback(player:PlayerData) {
 			client.Player.instance.playerData = player;
 
-			for (ship in player.ownedC) {
-			}
+			currentCaptainIndex = 0;
+			currentShipIndex = 0;
+			currentIslandIndex = 0;
 
-			for (ship in player.ownedShips) {
-				ships.push({
-					free: ship.type == 1 ? true : false,
-					currentLevel: ship.level,
-					maxLevel: 10,
-					rarity: ship.rarity == 3 ? 'Legendary' : 'Common',
-					size: ship.size == 1 ? 'Small' : 'Middle',
-					cannons: ship.cannons,
-					windows: ship.windows,
-					maintenance: false,
-					trait1: '-',
-					trait2: '-',
-					trait3: '-',
-					trait4: '-',
-					trait5: '-'
-				});
-			}
+			captains = player.ownedCaptains;
+			ships = player.ownedShips;
+			islands = player.ownedIslands;
+
+			hud.initiate();
 
 			initiateCaptains();
-			initiateShips();\
+			initiateShips();
+			initiateIslands();
 		});
 	}
 
@@ -219,7 +158,7 @@ class SceneMain extends Scene {
 			}
 
 			final newShipInfo = ships[currentShipIndex];
-			final shipSize = newShipInfo.size == 'Small' ? SMALL : MEDIUM;
+			final shipSize = newShipInfo.size == 1 ? SMALL : MEDIUM;
 
 			var shipCannons = ShipGuns.ONE;
 			if (newShipInfo.cannons == 2) {
@@ -242,14 +181,16 @@ class SceneMain extends Scene {
 			}
 			currentShip = new ShipTemplate(shipSize, shipWindows, shipCannons);
 			if (currentShip.shipSize == SMALL) {
-				currentShip.setPosition(baseShipX - 90, 500);
+				currentShip.setPosition(1150, 260);
 			} else {
-				currentShip.setPosition(baseShipX, 500);
+				currentShip.setPosition(1190, 260);
 			}
-			currentShip.setScale(3);
+			currentShip.setScale(1.5);
 			addChild(currentShip);
 
 			hud.updateShipUi(newShipInfo);
+
+			client.Player.instance.currentShipId = newShipInfo.type == 1 ? 'free' : newShipInfo.id;
 		}
 	}
 
@@ -262,7 +203,7 @@ class SceneMain extends Scene {
 				terrainType = IslandTerrainType.SNOW;
 			}
 			currentIsland = new UiIsland(terrainType);
-			miningAnimation.alpha = islands[index].mining ? 1 : 0;
+			// miningAnimation.alpha = islands[index].mining ? 1 : 0;
 		}
 
 		if (islands.length > 1 || dir == 0) {
@@ -286,42 +227,33 @@ class SceneMain extends Scene {
 				}
 				newIslandByIndex(currentIslandIndex);
 			}
-			currentIsland.setPosition(2600, 200);
+			currentIsland.setPosition(1700, 100);
 			addChild(currentIsland);
 			addChild(miningAnimation);
 			hud.updateIslandUi(islands[currentIslandIndex]);
 		}
 	}
 
-	public override function render(e:Engine) {
-		hud.render(e);
-		super.render(e);
-	}
-
-	public function getHud() {
-		return hud;
-	}
-
-	public function start() {}
-
 	// ---------------------------------
 	// UI parts
 	// ---------------------------------
 
 	private function initiateBalances() {
-		nvyTokens = new UiToken(hud.widePlate(3));
-		aksTokens = new UiToken(hud.widePlate(3));
+		nvyTokens = new UiToken(TokenType.NVY, hud.widePlate(2));
+		aksTokens = new UiToken(TokenType.AKS, hud.widePlate(2));
 
-		nvyTokens.setPosition(Main.ScreenWidth - nvyTokens.getBounds().width, 16);
-		aksTokens.setPosition(Main.ScreenWidth - aksTokens.getBounds().width, 134);
+		nvyTokens.setPosition(Main.ScreenWidth + 30, 16);
+		aksTokens.setPosition(Main.ScreenWidth + 30, 134);
 
 		addChild(nvyTokens);
 		addChild(aksTokens);
+
+		updateBalances();
 	}
 
 	private function initiateCaptains() {
 		currentCaptain = new UiAvatar();
-		currentCaptain.setPosition(600, 330);
+		currentCaptain.setPosition(510, 180);
 		addChild(currentCaptain);
 
 		final arrowCaptainLeft = hud.buttonArrowLeft(function callback() {
@@ -331,11 +263,13 @@ class SceneMain extends Scene {
 			changeCaptain(1);
 		}, true);
 
-		arrowCaptainLeft.setPosition(450, 350);
-		arrowCaptainRight.setPosition(800, 350);
+		arrowCaptainLeft.setPosition(400, 200);
+		arrowCaptainRight.setPosition(660, 200);
 
 		addChild(arrowCaptainLeft);
 		addChild(arrowCaptainRight);
+
+		changeCaptain(0);
 	}
 
 	private function initiateShips() {
@@ -346,8 +280,8 @@ class SceneMain extends Scene {
 			changeShip(1);
 		}, false);
 
-		arrowLeftShip.setPosition(baseShipX - 680, 350);
-		arrowRightShip.setPosition(baseShipX + 450, 350);
+		arrowLeftShip.setPosition(800, 200);
+		arrowRightShip.setPosition(1430, 200);
 
 		addChild(arrowLeftShip);
 		addChild(arrowRightShip);
@@ -356,38 +290,40 @@ class SceneMain extends Scene {
 	}
 
 	private function initiateIslands() {
-		final miningAnimation1 = hxd.Res.mine_anims._1.toTile();
-		final miningAnimation2 = hxd.Res.mine_anims._2.toTile();
-		final miningAnimation3 = hxd.Res.mine_anims._3.toTile();
-		final miningAnimation4 = hxd.Res.mine_anims._4.toTile();
-		final miningAnimation5 = hxd.Res.mine_anims._5.toTile();
-		final miningAnimation6 = hxd.Res.mine_anims._6.toTile();
-		final miningAnimation7 = hxd.Res.mine_anims._7.toTile();
-		final miningAnimation8 = hxd.Res.mine_anims._8.toTile();
+		if (islands.length > 0) {
+			final miningAnimation1 = hxd.Res.mine_anims._1.toTile();
+			final miningAnimation2 = hxd.Res.mine_anims._2.toTile();
+			final miningAnimation3 = hxd.Res.mine_anims._3.toTile();
+			final miningAnimation4 = hxd.Res.mine_anims._4.toTile();
+			final miningAnimation5 = hxd.Res.mine_anims._5.toTile();
+			final miningAnimation6 = hxd.Res.mine_anims._6.toTile();
+			final miningAnimation7 = hxd.Res.mine_anims._7.toTile();
+			final miningAnimation8 = hxd.Res.mine_anims._8.toTile();
 
-		miningAnimation = new h2d.Anim([
-			miningAnimation1,
-			miningAnimation2,
-			miningAnimation3,
-			miningAnimation4,
-			miningAnimation5,
-			miningAnimation6,
-			miningAnimation7,
-			miningAnimation8
-		]);
-		miningAnimation.setScale(5);
-		miningAnimation.setPosition(2716, 400);
-		miningAnimation.alpha = 1;
+			miningAnimation = new h2d.Anim([
+				miningAnimation1,
+				miningAnimation2,
+				miningAnimation3,
+				miningAnimation4,
+				miningAnimation5,
+				miningAnimation6,
+				miningAnimation7,
+				miningAnimation8
+			]);
+			miningAnimation.setScale(5);
+			miningAnimation.setPosition(1764, 230);
+			miningAnimation.alpha = 1;
 
-		changeIsland(0);
+			final arrowLeftIsland = hud.buttonArrowLeft(function callback() {
+				changeIsland(-1);
+			}, false);
+			final arrowRightIsland = hud.buttonArrowRight(function callback() {
+				changeIsland(1);
+			}, false);
+			arrowLeftIsland.setPosition(Main.ScreenWidth - 340, 200);
+			arrowRightIsland.setPosition(Main.ScreenWidth + 100, 200);
 
-		final arrowLeftIsland = hud.buttonArrowLeft(function callback() {
-			changeIsland(-1);
-		}, true);
-		final arrowRightIsland = hud.buttonArrowRight(function callback() {
-			changeIsland(1);
-		}, true);
-		arrowLeftIsland.setPosition(2400, 350);
-		arrowRightIsland.setPosition(3100, 350);
+			changeIsland(0);
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package client.network;
 
+import client.network.SocketProtocol.SocketServerDailyTaskChange;
 import haxe.Timer;
 import client.event.EventManager;
 import js.node.socketio.Client;
@@ -18,7 +19,7 @@ class Socket {
 
 		clientSocket.on(SocketProtocol.SocketServerEventPong, function(data) {
 			latency = Date.now().getTime() - lastPingTime;
-			trace('Latency:' + latency);
+			// trace('Latency:' + latency);
 		});
 		clientSocket.on(SocketProtocol.SocketServerEventGameInit, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventGameInit, data);
@@ -40,6 +41,18 @@ class Socket {
 		});
 		clientSocket.on(SocketProtocol.SocketServerEventSync, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventSync, data);
+		});
+		clientSocket.on(SocketProtocol.SocketServerEventDailyTaskUpdate, function(data:SocketServerDailyTaskChange) {
+			Player.instance.playerData.dailyPlayersKilledCurrent = data.dailyPlayersKilledCurrent;
+			Player.instance.playerData.dailyPlayersKilledMax = data.dailyPlayersKilledMax;
+			Player.instance.playerData.dailyBotsKilledCurrent = data.dailyBotsKilledCurrent;
+			Player.instance.playerData.dailyBotsKilledMax = data.dailyBotsKilledMax;
+			Player.instance.playerData.dailyBossesKilledCurrent = data.dailyBossesKilledCurrent;
+			Player.instance.playerData.dailyBossesKilledMax = data.dailyBossesKilledMax;
+			EventManager.instance.notify(SocketProtocol.SocketServerEventDailyTaskUpdate, data);
+		});
+		clientSocket.on(SocketProtocol.SocketServerEventDailyTaskReward, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventDailyTaskReward, data);
 		});
 
 		final timer = new Timer(1000);

@@ -2,7 +2,7 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { ShipSize } from "src/shipyard/shipyard.ship.entity";
+import { ShipSize } from "src/asset/asset.ship.entity";
 import { Random, RandomDocument } from "./random.entity";
 
 @Injectable()

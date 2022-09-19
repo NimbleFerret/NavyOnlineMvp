@@ -76,7 +76,7 @@ class UiAvatar extends h2d.Object {
 		accBmp.setPosition(9, 9);
 
 		addChild(boardBmp);
-		setScale(2);
+		setScale(1.5);
 		setPosition(16, 16);
 
 		addChild(bgBmp);

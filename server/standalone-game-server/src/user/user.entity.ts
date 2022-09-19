@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { Ship } from 'src/shipyard/shipyard.ship.entity';
-import { Island } from 'src/world/island.entity';
+import { Captain } from '../asset/asset.captain.entity';
+import { Island } from '../asset/asset.island.entity';
+import { Ship } from '../asset/asset.ship.entity';
 
 export enum UserWorldState {
     WORLD = 1,
@@ -40,13 +41,17 @@ export class User {
     @Prop({ default: UserWorldState.WORLD })
     worldState: number;
 
+    @Prop({ default: 0 })
     dailyPlayersKilled: number;
+
+    @Prop({ default: 0 })
     dailyBotsKilled: number;
+
+    @Prop({ default: 0 })
     dailyBossesKilled: number;
 
-    weeklyPlayersKilled: number;
-    weeklyBotsKilled: number;
-    weeklyBossesKilled: number;
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Captain' }] })
+    captainsOwned: Captain[];
 
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ship' }] })
     shipsOwned: Ship[];

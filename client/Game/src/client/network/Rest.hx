@@ -17,7 +17,9 @@ class Rest {
 		req.onData = function onData(data:String) {
 			if (callback != null) {
 				final json = haxe.Json.parse(data);
-				callback(new PlayerData(json.ethAddress, json.nickname, json.worldX, json.worldY, json.ownedCaptains, json.ownedShips, json.ownedIslands));
+				callback(new PlayerData(json.ethAddress, json.nickname, json.worldX, json.worldY, json.nvy, json.aks, json.ownedCaptains, json.ownedShips,
+					json.ownedIslands, json.dailyPlayersKilledCurrent, json.dailyPlayersKilledMax, json.dailyBotsKilledCurrent, json.dailyBotsKilledMax,
+					json.dailyBossesKilledCurrent, json.dailyBossesKilledMax));
 			}
 		};
 	}
@@ -64,7 +66,8 @@ class Rest {
 		req.onData = function onData(data:String) {
 			if (callback != null) {
 				final json = haxe.Json.parse(data);
-				callback(new JoinSectorResponse(json.result, json.reason, json.playersCount, json.totalShips, json.instanceId, json.sectorType));
+				callback(new JoinSectorResponse(json.result, json.reason, json.totalShips, json.instanceId, json.sectorType, json.islandId, json.islandOwner,
+					json.islandTerrain, json.islandMining));
 			}
 		};
 	}

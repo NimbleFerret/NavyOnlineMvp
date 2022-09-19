@@ -9,7 +9,7 @@ import h2d.Bitmap;
 import h2d.Tile;
 import h2d.Scene;
 
-final SectorSize = 96;
+final SectorSize = 64;
 
 class SectorRectObject {
 	public final object:h2d.Object;
@@ -45,8 +45,11 @@ class SectorRectObject {
 
 		if (contentBmp != null) {
 			if (isSkull) {
-				contentBmp.setScale(2);
-				contentBmp.setPosition(24, 24);
+				contentBmp.setScale(1.5);
+				contentBmp.setPosition(16, 16);
+			} else {
+				contentBmp.setScale(0.6);
+				contentBmp.setPosition(4, 4);
 			}
 			object.addChild(contentBmp);
 		}
@@ -82,6 +85,8 @@ class SceneGlobalMode extends Scene {
 	public function new(enterSectorCallback:EnterSectorCallback->Void, mainMenuCallback:Void->Void) {
 		super();
 
+		scaleMode = LetterBox(1920, 1080, false, Left, Center);
+
 		SceneGlobalMode.AcnhorTile = hxd.Res.anchor.toTile();
 		SceneGlobalMode.IslandTile = hxd.Res.small_palm.toTile();
 		SceneGlobalMode.CommonSkullTile = hxd.Res.common_skull.toTile();
@@ -113,13 +118,6 @@ class SceneGlobalMode extends Scene {
 			playerBmp = null;
 		}
 
-		// Rest.instance.signInOrUp(Player.instance.ethAddress, function callback(player:PlayerData) {
-		// 	if (!playerInitialized) {
-		// 		Player.instance.playerData = player;
-		// 		playerInitialized = true;
-		// 		initOrUpdateGameWorld();
-		// 	}
-		// });
 		playerInitialized = true;
 		initOrUpdateGameWorld();
 	}
@@ -156,11 +154,7 @@ class SceneGlobalMode extends Scene {
 
 	private function initOrUpdateGameWorld() {
 		Rest.instance.getWorldInfo(function callback(world:GameWorldData) {
-			if (!gameWorldInitialized) {
-				initiateGameWorld(world);
-			} else {
-				trace('update game world');
-			}
+			initiateGameWorld(world);
 		});
 	}
 
@@ -183,20 +177,9 @@ class SceneGlobalMode extends Scene {
 					if (Player.instance.playerData.worldX != x || Player.instance.playerData.worldY != y) {
 						if (checkDistance(x, y)) {
 							movePlayer(x, y);
-						} else {
-							trace("Too far");
-							// TODO show dialog
 						}
 					} else if (Player.instance.playerData.worldX == x && Player.instance.playerData.worldY == y) {
-						// TODO show dialog
-
 						enterSector(x, y);
-						// Game.CurrentSectorX = x;
-						// Game.CurrentSectorY = y;
-
-						// if (enterSectorCallback != null) {
-						// 	enterSectorCallback(new SectorDescription(x, y));
-						// }
 					}
 				}
 				gameWorldSectors.push(sectorRectObject);
@@ -222,8 +205,6 @@ class SceneGlobalMode extends Scene {
 					if (enterSectorCallback != null) {
 						enterSectorCallback(new EnterSectorCallback(response));
 					}
-				} else {
-					trace(response.reason);
 				}
 			});
 		}
