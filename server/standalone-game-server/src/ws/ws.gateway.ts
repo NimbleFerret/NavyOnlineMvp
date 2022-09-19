@@ -15,7 +15,6 @@ import {
 } from "../app.events";
 import { Logger, OnModuleInit } from "@nestjs/common";
 import {
-    SectorContent,
     SocketClientMessageJoinGame,
     SocketClientMessageLeaveGame,
     SocketClientMessageMove,

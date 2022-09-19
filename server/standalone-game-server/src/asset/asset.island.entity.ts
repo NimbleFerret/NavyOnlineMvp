@@ -21,6 +21,9 @@ export interface PlayerIslandEntity {
     maxMiners: number;
     miners: number;
     minersFee: number;
+    mining: boolean;
+    x: number;
+    y: number;
 }
 
 export type IslandDocument = Island & Document;

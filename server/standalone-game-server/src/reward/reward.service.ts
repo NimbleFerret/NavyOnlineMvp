@@ -12,17 +12,17 @@ import { DailyTaskType, SocketServerDailyTaskChange, SocketServerDailyTaskComple
 @Injectable()
 export class RewardService {
 
-    public static readonly DailyPlayersKillTask = 10;
-    public static readonly DailyPlayersKillRewardNVY = 1;
-    public static readonly DailyPlayersKillRewardAKS = 10;
+    public static readonly DailyPlayersKillTask = 2;
+    public static readonly DailyPlayersKillRewardNVY = 2;
+    public static readonly DailyPlayersKillRewardAKS = 40;
 
     public static readonly DailyBotsKillTask = 10;
-    public static readonly DailyBotsKillRewardNVY = 1;
-    public static readonly DailyBotsKillRewardAKS = 10;
+    public static readonly DailyBotsKillRewardNVY = 2;
+    public static readonly DailyBotsKillRewardAKS = 40;
 
-    public static readonly DailyBossesKillTask = 2;
+    public static readonly DailyBossesKillTask = 5;
     public static readonly DailyBossesKillRewardNVY = 1;
-    public static readonly DailyBossesKillRewardAKS = 10;
+    public static readonly DailyBossesKillRewardAKS = 40;
 
     constructor(
         @InjectModel(User.name) private userModel: Model<UserDocument>,
@@ -32,6 +32,7 @@ export class RewardService {
     @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
     resetDailyTasks() {
         console.log(new Date().getTime());
+        // TODO reset daily tasls
     }
 
     @OnEvent(AppEvents.PlayerKilledPlayer)

@@ -372,6 +372,11 @@
                 "components": [
                     {
                         "internalType": "uint256",
+                        "name": "integrity",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
                         "name": "maintenenceCostNVY",
                         "type": "uint256"
                     },
@@ -449,6 +454,11 @@
         ],
         "name": "idToShips",
         "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "integrity",
+                "type": "uint256"
+            },
             {
                 "internalType": "uint256",
                 "name": "maintenenceCostNVY",
@@ -858,6 +868,11 @@
             },
             {
                 "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "integrity",
+                        "type": "uint256"
+                    },
                     {
                         "internalType": "uint256",
                         "name": "maintenenceCostNVY",

@@ -95,6 +95,8 @@ export class NftShipGenerator {
                 { level: shipStats.level },
                 { rarity: shipStats.rarity },
                 { size: shipStats.size },
+                { currentIntegrity: shipStats.maxIntegrity },
+                { maxIntegrity: shipStats.maxIntegrity },
                 { windows },
                 { anchor: anchorType }
             ]

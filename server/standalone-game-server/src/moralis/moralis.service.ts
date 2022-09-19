@@ -114,15 +114,18 @@ export class MoralisService implements OnModuleInit {
                     accelerationStep: metadataAttributes[3]['accelerationStep'],
                     accelerationDelay: metadataAttributes[4]['accelerationDelay'],
                     rotationDelay: metadataAttributes[5]['rotationDelay'],
-                    cannons: metadataAttributes[6]['cannons'],
-                    cannonsRange: metadataAttributes[7]['cannonsRange'],
-                    cannonsDamage: metadataAttributes[8]['cannonsDamage'],
-                    traits: metadataAttributes[9]['traits'],
-                    level: metadataAttributes[10]['level'],
-                    rarity: metadataAttributes[11]['rarity'],
-                    size: metadataAttributes[12]['size'],
-                    windows: metadataAttributes[13]['windows'],
-                    anchor: metadataAttributes[14]['anchor'],
+                    fireDelay: metadataAttributes[6]['fireDelay'],
+                    cannons: metadataAttributes[7]['cannons'],
+                    cannonsRange: metadataAttributes[8]['cannonsRange'],
+                    cannonsDamage: metadataAttributes[9]['cannonsDamage'],
+                    traits: metadataAttributes[10]['traits'],
+                    level: metadataAttributes[11]['level'],
+                    rarity: metadataAttributes[12]['rarity'],
+                    size: metadataAttributes[13]['size'],
+                    currentIntegrity: metadataAttributes[14]['currentIntegrity'],
+                    maxIntegrity: metadataAttributes[15]['maxIntegrity'],
+                    windows: metadataAttributes[16]['windows'],
+                    anchor: metadataAttributes[17]['anchor'],
                 } as PlayerShipEntity;
                 result.push(playerShipEntity);
             }
@@ -149,7 +152,9 @@ export class MoralisService implements OnModuleInit {
                     miningRewardNVY: metadataAttributes[3]['miningRewardNVY'],
                     shipAndCaptainFee: metadataAttributes[4]['shipAndCaptainFee'],
                     maxMiners: metadataAttributes[5]['maxMiners'],
-                    minersFee: metadataAttributes[6]['minersFee']
+                    minersFee: metadataAttributes[6]['minersFee'],
+                    x: metadataAttributes[7]['x'],
+                    y: metadataAttributes[8]['y']
                 } as PlayerIslandEntity;
                 result.push(playerIslandEntity);
             }

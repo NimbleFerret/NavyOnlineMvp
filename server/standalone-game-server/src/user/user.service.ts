@@ -56,7 +56,9 @@ export class UserService {
         }).populate('shipsOwned').populate('captainsOwned').populate('islandsOwned');
         if (user) {
             this.playersMap.set(user.ethAddress, user);
-            user = await this.syncPlayer(user);
+            if (ethAddress.length >= 42) {
+                user = await this.syncPlayer(user);
+            }
         } else {
             const userModel = new this.userModel({
                 ethAddress,
@@ -67,6 +69,11 @@ export class UserService {
             userModel.captainsOwned = [await this.assetService.getFreeCaptain()];
             userModel.shipsOwned = [await this.assetService.getFreeShip()];
             user = await userModel.save();
+
+            // Hack. Need to check if user is using web3 or not.
+            if (ethAddress.length >= 42) {
+                user = await this.syncPlayer(user);
+            }
         }
 
         const ownedCaptains = user.captainsOwned.map(f => {
@@ -127,7 +134,8 @@ export class UserService {
                 shipAndCaptainFee: f.shipAndCaptainFee,
                 minersFee: f.minersFee,
                 maxMiners: f.maxMiners,
-                miners: f.miners
+                miners: f.miners,
+                mining: f.mining
             } as PlayerIslandEntity;
         });
 
@@ -235,6 +243,7 @@ export class UserService {
         // Sync captains
         user.captainsOwned = [freeCaptain];
         for (const nftCaptain of nftBasicInfo.captains) {
+            nftCaptain.owner = user.ethAddress;
             const captain = await this.assetService.syncCaptainIfNeeded(nftCaptain);
             user.captainsOwned.push(captain)
         }
@@ -242,12 +251,18 @@ export class UserService {
         // Sync ships
         user.shipsOwned = [freeShip];
         for (const nftShip of nftBasicInfo.ships) {
+            nftShip.owner = user.ethAddress;
             const ship = await this.assetService.syncShipIfNeeded(nftShip);
             user.shipsOwned.push(ship)
         }
 
-        // Sync islands
-        // const islands = user.islandsOwned.filter(f => f.type == AssetType.COMMON)[0];
+        // Sync island
+        user.islandsOwned = [];
+        for (const nftIsland of nftBasicInfo.islands) {
+            nftIsland.owner = user.ethAddress;
+            const island = await this.assetService.syncIslandIfNeeded(nftIsland);
+            user.islandsOwned.push(island)
+        }
 
         user = await user.save();
         return user;

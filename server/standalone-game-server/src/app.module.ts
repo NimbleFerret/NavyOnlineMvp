@@ -12,6 +12,7 @@ import { WorldModule } from './world/world.module';
 import { GameplayModule } from './gameplay/gameplay.module';
 import { CronosModule } from './cronos/cronos.module';
 import { RewardModule } from './reward/reward.module';
+import { AssetModule } from './asset/asset.module';
 
 @Module({
     imports: [
@@ -22,6 +23,7 @@ import { RewardModule } from './reward/reward.module';
         GameplayModule,
         WorldModule,
         RewardModule,
+        AssetModule,
         EventEmitterModule.forRoot(),
         ScheduleModule.forRoot(),
         MongooseModule.forRoot('mongodb://localhost/navy')

@@ -11,6 +11,8 @@ import { GameplayBattleService } from 'src/gameplay/battle/gameplay.battle.servi
 import { User, UserDocument } from 'src/user/user.entity';
 import { AssetService } from 'src/asset/asset.service';
 import { Rarity } from 'src/random/random.entity';
+import { RandomService } from 'src/random/random.service';
+import { Island, IslandDocument } from 'src/asset/asset.island.entity';
 
 export interface SectorInfo {
   x: number;
@@ -49,16 +51,20 @@ export class WorldService implements OnModuleInit {
   public static readonly BASE_POS_X = 5;
   public static readonly BASE_POS_Y = 5;
 
-  private world: WorldDocument;
+  private static world: WorldDocument;
+  private static worldModel: Model<WorldDocument>
+  private static userModel: Model<UserDocument>
 
   constructor(
-    private assetService: AssetService,
     private gameplayBattleService: GameplayBattleService,
     private gameplayIslandService: GameplayIslandService,
     @InjectModel(Sector.name) private sectorModel: Model<SectorDocument>,
     @InjectModel(World.name) private worldModel: Model<WorldDocument>,
-    @InjectModel(User.name) private userModel: Model<UserDocument>
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Island.name) private islandModel: Model<IslandDocument>
   ) {
+    WorldService.worldModel = worldModel;
+    WorldService.userModel = userModel;
   }
 
   async onModuleInit() {
@@ -80,73 +86,43 @@ export class WorldService implements OnModuleInit {
           if ((x == 12 && y == 12) || (x == 10 && y == 15) || (x == 13 && y == 14)) {
             content = SectorContent.PVP;
           }
-          let sector = await this.createSector(x, y, content);
+          const sector = await this.createSector(x, y, content);
 
-          if (content == SectorContent.BASE) {
-            const baseIsland = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, 'ADMIN', x, y, 'Green', true);
-            sector.island = baseIsland;
-            sector = await sector.save();
-          }
+          // if (content == SectorContent.BASE) {
+          //   const baseIsland = await AssetService.saveNewIsland(uuidv4(), Rarity.LEGENDARY, 'ADMIN', x, y, 'Green', true);
+          //   sector.island = baseIsland;
+          //   sector = await sector.save();
+          // }
           newWorld.sectors.push(sector);
         }
       }
-      this.world = await newWorld.save();
+      WorldService.world = await newWorld.save();
     } else {
-      this.world = world;
+      WorldService.world = world;
     }
-    await this.mockIslands();
+    // await this.mockIslands();
   }
 
-  public async mockIslands() {
-    const mockedUserAddress = '0x87400A03678dd03c8BF536404B5B14C609a23b79';
-    const user = await this.findUserByEthAddress(mockedUserAddress);
+  public static async addNewIslandToSector(island: IslandDocument) {
+    const world = await WorldService.worldModel.findOne().populate('sectors');
+    for (let sector of world.sectors) {
+      if (sector.x == island.x && sector.y == island.y) {
 
-    if (user) {
-      const mockedSector1X = 1;
-      const mockedSector1Y = 3;
+        sector.island = island;
+        sector.content = SectorContent.ISLAND;
+        sector = await sector.save();
 
-      const mockedSector2X = 5;
-      const mockedSector2Y = 7;
+        WorldService.world = await WorldService.world.save();
 
-      const mockedSector3X = 4;
-      const mockedSector3Y = 5;
-
-      let hasMockedSectors = false;
-
-      for (const sector of this.world.sectors) {
-        if (sector.x == mockedSector1X && sector.y == mockedSector1Y && sector.content != SectorContent.EMPTY) {
-          hasMockedSectors = true;
-          break;
+        const user = await this.findUserByEthAddress(island.owner);
+        if (user.islandsOwned) {
+          user.islandsOwned.push(island);
+        } else {
+          user.islandsOwned = [island];
         }
-      }
-
-      if (!hasMockedSectors) {
-        const island1 = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, mockedUserAddress, mockedSector1X, mockedSector1Y, 'Green');
-        const island2 = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, mockedUserAddress, mockedSector2X, mockedSector2Y, 'Dark');
-        const island3 = await this.assetService.createIsland(uuidv4(), Rarity.LEGENDARY, mockedUserAddress, mockedSector3X, mockedSector3Y, 'Snow');
-
-        for (let sector of this.world.sectors) {
-          if (sector.x == mockedSector1X && sector.y == mockedSector1Y) {
-            sector.content = SectorContent.ISLAND;
-            sector.island = island1;
-            sector = await sector.save();
-          }
-          if (sector.x == mockedSector2X && sector.y == mockedSector2Y) {
-            sector.content = SectorContent.ISLAND;
-            sector.island = island2;
-            sector = await sector.save();
-          }
-          if (sector.x == mockedSector3X && sector.y == mockedSector3Y) {
-            sector.content = SectorContent.ISLAND;
-            sector.island = island3;
-            sector = await sector.save();
-          }
-        }
-
-        this.world = await this.world.save();
-
-        user.islandsOwned = [island1, island2, island3];
         await user.save();
+
+        break;
       }
     }
   }
@@ -155,7 +131,8 @@ export class WorldService implements OnModuleInit {
     const result: JoinSectorResponse = {
       result: false
     };
-    for (const sector of this.world.sectors) {
+    const world = await this.findWorld();
+    for (const sector of world.sectors) {
       if (sector.x == x && sector.y == y) {
         switch (sector.content) {
           case SectorContent.BASE:
@@ -170,11 +147,14 @@ export class WorldService implements OnModuleInit {
               result.sectorType = sector.content;
 
               const populatedSector = await this.findSector(sector.id);
+              const island = await this.islandModel.findOne({
+                tokenId: populatedSector.island.tokenId
+              });
 
-              result.islandId = populatedSector.island.tokenId;
-              result.islandOwner = populatedSector.island.owner;
-              result.islandTerrain = populatedSector.island.terrain;
-              result.islandMining = populatedSector.island.mining;
+              result.islandId = island.tokenId;
+              result.islandOwner = island.owner;
+              result.islandTerrain = island.terrain;
+              result.islandMining = island.mining;
             }
             break;
           }
@@ -217,6 +197,39 @@ export class WorldService implements OnModuleInit {
     return result;
   }
 
+  public async generateNewIslandPosition() {
+    const world = await this.findWorld();
+    const notEmptySectors = new Set<string>();
+
+    world.sectors.forEach(sector => {
+      if (sector.content != SectorContent.EMPTY) {
+        notEmptySectors.add(String(sector.x + sector.y));
+      }
+    });
+
+    let x = 0;
+    let y = 0;
+    let emergencyBreakCount = 220;
+
+    while (true) {
+      emergencyBreakCount--;
+      if (emergencyBreakCount <= 0) {
+        break;
+      }
+
+      x = RandomService.GetRandomIntInRange(0, 15);
+      y = RandomService.GetRandomIntInRange(0, 15);
+
+      if (!notEmptySectors.has(String(x + y))) {
+        break;
+      }
+    }
+
+    return {
+      x, y
+    }
+  }
+
   private async createSector(x: number, y: number, sectorContent: SectorContent) {
     const sector = new this.sectorModel({
       x,
@@ -231,7 +244,7 @@ export class WorldService implements OnModuleInit {
     return await world.save();
   }
 
-  private async findWorld() {
+  public async findWorld() {
     return this.worldModel.findOne().populate('sectors');
   }
 
@@ -239,8 +252,8 @@ export class WorldService implements OnModuleInit {
     return this.sectorModel.findOne({ _id: id }).populate('island');
   }
 
-  async findUserByEthAddress(ethAddress: string) {
-    return await this.userModel.findOne({
+  private static async findUserByEthAddress(ethAddress: string) {
+    return await WorldService.userModel.findOne({
       ethAddress
     });
   }

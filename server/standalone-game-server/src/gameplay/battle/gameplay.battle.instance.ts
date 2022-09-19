@@ -25,12 +25,15 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
 
         this.gameEngine.deleteMainEntityCallback = async (ship: object) => {
             const jsShip = this.converJsEntityToTypeScript(ship) as GameplayShipEntity;
+            console.log('deleteMainEntityCallback 1');
             if (jsShip.killerId) {
                 const killerId = this.entityPlayerMap.get(jsShip.killerId);
-                const killerShip = this.gameEngine.getMainEntityById(jsShip.id);
+                const killerShip = this.gameEngine.getMainEntityById(jsShip.killerId);
 
                 if (killerShip.role == 'Player') {
+                    console.log('deleteMainEntityCallback 2');
                     if (killerId) {
+                        console.log('deleteMainEntityCallback 3');
                         let eventType = AppEvents.PlayerKilledBot;
                         if (jsShip.role == 'Boss') {
                             eventType = AppEvents.PlayerKilledBoss;
@@ -40,9 +43,11 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
                         this.eventEmitter.emit(eventType, {
                             playerId: killerId
                         } as PlayerKilledShip);
+                        console.log('deleteMainEntityCallback 4');
                     }
                 }
 
+                console.log('deleteMainEntityCallback 5');
                 if (jsShip.role == 'Player' && !jsShip.free) {
                     const shipToUpdate = await shipModel.findOne({ tokenId: jsShip.serverShipRef });
                     shipToUpdate.currentIntegrity -= 1;
@@ -76,16 +81,23 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             }
         };
 
+        this.gameEngine.createMainEntityCallback = (ship: object) => {
+            const socketServerMessageAddEntity = {
+                entity: this.converJsEntityToTypeScript(ship)
+            } as SocketServerMessageAddEntity;
+            this.notifyAllPlayers(socketServerMessageAddEntity, WsProtocol.SocketServerEventAddEntity);
+        };
+
         switch (sectorContent) {
             case SectorContent.BOSS: {
                 this.gameEngine.createEntity('', true, 'Boss', 200, 500, 'MEDIUM', 'TWO', 'FOUR',
-                    2000, 80, 5000, 5000, 200, 100, 100 / 1000, 200 / 1000, 200 / 1000,
+                    2000, 80, 500, 500, 200, 100, 100 / 1000, 200 / 1000, 200 / 1000,
                     undefined, undefined);
                 break;
             }
             case SectorContent.PVE: {
-                this.gameEngine.createEntity('', true, 'Bot', 200, -200, 'Small', 'NONE', 'TWO',
-                    600, 300, 300, 300, 200, 100, 100 / 1000, 200 / 1000, 200 / 1000,
+                this.gameEngine.createEntity('', true, 'Bot', 400, -200, 'Small', 'NONE', 'TWO',
+                    600, 10, 300, 300, 200, 100, 100 / 1000, 200 / 1000, 200 / 1000,
                     undefined, undefined);
                 // this.gameEngine.createEntity('Bot', 700, 500, 'Small', 'NONE', 'TWO', undefined, undefined);
                 // this.gameEngine.createEntity('Bot', 900, 500, 'Small', 'NONE', 'TWO', undefined, undefined);
@@ -118,7 +130,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
 
     async handlePlayerRespawn(data: SocketClientMessageRespawn) {
         if (!this.playerEntityMap.has(data.playerId)) {
-            const entity = this.addPlayer(data.playerId);
+            const entity = await this.addPlayer(data.playerId);
             const socketServerMessageAddEntity = {
                 entity
             } as SocketServerMessageAddEntity;

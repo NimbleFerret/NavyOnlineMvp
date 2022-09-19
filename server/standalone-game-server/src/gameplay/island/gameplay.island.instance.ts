@@ -13,13 +13,15 @@ import {
     NotifyEachPlayerEventMsg,
     AppEvents
 } from "src/app.events";
+import { Model } from "mongoose";
+import { ShipDocument } from "src/asset/asset.ship.entity.js";
 
 export class GameplayIslandInstance extends BaseGameplayInstance {
 
-    constructor(eventEmitter: EventEmitter2, public worldX: number, public worldY: number) {
-        super(undefined, eventEmitter, GameplayType.Island, new engine.IslandEngine());
+    constructor(shipModel: Model<ShipDocument>, eventEmitter: EventEmitter2, public worldX: number, public worldY: number) {
+        super(shipModel, eventEmitter, GameplayType.Island, new engine.IslandEngine());
 
-        this.gameEngine.createEntityCallback = (entity: object) => {
+        this.gameEngine.createMainEntityCallback = (entity: object) => {
             const socketServerMessageAddEntity = {
                 entity: this.converJsEntityToTypeScript(entity)
             } as SocketServerMessageAddEntity;

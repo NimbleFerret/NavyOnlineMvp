@@ -56,7 +56,7 @@ export abstract class GameplayBaseService {
         } else {
             let instance: BaseGameplayInstance;
             if (this.gameplayType == GameplayType.Island) {
-                instance = new GameplayIslandInstance(this.eventEmitter, x, y);
+                instance = new GameplayIslandInstance(this.shipModel, this.eventEmitter, x, y);
             } else {
                 instance = new GameplayBattleInstance(this.shipModel, this.eventEmitter, x, y, sectorContent);
             }
@@ -98,11 +98,11 @@ export abstract class GameplayBaseService {
     // TODO handle instance type here
     @OnEvent(AppEvents.PlayerJoinedInstance)
     async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
-        if (!this.playerInstanceMap.has(data.playerId)) {
+        if (!this.playerInstanceMap.has(data.playerId.toLowerCase())) {
             const islandInstance = this.instances.get(data.instanceId);
             if (islandInstance) {
-                islandInstance.handlePlayerJoinedEvent(data);
-                this.playerInstanceMap.set(data.playerId, data.instanceId);
+                await islandInstance.handlePlayerJoinedEvent(data);
+                this.playerInstanceMap.set(data.playerId.toLowerCase(), data.instanceId);
                 Logger.log(`Player: ${data.playerId} was added to the existing instance: ${data.instanceId}`);
             } else {
                 // Commented becasuse both island and battle gameplay has the same logic  
@@ -116,9 +116,9 @@ export abstract class GameplayBaseService {
 
     @OnEvent(AppEvents.PlayerDisconnected)
     async handlePlayerDisconnected(data: PlayerDisconnectedEvent) {
-        const instanceId = this.playerInstanceMap.get(data.playerId);
+        const instanceId = this.playerInstanceMap.get(data.playerId.toLowerCase());
         if (instanceId) {
-            this.playerInstanceMap.delete(data.playerId);
+            this.playerInstanceMap.delete(data.playerId.toLowerCase());
             const instance = this.instances.get(instanceId);
             instance.handlePlayerDisconnected(data);
             if (instance.getPlayersCount() == 0) {
@@ -142,7 +142,7 @@ export abstract class GameplayBaseService {
 
     @OnEvent(AppEvents.PlayerMove)
     async handlePlayerMove(data: SocketClientMessageMove) {
-        const instanceId = this.playerInstanceMap.get(data.playerId);
+        const instanceId = this.playerInstanceMap.get(data.playerId.toLowerCase());
         if (instanceId) {
             const instance = this.instances.get(instanceId);
             instance.handlePlayerMove(data);
@@ -153,7 +153,7 @@ export abstract class GameplayBaseService {
 
     @OnEvent(AppEvents.PlayerSync)
     async handlePlayerSync(data: SocketClientMessageSync) {
-        const instanceId = this.playerInstanceMap.get(data.playerId);
+        const instanceId = this.playerInstanceMap.get(data.playerId.toLowerCase());
         if (instanceId) {
             const gameInstance = this.instances.get(instanceId);
             gameInstance.handlePlayerSync(data);

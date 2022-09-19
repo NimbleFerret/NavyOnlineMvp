@@ -45,7 +45,9 @@ export class NftIslandGenerator {
                 { miningRewardNVY: islandStats.miningRewardNVY },
                 { shipAndCaptainFee: islandStats.shipAndCaptainFee },
                 { maxMiners: islandStats.maxMiners },
-                { minersFee: islandStats.minersFee }
+                { minersFee: islandStats.minersFee },
+                { x: islandStats.x },
+                { y: islandStats.y }
             ]
         }
 

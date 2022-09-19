@@ -3,12 +3,13 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Captain, CaptainDocument, PlayerCaptainEntity } from './asset.captain.entity';
-import { Island, IslandDocument } from './asset.island.entity';
+import { Island, IslandDocument, PlayerIslandEntity } from './asset.island.entity';
 import { PlayerShipEntity, Ship, ShipDocument, ShipSize } from './asset.ship.entity';
 import { ShipStatsRange, ShipStatsStep } from '../cronos/cronos.service';
 import { Rarity } from '../random/random.entity';
 import { RandomService } from '../random/random.service';
 import { NftShipGenerator } from '../nft/nft.ship.generator';
+import { WorldService } from 'src/world/world.service';
 
 export enum AssetType {
     FREE = 1,
@@ -20,12 +21,15 @@ export class AssetService implements OnModuleInit {
 
     private nftShipGenerator = new NftShipGenerator()
 
+    private static islandModel: Model<IslandDocument>;
+
     constructor(
         private randomService: RandomService,
         @InjectModel(Captain.name) private captainModel: Model<CaptainDocument>,
         @InjectModel(Ship.name) private shipModel: Model<ShipDocument>,
         @InjectModel(Island.name) private islandModel: Model<IslandDocument>,
     ) {
+        AssetService.islandModel = islandModel;
     }
 
     async onModuleInit() {
@@ -105,14 +109,6 @@ export class AssetService implements OnModuleInit {
         });
         // Save ship if not exists
         if (!ship) {
-            // Qfix
-            if (playerShipEntity.size == 1) {
-                playerShipEntity.size = 2;
-            }
-            // Qfix 2
-            playerShipEntity.fireDelay = 300;
-            playerShipEntity.currentIntegrity = 10;
-            playerShipEntity.maxIntegrity = 10;
             ship = await this.saveNewShip(AssetType.COMMON, playerShipEntity);
         } else {
             // Update ship stats
@@ -172,8 +168,12 @@ export class AssetService implements OnModuleInit {
         shipAttributes.owner = owner;
 
         await this.saveNewShip(AssetType.COMMON, shipAttributes);
+        const metadata = await this.nftShipGenerator.generateFounderShip(shipCurrentIndex, shipMaxIndex, shipAttributes);
 
-        return await this.nftShipGenerator.generateFounderShip(shipCurrentIndex, shipMaxIndex, shipAttributes);
+        return {
+            metadata,
+            shipAttributes
+        }
     }
 
     async getFreeCaptain() {
@@ -182,6 +182,16 @@ export class AssetService implements OnModuleInit {
 
     async getFreeShip() {
         return this.shipModel.findOne({ tokenId: 'free' });
+    }
+
+    async repairShip(shipId: string) {
+        const ship = await this.shipModel.findOne({
+            tokenId: shipId
+        });
+        if (ship) {
+            ship.currentIntegrity - ship.maxIntegrity;
+            await ship.save();
+        }
     }
 
     private async saveNewShip(assetType: AssetType, shipEntity: PlayerShipEntity) {
@@ -220,12 +230,14 @@ export class AssetService implements OnModuleInit {
             armor: this.calculateShipAttribute(shipStatsRange.minArmor, shipStatsRange.maxArmor, shipStatsStep.armorAndHullStep),
             maxSpeed: this.calculateShipAttribute(shipStatsRange.minMaxSpeed, shipStatsRange.maxMaxSpeed, shipStatsStep.speedAndAccelerationStep),
             accelerationStep: this.calculateShipAttribute(shipStatsRange.minAccelerationStep, shipStatsRange.maxAccelerationStep, shipStatsStep.speedAndAccelerationStep),
-            accelerationDelay: this.calculateShipAttribute(shipStatsRange.minAccelerationDelay, shipStatsRange.maxAccelerationDelay, shipStatsStep.inputdelayStep),
-            rotationDelay: this.calculateShipAttribute(shipStatsRange.minRotationDelay, shipStatsRange.maxRotationDelay, shipStatsStep.inputdelayStep),
-            fireDelay: this.calculateShipAttribute(shipStatsRange.minFireDelay, shipStatsRange.maxFireDelay, shipStatsStep.inputdelayStep),
+            accelerationDelay: this.calculateShipAttribute(shipStatsRange.minAccelerationDelay, shipStatsRange.maxAccelerationDelay, shipStatsStep.inputDelayStep),
+            rotationDelay: this.calculateShipAttribute(shipStatsRange.minRotationDelay, shipStatsRange.maxRotationDelay, shipStatsStep.inputDelayStep),
+            fireDelay: this.calculateShipAttribute(shipStatsRange.minFireDelay, shipStatsRange.maxFireDelay, shipStatsStep.inputDelayStep),
             cannons,
             cannonsRange: this.calculateShipAttribute(shipStatsRange.minCannonsRange, shipStatsRange.maxCannonsRange, shipStatsStep.cannonsRangeStep),
             cannonsDamage: this.calculateShipAttribute(shipStatsRange.minCannonsDamage, shipStatsRange.maxCannonsDamage, shipStatsStep.cannonsDamageStep),
+            currentIntegrity: this.calculateShipAttribute(shipStatsRange.minIntegrity, shipStatsRange.maxIntegrity, shipStatsStep.integrityStep),
+            maxIntegrity: this.calculateShipAttribute(shipStatsRange.minIntegrity, shipStatsRange.maxIntegrity, shipStatsStep.integrityStep),
             level: 0,
             traits: 0,
             rarity: Rarity.LEGENDARY,
@@ -242,13 +254,35 @@ export class AssetService implements OnModuleInit {
 
     // Island
 
+    async startMining(islandId: string) {
+        const island = await this.islandModel.findOne({
+            tokenId: islandId
+        });
+        if (island) {
+            island.mining = true;
+            await island.save();
+        }
+    }
+
+    async syncIslandIfNeeded(playerIslandEntity: PlayerIslandEntity) {
+        let island = await this.islandModel.findOne({
+            tokenId: playerIslandEntity.id
+        });
+        // Save island if not exists
+        if (!island) {
+            island = await AssetService.saveNewIsland(playerIslandEntity.id, playerIslandEntity.rarity, playerIslandEntity.owner, playerIslandEntity.x, playerIslandEntity.y, playerIslandEntity.terrain, false);
+            await WorldService.addNewIslandToSector(island);
+        }
+        return island;
+    }
+
     public async findIslandByXAndY(x: number, y: number) {
         return this.islandModel.findOne({
             x, y
         });
     }
 
-    public async createIsland(tokenId: string, rarity: Rarity, owner: string, x: number, y: number, terrain: string, isBase = false) {
+    public static async saveNewIsland(tokenId: string, rarity: Rarity, owner: string, x: number, y: number, terrain: string, isBase = false) {
         const island = new this.islandModel();
         island.tokenId = tokenId;
         island.owner = owner;
@@ -259,12 +293,13 @@ export class AssetService implements OnModuleInit {
         island.rarity = rarity;
         island.mining = false;
         island.miningStartedAt = 0;
-        island.miningDurationSeconds = 120;
+        island.miningDurationSeconds = 604800; // 1 Week
         island.miningRewardNVY = 45;
         island.shipAndCaptainFee = 10;
         island.minersFee = 5;
         island.miners = 0;
         island.maxMiners = 3;
+        island.level = 0;
         return await island.save();
     }
 
