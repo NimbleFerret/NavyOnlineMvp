@@ -20,7 +20,8 @@ contract ShipTemplate is AccessControl {
             10, // inputdelayStep
             1, // cannonsStep
             50, // cannonsRangeStep
-            5 // cannonsDamageStep
+            5, // cannonsDamageStep
+            5 // integrityStep
         );
 
         smallShipStatsTemplate = NVYGameLibrary.ShipStatsTemplate(
@@ -36,12 +37,16 @@ contract ShipTemplate is AccessControl {
             200, // maxAccDelay
             100, // minRotationDelay
             250, // maxRotationDelay
+            100, // minFireDelay
+            500, // maxFireDelay
             1, // minCannonsOnSide
             2, // maxCannonsOnSide
             600, // minCannonsRange
             1000, // maxCannonsRange
             20, // minCannonballDamage
-            50 // maxCannonballDamage
+            50, // maxCannonballDamage
+            15, // minIntegrity
+            35 // maxIntegrity
         );
 
         middleShipStatsTemplate = NVYGameLibrary.ShipStatsTemplate(
@@ -57,12 +62,16 @@ contract ShipTemplate is AccessControl {
             5300, // maxAccDelay
             100, // minRotationDelay
             500, // maxRotationDelay
+            100, // minFireDelay
+            500, // maxFireDelay
             3, // minCannonsOnSide
             4, // maxCannonsOnSide
             700, // minCannonsRange
             1600, // maxCannonsRange
             20, // minCannonballDamage
-            80 // maxCannonballDamage
+            80, // maxCannonballDamage,
+            25, // minIntegrity
+            80 // maxIntegrity
         );
 
         largeShipStatsTemplate = NVYGameLibrary.ShipStatsTemplate(
@@ -78,12 +87,16 @@ contract ShipTemplate is AccessControl {
             200, // maxAccDelay
             100, // minRotationDelay
             250, // maxRotationDelay
+            100, // minFireDelay
+            500, // maxFireDelay
             3, // minCannonsOnSide
             5, // maxCannonsOnSide
             600, // minCannonsRange
             1000, // maxCannonsRange
             20, // minCannonballDamage
-            50 // maxCannonballDamage
+            50, // maxCannonballDamage
+            50, // minIntegrity
+            200 // maxIntegrity
         );
     }
 

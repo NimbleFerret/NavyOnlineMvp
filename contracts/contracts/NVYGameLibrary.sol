@@ -48,24 +48,30 @@ library NVYGameLibrary {
         uint256 maxAccelerationDelay;
         uint256 minRotationDelay;
         uint256 maxRotationDelay;
+        uint256 minFireDelay;
+        uint256 maxFireDelay;
         uint256 minCannons;
         uint256 maxCannons;
         uint256 minCannonsRange;
         uint256 maxCannonsRange;
         uint256 minCannonsDamage;
         uint256 maxCannonsDamage;
+        uint256 minIntegrity;
+        uint256 maxIntegrity;
     }
 
     struct ShipStatsStep {
         uint256 armorAndHullStep;
         uint256 speedAndAccelerationStep;
-        uint256 inputdelayStep;
+        uint256 inputDelayStep;
         uint256 cannonsStep;
         uint256 cannonsRangeStep;
         uint256 cannonsDamageStep;
+        uint256 integrityStep;
     }
 
     struct ShipStats {
+        uint256 integrity;
         uint256 maintenenceCostNVY;
         uint256 maintenenceCostAKS;
     }

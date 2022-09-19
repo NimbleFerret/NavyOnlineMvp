@@ -15,13 +15,13 @@ contract FounderCaptainCollectionSale is Ownable {
         captainPrice = _captainPrice * 10**18;
     }
 
-    function buyCaptain(uint256 amount) public payable {
+    function buyCaptain() public payable {
         require(captainOnSaleTotal > 0, "No more captains to sell");
         require(
             address(msg.sender).balance >= captainPrice,
             "Insufficient funds"
         );
-        require(msg.value == amount && msg.value == captainPrice, "Bad amount");
+
         captainOnSaleTotal -= 1;
 
         emit GenerateCaptain(msg.sender);

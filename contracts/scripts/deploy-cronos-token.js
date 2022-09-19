@@ -1,17 +1,20 @@
 const hre = require("hardhat");
 
 async function main() {
-    // await deployContractByName('AKS');
-    // await deployContractByName('NVY');
+    await deployContractByName('AKS');
+    await deployContractByName('NVY');
 
-    // await deployContractByName('Island');
-    // await deployContractByName('FounderIslandCollectionSale', 42, 1500);
+    await deployContractByName('FounderCaptainCollectionSale', 100, 1);
 
-    // await deployContractByName('Ship');
+    await deployContractByName('Captain');
+    await deployContractByName('Island');
+    await deployContractByName('Ship');
+
+    await deployContractByName('FounderIslandCollectionSale', 42, 1);
+
     await deployContractByName('FounderShipCollectionSale', 500, 1);
-    // await deployContractByName('FounderShipCollectionSale', 500, 120);
 
-    // await deployContractByName('ShipTemplate');
+    await deployContractByName('ShipTemplate');
 }
 
 async function deployContractByName(name, arg1, arg2) {

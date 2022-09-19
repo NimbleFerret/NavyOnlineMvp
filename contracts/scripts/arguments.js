@@ -1,4 +1,4 @@
 module.exports = [
-    _shipOnSaleTotal = 500,
-    _shipPrice = 1,
+    _captainOnSaleTotal = 100,
+    _captainPrice = 1,
 ]

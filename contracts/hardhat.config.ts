@@ -27,7 +27,7 @@ const config: HardhatUserConfig = {
             accounts: [myPrivateKey],
         },
         cronosTestnet: {
-            url: "https://evm-t3.cronos.org/",
+            url: "https://evm-t3.cronos.org",
             chainId: 338,
             accounts: [myPrivateKey],
             gasPrice: 5000000000000,
