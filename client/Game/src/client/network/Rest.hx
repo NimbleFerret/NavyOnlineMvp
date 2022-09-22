@@ -3,7 +3,9 @@ package client.network;
 import client.network.RestProtocol;
 import haxe.http.HttpJs;
 
-final ServerUrl = 'http://localhost:3000';
+// final ServerUrl = 'http://localhost:3000';
+
+final ServerUrl = 'http://23.111.202.19:3000';
 
 class Rest {
 	public static final instance:Rest = new Rest();

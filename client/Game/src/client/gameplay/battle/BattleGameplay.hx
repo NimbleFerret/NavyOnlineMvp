@@ -66,11 +66,6 @@ class BattleGameplay extends BasicGameplay {
 						});
 					}
 				}
-				if (engineShellEntities[0].serverSide) {
-					trace('server side shells');
-				} else {
-					trace('client side shells');
-				}
 				if (gameEngine.engineMode == EngineMode.Server && !engineShellEntities[0].serverSide) {
 					Socket.instance.shoot({
 						playerId: playerId,
@@ -148,6 +143,9 @@ class BattleGameplay extends BasicGameplay {
 		});
 
 		waterScene = new WaterScene();
+
+		maxDragX = 200;
+		maxDragY = 200;
 	}
 
 	public function debugDraw() {
@@ -376,6 +374,13 @@ class BattleGameplay extends BasicGameplay {
 			}
 
 			final playerShip = cast(getPlayerEntity(), ClientShip);
+
+			if (playerShip != null) {
+				waterScene.updatePlayerMovement(playerShip.isMoving, playerShip.isMovingForward, playerShip.direction, playerShip.currentSpeed);
+			} else {
+				waterScene.updatePlayerMovement(false);
+			}
+
 			hud.updatePlayerParams(playerShip);
 		}
 	}

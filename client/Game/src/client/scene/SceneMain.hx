@@ -68,16 +68,13 @@ class SceneMain extends Scene {
 			trace('collectRewardCallback');
 		}, function startMining() {
 			if (!islands[currentIslandIndex].mining) {
-				trace(islands[currentIslandIndex]);
-				trace('mining started 1');
 				Moralis.startIslandMining(islands[currentIslandIndex].id, function miningStarted() {
 					Rest.instance.startMining(client.Player.instance.ethAddress, islands[currentIslandIndex].id);
 					trace('mining started');
 				}, function miningErrir() {
-					trace('minint start error');
+					trace('mining start error');
 				});
 			}
-			trace('startMining');
 		}, function repairCallback() {
 			Moralis.repairShip(ships[currentShipIndex].id, function repairSuccess() {
 				trace('repair success');
@@ -111,7 +108,6 @@ class SceneMain extends Scene {
 	}
 
 	public function updateBalances() {
-		trace(client.Player.instance.playerData);
 		if (nvyTokens != null && aksTokens != null && client.Player.instance.playerData != null) {
 			nvyTokens.setText(Std.string(client.Player.instance.playerData.nvy));
 			aksTokens.setText(Std.string(client.Player.instance.playerData.aks));

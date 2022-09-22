@@ -19,12 +19,11 @@ class SceneIsland extends Scene implements EventListener {
 	public function new(width:Int, height:Int, leaveCallback:Void->Void) {
 		super();
 		this.leaveCallback = leaveCallback;
-		scaleMode = LetterBox(1920, 1080);
-		camera.setViewport(width / 2, height / 2, 0, 0);
+		scaleMode = LetterBox(1920, 1080, true, Center, Center);
+		camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
 	}
 
 	public function start(response:JoinSectorResponse) {
-		trace(response);
 		game = new IslandGameplay(this, response.islandId, response.islandOwner, response.islandTerrain, response.islandMining, function callback() {
 			if (leaveCallback != null) {
 				game = null;

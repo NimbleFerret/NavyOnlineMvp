@@ -41,6 +41,18 @@ class IslandGameplay extends BasicGameplay {
 		islandsManager = new IslandsManager(scene, islandTerrain, islandMining);
 
 		final islandEngine = cast(baseEngine, IslandEngine);
+		islandEngine.deleteMainEntityCallback = function callback(engineCharacterEntity:EngineBaseGameEntity) {
+			if (gameState == GameState.Playing) {
+				final clientEntity = clientMainEntities.get(engineCharacterEntity.id);
+				if (clientEntity != null) {
+					scene.removeChild(clientEntity);
+					clientMainEntities.remove(engineCharacterEntity.id);
+					clientMainEntitiesCount--;
+				}
+			}
+		};
+
+		final islandEngine = cast(baseEngine, IslandEngine);
 
 		for (lineCollider in islandEngine.lineColliders) {
 			// addLineCollider(scene, lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2);
@@ -200,7 +212,7 @@ class IslandGameplay extends BasicGameplay {
 	// --------------------------------------
 
 	public function jsEntityToEngineEntity(message:Dynamic):EngineBaseGameEntity {
-		return new EngineCharacterEntity(message.entity.x, message.entity.y, message.entity.id, message.entity.ownerId);
+		return new EngineCharacterEntity(message.x, message.y, message.id, message.ownerId);
 	}
 
 	public function jsEntitiesToEngineEntities(entities:Dynamic):Array<EngineBaseGameEntity> {

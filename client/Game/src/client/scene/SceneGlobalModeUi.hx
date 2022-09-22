@@ -17,7 +17,7 @@ class SceneGlobalModeUi extends BasicHud {
 		mainMenuBtn.x = 1080;
 		mainMenuBtn.y = 32;
 
-		final menuPlate = newCustomPlate(this, 5, 6);
+		final menuPlate = newCustomPlate(this, 5, 7);
 		menuPlate.setPosition(1086, 128);
 
 		final sanctuaryIcon = new h2d.Bitmap(SceneGlobalMode.AcnhorTile);
@@ -53,6 +53,10 @@ class SceneGlobalModeUi extends BasicHud {
 
 		final piratesText = addText2(this, "Pirates");
 		piratesText.setPosition(menuPlate.x + 100, menuPlate.y + 295);
+
+		final descText = addText2(this, "Move by 1 sector");
+		descText.setPosition(piratesText.x - 50, piratesText.y + 70);
+
 		pinkSkullIcon.setScale(1.5);
 		pinkSkullIcon.setPosition(pinkSkullIcon.x + 24, pinkSkullIcon.y + 24);
 		blueSkullIcon.setScale(1.5);

@@ -22,6 +22,8 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		this.diedCallback = diedCallback;
 		scaleMode = LetterBox(1920, 1080, true, Center, Center);
 		camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
+
+		// camera.scale(0.7, 0.7);
 	}
 
 	public function start() {
@@ -77,10 +79,10 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 	public function update(dt:Float, fps:Float) {
 		final c = camera;
 
-		if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))
-			c.scale(1.25, 1.25);
-		if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_DOWN))
-			c.scale(0.8, 0.8);
+		// if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))
+		// 	c.scale(1.25, 1.25);
+		// if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_DOWN))
+		// 	c.scale(0.8, 0.8);
 
 		game.update(dt, fps);
 	}

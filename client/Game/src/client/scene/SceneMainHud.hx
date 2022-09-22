@@ -93,10 +93,7 @@ class SceneMainHud extends BasicHud {
 		Main.IsWeb3Available = Moralis.isEthereumBrowser();
 
 		if (!Main.IsWeb3Available) {
-			// Player.instance.ethAddress = '0xd6d6EE855ADDB';
-			// Player.instance.ethAddress = '0xd6d6ee855addb';
-			Player.instance.ethAddress = '0xc69d232ec38662ab51b334c48f2e8be625d55095';
-			// Player.instance.ethAddress = Uuid.short().toLowerCase();
+			Player.instance.ethAddress = Uuid.short().toLowerCase();
 
 			showMetamaskError(function callback() {
 				if (unloggedInitCallback != null) {
@@ -291,11 +288,11 @@ class SceneMainHud extends BasicHud {
 	// ----------------------------------
 
 	public function showMetamaskError(callback:Void->Void) {
-		alertDialog('Please install Web3 plugin (Crypto.com or MetaMask)\nAll kind of rewards and tokens are not available!', callback);
+		alertDialog('Please install Web3 plugin (Crypto.com or MetaMask)\nUse arrow keys and Q/E for input!', callback);
 	}
 
 	public function showMetamaskLogin(callback:Void->Void) {
-		alertDialog('You have Web3 plugin installed !\nPlease login and enjoy all game features !', callback);
+		alertDialog('You have Web3 plugin installed, all features available !\nUse arrow keys and Q/E for input !', callback);
 	}
 
 	public function showShipRepairDialog(?parent:h2d.Object) {
