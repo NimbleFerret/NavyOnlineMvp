@@ -3004,6 +3004,7 @@ const islandAddress = '0x805325D64B9178F85d52aFb51B2A99EC403f447d';
 
 let ethAddress = '';
 let web3Provider;
+let ethers;
 
 function isEthereumBrowser() {
 	return window.ethereum;
@@ -3018,7 +3019,6 @@ async function checkAndChangeNetworkIfNeeded() {
 		try {
 			await Moralis.switchNetwork(0x152);
 		} catch (e) {
-			console.log(e);
 			if (e.message.includes('Unrecognized chain ID')) {
 				await Moralis.addNetwork(
 					0x152,

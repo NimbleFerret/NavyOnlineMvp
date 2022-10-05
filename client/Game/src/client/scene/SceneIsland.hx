@@ -21,6 +21,7 @@ class SceneIsland extends Scene implements EventListener {
 		this.leaveCallback = leaveCallback;
 		scaleMode = LetterBox(1920, 1080, true, Center, Center);
 		camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
+		camera.scale(1.5, 1.5);
 	}
 
 	public function start(response:JoinSectorResponse) {

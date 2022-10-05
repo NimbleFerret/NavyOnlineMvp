@@ -35,7 +35,7 @@ class IslandGameplay extends BasicGameplay {
 			engineMode = EngineMode.Server) {
 		super(scene, new IslandEngine(engineMode));
 
-		waterBg = new WaterBg(scene, -1650, -600, 5, 19, 9);
+		waterBg = new WaterBg(scene, -1650, -700, 5, 21, 10);
 
 		// Pass additional island info here.
 		islandsManager = new IslandsManager(scene, islandTerrain, islandMining);
