@@ -55,7 +55,6 @@ class UiToken extends h2d.Object {
 
 	public function setText(text:String) {
 		// WAT ?
-		trace('MONEEEEYYYYYYYYY 1' + text);
 		this.text.text = text;
 	}
 }

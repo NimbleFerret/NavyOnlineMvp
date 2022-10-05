@@ -29,20 +29,27 @@ button {
 .header {
   height: 128px;
   background-color: #06aeee;
+  border-bottom: 6px solid #01e820;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-wrapper {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  border-bottom: 6px solid #01e820;
+  padding: 0px 40px;
 }
 
 .logo {
   display: block;
-  padding-left: 40px;
 }
 
 .logo-img {
-  width: 164px;
+  width: 102px;
 }
 
 .capitan-gif {
@@ -63,9 +70,51 @@ button {
 .twitter-icon {
   padding: 8px;
 }
+
 .twitter-icon:hover {
   cursor: pointer;
   transform: scale(1.06);
+}
+
+@-webkit-keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+
+  0% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+
+  0% {
+    transform: rotate(0deg);
+  }
+}
+
+.telegram-icon {
+  width: 42px;
+}
+
+.telegram-icon:hover {
+  -webkit-animation-name: rotation;
+  animation-name: rotation;
+  -webkit-animation-duration: 0.6s;
+  animation-duration: 0.6s;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
 }
 
 .navigation {
@@ -87,17 +136,21 @@ button {
   padding: 6px;
   transition: all 0.3s;
 }
+
 .nav-link:hover {
   cursor: pointer;
   color: #000;
 }
 
-.header-right {
+.hidden {
+  display: block;
+}
+
+.btn-game {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  padding-right: 40px;
 }
 
 .btn-header {
@@ -117,6 +170,7 @@ button {
   padding: 12px 36px;
   color: #fff;
 }
+
 .btn-header:hover {
   cursor: pointer;
   background-color: #0021dd;
@@ -129,7 +183,7 @@ button {
   justify-content: center;
   align-items: flex-start;
   position: relative;
-  background-image: linear-gradient(180deg, rgba(0, 220, 235, 0.27), rgba(56, 84, 199, 0.37));
+  background-image: linear-gradient(180deg, rgba(0, 220, 235, 0.27), rgba(56, 87, 199, 0.36));
 }
 
 .banner video {
@@ -144,7 +198,7 @@ button {
   top: -100%;
   left: -100%;
   -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   z-index: -100;
 }
 
@@ -178,6 +232,14 @@ button {
   font-weight: 700;
   color: #fff;
   text-transform: uppercase;
+  text-align: center;
+  line-height: 28px;
+  padding: 0 20px;
+}
+
+.heading-h1 {
+  padding: 0 20px;
+  text-align: center;
 }
 
 .text-shadow {
@@ -199,9 +261,9 @@ button {
   color: #000;
   background-color: #01e820;
   border-radius: 10px;
-  padding: 3px 0;
   box-shadow: -2px 2px 16px rgba(0, 0, 0, 0.6);
 }
+
 .banner-btn:hover {
   cursor: pointer;
   transform: scale(1.06);
@@ -215,12 +277,13 @@ button {
 
 .about-wrapper {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   gap: 48px;
 }
 
 .section-left {
+  max-width: 800px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -316,7 +379,7 @@ button {
   margin-top: 32px;
   position: absolute;
   bottom: 10px;
-  left: 41%;
+  left: 39%;
 }
 
 .btn-arrow {
@@ -324,6 +387,7 @@ button {
   height: 52px;
   background: none;
 }
+
 .btn-arrow:hover {
   cursor: pointer;
   transform: scale(1.08);
@@ -366,6 +430,21 @@ button {
   border-radius: 10px;
   background: #3753f3;
   padding: 18px 14px;
+  position: relative;
+}
+
+.accept-icon {
+  position: absolute;
+  width: 52px;
+  top: 6px;
+  right: 14px;
+}
+
+.continue-icon {
+  position: absolute;
+  width: 68px;
+  top: 10px;
+  right: 14px;
 }
 
 .card-heading {
@@ -457,15 +536,16 @@ details summary::-webkit-details-marker {
   font-size: 42px;
 }
 
-.details-card[open] .details-heading ~ * {
+.details-card[open] .details-heading~* {
   -webkit-animation: open 0.3s ease-in-out;
-          animation: open 0.3s ease-in-out;
+  animation: open 0.3s ease-in-out;
 }
 
 @-webkit-keyframes open {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -475,10 +555,12 @@ details summary::-webkit-details-marker {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
 }
+
 .details-text {
   font-family: "Exo", sans-serif;
   font-size: 22px;
@@ -491,22 +573,340 @@ details summary::-webkit-details-marker {
 }
 
 .footer {
-  min-height: 200px;
+  min-height: 260px;
   background: #000;
+}
+
+.footer-content {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 48px;
   padding: 40px;
 }
 
-.footer-copy {
+.footer-content__contacts {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 52px;
+}
+
+.contacts-block__item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 18px;
+}
+
+.contacts-block__item:hover {
+  cursor: pointer;
+}
+
+.contacts-block__item:hover .contact-icon {
+  cursor: pointer;
+  transform: scale(1.25);
+}
+
+.contact-name {
   font-family: "Exo", sans-serif;
   font-size: 22px;
   line-height: 2.25rem;
   letter-spacing: 0.06em;
   font-weight: 400;
-  font-size: 22px;
+  font-size: 20px;
+  font-weight: 400;
   color: rgb(234, 239, 245);
-}/*# sourceMappingURL=style.css.map */
+  display: block;
+}
+
+.contact-icon {
+  width: 42px;
+  transition: 0.3s;
+}
+
+.footer-content__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+
+.copy-text {
+  font-family: "Exo", sans-serif;
+  font-size: 22px;
+  line-height: 2.25rem;
+  letter-spacing: 0.06em;
+  font-weight: 400;
+  font-size: 16px;
+  text-align: center;
+  color: rgb(234, 239, 245);
+}
+
+.copy-heart:hover {
+  -webkit-animation-name: rotation;
+  animation-name: rotation;
+  -webkit-animation-duration: 0.6s;
+  animation-duration: 0.6s;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+}
+
+@media (max-width: 1360px) {
+  .about-wrapper {
+    flex-wrap: wrap;
+  }
+
+  .section-left {
+    max-width: 1230px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .container {
+    width: 700px;
+  }
+
+  .slider {
+    width: 700px;
+  }
+
+  .slider_card {
+    width: 600px;
+  }
+
+  .capitans-img,
+  .ships-img,
+  .islands-img {
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .btn-game {
+    display: none;
+  }
+
+  .heading {
+    font-size: 42px;
+    line-height: 48px;
+  }
+
+  .heading-about {
+    line-height: 20px;
+  }
+}
+
+@media (max-width: 930px) {
+  .hidden {
+    display: none;
+  }
+
+  .banner-btn {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 847px) {
+  .list-items {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 810px) {
+  .about-img {
+    max-width: 500px;
+  }
+
+  .container {
+    width: 600px;
+  }
+
+  .slider {
+    width: 600px;
+  }
+
+  .slider_card {
+    width: 500px;
+  }
+
+  .capitans-img,
+  .ships-img,
+  .islands-img {
+    max-width: 500px;
+  }
+
+  .btn-arrow {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (max-width: 670px) {
+  .nft {
+    padding: 60px 40px;
+  }
+
+  .btn-arrow {
+    display: none;
+  }
+
+  .heading {
+    font-size: 36px;
+    line-height: 42px;
+  }
+
+  .subheading {
+    font-size: 22px;
+  }
+
+  .container {
+    height: 1600px;
+    max-width: 650px;
+  }
+
+  .slider {
+    max-width: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+    gap: 42px;
+    top: 50px;
+    margin: 0 auto;
+  }
+
+  .slider_card {
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 590px) {
+  .nft {
+    padding: 20px 20px 40px;
+  }
+
+  .capitan-gif__about {
+    display: none;
+  }
+
+  .text {
+    font-size: 18px;
+    line-height: 26px;
+  }
+
+  .about-img {
+    max-width: 400px;
+  }
+
+  .container {
+    height: 1300px;
+  }
+
+  .capitans-img,
+  .ships-img,
+  .islands-img {
+    max-width: 400px;
+  }
+
+  .card-item {
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-heading {
+    font-size: 24px;
+  }
+
+  .details-heading {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .details-text {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .footer-content {
+    padding: 40px 20px;
+  }
+
+  .contact-name {
+    font-size: 18px;
+  }
+
+  .copy-text {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 495px) {
+  .header {
+    height: 110px;
+  }
+
+  .header-wrapper {
+    padding: 0 20px;
+    gap: 14px;
+  }
+
+  .logo-img {
+    width: 78px;
+  }
+
+  .nav-link {
+    font-size: 22px;
+  }
+
+  .about {
+    padding: 40px 20px;
+  }
+
+  .roadmap-block {
+    padding: 40px;
+  }
+
+  .info-block {
+    padding: 40px;
+  }
+
+  .about-img {
+    max-width: 320px;
+  }
+
+  .capitans-img,
+  .ships-img,
+  .islands-img {
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 320px) {
+  .header-wrapper {
+    padding: 0 10px;
+  }
+
+  .nav-link {
+    font-size: 20px;
+  }
+
+  .about-img {
+    max-width: 280px;
+  }
+
+  .nft {
+    padding: 20px 10px 20px;
+  }
+
+  .capitans-img,
+  .ships-img,
+  .islands-img {
+    max-width: 280px;
+  }
+}
+
+/*# sourceMappingURL=style.css.map */

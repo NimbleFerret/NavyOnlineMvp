@@ -50,7 +50,7 @@ a,
 button {
   cursor: pointer;
   text-decoration: none;
-  
+
 }
 
 .center {
@@ -61,28 +61,35 @@ button {
 .header {
   height: 128px;
   background-color: $color-blue-leght;
+  border-bottom: 6px solid $color-green;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-wrapper {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  border-bottom: 6px solid $color-green;
+  padding: 0px 40px;
 }
 
 .logo {
   display: block;
-  padding-left: 40px;
 }
 
-.logo-img{
-  width: 164px;
+.logo-img {
+  width: 102px;
 
 }
 
-.capitan-gif {   
+.capitan-gif {
   margin-right: -10px;
 }
 
-.capitan-gif-right{
+.capitan-gif-right {
   transform: scaleX(-1); // отразить по вертикали
   margin-left: -11px;
   margin-bottom: 9px;
@@ -101,6 +108,32 @@ button {
     transform: scale(1.06);
   }
 }
+
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+
+  0% {
+    transform: rotate(0deg);
+  }
+}
+
+.telegram-icon {
+  width: 32px;
+
+  &:hover {
+    animation-name: rotation;
+    animation-duration: 0.6s;
+    animation-timing-function: linear;
+  }
+}
+
 
 .navigation {
   display: flex;
@@ -124,12 +157,15 @@ button {
   }
 }
 
-.header-right {
+.hidden {
+  display: block;
+}
+
+.btn-game {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  padding-right: 40px;
 }
 
 .btn-header {
@@ -160,7 +196,7 @@ button {
   justify-content: center;
   align-items: flex-start;
   position: relative;
-  background-image: linear-gradient(180deg, rgb(0 220 235 / 27%), rgb(56 84 199 / 37%));
+  background-image: linear-gradient(180deg, rgba(0, 220, 235, 0.27), rgb(56 87 199 / 36%))
 }
 
 .banner video {
@@ -194,12 +230,20 @@ button {
 
 .heading {
   @include big-title;
-  color: $text-color-light; 
+  color: $text-color-light;
 }
 
 .subheading {
   @include subtitle;
   text-transform: uppercase;
+  text-align: center;
+  line-height: 28px;
+  padding: 0 20px;
+}
+
+.heading-h1 {
+  padding: 0 20px;
+  text-align: center;
 }
 
 .text-shadow {
@@ -217,7 +261,6 @@ button {
   color: $color-black;
   background-color: $color-green;
   border-radius: 10px;
-  padding: 3px  0;
   box-shadow: -2px 2px 16px rgba(0, 0, 0, 0.6);
 
   &:hover {
@@ -232,14 +275,15 @@ button {
   padding: 60px 40px;
 }
 
-.about-wrapper{
+.about-wrapper {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   gap: 48px;
 }
 
 .section-left {
+  max-width: 800px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -278,8 +322,6 @@ button {
   align-items: center;
   padding: 0 40px 60px;
   background: $color-green;
-  // background: $color-blue-leght;
-
 }
 
 .container {
@@ -330,7 +372,7 @@ button {
   margin-top: 32px;
   position: absolute;
   bottom: 10px;
-  left: 41%;
+  left: 39%;
 }
 
 .btn-arrow {
@@ -382,6 +424,21 @@ button {
   border-radius: 10px;
   background: #3753f3;
   padding: 18px 14px;
+  position: relative;
+}
+
+.accept-icon {
+  position: absolute;
+  width: 52px;
+  top: 6px;
+  right: 14px;
+}
+
+.continue-icon {
+  position: absolute;
+  width: 68px;
+  top: 10px;
+  right: 14px;
 }
 
 .card-heading {
@@ -414,14 +471,14 @@ button {
 }
 
 
-.details-block{
+.details-block {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 24px;
 }
 
-.details-card{
+.details-card {
   max-width: 800px;
   background: #FF9333;
   padding: 24px 16px;
@@ -433,7 +490,7 @@ button {
   cursor: pointer;
 }
 
-.details-heading{
+.details-heading {
   @include subtitle;
   list-style: none;
   position: relative;
@@ -457,12 +514,13 @@ details summary::-webkit-details-marker {
   transform-origin: center;
   transition: 200ms linear;
 }
+
 .details-card[open] .details-heading:after {
   transform: rotate(45deg);
   font-size: 42px;
 }
 
-.details-card[open] .details-heading ~ * {
+.details-card[open] .details-heading~* {
   animation: open 0.3s ease-in-out;
 }
 
@@ -470,12 +528,13 @@ details summary::-webkit-details-marker {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
 }
 
-.details-text{
+.details-text {
   @include main-text;
   color: $text-color-light;
   // color: $color-black;
@@ -486,18 +545,346 @@ details summary::-webkit-details-marker {
 
 
 .footer {
-  min-height: 200px;
+  min-height: 260px;
   background: $color-black;
+}
+
+.footer-content {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 48px;
   padding: 40px;
 }
 
-.footer-copy {
+
+.footer-content__contacts {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 52px
+}
+
+.contacts-block__item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 18px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:hover .contact-icon {
+    cursor: pointer;
+    transform: scale(1.25);
+  }
+}
+
+.contact-name {
   @include main-text;
-  font-size: 22px;
+  font-size: 20px;
+  font-weight: 400;
   color: rgb(234, 239, 245);
+  display: block;
+}
+
+.contact-icon {
+  width: 42px;
+  transition: 0.3s;
+}
+
+.footer-content__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+
+.copy-text {
+  @include main-text;
+  font-size: 16px;
+  text-align: center;
+  color: rgb(234, 239, 245);
+}
+
+.copy-heart:hover {
+  animation-name: rotation;
+  animation-duration: 0.6s;
+  animation-timing-function: linear;
+}
+
+
+
+@media (max-width : 1360px) {
+
+  .about-wrapper {
+    flex-wrap: wrap;
+  }
+
+  .section-left {
+    max-width: 1230px;
+  }
+}
+
+
+@media (max-width : 1080px) {
+
+  .container {
+    width: 700px;
+  }
+
+  .slider {
+    width: 700px;
+  }
+
+  .slider_card {
+    width: 600px;
+  }
+
+  .capitans-img,
+  .ships-img,
+  .islands-img {
+    max-width: 600px;
+  }
+}
+
+@media (max-width : 1024px) {
+  .btn-game {
+    display: none;
+  }
+
+  .heading {
+    font-size: 42px;
+    line-height: 48px;
+  }
+
+  .heading-about {
+    line-height: 20px;
+  }
+}
+
+@media (max-width : 930px) {
+
+  .hidden {
+    display: none;
+  }
+
+  .banner-btn {
+    font-size: 20px;
+  }
+
+}
+
+
+@media (max-width : 847px) {
+
+  .list-items {
+    justify-content: center;
+  }
+
+}
+
+@media (max-width : 810px) {
+
+  .about-img {
+    max-width: 500px;
+  }
+
+  .container {
+    width: 600px;
+  }
+
+  .slider {
+    width: 600px;
+  }
+
+  .slider_card {
+    width: 500px;
+  }
+
+  .capitans-img,
+  .ships-img,
+  .islands-img {
+    max-width: 500px;
+  }
+
+  .btn-arrow {
+    width: 42px;
+    height: 42px;
+  }
+
+}
+
+@media (max-width : 670px) {
+
+  .nft {
+    padding: 60px 40px;
+  }
+
+  .btn-arrow {
+    display: none;
+  }
+
+  .heading {
+    font-size: 36px;
+    line-height: 42px;
+  }
+
+  .subheading {
+    font-size: 22px;
+  }
+
+  .container {
+    height: 1600px;
+    max-width: 650px;
+  }
+
+  .slider {
+    max-width: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+    gap: 42px;
+    top: 50px;
+    margin: 0 auto;
+  }
+
+  .slider_card {
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+  }
+
+}
+
+@media (max-width : 590px) {
+
+  .nft {
+    padding: 20px 20px 40px;
+  }
+
+  .capitan-gif__about {
+    display: none;
+  }
+
+  .text {
+    font-size: 18px;
+    line-height: 26px;
+  }
+
+  .about-img {
+    max-width: 400px;
+  }
+
+  .container {
+    height: 1300px;
+  }
+
+  .capitans-img,
+  .ships-img,
+  .islands-img {
+    max-width: 400px;
+  }
+
+  .card-item {
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-heading {
+    font-size: 24px;
+  }
+
+  .details-heading {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .details-text {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .footer-content {
+    padding: 40px 20px;
+  }
+
+  .contact-name {
+    font-size: 18px;
+  }
+
+  .copy-text {
+    font-size: 18px;
+  }
+
+}
+
+@media (max-width : 495px) {
+
+  .header {
+    height: 110px;
+  }
+
+  .header-wrapper {
+    padding: 0 20px;
+    gap: 14px;
+  }
+
+  .logo-img {
+    width: 78px;
+  }
+
+  .nav-link {
+    font-size: 22px;
+  }
+
+  .about {
+    padding: 40px 20px;
+  }
+
+  .roadmap-block {
+    padding: 40px;
+  }
+
+  .info-block {
+    padding: 40px;
+  }
+
+  .about-img {
+    max-width: 320px;
+  }
+
+  .capitans-img,
+  .ships-img,
+  .islands-img {
+    max-width: 320px;
+  }
+}
+
+@media (max-width : 320px) {
+
+  .header-wrapper {
+    padding: 0 10px;
+  }
+
+  .nav-link {
+    font-size: 20px;
+  }
+
+  .about-img {
+    max-width: 280px;
+  }
+
+  .nft {
+    padding: 20px 10px 20px;
+  }
+
+  .capitans-img,
+  .ships-img,
+  .islands-img {
+    max-width: 280px;
+  }
 }

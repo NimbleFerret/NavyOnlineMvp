@@ -41,17 +41,30 @@ class ClientShip extends ClientBaseGameEntity {
 
 	private final shipTemplate:ShipTemplate;
 
+	public var isMoving = false;
+	public var isMovingForward = false;
+	public var direction:GameEntityDirection = East;
+	public var currentSpeed:Float;
+
 	public function new(s2d:h2d.Scene, engineShipEntity:EngineShipEntity) {
 		super();
 
 		engineShipEntity.speedChangeCallback = function callback(speed) {
 			if (speed != 0) {
 				rippleAnim.alpha = 1;
+				isMoving = true;
+				currentSpeed = speed;
 			} else {
 				rippleAnim.alpha = 0;
+				isMoving = false;
+				currentSpeed = 0;
 			}
+
+			isMovingForward = speed > 0;
 		};
 		engineShipEntity.directionChangeCallbackLeft = function callback(dir) {
+			direction = dir;
+
 			shipTemplate.changeDirLeft();
 
 			final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
@@ -59,6 +72,8 @@ class ClientShip extends ClientBaseGameEntity {
 			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
 		engineShipEntity.directionChangeCallbackRight = function callback(dir) {
+			direction = dir;
+
 			shipTemplate.changeDirRight();
 
 			final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
@@ -112,7 +127,7 @@ class ClientShip extends ClientBaseGameEntity {
 			nickname.setPosition(-50, -180);
 		} else {
 			if (engineShipEntity.role == Role.Player) {
-				nickname.setPosition(-60, -220);
+				nickname.setPosition(-150, -220);
 			} else {
 				nickname.setPosition(-150, -220);
 			}

@@ -5,6 +5,8 @@ import haxe.http.HttpJs;
 
 final ServerUrl = 'http://localhost:3000';
 
+// final ServerUrl = 'https://navy.online';
+
 class Rest {
 	public static final instance:Rest = new Rest();
 

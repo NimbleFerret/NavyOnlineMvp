@@ -3003,9 +3003,35 @@ const shipAddress = '0x86E391AeCc06f1ccd793c29012fC76D5b4A25A49';
 const islandAddress = '0x805325D64B9178F85d52aFb51B2A99EC403f447d';
 
 let ethAddress = '';
+let web3Provider;
+let ethers;
 
 function isEthereumBrowser() {
 	return window.ethereum;
+}
+
+async function checkAndChangeNetworkIfNeeded() {
+	if (!web3Provider) {
+		web3Provider = await Moralis.enableWeb3();
+	}
+	const chainId = await Moralis.getChainId();
+	if (chainId != 0x152) {
+		try {
+			await Moralis.switchNetwork(0x152);
+		} catch (e) {
+			if (e.message.includes('Unrecognized chain ID')) {
+				await Moralis.addNetwork(
+					0x152,
+					'TEST CRONOS',
+					'CRO',
+					'tCRO',
+					'https://evm-t3.cronos.org');
+				await Moralis.switchNetwork(0x152);
+				web3Provider = await Moralis.enableWeb3();
+			}
+		}
+	}
+	ethers = Moralis.web3Library;
 }
 
 async function initMoralis(callback) {
@@ -3015,20 +3041,16 @@ async function initMoralis(callback) {
 	if (!user) {
 		Moralis.authenticate({ signingMessage: "Log in using Moralis" }).then(function (user) {
 			ethAddress = user.get('ethAddress');
-			enableWeb3().then(function () {
+			checkAndChangeNetworkIfNeeded().then(function () {
 				callback(ethAddress);
 			});
 		});
 	} else {
 		ethAddress = user.get('ethAddress');
-		await enableWeb3();
-		callback(ethAddress);
+		checkAndChangeNetworkIfNeeded().then(function () {
+			callback(ethAddress);
+		});
 	}
-}
-
-async function enableWeb3() {
-	web3Provider = await Moralis.enableWeb3();
-	ethers = Moralis.web3Library;
 }
 
 function getEthAddress() {
@@ -3038,6 +3060,8 @@ function getEthAddress() {
 // Buy NFTs
 
 async function buyFounderCaptain(successCallback, errorCallback) {
+	await checkAndChangeNetworkIfNeeded();
+
 	const signer = web3Provider.getSigner();
 	const saleContract = new ethers.Contract(captainSaleAddress, captainSaleAbi, web3Provider).connect(signer);
 	saleContract.buyCaptain({ value: ethers.utils.parseEther("1") })
@@ -3053,6 +3077,8 @@ async function buyFounderCaptain(successCallback, errorCallback) {
 }
 
 async function buyFounderShip(successCallback, errorCallback) {
+	await checkAndChangeNetworkIfNeeded();
+
 	const signer = web3Provider.getSigner();
 	const saleContract = new ethers.Contract(shipSaleAddress, shipSaleAbi, web3Provider).connect(signer);
 	saleContract.buyShip({ value: ethers.utils.parseEther("1") })
@@ -3068,6 +3094,8 @@ async function buyFounderShip(successCallback, errorCallback) {
 }
 
 async function buyFounderIsland(successCallback, errorCallback) {
+	await checkAndChangeNetworkIfNeeded();
+
 	const signer = web3Provider.getSigner();
 	const saleContract = new ethers.Contract(islandSaleAddress, islandSaleAbi, web3Provider).connect(signer);
 	saleContract.buyIsland({ value: ethers.utils.parseEther("1") })
@@ -3099,6 +3127,8 @@ async function upgradeCaptain() {
 // Island manipulation
 
 async function startIslandMining(islandId, successCallback, errorCallback) {
+	await checkAndChangeNetworkIfNeeded();
+
 	const signer = web3Provider.getSigner();
 	const islandContract = new ethers.Contract(islandAddress, islandAbi, web3Provider).connect(signer);
 	islandContract.startMining(islandId)
@@ -3122,6 +3152,8 @@ async function upgradeIsland() {
 // Ship manipulation
 
 async function repairShip(shipId, successCallback, errorCallback) {
+	await checkAndChangeNetworkIfNeeded();
+
 	const signer = web3Provider.getSigner();
 	const shipContract = new ethers.Contract(shipAddress, shipAbi, web3Provider).connect(signer);
 	shipContract.repair(shipId)
