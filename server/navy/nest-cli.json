@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/navy/src",
+  "monorepo": true,
+  "root": "apps/navy",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/navy/tsconfig.app.json"
+  },
+  "projects": {
+    "navy": {
+      "type": "application",
+      "root": "apps/navy",
+      "entryFile": "main",
+      "sourceRoot": "apps/navy/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/navy/tsconfig.app.json"
+      }
+    },
+    "web3-service": {
+      "type": "application",
+      "root": "apps/web3-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/web3-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/web3-service/tsconfig.app.json"
+      }
+    },
+    "shared-library": {
+      "type": "library",
+      "root": "libs/shared-library",
+      "entryFile": "index",
+      "sourceRoot": "libs/shared-library/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/shared-library/tsconfig.lib.json"
+      }
+    }
+  }
+}

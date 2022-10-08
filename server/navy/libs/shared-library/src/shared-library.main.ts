@@ -1,0 +1,17 @@
+export enum AssetType {
+    FREE = 1,
+    COMMON = 2
+}
+
+export enum Rarity {
+    COMMON = 1,
+    RARE = 2,
+    EPIC = 3,
+    LEGENDARY = 3
+}
+
+export enum ShipSize {
+    SMALL = 1,
+    MIDDLE = 2,
+    LARGE = 3
+}
