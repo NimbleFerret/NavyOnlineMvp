@@ -15,3 +15,10 @@ export enum ShipSize {
     MIDDLE = 2,
     LARGE = 3
 }
+
+export enum IslandSize {
+    SMALL = 1,
+    MIDDLE = 2,
+    LARGE = 3,
+    EXTRA_LARGE = 4
+}

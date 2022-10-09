@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package worldservice;
+
+service WorldService {
+  rpc GenerateNewIslandPosition (IslandPositionRequest) returns (IslandPositionResponse);
+}
+
+message IslandPositionRequest {
+}
+
+message IslandPositionResponse {
+  int32 x = 1;
+  int32 y = 2;
+}

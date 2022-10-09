@@ -8,6 +8,8 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "protoc_win": "Copy-Item -Path \"proto\" -Destination \"dist/proto\" -recurse -Force",
+    "protoc_nix": "mkdir -p dist/proto & cp -a /proto/. /dist/proto/",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -17,9 +19,12 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.7.1",
+    "@grpc/proto-loader": "^0.7.3",
     "@nestjs/bull": "^0.6.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/microservices": "^9.1.4",
     "@nestjs/mongoose": "^9.2.0",
     "@nestjs/platform-express": "^9.0.0",
     "bull": "^4.10.0",

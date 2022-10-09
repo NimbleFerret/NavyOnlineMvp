@@ -1,21 +1,25 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/navy/src",
+  "sourceRoot": "apps/gameplay-service/src",
   "monorepo": true,
-  "root": "apps/navy",
+  "root": "apps/gameplay-service",
   "compilerOptions": {
     "webpack": true,
-    "tsConfigPath": "apps/navy/tsconfig.app.json"
+    "tsConfigPath": "apps/gameplay-service/tsconfig.app.json",
+    "assets": [
+      "**/*.proto"
+    ],
+    "watchAssets": true
   },
   "projects": {
-    "navy": {
+    "gameplay-service": {
       "type": "application",
-      "root": "apps/navy",
+      "root": "apps/gameplay-service",
       "entryFile": "main",
-      "sourceRoot": "apps/navy/src",
+      "sourceRoot": "apps/gameplay-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/navy/tsconfig.app.json"
+        "tsConfigPath": "apps/gameplay-service/tsconfig.app.json"
       }
     },
     "web3-service": {
@@ -34,6 +38,15 @@
       "sourceRoot": "libs/shared-library/src",
       "compilerOptions": {
         "tsConfigPath": "libs/shared-library/tsconfig.lib.json"
+      }
+    },
+    "world-service": {
+      "type": "application",
+      "root": "apps/world-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/world-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/world-service/tsconfig.app.json"
       }
     }
   }
