@@ -1,5 +1,5 @@
 import { SharedLibraryService } from '@app/shared-library';
-import { SectorContent } from '@app/shared-library/shared-library.main';
+import { SectorContent, SectorInfo } from '@app/shared-library/gprc/grpc.world.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -10,9 +10,9 @@ import { World, WorldDocument } from './schemas/schema.world';
 @Injectable()
 export class AppService {
 
-  public static readonly WORLD_SIZE = 15;
-  public static readonly BASE_POS_X = 5;
-  public static readonly BASE_POS_Y = 5;
+  public static readonly WORLD_SIZE = 5;
+  public static readonly BASE_POS_X = 2;
+  public static readonly BASE_POS_Y = 2;
 
   private world: WorldDocument;
 
@@ -28,18 +28,18 @@ export class AppService {
       const newWorld = await this.createWorld();
       for (let x = 0; x < AppService.WORLD_SIZE; x++) {
         for (let y = 0; y < AppService.WORLD_SIZE; y++) {
-          let content = SectorContent.EMPTY;
+          let content = SectorContent.SECTOR_CONTENT_EMPTY;
           if (x == AppService.BASE_POS_X && y == AppService.BASE_POS_Y) {
-            content = SectorContent.BASE;
+            content = SectorContent.SECTOR_CONTENT_BASE;
           }
           if ((x == 7 && y == 2) || (x == 2 && y == 10) || (x == 10 && y == 8)) {
-            content = SectorContent.PVE;
+            content = SectorContent.SECTOR_CONTENT_PVE;
           }
           if ((x == 2 && y == 2) || (x == 9 && y == 9)) {
-            content = SectorContent.BOSS;
+            content = SectorContent.SECTOR_CONTENT_BOSS;
           }
           if ((x == 12 && y == 12) || (x == 10 && y == 15) || (x == 13 && y == 14)) {
-            content = SectorContent.PVP;
+            content = SectorContent.SECTOR_CONTENT_PVP;
           }
           const sector = await this.createSector(x, y, content);
 
@@ -58,37 +58,63 @@ export class AppService {
     // await this.mockIslands();
   }
 
+  async mockIslands() {
+
+  }
+
   // -----------------------
   // World
   // -----------------------
 
-  public generateNewIslandPosition() {
-    const notEmptySectors = new Set<Number>(
+  public async generateNewIslandPosition() {
+    const emptySectors = new Set<String>(
       this.world.sectors
-        .filter(sector => sector.content == SectorContent.EMPTY && !sector.locked)
+        .filter(sector => sector.content == SectorContent.SECTOR_CONTENT_EMPTY && !sector.locked)
         .map(sector => sector.positionId)
     );
 
     let x = 0;
     let y = 0;
+    let success = true;
     let emergencyBreakCount = AppService.WORLD_SIZE * AppService.WORLD_SIZE;
 
     while (true) {
       emergencyBreakCount--;
       if (emergencyBreakCount <= 0) {
+        success = false;
         break;
       }
 
-      x = SharedLibraryService.GetRandomIntInRange(0, 15);
-      y = SharedLibraryService.GetRandomIntInRange(0, 15);
+      x = SharedLibraryService.GetRandomIntInRange(0, AppService.WORLD_SIZE - 1);
+      y = SharedLibraryService.GetRandomIntInRange(0, AppService.WORLD_SIZE - 1);
 
-      if (!notEmptySectors.has(x + y)) {
+      if (emptySectors.has(x + '/' + y)) {
         break;
       }
     }
 
+    if (success) {
+      await this.lockSector(x + '/' + y);
+    }
+
     return {
-      x, y
+      x,
+      y,
+      success
+    }
+  }
+
+  public async getWorldInfo() {
+    let sectors: SectorInfo[];
+    sectors = this.world.sectors.map(sector => {
+      return {
+        x: sector.x,
+        y: sector.y,
+        sectorContent: sector.content
+      }
+    })
+    return {
+      sectors
     }
   }
 
@@ -111,7 +137,7 @@ export class AppService {
 
   private async createSector(x: number, y: number, sectorContent: SectorContent) {
     const sector = new this.sectorModel({
-      positionId: x + y,
+      positionId: x + '/' + y,
       x,
       y,
       content: sectorContent
@@ -123,7 +149,8 @@ export class AppService {
     return this.sectorModel.findOne({ _id: id }).populate('island');
   }
 
-  private async lockSector(positionId: number) {
+  private async lockSector(positionId: string) {
+    console.log('Locking sector:' + positionId);
     const sector = await this.sectorModel.findOne({ positionId });
     if (sector) {
       sector.locked = true;

@@ -136,50 +136,52 @@ export class NFTService implements OnModuleInit {
 
             this.worldService.GenerateNewIslandPosition({}).subscribe({
                 next: (response: IslandPositionResponse) => async () => {
-                    const islandStats = {
-                        level: 0,
-                        rarity: Rarity.LEGENDARY,
-                        mining: false,
-                        terrain,
-                        miningStartedAt: 0,
-                        miningDurationSeconds: 120,
-                        miningRewardNVY: 45,
-                        shipAndCaptainFee: 10,
-                        currMiners: 0,
-                        maxMiners: 3,
-                        minersFee: 5,
-                        x: response.x,
-                        y: response.y
-                    } as IslandStats;
+                    if (response.success) {
+                        const islandStats = {
+                            level: 0,
+                            rarity: Rarity.LEGENDARY,
+                            mining: false,
+                            terrain,
+                            miningStartedAt: 0,
+                            miningDurationSeconds: 120,
+                            miningRewardNVY: 45,
+                            shipAndCaptainFee: 10,
+                            currMiners: 0,
+                            maxMiners: 3,
+                            minersFee: 5,
+                            x: response.x,
+                            y: response.y
+                        } as IslandStats;
 
-                    const metadata = await this.nftIslandGenerator.generateFounderIsland(index, maxIndex, islandStats);
+                        const metadata = await this.nftIslandGenerator.generateFounderIsland(index, maxIndex, islandStats);
 
-                    const tuple: [
-                        boolean,
-                        ethers.BigNumber,
-                        ethers.BigNumber,
-                        ethers.BigNumber,
-                        ethers.BigNumber,
-                        ethers.BigNumber,
-                        ethers.BigNumber,
-                        ethers.BigNumber] = [
-                            false,
-                            ethers.BigNumber.from(islandStats.miningStartedAt),
-                            ethers.BigNumber.from(islandStats.miningDurationSeconds),
-                            ethers.BigNumber.from(islandStats.miningRewardNVY),
-                            ethers.BigNumber.from(islandStats.shipAndCaptainFee),
-                            ethers.BigNumber.from(islandStats.currMiners),
-                            ethers.BigNumber.from(islandStats.maxMiners),
-                            ethers.BigNumber.from(islandStats.minersFee)
-                        ];
+                        const tuple: [
+                            boolean,
+                            ethers.BigNumber,
+                            ethers.BigNumber,
+                            ethers.BigNumber,
+                            ethers.BigNumber,
+                            ethers.BigNumber,
+                            ethers.BigNumber,
+                            ethers.BigNumber] = [
+                                false,
+                                ethers.BigNumber.from(islandStats.miningStartedAt),
+                                ethers.BigNumber.from(islandStats.miningDurationSeconds),
+                                ethers.BigNumber.from(islandStats.miningRewardNVY),
+                                ethers.BigNumber.from(islandStats.shipAndCaptainFee),
+                                ethers.BigNumber.from(islandStats.currMiners),
+                                ethers.BigNumber.from(islandStats.maxMiners),
+                                ethers.BigNumber.from(islandStats.minersFee)
+                            ];
 
-                    await this.blockchainQueue.add(BlockchainQueueProcessor.MINT_NFT_QUEUE, {
-                        id: uuidv4(),
-                        transactionType: TransactionType.MINT_FOUNDERS_ISLAND,
-                        recipient,
-                        tuple,
-                        metadata
-                    } as NFTJobData);
+                        await this.blockchainQueue.add(BlockchainQueueProcessor.MINT_NFT_QUEUE, {
+                            id: uuidv4(),
+                            transactionType: TransactionType.MINT_FOUNDERS_ISLAND,
+                            recipient,
+                            tuple,
+                            metadata
+                        } as NFTJobData);
+                    }
                 },
                 error: (e) => this.logger.error(`Cant get new island position`, e)
             });

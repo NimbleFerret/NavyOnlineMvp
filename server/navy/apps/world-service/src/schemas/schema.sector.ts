@@ -1,4 +1,4 @@
-import { SectorContent } from '@app/shared-library/shared-library.main';
+import { SectorContent } from '@app/shared-library/gprc/grpc.world.service';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { IslandSchema, Island } from './schema.island';
@@ -9,7 +9,7 @@ export type SectorDocument = Sector & Document;
 export class Sector {
 
     @Prop({ required: true, index: true })
-    positionId: number;
+    positionId: string;
 
     @Prop()
     x: number;
@@ -21,14 +21,14 @@ export class Sector {
         type: Number,
         required: true,
         enum: [
-            SectorContent.EMPTY,
-            SectorContent.BASE,
-            SectorContent.ISLAND,
-            SectorContent.BOSS,
-            SectorContent.PVE,
-            SectorContent.PVP,
+            SectorContent.SECTOR_CONTENT_EMPTY,
+            SectorContent.SECTOR_CONTENT_BASE,
+            SectorContent.SECTOR_CONTENT_ISLAND,
+            SectorContent.SECTOR_CONTENT_BOSS,
+            SectorContent.SECTOR_CONTENT_PVE,
+            SectorContent.SECTOR_CONTENT_PVP,
         ],
-        default: SectorContent.EMPTY
+        default: SectorContent.SECTOR_CONTENT_EMPTY
     })
     content: SectorContent;
 

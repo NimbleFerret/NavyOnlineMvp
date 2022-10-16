@@ -4,7 +4,10 @@ package worldservice;
 
 service WorldService {
   rpc GenerateNewIslandPosition (IslandPositionRequest) returns (IslandPositionResponse);
+  rpc GetWorldInfo (WorldInfoRequest) returns (WorldInfoResponse);
 }
+
+//-----------------------------
 
 message IslandPositionRequest {
 }
@@ -12,4 +15,29 @@ message IslandPositionRequest {
 message IslandPositionResponse {
   int32 x = 1;
   int32 y = 2;
+  bool success = 3;
+}
+
+//-----------------------------
+
+enum SectorContent {
+  SECTOR_CONTENT_EMPTY = 1;
+  SECTOR_CONTENT_BASE = 2;
+  SECTOR_CONTENT_ISLAND = 3;
+  SECTOR_CONTENT_BOSS = 4;
+  SECTOR_CONTENT_PVE = 5;
+  SECTOR_CONTENT_PVP = 6;
+}
+
+message SectorInfo {
+  int32 x = 1;
+  int32 y = 2;
+  SectorContent sectorContent = 3;
+}
+
+message WorldInfoRequest {
+}
+
+message WorldInfoResponse {
+  repeated SectorInfo sectors = 1;
 }

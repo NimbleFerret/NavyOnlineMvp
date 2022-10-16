@@ -34,12 +34,3 @@ export enum IslandSize {
     LARGE = 3,
     EXTRA_LARGE = 4
 }
-
-export enum SectorContent {
-    EMPTY = 1,
-    BASE = 2,
-    ISLAND = 3,
-    BOSS = 4,
-    PVE = 5,
-    PVP = 6
-}
