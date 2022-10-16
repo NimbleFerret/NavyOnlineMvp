@@ -1,5 +1,5 @@
 import { Rarity, ShipSize } from "@app/shared-library/shared-library.main";
-import { Injectable, Logger } from "@nestjs/common";
+import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { ethers } from 'ethers';
@@ -13,9 +13,11 @@ import { BlockchainQueueProcessor, NFTJobData } from "../blockchain/blockchain.q
 import { SharedLibraryService } from "@app/shared-library";
 import { Constants } from "../app.constants";
 import { ShipEntity } from "@app/shared-library/entities/entity.ship";
+import { IslandPositionResponse, WorldService, WorldServiceName } from "@app/shared-library/gprc/grpc.world.service";
+import { ClientGrpc } from "@nestjs/microservices";
 
 @Injectable()
-export class NFTService {
+export class NFTService implements OnModuleInit {
 
     private readonly logger = new Logger(NFTService.name);
 
@@ -27,7 +29,15 @@ export class NFTService {
     private middleShipStatsRange: ShipStatsRange;
     private shipStatsStep: ShipStatsStep;
 
-    constructor(@InjectQueue('blockchain') private readonly blockchainQueue: Queue) { }
+    private worldService: WorldService;
+
+    constructor(
+        @Inject('WorldServiceGrpcClient') private readonly worldServiceGrpcClient: ClientGrpc,
+        @InjectQueue('blockchain') private readonly blockchainQueue: Queue) { }
+
+    async onModuleInit() {
+        this.worldService = this.worldServiceGrpcClient.getService<WorldService>(WorldServiceName);
+    }
 
     updateShipStats(smallShipStatsRange: ShipStatsRange, middleShipStatsRange: ShipStatsRange, shipStatsStep: ShipStatsStep) {
         this.smallShipStatsRange = smallShipStatsRange;
@@ -124,52 +134,55 @@ export class NFTService {
                 terrain = 'Snow';
             }
 
-            // TODO implement world service connection by grpc
+            this.worldService.GenerateNewIslandPosition({}).subscribe({
+                next: (response: IslandPositionResponse) => async () => {
+                    const islandStats = {
+                        level: 0,
+                        rarity: Rarity.LEGENDARY,
+                        mining: false,
+                        terrain,
+                        miningStartedAt: 0,
+                        miningDurationSeconds: 120,
+                        miningRewardNVY: 45,
+                        shipAndCaptainFee: 10,
+                        currMiners: 0,
+                        maxMiners: 3,
+                        minersFee: 5,
+                        x: response.x,
+                        y: response.y
+                    } as IslandStats;
 
-            const islandStats = {
-                level: 0,
-                rarity: Rarity.LEGENDARY,
-                mining: false,
-                terrain,
-                miningStartedAt: 0,
-                miningDurationSeconds: 120,
-                miningRewardNVY: 45,
-                shipAndCaptainFee: 10,
-                currMiners: 0,
-                maxMiners: 3,
-                minersFee: 5,
-                x: 1,
-                y: 2
-            } as IslandStats;
+                    const metadata = await this.nftIslandGenerator.generateFounderIsland(index, maxIndex, islandStats);
 
-            const metadata = await this.nftIslandGenerator.generateFounderIsland(index, maxIndex, islandStats);
+                    const tuple: [
+                        boolean,
+                        ethers.BigNumber,
+                        ethers.BigNumber,
+                        ethers.BigNumber,
+                        ethers.BigNumber,
+                        ethers.BigNumber,
+                        ethers.BigNumber,
+                        ethers.BigNumber] = [
+                            false,
+                            ethers.BigNumber.from(islandStats.miningStartedAt),
+                            ethers.BigNumber.from(islandStats.miningDurationSeconds),
+                            ethers.BigNumber.from(islandStats.miningRewardNVY),
+                            ethers.BigNumber.from(islandStats.shipAndCaptainFee),
+                            ethers.BigNumber.from(islandStats.currMiners),
+                            ethers.BigNumber.from(islandStats.maxMiners),
+                            ethers.BigNumber.from(islandStats.minersFee)
+                        ];
 
-            const tuple: [
-                boolean,
-                ethers.BigNumber,
-                ethers.BigNumber,
-                ethers.BigNumber,
-                ethers.BigNumber,
-                ethers.BigNumber,
-                ethers.BigNumber,
-                ethers.BigNumber] = [
-                    false,
-                    ethers.BigNumber.from(islandStats.miningStartedAt),
-                    ethers.BigNumber.from(islandStats.miningDurationSeconds),
-                    ethers.BigNumber.from(islandStats.miningRewardNVY),
-                    ethers.BigNumber.from(islandStats.shipAndCaptainFee),
-                    ethers.BigNumber.from(islandStats.currMiners),
-                    ethers.BigNumber.from(islandStats.maxMiners),
-                    ethers.BigNumber.from(islandStats.minersFee)
-                ];
-
-            await this.blockchainQueue.add(BlockchainQueueProcessor.MINT_NFT_QUEUE, {
-                id: uuidv4(),
-                transactionType: TransactionType.MINT_FOUNDERS_ISLAND,
-                recipient,
-                tuple,
-                metadata
-            } as NFTJobData);
+                    await this.blockchainQueue.add(BlockchainQueueProcessor.MINT_NFT_QUEUE, {
+                        id: uuidv4(),
+                        transactionType: TransactionType.MINT_FOUNDERS_ISLAND,
+                        recipient,
+                        tuple,
+                        metadata
+                    } as NFTJobData);
+                },
+                error: (e) => this.logger.error(`Cant get new island position`, e)
+            });
         } catch (e) {
             this.logger.error(`createNewIsland for: ${recipient}, error`, e);
         }

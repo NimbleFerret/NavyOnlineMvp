@@ -5,13 +5,13 @@ import { Web3ServiceService } from './app.service';
 import { BlockchainModule } from './blockchain/blockchain.module';
 import { MoralisModule } from './moralis/moralis.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { GrpcModule } from './grpc/grpc.module';
+import { NFTModule } from './nft/nft.module';
 
 @Module({
   imports: [
     MoralisModule,
     BlockchainModule,
-    GrpcModule,
+    NFTModule,
     BullModule.forRoot({
       redis: {
         host: 'localhost',

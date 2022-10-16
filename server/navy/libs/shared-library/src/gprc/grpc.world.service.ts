@@ -14,6 +14,7 @@ export interface WorldService {
     GenerateNewIslandPosition(request: IslandPositionRequest): Observable<IslandPositionResponse>;
 }
 
+export const WorldServiceName = 'WorldService';
 export const WorldServiceGrpcPackage = 'worldservice';
 
 export const WorldServiceGrpcClientOptions: ClientOptions = {

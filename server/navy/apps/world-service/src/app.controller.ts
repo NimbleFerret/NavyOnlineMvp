@@ -1,17 +1,16 @@
 import { IslandPositionRequest, IslandPositionResponse } from '@app/shared-library/gprc/grpc.world.service';
 import { Controller, } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
+import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
 
+  constructor(private readonly appService: AppService) { }
+
   @GrpcMethod('WorldService')
   generateNewIslandPosition(request: IslandPositionRequest): IslandPositionResponse {
-    console.log('WorldService generateNewIslandPosition');
-    return {
-      x: 1,
-      y: 1
-    }
+    return this.appService.generateNewIslandPosition();
   }
 
 }

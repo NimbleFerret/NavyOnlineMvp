@@ -1,10 +1,20 @@
-import { WorldServiceGrpcClientOptions, WorldServiceGrpcPackage } from '@app/shared-library/gprc/grpc.world.service';
 import { Module } from '@nestjs/common';
-import { ClientsModule } from '@nestjs/microservices';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { Island, IslandSchema } from './schemas/schema.island';
+import { Sector, SectorSchema } from './schemas/schema.sector';
+import { World, WorldSchema } from './schemas/schema.world';
 
 @Module({
+  imports: [
+    MongooseModule.forFeature([
+      { name: Sector.name, schema: SectorSchema },
+      { name: World.name, schema: WorldSchema },
+      { name: Island.name, schema: IslandSchema }
+    ]),
+    MongooseModule.forRoot('mongodb://localhost/navy')
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
