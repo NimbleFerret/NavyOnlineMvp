@@ -8,7 +8,19 @@ export interface SignInOrUpRequest {
     user: string;
 }
 
+// TODO import ship, captain and island
 export interface SignInOrUpResponse {
+
+    // ethAddress: user.ethAddress,
+    // nickname: user.nickname,
+    // worldX: user.worldX,
+    // worldY: user.worldY,
+    // nvy: user.nvyBalance,
+    // aks: user.aksBalance,
+    // ownedCaptains,
+    // ownedShips,
+    // ownedIslands,
+
 }
 
 //-----------------------------
