@@ -1,5 +1,5 @@
 import { SharedLibraryService } from '@app/shared-library';
-import { SectorContent, SectorInfo, WorldMoveRequest } from '@app/shared-library/gprc/grpc.world.service';
+import { AddNewIslandToSectorRequest, SectorContent, SectorInfo, WorldMoveRequest } from '@app/shared-library/gprc/grpc.world.service';
 import { Sector, SectorDocument } from '@app/shared-library/schemas/schema.sector';
 import { WorldDocument, World } from '@app/shared-library/schemas/schema.world';
 import { IslandDocument, Island } from '@app/shared-library/schemas/schema.island';
@@ -114,7 +114,11 @@ export class AppService {
     }
   }
 
-  public async worldMove(quest: WorldMoveRequest) {
+  public async worldMove(request: WorldMoveRequest) {
+
+  }
+
+  public async addNewIslandToSector(request: AddNewIslandToSectorRequest) {
 
   }
 

@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Rarity } from '../shared-library.main';
 
 export type CaptainDocument = Captain & Document;
 
@@ -14,8 +15,17 @@ export class Captain {
     @Prop()
     owner: string;
 
-    @Prop()
-    rarity: number;
+    @Prop({
+        type: String,
+        required: true,
+        enum: [
+            Rarity.COMMON,
+            Rarity.RARE,
+            Rarity.EPIC,
+            Rarity.LEGENDARY,
+        ]
+    })
+    rarity: Rarity;
 
     @Prop()
     level: number;

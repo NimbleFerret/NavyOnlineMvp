@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Rarity, ShipSize } from '../shared-library.main';
 
 export type ShipDocument = Ship & Document;
 
@@ -43,11 +44,29 @@ export class Ship {
     @Prop()
     cannonsDamage: number;
 
-    @Prop()
-    rarity: number;
+    @Prop({
+        type: String,
+        required: true,
+        enum: [
+            Rarity.COMMON,
+            Rarity.RARE,
+            Rarity.EPIC,
+            Rarity.LEGENDARY,
+        ]
+    })
+    rarity: Rarity;
 
-    @Prop()
-    size: number;
+    @Prop({
+        type: String,
+        required: true,
+        enum: [
+            ShipSize.SMALL,
+            ShipSize.MIDDLE,
+            ShipSize.LARGE
+        ]
+    })
+    size: ShipSize;
+
 
     @Prop()
     traits: number;

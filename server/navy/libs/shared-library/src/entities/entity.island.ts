@@ -3,7 +3,7 @@ export interface IslandEntity {
     owner: string;
     level: number;
     size: number;
-    rarity: number;
+    rarity: string;
     terrain: string;
     miningRewardNVY: number;
     shipAndCaptainFee: number;

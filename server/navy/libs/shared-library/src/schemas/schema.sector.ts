@@ -18,7 +18,7 @@ export class Sector {
     y: number;
 
     @Prop({
-        type: Number,
+        type: String,
         required: true,
         enum: [
             SectorContent.SECTOR_CONTENT_EMPTY,

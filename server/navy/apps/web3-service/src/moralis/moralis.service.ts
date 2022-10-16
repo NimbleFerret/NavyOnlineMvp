@@ -1,9 +1,10 @@
 import Moralis from "moralis";
 import { EvmChain } from '@moralisweb3/evm-utils';
-import { ethers } from 'ethers';
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
+import { ClientGrpc } from "@nestjs/microservices";
 import { Model } from "mongoose";
+import { ethers } from 'ethers';
 import { Constants } from "../app.constants";
 import { CaptainEntity } from "@app/shared-library/entities/entity.captain";
 import { IslandEntity } from "@app/shared-library/entities/entity.island";
@@ -13,14 +14,21 @@ import { GetUserAssetsResponse } from "@app/shared-library/gprc/grpc.web3.servic
 import { Ship, ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import { Captain, CaptainDocument } from "@app/shared-library/schemas/schema.captain";
 import { Island, IslandDocument } from "@app/shared-library/schemas/schema.island";
+import { WorldService, WorldServiceGrpcClientName, WorldServiceName } from "@app/shared-library/gprc/grpc.world.service";
+import { lastValueFrom } from "rxjs";
 
 @Injectable()
 export class MoralisService implements OnModuleInit {
 
+    private readonly logger = new Logger(MoralisService.name);
+
     private readonly chain = EvmChain.CRONOS_TESTNET;
     private readonly apiKey = "aQrAItXuznpPv1pEXAgPIIwcVqwaehaPHpB9WmGo0eP1dGUdmzyt5SYfmstQslBF";
 
+    private worldService: WorldService;
+
     constructor(
+        @Inject(WorldServiceGrpcClientName) private readonly worldServiceGrpcClient: ClientGrpc,
         @InjectModel(Captain.name) private captainModel: Model<CaptainDocument>,
         @InjectModel(Ship.name) private shipModel: Model<ShipDocument>,
         @InjectModel(Island.name) private islandModel: Model<IslandDocument>
@@ -29,6 +37,7 @@ export class MoralisService implements OnModuleInit {
     }
 
     async onModuleInit() {
+        this.worldService = this.worldServiceGrpcClient.getService<WorldService>(WorldServiceName);
         await Moralis.start({
             apiKey: this.apiKey
         });
@@ -266,26 +275,47 @@ export class MoralisService implements OnModuleInit {
         });
 
         if (!island) {
-            const newIsland = new this.islandModel();
-            newIsland.tokenId = playerIslandEntity.id;
-            newIsland.owner = playerIslandEntity.owner;
-            newIsland.x = playerIslandEntity.x;
-            newIsland.y = playerIslandEntity.y;
-            newIsland.isBase = false;
-            newIsland.terrain = playerIslandEntity.terrain;
-            newIsland.rarity = playerIslandEntity.rarity;
-            newIsland.mining = false;
-            newIsland.miningStartedAt = 0;
-            newIsland.miningDurationSeconds = 604800; // 1 Week
-            newIsland.miningRewardNVY = 45;
-            newIsland.shipAndCaptainFee = 10;
-            newIsland.minersFee = 5;
-            newIsland.miners = 0;
-            newIsland.maxMiners = 3;
-            newIsland.level = 0;
-            await newIsland.save();
-            // island = await AssetService.saveNewIsland(playerIslandEntity.id, playerIslandEntity.rarity, playerIslandEntity.owner, playerIslandEntity.x, playerIslandEntity.y, playerIslandEntity.terrain, false);
-            // await WorldService.addNewIslandToSector(island);
+            try {
+                const newIsland = new this.islandModel();
+                newIsland.tokenId = playerIslandEntity.id;
+                newIsland.owner = playerIslandEntity.owner;
+                newIsland.x = playerIslandEntity.x;
+                newIsland.y = playerIslandEntity.y;
+                newIsland.isBase = false;
+                newIsland.terrain = playerIslandEntity.terrain;
+                newIsland.rarity = playerIslandEntity.rarity;
+                newIsland.mining = false;
+                newIsland.miningStartedAt = 0;
+                newIsland.miningDurationSeconds = 604800; // 1 Week
+                newIsland.miningRewardNVY = 45;
+                newIsland.shipAndCaptainFee = 10;
+                newIsland.minersFee = 5;
+                newIsland.miners = 0;
+                newIsland.maxMiners = 3;
+                newIsland.level = 0;
+
+                await lastValueFrom(this.worldService.AddNewIslandToSector({
+                    tokenId: newIsland.tokenId,
+                    owner: newIsland.owner,
+                    x: newIsland.x,
+                    y: newIsland.y,
+                    terrain: newIsland.terrain,
+                    rarity: newIsland.rarity,
+                    mining: newIsland.mining,
+                    miningStartedAt: newIsland.miningStartedAt,
+                    miningDurationSeconds: newIsland.miningDurationSeconds,
+                    miningRewardNVY: newIsland.miningRewardNVY,
+                    shipAndCaptainFee: newIsland.shipAndCaptainFee,
+                    minersFee: newIsland.minersFee,
+                    miners: newIsland.miners,
+                    maxMiners: newIsland.maxMiners,
+                    level: newIsland.level
+                }));
+
+                await newIsland.save();
+            } catch (e) {
+                this.logger.error('Unable to add island to sector', e);
+            }
         } else {
             island.owner = playerIslandEntity.owner;
             await island.save();

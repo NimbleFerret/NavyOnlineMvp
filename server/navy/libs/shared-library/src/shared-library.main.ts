@@ -3,15 +3,15 @@
 // -----------------------
 
 export enum AssetType {
-    FREE = 1,
-    COMMON = 2
+    FREE = 'FREE',
+    COMMON = 'COMMON'
 }
 
 export enum Rarity {
-    COMMON = 1,
-    RARE = 2,
-    EPIC = 3,
-    LEGENDARY = 3
+    COMMON = 'COMMON',
+    RARE = 'RARE',
+    EPIC = 'EPIC',
+    LEGENDARY = 'LEGENDARY'
 }
 
 // -----------------------
@@ -19,9 +19,9 @@ export enum Rarity {
 // -----------------------
 
 export enum ShipSize {
-    SMALL = 1,
-    MIDDLE = 2,
-    LARGE = 3
+    SMALL = 'SMALL',
+    MIDDLE = 'MIDDLE',
+    LARGE = 'LARGE'
 }
 
 // -----------------------
@@ -29,13 +29,19 @@ export enum ShipSize {
 // -----------------------
 
 export enum UserWorldState {
-    WORLD = 1,
-    SECTOR = 2,
+    WORLD = 'WORLD',
+    SECTOR = 'SECTOR',
 }
 
 export enum IslandSize {
-    SMALL = 1,
-    MIDDLE = 2,
-    LARGE = 3,
-    EXTRA_LARGE = 4
+    SMALL = 'SMALL',
+    MIDDLE = 'MIDDLE',
+    LARGE = 'LARGE',
+    EXTRA_LARGE = 'EXTRA_LARGE'
+}
+
+export enum Terrain {
+    GREEN = 'GREEN',
+    SNOW = 'SNOW',
+    DARK = 'DARK',
 }

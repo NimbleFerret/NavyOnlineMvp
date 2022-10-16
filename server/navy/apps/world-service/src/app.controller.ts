@@ -1,4 +1,5 @@
 import {
+  AddNewIslandToSectorRequest,
   IslandPositionRequest,
   WorldInfoRequest,
   WorldMoveRequest,
@@ -26,6 +27,11 @@ export class AppController {
   @GrpcMethod(WorldServiceName)
   async worldMove(request: WorldMoveRequest) {
     return this.appService.worldMove(request);
+  }
+
+  @GrpcMethod(WorldServiceName)
+  async addNewIslandToSector(request: AddNewIslandToSectorRequest) {
+    return this.appService.addNewIslandToSector(request);
   }
 
 }

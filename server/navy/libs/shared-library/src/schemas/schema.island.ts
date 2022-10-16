@@ -1,4 +1,4 @@
-import { IslandSize } from "@app/shared-library/shared-library.main";
+import { IslandSize, Rarity, Terrain } from "@app/shared-library/shared-library.main";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 export type IslandDocument = Island & Document;
@@ -12,26 +12,40 @@ export class Island {
     @Prop()
     owner: string;
 
-    @Prop({ default: false })
-    isBase: boolean;
-
     @Prop()
     x: number;
 
     @Prop()
     y: number;
 
-    @Prop()
-    terrain: string;
+    @Prop({
+        type: String,
+        required: true,
+        enum: [
+            Terrain.GREEN,
+            Terrain.SNOW,
+            Terrain.DARK,
+        ]
+    })
+    terrain: Terrain;
 
     @Prop()
     level: number;
 
-    @Prop()
-    rarity: number;
+    @Prop({
+        type: String,
+        required: true,
+        enum: [
+            Rarity.COMMON,
+            Rarity.RARE,
+            Rarity.EPIC,
+            Rarity.LEGENDARY,
+        ]
+    })
+    rarity: Rarity;
 
     @Prop({
-        type: Number,
+        type: String,
         required: true,
         enum: [
             IslandSize.SMALL,
