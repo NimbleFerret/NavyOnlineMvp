@@ -11,7 +11,7 @@ import { NftShipGenerator } from "./nft.generator.ship";
 import { TransactionType } from "../blockchain/schemas/schema.blockchain.transaction";
 import { BlockchainQueueProcessor, NFTJobData } from "../blockchain/blockchain.queue.processor";
 import { SharedLibraryService } from "@app/shared-library";
-import { Rarity, ShipSize } from "@app/shared-library/shared-library.main";
+import { Rarity, ShipSize, Terrain } from "@app/shared-library/shared-library.main";
 import { ShipEntity } from "@app/shared-library/entities/entity.ship";
 import { IslandPositionResponse, WorldService, WorldServiceGrpcClientName, WorldServiceName } from "@app/shared-library/gprc/grpc.world.service";
 import { Constants } from "../app.constants";
@@ -127,11 +127,11 @@ export class NFTService implements OnModuleInit {
     async createNewIsland(index: number, maxIndex: number, recipient: string) {
         try {
             const terrainRnd = SharedLibraryService.GetRandomIntInRange(1, 100);
-            let terrain = 'Green';
+            let terrain = Terrain.GREEN;
             if (100 - NftIslandGenerator.DarkTerrainChance < terrainRnd) {
-                terrain = 'Dark'
+                terrain = Terrain.DARK
             } else if (100 - NftIslandGenerator.SnowTerrainChance < terrainRnd) {
-                terrain = 'Snow';
+                terrain = Terrain.SNOW;
             }
 
             this.worldService.GenerateNewIslandPosition({}).subscribe({

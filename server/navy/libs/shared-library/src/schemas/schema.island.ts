@@ -19,7 +19,7 @@ export class Island {
     y: number;
 
     @Prop({
-        type: String,
+        type: Number,
         required: true,
         enum: [
             Terrain.GREEN,
@@ -33,7 +33,7 @@ export class Island {
     level: number;
 
     @Prop({
-        type: String,
+        type: Number,
         required: true,
         enum: [
             Rarity.COMMON,

@@ -35,7 +35,7 @@ export class User {
     aksBalance: number;
 
     @Prop({
-        type: Number,
+        type: String,
         required: true,
         enum: [
             UserWorldState.SECTOR,

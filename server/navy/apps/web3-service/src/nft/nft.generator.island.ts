@@ -2,6 +2,7 @@ import { createCanvas, loadImage } from "canvas";
 import { IslandStats } from "../blockchain/blockchain.service";
 import { MoralisService } from "../moralis/moralis.service";
 import { v4 as uuidv4 } from 'uuid';
+import { Terrain } from "@app/shared-library/shared-library.main";
 
 export class NftIslandGenerator {
     public static readonly SnowTerrainChance = 25;
@@ -16,9 +17,9 @@ export class NftIslandGenerator {
         const ctx = canvas.getContext('2d');
 
         let terrainImagePath = greenIslandImagePath;
-        if (islandStats.terrain == 'Dark') {
+        if (islandStats.terrain == Terrain.DARK) {
             terrainImagePath = darkIslandImagePath;
-        } else if (islandStats.terrain == 'Snow') {
+        } else if (islandStats.terrain == Terrain.SNOW) {
             terrainImagePath = snowIslandImagePath;
         }
 

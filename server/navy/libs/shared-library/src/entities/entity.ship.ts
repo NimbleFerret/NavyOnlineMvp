@@ -1,7 +1,7 @@
 export interface ShipEntity {
     id: string;
     owner: string;
-    type: string;
+    type: number;
     armor: number;
     hull: number;
     maxSpeed: number;
@@ -14,8 +14,8 @@ export interface ShipEntity {
     cannonsDamage: number;
     level: number;
     traits: number;
-    size: string;
-    rarity: string;
+    size: number;
+    rarity: number;
     windows: number;
     anchor: number;
     currentIntegrity: number;

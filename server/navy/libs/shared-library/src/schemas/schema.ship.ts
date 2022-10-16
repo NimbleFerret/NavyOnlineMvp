@@ -45,7 +45,7 @@ export class Ship {
     cannonsDamage: number;
 
     @Prop({
-        type: String,
+        type: Number,
         required: true,
         enum: [
             Rarity.COMMON,
@@ -57,7 +57,7 @@ export class Ship {
     rarity: Rarity;
 
     @Prop({
-        type: String,
+        type: Number,
         required: true,
         enum: [
             ShipSize.SMALL,
@@ -66,7 +66,6 @@ export class Ship {
         ]
     })
     size: ShipSize;
-
 
     @Prop()
     traits: number;

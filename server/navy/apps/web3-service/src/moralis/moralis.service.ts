@@ -9,7 +9,7 @@ import { Constants } from "../app.constants";
 import { CaptainEntity } from "@app/shared-library/entities/entity.captain";
 import { IslandEntity } from "@app/shared-library/entities/entity.island";
 import { ShipEntity } from "@app/shared-library/entities/entity.ship";
-import { AssetType } from "@app/shared-library/shared-library.main";
+import { AssetType, Rarity, ShipSize, Terrain } from "@app/shared-library/shared-library.main";
 import { GetUserAssetsResponse } from "@app/shared-library/gprc/grpc.web3.service";
 import { Ship, ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import { Captain, CaptainDocument } from "@app/shared-library/schemas/schema.captain";
@@ -154,6 +154,8 @@ export class MoralisService implements OnModuleInit {
             clothes: metadataAttributes[9]['clothes'],
         } as CaptainEntity;
 
+        console.log(playerCaptainEntity);
+
         const captain = await this.captainModel.findOne({
             tokenId: playerCaptainEntity.id
         });
@@ -166,7 +168,7 @@ export class MoralisService implements OnModuleInit {
             newCaptain.stakingRewardNVY = playerCaptainEntity.stakingRewardNVY;
             newCaptain.traits = playerCaptainEntity.traits;
             newCaptain.level = playerCaptainEntity.level;
-            newCaptain.rarity = playerCaptainEntity.rarity;
+            newCaptain.rarity = Rarity[Rarity[playerCaptainEntity.rarity]];
             newCaptain.bg = playerCaptainEntity.bg;
             newCaptain.acc = playerCaptainEntity.acc;
             newCaptain.head = playerCaptainEntity.head;
@@ -228,8 +230,8 @@ export class MoralisService implements OnModuleInit {
             newShip.cannons = playerShipEntity.cannons;
             newShip.cannonsRange = playerShipEntity.cannonsRange;
             newShip.cannonsDamage = playerShipEntity.cannonsDamage;
-            newShip.rarity = playerShipEntity.rarity;
-            newShip.size = playerShipEntity.size;
+            newShip.size = ShipSize[ShipSize[playerShipEntity.size]];
+            newShip.rarity = Rarity[Rarity[playerShipEntity.rarity]];
             newShip.level = playerShipEntity.level;
             newShip.windows = playerShipEntity.windows;
             newShip.anchor = playerShipEntity.anchor;
@@ -270,6 +272,8 @@ export class MoralisService implements OnModuleInit {
             y: metadataAttributes[8]['y']
         } as IslandEntity;
 
+        // TODO redeploy contract and replace terrain type to number
+
         const island = await this.islandModel.findOne({
             tokenId: playerIslandEntity.id
         });
@@ -281,12 +285,11 @@ export class MoralisService implements OnModuleInit {
                 newIsland.owner = playerIslandEntity.owner;
                 newIsland.x = playerIslandEntity.x;
                 newIsland.y = playerIslandEntity.y;
-                newIsland.isBase = false;
-                newIsland.terrain = playerIslandEntity.terrain;
-                newIsland.rarity = playerIslandEntity.rarity;
+                newIsland.terrain = Terrain[Terrain[playerIslandEntity.terrain]];
+                newIsland.rarity = Rarity[Rarity[playerIslandEntity.rarity]];
                 newIsland.mining = false;
                 newIsland.miningStartedAt = 0;
-                newIsland.miningDurationSeconds = 604800; // 1 Week
+                newIsland.miningDurationSeconds = 604800;
                 newIsland.miningRewardNVY = 45;
                 newIsland.shipAndCaptainFee = 10;
                 newIsland.minersFee = 5;

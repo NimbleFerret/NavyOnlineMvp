@@ -25,7 +25,7 @@ export interface IslandStats {
     level: number;
     rarity: number;
     mining: boolean;
-    terrain: string;
+    terrain: number;
     miningStartedAt: number;
     miningDurationSeconds: number;
     miningRewardNVY: number;

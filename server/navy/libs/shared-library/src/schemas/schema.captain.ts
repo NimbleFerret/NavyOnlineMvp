@@ -16,7 +16,7 @@ export class Captain {
     owner: string;
 
     @Prop({
-        type: String,
+        type: Number,
         required: true,
         enum: [
             Rarity.COMMON,

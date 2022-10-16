@@ -76,8 +76,8 @@ export interface AddNewIslandToSectorRequest {
     owner: string;
     x: number;
     y: number;
-    terrain: string;
-    rarity: string;
+    terrain: number;
+    rarity: number;
     mining: boolean;
     miningStartedAt: number;
     miningDurationSeconds: number;
