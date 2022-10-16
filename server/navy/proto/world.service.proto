@@ -5,6 +5,8 @@ package worldservice;
 service WorldService {
   rpc GenerateNewIslandPosition (IslandPositionRequest) returns (IslandPositionResponse);
   rpc GetWorldInfo (WorldInfoRequest) returns (WorldInfoResponse);
+  rpc WorldMove (WorldMoveRequest) returns (WorldMoveResponse);
+  rpc AddNewIslandToSector (AddNewIslandToSectorRequest) returns (AddNewIslandToSectorResponse);
 }
 
 //-----------------------------
@@ -41,3 +43,39 @@ message WorldInfoRequest {
 message WorldInfoResponse {
   repeated SectorInfo sectors = 1;
 }
+
+//-----------------------------
+
+message WorldMoveRequest {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message WorldMoveResponse {
+  bool success = 1;
+}
+
+//-----------------------------
+
+message AddNewIslandToSectorRequest {
+  string tokenId = 1;
+  string owner = 2;
+  int32 x = 3;
+  int32 y = 4;
+  string terrain = 5;
+  string rarity =6;
+  bool mining = 7;
+  int32 miningStartedAt = 8;
+  int32 miningDurationSeconds = 9;
+  int32 miningRewardNVY = 10;
+  int32 shipAndCaptainFee = 11;
+  int32 minersFee = 12;
+  int32 miners = 13;
+  int32 maxMiners = 14;
+  int32 level = 15;
+}
+
+message AddNewIslandToSectorResponse {
+}
+
+//-----------------------------

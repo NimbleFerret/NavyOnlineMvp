@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package userservice;
+
+service UserService {
+  rpc SignInOrUp (SignInOrUpRequest) returns (SignInOrUpResponse);
+}
+
+//-----------------------------
+
+message SignInOrUpRequest {
+    string user = 1;
+}
+
+message SignInOrUpResponse {
+
+}
+
+//-----------------------------

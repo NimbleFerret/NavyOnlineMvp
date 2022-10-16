@@ -1,8 +1,30 @@
 import { ClientOptions, Transport } from "@nestjs/microservices";
 import { join } from "path";
 import { Observable } from "rxjs";
+import { Config } from "../config";
+
+export interface WorldService {
+    GenerateNewIslandPosition(request: IslandPositionRequest): Observable<IslandPositionResponse>;
+    GetWorldInfo(request: WorldInfoRequest): Observable<WorldInfoResponse>;
+    WorldMove(request: WorldMoveRequest): Observable<WorldMoveResponse>;
+    AddNewIslandToSector(request: AddNewIslandToSectorRequest): Observable<AddNewIslandToSectorResponse>;
+}
+
+export const WorldServiceName = 'WorldService';
+export const WorldServiceGrpcClientName = 'worldservice';
+export const WorldServiceGrpcPackage = 'worldservice';
+
+export const WorldServiceGrpcClientOptions: ClientOptions = {
+    transport: Transport.GRPC,
+    options: {
+        url: 'localhost:' + Config.WORLD_SERVICE_PORT,
+        package: WorldServiceGrpcPackage,
+        protoPath: join(__dirname, '../../proto/world.service.proto'),
+    },
+};
 
 //-----------------------------
+
 export interface IslandPositionRequest {
 }
 
@@ -38,19 +60,36 @@ export interface WorldInfoResponse {
 
 //-----------------------------
 
-export interface WorldService {
-    GenerateNewIslandPosition(request: IslandPositionRequest): Observable<IslandPositionResponse>;
-    GetWorldInfo(request: WorldInfoRequest): Observable<WorldInfoResponse>;
+export interface WorldMoveRequest {
+    x: number;
+    y: number;
 }
 
-export const WorldServiceName = 'WorldService';
-export const WorldServiceGrpcPackage = 'worldservice';
+export interface WorldMoveResponse {
+    success: boolean;
+}
 
-export const WorldServiceGrpcClientOptions: ClientOptions = {
-    transport: Transport.GRPC,
-    options: {
-        url: 'localhost:3001',
-        package: WorldServiceGrpcPackage, // ['hero', 'hero2']
-        protoPath: join(__dirname, '../../proto/world.service.proto'), // ['./hero/hero.proto', './hero/hero2.proto']
-    },
-};
+//-----------------------------
+
+export interface AddNewIslandToSectorRequest {
+    tokenId: string;
+    owner: string;
+    x: number;
+    y: number;
+    terrain: string;
+    rarity: string;
+    mining: boolean;
+    miningStartedAt: number;
+    miningDurationSeconds: number;
+    miningRewardNVY: number;
+    shipAndCaptainFee: number;
+    minersFee: number;
+    miners: number;
+    maxMiners: number;
+    level: number;
+}
+
+export interface AddNewIslandToSectorResponse {
+}
+
+//-----------------------------

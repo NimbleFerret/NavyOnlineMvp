@@ -1,6 +1,7 @@
 export interface CaptainEntity {
     id: string;
     owner: string;
+    type: number;
     miningRewardNVY: number;
     stakingRewardNVY: number;
     miningStartedAt: number;

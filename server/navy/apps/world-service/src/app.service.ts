@@ -1,18 +1,14 @@
 import { SharedLibraryService } from '@app/shared-library';
-import { SectorContent, SectorInfo } from '@app/shared-library/gprc/grpc.world.service';
+import { SectorContent, SectorInfo, WorldMoveRequest } from '@app/shared-library/gprc/grpc.world.service';
+import { Sector, SectorDocument } from '@app/shared-library/schemas/schema.sector';
+import { WorldDocument, World } from '@app/shared-library/schemas/schema.world';
+import { IslandDocument, Island } from '@app/shared-library/schemas/schema.island';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Island, IslandDocument } from './schemas/schema.island';
-import { Sector, SectorDocument } from './schemas/schema.sector';
-import { World, WorldDocument } from './schemas/schema.world';
 
 @Injectable()
 export class AppService {
-
-  public static readonly WORLD_SIZE = 5;
-  public static readonly BASE_POS_X = 2;
-  public static readonly BASE_POS_Y = 2;
 
   private world: WorldDocument;
 
@@ -26,10 +22,10 @@ export class AppService {
     const world = await this.findWorld();
     if (!world) {
       const newWorld = await this.createWorld();
-      for (let x = 0; x < AppService.WORLD_SIZE; x++) {
-        for (let y = 0; y < AppService.WORLD_SIZE; y++) {
+      for (let x = 0; x < SharedLibraryService.WORLD_SIZE; x++) {
+        for (let y = 0; y < SharedLibraryService.WORLD_SIZE; y++) {
           let content = SectorContent.SECTOR_CONTENT_EMPTY;
-          if (x == AppService.BASE_POS_X && y == AppService.BASE_POS_Y) {
+          if (x == SharedLibraryService.BASE_POS_X && y == SharedLibraryService.BASE_POS_Y) {
             content = SectorContent.SECTOR_CONTENT_BASE;
           }
           if ((x == 7 && y == 2) || (x == 2 && y == 10) || (x == 10 && y == 8)) {
@@ -76,7 +72,7 @@ export class AppService {
     let x = 0;
     let y = 0;
     let success = true;
-    let emergencyBreakCount = AppService.WORLD_SIZE * AppService.WORLD_SIZE;
+    let emergencyBreakCount = SharedLibraryService.WORLD_SIZE * SharedLibraryService.WORLD_SIZE;
 
     while (true) {
       emergencyBreakCount--;
@@ -85,8 +81,8 @@ export class AppService {
         break;
       }
 
-      x = SharedLibraryService.GetRandomIntInRange(0, AppService.WORLD_SIZE - 1);
-      y = SharedLibraryService.GetRandomIntInRange(0, AppService.WORLD_SIZE - 1);
+      x = SharedLibraryService.GetRandomIntInRange(0, SharedLibraryService.WORLD_SIZE - 1);
+      y = SharedLibraryService.GetRandomIntInRange(0, SharedLibraryService.WORLD_SIZE - 1);
 
       if (emptySectors.has(x + '/' + y)) {
         break;
@@ -116,6 +112,10 @@ export class AppService {
     return {
       sectors
     }
+  }
+
+  public async worldMove(quest: WorldMoveRequest) {
+
   }
 
   public async findWorld() {

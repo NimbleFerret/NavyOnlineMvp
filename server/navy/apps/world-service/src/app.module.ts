@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Island, IslandSchema } from './schemas/schema.island';
-import { Sector, SectorSchema } from './schemas/schema.sector';
-import { World, WorldSchema } from './schemas/schema.world';
+import { Island, IslandSchema } from '../../../libs/shared-library/src/schemas/schema.island';
+import { Sector, SectorSchema } from '@app/shared-library/schemas/schema.sector';
+import { World, WorldSchema } from '@app/shared-library/schemas/schema.world';
 
 @Module({
   imports: [

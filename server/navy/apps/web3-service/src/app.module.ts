@@ -1,7 +1,6 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
-import { Web3ServiceController } from './app.controller';
-import { Web3ServiceService } from './app.service';
+import { AppController } from './app.controller';
 import { BlockchainModule } from './blockchain/blockchain.module';
 import { MoralisModule } from './moralis/moralis.module';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -21,7 +20,7 @@ import { NFTModule } from './nft/nft.module';
     }),
     MongooseModule.forRoot('mongodb://localhost/navy')
   ],
-  controllers: [Web3ServiceController],
-  providers: [Web3ServiceService],
+  controllers: [AppController],
+  providers: [],
 })
-export class Web3ServiceModule { }
+export class AppModule { }

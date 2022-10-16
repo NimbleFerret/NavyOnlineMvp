@@ -28,6 +28,11 @@ export enum ShipSize {
 // World, sectors, islands
 // -----------------------
 
+export enum UserWorldState {
+    WORLD = 1,
+    SECTOR = 2,
+}
+
 export enum IslandSize {
     SMALL = 1,
     MIDDLE = 2,

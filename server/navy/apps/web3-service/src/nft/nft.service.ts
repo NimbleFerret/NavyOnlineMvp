@@ -1,6 +1,6 @@
-import { Rarity, ShipSize } from "@app/shared-library/shared-library.main";
 import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { InjectQueue } from "@nestjs/bull";
+import { ClientGrpc } from "@nestjs/microservices";
 import { Queue } from "bull";
 import { ethers } from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
@@ -11,10 +11,10 @@ import { NftShipGenerator } from "./nft.generator.ship";
 import { TransactionType } from "../blockchain/schemas/schema.blockchain.transaction";
 import { BlockchainQueueProcessor, NFTJobData } from "../blockchain/blockchain.queue.processor";
 import { SharedLibraryService } from "@app/shared-library";
-import { Constants } from "../app.constants";
+import { Rarity, ShipSize } from "@app/shared-library/shared-library.main";
 import { ShipEntity } from "@app/shared-library/entities/entity.ship";
-import { IslandPositionResponse, WorldService, WorldServiceName } from "@app/shared-library/gprc/grpc.world.service";
-import { ClientGrpc } from "@nestjs/microservices";
+import { IslandPositionResponse, WorldService, WorldServiceGrpcClientName, WorldServiceName } from "@app/shared-library/gprc/grpc.world.service";
+import { Constants } from "../app.constants";
 
 @Injectable()
 export class NFTService implements OnModuleInit {
@@ -32,7 +32,7 @@ export class NFTService implements OnModuleInit {
     private worldService: WorldService;
 
     constructor(
-        @Inject('WorldServiceGrpcClient') private readonly worldServiceGrpcClient: ClientGrpc,
+        @Inject(WorldServiceGrpcClientName) private readonly worldServiceGrpcClient: ClientGrpc,
         @InjectQueue('blockchain') private readonly blockchainQueue: Queue) { }
 
     async onModuleInit() {
