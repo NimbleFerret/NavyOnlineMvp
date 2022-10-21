@@ -45,14 +45,15 @@ export class Island {
     rarity: Rarity;
 
     @Prop({
-        type: String,
+        type: Number,
         required: true,
         enum: [
             IslandSize.SMALL,
             IslandSize.MIDDLE,
             IslandSize.LARGE,
             IslandSize.EXTRA_LARGE,
-        ]
+        ],
+        default: IslandSize.SMALL
     })
     size: IslandSize;
 

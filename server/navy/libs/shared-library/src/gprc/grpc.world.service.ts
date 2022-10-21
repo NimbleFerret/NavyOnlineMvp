@@ -73,20 +73,6 @@ export interface WorldMoveResponse {
 
 export interface AddNewIslandToSectorRequest {
     tokenId: string;
-    owner: string;
-    x: number;
-    y: number;
-    terrain: number;
-    rarity: number;
-    mining: boolean;
-    miningStartedAt: number;
-    miningDurationSeconds: number;
-    miningRewardNVY: number;
-    shipAndCaptainFee: number;
-    minersFee: number;
-    miners: number;
-    maxMiners: number;
-    level: number;
 }
 
 export interface AddNewIslandToSectorResponse {

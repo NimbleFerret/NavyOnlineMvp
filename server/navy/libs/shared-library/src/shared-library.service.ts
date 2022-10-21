@@ -6,9 +6,9 @@ import { ShipSize, Rarity, AssetType } from './shared-library.main';
 @Injectable()
 export class SharedLibraryService {
 
-    public static readonly WORLD_SIZE = 5;
-    public static readonly BASE_POS_X = 2;
-    public static readonly BASE_POS_Y = 2;
+    public static readonly WORLD_SIZE = 15;
+    public static readonly BASE_POS_X = 5;
+    public static readonly BASE_POS_Y = 5;
 
     public static GetRandomIntInRange(min: number, max: number) {
         min = Math.ceil(min);

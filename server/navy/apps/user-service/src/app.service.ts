@@ -31,7 +31,6 @@ export class AppService implements OnModuleInit {
     this.web3Service = this.web3ServiceGrpcClient.getService<Web3Service>(Web3ServiceName);
   }
 
-
   async signInOrUp(request: SignInOrUpRequest) {
     console.log('signInOrUp !');
 
@@ -43,7 +42,6 @@ export class AppService implements OnModuleInit {
 
     if (user) {
       console.log('User found');
-      await this.syncPlayer(user);
     } else {
       const userModel = new this.userModel({
         ethAddress,
@@ -51,10 +49,10 @@ export class AppService implements OnModuleInit {
         worldY: SharedLibraryService.BASE_POS_Y
       });
       user = await userModel.save();
-      await this.syncPlayer(user);
-
       console.log('User not found');
     }
+
+    await this.syncPlayer(user);
 
     const ownedCaptains = user.captainsOwned.map(f => {
       return {

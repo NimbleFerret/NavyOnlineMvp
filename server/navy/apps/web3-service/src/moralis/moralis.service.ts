@@ -9,7 +9,7 @@ import { Constants } from "../app.constants";
 import { CaptainEntity } from "@app/shared-library/entities/entity.captain";
 import { IslandEntity } from "@app/shared-library/entities/entity.island";
 import { ShipEntity } from "@app/shared-library/entities/entity.ship";
-import { AssetType, Rarity, ShipSize, Terrain } from "@app/shared-library/shared-library.main";
+import { AssetType, IslandSize, Rarity, ShipSize, Terrain } from "@app/shared-library/shared-library.main";
 import { GetUserAssetsResponse } from "@app/shared-library/gprc/grpc.web3.service";
 import { Ship, ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import { Captain, CaptainDocument } from "@app/shared-library/schemas/schema.captain";
@@ -272,6 +272,7 @@ export class MoralisService implements OnModuleInit {
             y: metadataAttributes[8]['y']
         } as IslandEntity;
 
+        // TODO add size also
         // TODO redeploy contract and replace terrain type to number
 
         const island = await this.islandModel.findOne({
@@ -285,8 +286,10 @@ export class MoralisService implements OnModuleInit {
                 newIsland.owner = playerIslandEntity.owner;
                 newIsland.x = playerIslandEntity.x;
                 newIsland.y = playerIslandEntity.y;
-                newIsland.terrain = Terrain[Terrain[playerIslandEntity.terrain]];
+                newIsland.terrain = Terrain.GREEN;
+                // newIsland.terrain = Terrain[Terrain[playerIslandEntity.terrain]];
                 newIsland.rarity = Rarity[Rarity[playerIslandEntity.rarity]];
+                newIsland.size = IslandSize.SMALL;
                 newIsland.mining = false;
                 newIsland.miningStartedAt = 0;
                 newIsland.miningDurationSeconds = 604800;
@@ -296,26 +299,10 @@ export class MoralisService implements OnModuleInit {
                 newIsland.miners = 0;
                 newIsland.maxMiners = 3;
                 newIsland.level = 0;
-
+                await newIsland.save();
                 await lastValueFrom(this.worldService.AddNewIslandToSector({
                     tokenId: newIsland.tokenId,
-                    owner: newIsland.owner,
-                    x: newIsland.x,
-                    y: newIsland.y,
-                    terrain: newIsland.terrain,
-                    rarity: newIsland.rarity,
-                    mining: newIsland.mining,
-                    miningStartedAt: newIsland.miningStartedAt,
-                    miningDurationSeconds: newIsland.miningDurationSeconds,
-                    miningRewardNVY: newIsland.miningRewardNVY,
-                    shipAndCaptainFee: newIsland.shipAndCaptainFee,
-                    minersFee: newIsland.minersFee,
-                    miners: newIsland.miners,
-                    maxMiners: newIsland.maxMiners,
-                    level: newIsland.level
                 }));
-
-                await newIsland.save();
             } catch (e) {
                 this.logger.error('Unable to add island to sector', e);
             }

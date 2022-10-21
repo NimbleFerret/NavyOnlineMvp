@@ -1,7 +1,7 @@
 import { SectorContent } from '@app/shared-library/gprc/grpc.world.service';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import { IslandSchema, Island } from './schema.island';
+import mongoose, { Document } from 'mongoose';
+import { IslandDocument } from './schema.island';
 
 export type SectorDocument = Sector & Document;
 
@@ -35,8 +35,8 @@ export class Sector {
     @Prop({ default: false })
     locked: boolean;
 
-    @Prop({ type: IslandSchema })
-    island: Island;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Island' })
+    island: IslandDocument;
 }
 
 export const SectorSchema = SchemaFactory.createForClass(Sector);

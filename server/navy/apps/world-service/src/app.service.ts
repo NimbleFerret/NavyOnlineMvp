@@ -6,6 +6,7 @@ import { IslandDocument, Island } from '@app/shared-library/schemas/schema.islan
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { IslandSize, Rarity, Terrain } from '@app/shared-library/shared-library.main';
 
 @Injectable()
 export class AppService {
@@ -119,7 +120,24 @@ export class AppService {
   }
 
   public async addNewIslandToSector(request: AddNewIslandToSectorRequest) {
-
+    const island = await this.islandModel.findOne({
+      tokenId: request.tokenId
+    });
+    if (island) {
+      const sector = await this.sectorModel.findOne({
+        positionId: island.x + '/' + island.y
+      });
+      if (sector) {
+        sector.content = SectorContent.SECTOR_CONTENT_ISLAND;
+        sector.island = island;
+        await sector.save();
+        await this.invalidateWorld();
+      } else {
+        console.log('No such sector error');
+      }
+    } else {
+      console.log('No such island');
+    }
   }
 
   public async findWorld() {
@@ -133,6 +151,14 @@ export class AppService {
 
   private async invalidateWorld() {
     this.world = await this.findWorld();
+  }
+
+  // -----------------------
+  // Island
+  // -----------------------
+
+  private async createIsland() {
+
   }
 
   // -----------------------
