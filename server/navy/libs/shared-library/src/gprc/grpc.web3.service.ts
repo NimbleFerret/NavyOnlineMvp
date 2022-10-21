@@ -8,11 +8,11 @@ import { ShipEntity } from "../entities/entity.ship";
 
 //-----------------------------
 
-export interface GetUserAssetsRequest {
+export interface GetAndSyncUserAssetsRequest {
     address: string;
 }
 
-export interface GetUserAssetsResponse {
+export interface GetAndSyncUserAssetsResponse {
     nvy?: number;
     aks?: number;
     captains?: CaptainEntity[];
@@ -23,7 +23,7 @@ export interface GetUserAssetsResponse {
 //-----------------------------
 
 export interface Web3Service {
-    GetUserAssets(request: GetUserAssetsRequest): Observable<GetUserAssetsResponse>;
+    GetAndSyncUserAssets(request: GetAndSyncUserAssetsRequest): Observable<GetAndSyncUserAssetsResponse>;
 }
 
 export const Web3ServiceName = 'Web3Service';

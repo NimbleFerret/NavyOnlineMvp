@@ -1,10 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import { Document } from 'mongoose';
 import { UserWorldState } from '../shared-library.main';
-import { Captain } from './schema.captain';
-import { Island } from './schema.island';
-import { Ship } from './schema.ship';
 
 export type UserDocument = User & Document;
 
@@ -53,15 +50,6 @@ export class User {
 
     @Prop({ default: 0 })
     dailyBossesKilled: number;
-
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Captain' }] })
-    captainsOwned: Captain[];
-
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ship' }] })
-    shipsOwned: Ship[];
-
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Island' }] })
-    islandsOwned: Island[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

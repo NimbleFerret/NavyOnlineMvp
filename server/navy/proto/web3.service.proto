@@ -3,7 +3,7 @@ syntax = "proto3";
 package web3service;
 
 service Web3Service {
-  rpc GetUserAssets (GetUserAssetsRequest) returns (GetUserAssetsResponse);
+  rpc GetAndSyncUserAssets (GetAndSyncUserAssetsRequest) returns (GetAndSyncUserAssetsResponse);
 }
 
 //-----------------------------
@@ -68,11 +68,11 @@ message Island {
   int32 y = 14;
 }
 
-message GetUserAssetsRequest {
+message GetAndSyncUserAssetsRequest {
     string address = 1;
 }
 
-message GetUserAssetsResponse {
+message GetAndSyncUserAssetsResponse {
   int32 nvy = 1;
   int32 aks = 2;
   repeated Captain captains = 3;

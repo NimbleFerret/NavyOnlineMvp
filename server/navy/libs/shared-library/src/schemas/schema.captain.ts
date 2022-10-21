@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { Rarity } from '../shared-library.main';
+import { UserDocument } from './schema.user';
 
 export type CaptainDocument = Captain & Document;
 
@@ -12,8 +13,8 @@ export class Captain {
     @Prop()
     tokenId: string;
 
-    @Prop()
-    owner: string;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+    owner: UserDocument;
 
     @Prop({
         type: Number,

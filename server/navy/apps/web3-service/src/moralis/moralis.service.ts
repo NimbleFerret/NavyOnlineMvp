@@ -10,12 +10,13 @@ import { CaptainEntity } from "@app/shared-library/entities/entity.captain";
 import { IslandEntity } from "@app/shared-library/entities/entity.island";
 import { ShipEntity } from "@app/shared-library/entities/entity.ship";
 import { AssetType, IslandSize, Rarity, ShipSize, Terrain } from "@app/shared-library/shared-library.main";
-import { GetUserAssetsResponse } from "@app/shared-library/gprc/grpc.web3.service";
+import { GetAndSyncUserAssetsResponse } from "@app/shared-library/gprc/grpc.web3.service";
 import { Ship, ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import { Captain, CaptainDocument } from "@app/shared-library/schemas/schema.captain";
 import { Island, IslandDocument } from "@app/shared-library/schemas/schema.island";
 import { WorldService, WorldServiceGrpcClientName, WorldServiceName } from "@app/shared-library/gprc/grpc.world.service";
 import { lastValueFrom } from "rxjs";
+import { User, UserDocument } from "@app/shared-library/schemas/schema.user";
 
 @Injectable()
 export class MoralisService implements OnModuleInit {
@@ -31,7 +32,8 @@ export class MoralisService implements OnModuleInit {
         @Inject(WorldServiceGrpcClientName) private readonly worldServiceGrpcClient: ClientGrpc,
         @InjectModel(Captain.name) private captainModel: Model<CaptainDocument>,
         @InjectModel(Ship.name) private shipModel: Model<ShipDocument>,
-        @InjectModel(Island.name) private islandModel: Model<IslandDocument>
+        @InjectModel(Island.name) private islandModel: Model<IslandDocument>,
+        @InjectModel(User.name) private userModel: Model<UserDocument>,
     ) {
 
     }
@@ -55,29 +57,35 @@ export class MoralisService implements OnModuleInit {
         });
     }
 
-    async getUserAssets(address: string) {
-        const result: GetUserAssetsResponse = {};
+    async getAndSyncUserAssets(ethAddress: string) {
+        const result: GetAndSyncUserAssetsResponse = {};
 
-        const userAssets = await Promise.all([this.getUserTokenBalances(address), this.getUserNFTs(address)])
+        const user = await this.userModel.findOne({
+            ethAddress
+        });
 
-        result.aks = userAssets[0].aks;
-        result.nvy = userAssets[0].nvy;
+        if (user) {
+            const userAssets = await Promise.all([this.getUserTokenBalances(user), this.getUserNFTs(user)])
 
-        result.captains = userAssets[1].captains;
-        result.ships = userAssets[1].ships;
-        result.islands = userAssets[1].islands;
+            result.aks = userAssets[0].aks;
+            result.nvy = userAssets[0].nvy;
 
-        console.log(result);
+            result.captains = userAssets[1].captains;
+            result.ships = userAssets[1].ships;
+            result.islands = userAssets[1].islands;
+        } else {
+            this.logger.error('No such user');
+        }
 
         return result;
     }
 
-    private async getUserTokenBalances(address: string) {
+    private async getUserTokenBalances(user: UserDocument) {
         let nvy = 0;
         let aks = 0;
 
         const response = await Moralis.EvmApi.token.getWalletTokenBalances({
-            address,
+            address: user.ethAddress,
             chain: this.chain,
         }) as any;
 
@@ -95,13 +103,13 @@ export class MoralisService implements OnModuleInit {
         }
     }
 
-    private async getUserNFTs(address: string) {
+    private async getUserNFTs(user: UserDocument) {
         const captains: CaptainEntity[] = [];
         const ships: ShipEntity[] = [];
         const islands: IslandEntity[] = [];
 
         const response = await Moralis.EvmApi.nft.getWalletNFTs({
-            address,
+            address: user.ethAddress,
             chain: this.chain,
             tokenAddresses: [
                 Constants.CaptainContractAddress,
@@ -116,15 +124,15 @@ export class MoralisService implements OnModuleInit {
             for (const entity of response.data.result) {
                 switch (entity.token_address) {
                     case Constants.CaptainContractAddress: {
-                        captains.push(await this.getCaptainNFTsByOwnerAddress(entity));
+                        captains.push(await this.getCaptainNFTsByOwnerAddress(entity, user));
                         break;
                     }
                     case Constants.ShipContractAddress: {
-                        ships.push(await this.getShipNFTsByOwnerAddress(entity));
+                        ships.push(await this.getShipNFTsByOwnerAddress(entity, user));
                         break;
                     }
                     case Constants.IslandContractAddress: {
-                        islands.push(await this.getIslandNFTsByOwnerAddress(entity));
+                        islands.push(await this.getIslandNFTsByOwnerAddress(entity, user));
                         break;
                     }
                 }
@@ -138,7 +146,7 @@ export class MoralisService implements OnModuleInit {
         }
     }
 
-    private async getCaptainNFTsByOwnerAddress(entity: any) {
+    private async getCaptainNFTsByOwnerAddress(entity: any, user: UserDocument) {
         const metadataAttributes = JSON.parse(entity.metadata).attributes;
         const playerCaptainEntity = {
             id: entity.token_id,
@@ -154,8 +162,6 @@ export class MoralisService implements OnModuleInit {
             clothes: metadataAttributes[9]['clothes'],
         } as CaptainEntity;
 
-        console.log(playerCaptainEntity);
-
         const captain = await this.captainModel.findOne({
             tokenId: playerCaptainEntity.id
         });
@@ -163,7 +169,7 @@ export class MoralisService implements OnModuleInit {
         if (!captain) {
             const newCaptain = new this.captainModel();
             newCaptain.tokenId = playerCaptainEntity.id;
-            newCaptain.owner = playerCaptainEntity.owner;
+            newCaptain.owner = user;
             newCaptain.miningRewardNVY = playerCaptainEntity.miningRewardNVY;
             newCaptain.stakingRewardNVY = playerCaptainEntity.stakingRewardNVY;
             newCaptain.traits = playerCaptainEntity.traits;
@@ -176,7 +182,7 @@ export class MoralisService implements OnModuleInit {
             newCaptain.clothes = playerCaptainEntity.clothes;
             await newCaptain.save();
         } else {
-            captain.owner = playerCaptainEntity.owner;
+            captain.owner = user;
             captain.miningRewardNVY = playerCaptainEntity.miningRewardNVY;
             captain.stakingRewardNVY = playerCaptainEntity.stakingRewardNVY;
             captain.traits = playerCaptainEntity.traits;
@@ -187,7 +193,7 @@ export class MoralisService implements OnModuleInit {
         return playerCaptainEntity;
     }
 
-    private async getShipNFTsByOwnerAddress(entity: any) {
+    private async getShipNFTsByOwnerAddress(entity: any, user: UserDocument) {
         const metadataAttributes = JSON.parse(entity.metadata).attributes;
         const playerShipEntity = {
             id: entity.token_id,
@@ -219,7 +225,7 @@ export class MoralisService implements OnModuleInit {
         if (!ship) {
             const newShip = new this.shipModel();
             newShip.tokenId = playerShipEntity.id;
-            newShip.owner = playerShipEntity.owner;
+            newShip.owner = user;
             newShip.hull = playerShipEntity.hull;
             newShip.armor = playerShipEntity.armor;
             newShip.maxSpeed = playerShipEntity.maxSpeed;
@@ -240,7 +246,7 @@ export class MoralisService implements OnModuleInit {
             await newShip.save();
         } else {
             ship.hull = playerShipEntity.hull;
-            ship.owner = playerShipEntity.owner;
+            ship.owner = user;
             ship.armor = playerShipEntity.armor;
             ship.maxSpeed = playerShipEntity.maxSpeed;
             ship.accelerationStep = playerShipEntity.accelerationStep;
@@ -257,7 +263,7 @@ export class MoralisService implements OnModuleInit {
         return playerShipEntity;
     }
 
-    private async getIslandNFTsByOwnerAddress(entity: any) {
+    private async getIslandNFTsByOwnerAddress(entity: any, user: UserDocument) {
         const metadataAttributes = JSON.parse(entity.metadata).attributes;
         const playerIslandEntity = {
             id: entity.token_id,
@@ -283,7 +289,7 @@ export class MoralisService implements OnModuleInit {
             try {
                 const newIsland = new this.islandModel();
                 newIsland.tokenId = playerIslandEntity.id;
-                newIsland.owner = playerIslandEntity.owner;
+                newIsland.owner = user;
                 newIsland.x = playerIslandEntity.x;
                 newIsland.y = playerIslandEntity.y;
                 newIsland.terrain = Terrain.GREEN;
@@ -307,7 +313,7 @@ export class MoralisService implements OnModuleInit {
                 this.logger.error('Unable to add island to sector', e);
             }
         } else {
-            island.owner = playerIslandEntity.owner;
+            island.owner = user;
             await island.save();
         }
 

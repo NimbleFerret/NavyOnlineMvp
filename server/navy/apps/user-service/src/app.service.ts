@@ -4,7 +4,7 @@ import { IslandEntity } from '@app/shared-library/entities/entity.island';
 import { ShipEntity } from '@app/shared-library/entities/entity.ship';
 import { SignInOrUpRequest, SignInOrUpResponse } from '@app/shared-library/gprc/grpc.user.service';
 import {
-  GetUserAssetsResponse,
+  GetAndSyncUserAssetsResponse,
   Web3Service,
   Web3ServiceGrpcClientName,
   Web3ServiceName
@@ -14,6 +14,7 @@ import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AppService implements OnModuleInit {
@@ -32,31 +33,24 @@ export class AppService implements OnModuleInit {
   }
 
   async signInOrUp(request: SignInOrUpRequest) {
-    console.log('signInOrUp !');
-
     const ethAddress = request.user.toLocaleLowerCase();
-
     let user = await this.userModel.findOne({
       ethAddress
     }).populate('shipsOwned').populate('captainsOwned').populate('islandsOwned');
 
-    if (user) {
-      console.log('User found');
-    } else {
+    if (!user) {
       const userModel = new this.userModel({
         ethAddress,
         worldX: SharedLibraryService.BASE_POS_X,
         worldY: SharedLibraryService.BASE_POS_Y
       });
       user = await userModel.save();
-      console.log('User not found');
     }
 
-    await this.syncPlayer(user);
-
-    const ownedCaptains = user.captainsOwned.map(f => {
+    const userAssets = await this.getUserAssets(ethAddress);
+    const ownedCaptains = userAssets.captains.map(f => {
       return {
-        id: f.tokenId,
+        id: f.id,
         owner: f.owner,
         level: f.level,
         traits: f.traits,
@@ -72,10 +66,9 @@ export class AppService implements OnModuleInit {
         clothes: f.clothes,
       } as CaptainEntity;
     });
-
-    const ownedShips = user.shipsOwned.map(f => {
+    const ownedShips = userAssets.ships.map(f => {
       return {
-        id: f.tokenId,
+        id: f.id,
         owner: f.owner,
         armor: f.armor,
         hull: f.hull,
@@ -97,10 +90,9 @@ export class AppService implements OnModuleInit {
         maxIntegrity: f.maxIntegrity
       } as ShipEntity;
     });
-
-    const ownedIslands = user.islandsOwned.map(f => {
+    const ownedIslands = userAssets.islands.map(f => {
       return {
-        id: f.tokenId,
+        id: f.id,
         owner: f.owner,
         level: f.level,
         rarity: f.rarity,
@@ -115,7 +107,7 @@ export class AppService implements OnModuleInit {
       } as IslandEntity;
     });
 
-    const signInOrUpResponse = {
+    return {
       ethAddress: user.ethAddress,
       nickname: user.nickname,
       worldX: user.worldX,
@@ -128,25 +120,10 @@ export class AppService implements OnModuleInit {
     } as SignInOrUpResponse;
   }
 
-  private async syncPlayer(user: UserDocument) {
-    return new Promise((resolve, reject) => {
-      console.log('syncPlayer...');
-
-      this.web3Service.GetUserAssets({
-        address: user.ethAddress
-      }).subscribe({
-        next: async (response: GetUserAssetsResponse) => {
-          user.nvyBalance = response.nvy;
-          user.aksBalance = response.aks;
-          await user.save();
-          resolve(user);
-        },
-        error: (e) => {
-          this.logger.error(`Cant get user assets`, e);
-          reject(e);
-        }
-      });
-    });
+  private async getUserAssets(address: string) {
+    return lastValueFrom(this.web3Service.GetAndSyncUserAssets({
+      address
+    }));
   }
 
 }
