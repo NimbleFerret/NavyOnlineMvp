@@ -25,12 +25,6 @@ export class User {
     @Prop()
     paidSubscriptionEndDate: string;
 
-    @Prop({ default: 0 })
-    nvyBalance: number;
-
-    @Prop({ default: 0 })
-    aksBalance: number;
-
     @Prop({
         type: String,
         required: true,

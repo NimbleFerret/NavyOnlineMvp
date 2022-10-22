@@ -2,6 +2,9 @@ import { ClientOptions, Transport } from "@nestjs/microservices";
 import { join } from "path";
 import { Observable } from "rxjs";
 import { Config } from "../config";
+import { CaptainEntity } from "../entities/entity.captain";
+import { IslandEntity } from "../entities/entity.island";
+import { ShipEntity } from "../entities/entity.ship";
 
 //-----------------------------
 export interface SignInOrUpRequest {
@@ -10,17 +13,21 @@ export interface SignInOrUpRequest {
 
 // TODO import ship, captain and island
 export interface SignInOrUpResponse {
-
-    // ethAddress: user.ethAddress,
-    // nickname: user.nickname,
-    // worldX: user.worldX,
-    // worldY: user.worldY,
-    // nvy: user.nvyBalance,
-    // aks: user.aksBalance,
-    // ownedCaptains,
-    // ownedShips,
-    // ownedIslands,
-
+    ethAddress: string;
+    nickname: string;
+    worldX: number;
+    worldY: number;
+    nvy: number;
+    aks: number;
+    captains: CaptainEntity[];
+    ships: ShipEntity[];
+    islands: IslandEntity[];
+    dailyPlayersKilledCurrent: number;
+    dailyPlayersKilledMax: number;
+    dailyBotsKilledCurrent: number;
+    dailyBotsKilledMax: number;
+    dailyBossesKilledCurrent: number;
+    dailyBossesKilledMax: number;
 }
 
 //-----------------------------

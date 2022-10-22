@@ -36,7 +36,7 @@ export class AppService implements OnModuleInit {
     const ethAddress = request.user.toLocaleLowerCase();
     let user = await this.userModel.findOne({
       ethAddress
-    }).populate('shipsOwned').populate('captainsOwned').populate('islandsOwned');
+    });
 
     if (!user) {
       const userModel = new this.userModel({
@@ -48,7 +48,7 @@ export class AppService implements OnModuleInit {
     }
 
     const userAssets = await this.getUserAssets(ethAddress);
-    const ownedCaptains = userAssets.captains.map(f => {
+    const captains = userAssets.captains.map(f => {
       return {
         id: f.id,
         owner: f.owner,
@@ -66,7 +66,7 @@ export class AppService implements OnModuleInit {
         clothes: f.clothes,
       } as CaptainEntity;
     });
-    const ownedShips = userAssets.ships.map(f => {
+    const ships = userAssets.ships.map(f => {
       return {
         id: f.id,
         owner: f.owner,
@@ -90,7 +90,7 @@ export class AppService implements OnModuleInit {
         maxIntegrity: f.maxIntegrity
       } as ShipEntity;
     });
-    const ownedIslands = userAssets.islands.map(f => {
+    const islands = userAssets.islands.map(f => {
       return {
         id: f.id,
         owner: f.owner,
@@ -112,11 +112,17 @@ export class AppService implements OnModuleInit {
       nickname: user.nickname,
       worldX: user.worldX,
       worldY: user.worldY,
-      nvy: user.nvyBalance,
-      aks: user.aksBalance,
-      ownedCaptains,
-      ownedShips,
-      ownedIslands,
+      nvy: userAssets.nvy,
+      aks: userAssets.aks,
+      captains,
+      ships,
+      islands,
+      dailyPlayersKilledCurrent: 0,
+      dailyPlayersKilledMax: 0,
+      dailyBotsKilledCurrent: 0,
+      dailyBotsKilledMax: 0,
+      dailyBossesKilledCurrent: 0,
+      dailyBossesKilledMax: 0,
     } as SignInOrUpResponse;
   }
 
