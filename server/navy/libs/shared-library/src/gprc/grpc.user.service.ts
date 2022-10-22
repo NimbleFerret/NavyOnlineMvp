@@ -32,8 +32,20 @@ export interface SignInOrUpResponse {
 
 //-----------------------------
 
+export interface GetUserPosRequest {
+    user: string;
+}
+
+export interface GetUserPosResponse {
+    x: number;
+    y: number;
+}
+
+//-----------------------------
+
 export interface UserService {
     SignInOrUp(request: SignInOrUpRequest): Observable<SignInOrUpResponse>;
+    GetUserPos(request: GetUserPosRequest): Observable<GetUserPosResponse>;
 }
 
 export const UserServiceName = 'UserService';

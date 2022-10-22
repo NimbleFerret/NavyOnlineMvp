@@ -5,6 +5,7 @@ package worldservice;
 service WorldService {
   rpc GenerateNewIslandPosition (IslandPositionRequest) returns (IslandPositionResponse);
   rpc GetWorldInfo (WorldInfoRequest) returns (WorldInfoResponse);
+  rpc GetSectorInfo (SectorInfoRequest) returns (SectorInfoResponse);
   rpc WorldMove (WorldMoveRequest) returns (WorldMoveResponse);
   rpc AddNewIslandToSector (AddNewIslandToSectorRequest) returns (AddNewIslandToSectorResponse);
 }
@@ -42,6 +43,17 @@ message WorldInfoRequest {
 
 message WorldInfoResponse {
   repeated SectorInfo sectors = 1;
+}
+
+//-----------------------------
+
+message SectorInfoRequest {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message SectorInfoResponse {
+  SectorInfo sector = 1;
 }
 
 //-----------------------------

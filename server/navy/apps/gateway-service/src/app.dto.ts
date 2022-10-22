@@ -10,8 +10,7 @@ export class WorldMoveDto {
 
 export class WorldEnterDto {
     user: string;
-    x: number;
-    y: number;
+    region: string;
 }
 
 export class StartMiningDto {

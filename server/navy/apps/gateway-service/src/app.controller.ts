@@ -26,6 +26,8 @@ export class AppController {
 
   @Post('world/enter')
   async worldEnter(@Body() dto: WorldEnterDto) {
+    dto.user = dto.user.toLowerCase();
+    return this.appService.worldEnter(dto);
   }
 
 }

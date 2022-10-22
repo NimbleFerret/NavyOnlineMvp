@@ -6,6 +6,7 @@ import "web3.service.proto";
 
 service UserService {
   rpc SignInOrUp (SignInOrUpRequest) returns (SignInOrUpResponse);
+  rpc GetUserPos (GetUserPosRequest) returns (GetUserPosResponse);
 }
 
 //-----------------------------
@@ -30,6 +31,17 @@ message SignInOrUpResponse {
     int32 dailyBotsKilledMax = 13;
     int32 dailyBossesKilledCurrent = 14;
     int32 dailyBossesKilledMax = 15;
+}
+
+//-----------------------------
+
+message GetUserPosRequest {
+  string user = 1;
+}
+
+message GetUserPosResponse {
+  int32 x = 1;
+  int32 y = 2;
 }
 
 //-----------------------------

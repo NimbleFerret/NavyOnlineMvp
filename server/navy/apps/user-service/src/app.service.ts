@@ -2,9 +2,8 @@ import { SharedLibraryService } from '@app/shared-library';
 import { CaptainEntity } from '@app/shared-library/entities/entity.captain';
 import { IslandEntity } from '@app/shared-library/entities/entity.island';
 import { ShipEntity } from '@app/shared-library/entities/entity.ship';
-import { SignInOrUpRequest, SignInOrUpResponse } from '@app/shared-library/gprc/grpc.user.service';
+import { GetUserPosRequest, GetUserPosResponse, SignInOrUpRequest, SignInOrUpResponse } from '@app/shared-library/gprc/grpc.user.service';
 import {
-  GetAndSyncUserAssetsResponse,
   Web3Service,
   Web3ServiceGrpcClientName,
   Web3ServiceName
@@ -124,6 +123,18 @@ export class AppService implements OnModuleInit {
       dailyBossesKilledCurrent: 0,
       dailyBossesKilledMax: 0,
     } as SignInOrUpResponse;
+  }
+
+  async getUserPos(request: GetUserPosRequest) {
+    const user = await this.userModel.findOne({
+      ethAddress: request.user
+    });
+    if (user) {
+      return {
+        x: user.worldX,
+        y: user.worldY
+      } as GetUserPosResponse;
+    };
   }
 
   private async getUserAssets(address: string) {

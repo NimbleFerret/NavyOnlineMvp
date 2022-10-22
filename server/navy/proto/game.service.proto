@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package gammeservice;
+
+service GameService {
+  rpc CreareOrJoinGame (CreareOrJoinGameRequest) returns (CreareOrJoinGameResponse);
+}
+
+//-----------------------------
+
+message CreareOrJoinGameRequest {
+}
+
+message CreareOrJoinGameResponse {
+  int32 x = 1;
+  int32 y = 2;
+  bool success = 3;
+}
+
+//-----------------------------

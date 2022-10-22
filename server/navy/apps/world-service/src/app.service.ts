@@ -5,19 +5,17 @@ import { SharedLibraryService } from '@app/shared-library';
 import {
   AddNewIslandToSectorRequest,
   SectorContent,
-  SectorInfo,
+  SectorInfoRequest,
+  SectorInfoResponse,
   WorldMoveRequest
 } from '@app/shared-library/gprc/grpc.world.service';
 import { Sector, SectorDocument } from '@app/shared-library/schemas/schema.sector';
 import { WorldDocument, World } from '@app/shared-library/schemas/schema.world';
 import { IslandDocument, Island } from '@app/shared-library/schemas/schema.island';
 import { User, UserDocument } from '@app/shared-library/schemas/schema.user';
-import e from 'express';
 
 @Injectable()
 export class AppService {
-
-  private world: WorldDocument;
 
   constructor(
     @InjectModel(Sector.name) private sectorModel: Model<SectorDocument>,
@@ -55,11 +53,8 @@ export class AppService {
           newWorld.sectors.push(sector);
         }
       }
-      this.world = await newWorld.save();
-    } else {
-      this.world = world;
+      await newWorld.save();
     }
-    // await this.mockIslands();
   }
 
   async mockIslands() {
@@ -71,8 +66,10 @@ export class AppService {
   // -----------------------
 
   public async generateNewIslandPosition() {
+    const world = await this.findWorld();
+
     const emptySectors = new Set<String>(
-      this.world.sectors
+      world.sectors
         .filter(sector => sector.content == SectorContent.SECTOR_CONTENT_EMPTY && !sector.locked)
         .map(sector => sector.positionId)
     );
@@ -109,17 +106,30 @@ export class AppService {
   }
 
   public async getWorldInfo() {
-    let sectors: SectorInfo[];
-    sectors = this.world.sectors.map(sector => {
+    const world = await this.findWorld();
+    const sectors = world.sectors.map(sector => {
       return {
         x: sector.x,
         y: sector.y,
         sectorContent: sector.content
       }
-    })
+    });
     return {
       sectors
     }
+  }
+
+  public async getSectorInfo(request: SectorInfoRequest) {
+    const sector = await this.sectorModel.findOne({
+      positionId: request.x + '/' + request.y
+    });
+    return {
+      sector: {
+        x: sector.x,
+        y: sector.y,
+        sectorContent: sector.content
+      }
+    } as SectorInfoResponse;
   }
 
   public async worldMove(request: WorldMoveRequest) {
@@ -127,7 +137,7 @@ export class AppService {
     const user = await this.userModel.findOne({
       ethAddress: request.user
     });
-    if (user) {
+    if (user && request.x <= SharedLibraryService.WORLD_SIZE && request.y <= SharedLibraryService.WORLD_SIZE) {
       const x = Math.abs(user.worldX - request.x);
       const y = Math.abs(user.worldY - request.y);
       if (x <= 1 && y <= 1) {
@@ -154,7 +164,6 @@ export class AppService {
         sector.content = SectorContent.SECTOR_CONTENT_ISLAND;
         sector.island = island;
         await sector.save();
-        await this.invalidateWorld();
       } else {
         console.log('No such sector error');
       }
@@ -170,10 +179,6 @@ export class AppService {
   private async createWorld() {
     const world = new this.worldModel();
     return await world.save();
-  }
-
-  private async invalidateWorld() {
-    this.world = await this.findWorld();
   }
 
   // -----------------------
@@ -203,12 +208,10 @@ export class AppService {
   }
 
   private async lockSector(positionId: string) {
-    console.log('Locking sector:' + positionId);
     const sector = await this.sectorModel.findOne({ positionId });
     if (sector) {
       sector.locked = true;
       await sector.save();
-      await this.invalidateWorld();
     }
   }
 
