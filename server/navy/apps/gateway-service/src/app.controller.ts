@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { WorldEnterDto, WorldMoveDto } from './add.dto';
+import { SignInOrUpDto, WorldEnterDto, WorldMoveDto } from './app.dto';
 import { AppService } from './app.service';
 
 // TODO add auth tokens
@@ -8,8 +8,8 @@ export class AppController {
   constructor(private readonly appService: AppService) { }
 
   @Post('signInOrUp')
-  signInOrUp() {
-
+  async signInOrUp(@Body() dto: SignInOrUpDto) {
+    return this.appService.signInOrUp(dto);
   }
 
   @Get('world')

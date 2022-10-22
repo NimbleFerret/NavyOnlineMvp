@@ -37,6 +37,7 @@ export interface UserService {
 }
 
 export const UserServiceName = 'UserService';
+export const UserServiceGrpcClientName = 'UserService';
 export const UserServiceGrpcPackage = 'userservice';
 
 export const UserServiceGrpcClientOptions: ClientOptions = {

@@ -1,5 +1,5 @@
 export class SignInOrUpDto {
-    ethAddress: string;
+    user: string;
 }
 
 export class WorldMoveDto {
