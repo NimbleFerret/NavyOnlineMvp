@@ -61,6 +61,7 @@ export interface WorldInfoResponse {
 //-----------------------------
 
 export interface WorldMoveRequest {
+    user: string;
     x: number;
     y: number;
 }

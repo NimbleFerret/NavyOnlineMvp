@@ -3,18 +3,18 @@ export class SignInOrUpDto {
 }
 
 export class WorldMoveDto {
-    ethAddress: string;
+    user: string;
     x: number;
     y: number;
 }
 
 export class WorldEnterDto {
-    ethAddress: string;
+    user: string;
     x: number;
     y: number;
 }
 
 export class StartMiningDto {
-    ethAddress: string;
+    user: string;
     islandId: string;
 }

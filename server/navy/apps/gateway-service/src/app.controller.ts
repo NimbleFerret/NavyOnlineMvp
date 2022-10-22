@@ -9,6 +9,7 @@ export class AppController {
 
   @Post('signInOrUp')
   async signInOrUp(@Body() dto: SignInOrUpDto) {
+    dto.user = dto.user.toLowerCase();
     return this.appService.signInOrUp(dto);
   }
 
@@ -19,6 +20,7 @@ export class AppController {
 
   @Post('world/move')
   async worldMove(@Body() dto: WorldMoveDto) {
+    dto.user = dto.user.toLowerCase();
     return this.appService.worldMove(dto);
   }
 

@@ -1,12 +1,18 @@
-import { SharedLibraryService } from '@app/shared-library';
-import { AddNewIslandToSectorRequest, SectorContent, SectorInfo, WorldMoveRequest } from '@app/shared-library/gprc/grpc.world.service';
-import { Sector, SectorDocument } from '@app/shared-library/schemas/schema.sector';
-import { WorldDocument, World } from '@app/shared-library/schemas/schema.world';
-import { IslandDocument, Island } from '@app/shared-library/schemas/schema.island';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IslandSize, Rarity, Terrain } from '@app/shared-library/shared-library.main';
+import { SharedLibraryService } from '@app/shared-library';
+import {
+  AddNewIslandToSectorRequest,
+  SectorContent,
+  SectorInfo,
+  WorldMoveRequest
+} from '@app/shared-library/gprc/grpc.world.service';
+import { Sector, SectorDocument } from '@app/shared-library/schemas/schema.sector';
+import { WorldDocument, World } from '@app/shared-library/schemas/schema.world';
+import { IslandDocument, Island } from '@app/shared-library/schemas/schema.island';
+import { User, UserDocument } from '@app/shared-library/schemas/schema.user';
+import e from 'express';
 
 @Injectable()
 export class AppService {
@@ -16,7 +22,8 @@ export class AppService {
   constructor(
     @InjectModel(Sector.name) private sectorModel: Model<SectorDocument>,
     @InjectModel(World.name) private worldModel: Model<WorldDocument>,
-    @InjectModel(Island.name) private islandModel: Model<IslandDocument>
+    @InjectModel(Island.name) private islandModel: Model<IslandDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>
   ) { }
 
   async onModuleInit() {
@@ -116,7 +123,23 @@ export class AppService {
   }
 
   public async worldMove(request: WorldMoveRequest) {
-
+    let success = false;
+    const user = await this.userModel.findOne({
+      ethAddress: request.user
+    });
+    if (user) {
+      const x = Math.abs(user.worldX - request.x);
+      const y = Math.abs(user.worldY - request.y);
+      if (x <= 1 && y <= 1) {
+        user.worldX = request.x;
+        user.worldY = request.y;
+        await user.save();
+        success = true;
+      }
+    }
+    return {
+      success
+    }
   }
 
   public async addNewIslandToSector(request: AddNewIslandToSectorRequest) {

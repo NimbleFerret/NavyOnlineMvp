@@ -29,7 +29,7 @@ export class AppService implements OnModuleInit {
   }
 
   worldMove(dto: WorldMoveDto) {
-
+    return this.worldService.WorldMove(dto);
   }
 
 }
