@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package gameplaybalancerservice;
+
+service GameplayBalancerService {
+  rpc GameplayServicePing (GameplayServicePingRequest) returns (GameplayServicePingResponse);
+  rpc GetGameplayInstance (GetGameplayInstanceRequest) returns (GetGameplayInstanceResponse);
+}
+
+//-----------------------------
+
+message InstanceDetails {
+  string id = 1;
+  int32 players = 2;
+  int32 bots = 3;
+  int32 x = 4;
+  int32 y = 5;
+}
+
+message GameplayServicePingRequest {
+  string address = 1;
+  string region = 2;
+  repeated InstanceDetails battleInstances = 3;
+  repeated InstanceDetails islandInstances = 4;
+}
+
+message GameplayServicePingResponse {
+}
+
+//-----------------------------
+
+message GetGameplayInstanceRequest {
+  string region = 1;
+}
+
+message GetGameplayInstanceResponse {
+  string address = 1;
+  string region = 2;
+}
+
+//-----------------------------

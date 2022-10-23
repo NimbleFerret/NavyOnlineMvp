@@ -66,6 +66,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/user-service/tsconfig.app.json"
       }
+    },
+    "gameplay-balancer-service": {
+      "type": "application",
+      "root": "apps/gameplay-balancer-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/gameplay-balancer-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gameplay-balancer-service/tsconfig.app.json"
+      }
     }
   }
 }

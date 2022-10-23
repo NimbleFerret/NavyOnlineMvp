@@ -1,5 +1,5 @@
 import { UserService, UserServiceGrpcClientName, UserServiceName } from '@app/shared-library/gprc/grpc.user.service';
-import { WorldService, WorldServiceGrpcClientName, WorldServiceName } from '@app/shared-library/gprc/grpc.world.service';
+import { SectorContent, WorldService, WorldServiceGrpcClientName, WorldServiceName } from '@app/shared-library/gprc/grpc.world.service';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
@@ -42,6 +42,14 @@ export class AppService implements OnModuleInit {
       y: userPos.y
     }));
     console.log(sectorInfo);
+
+    switch (sectorInfo.sector.sectorContent) {
+      case SectorContent.SECTOR_CONTENT_BASE:
+      case SectorContent.SECTOR_CONTENT_ISLAND:
+        console.log('');
+    }
+
+    // Create or join game
   }
 
 }
