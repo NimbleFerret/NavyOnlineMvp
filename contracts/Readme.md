@@ -13,3 +13,5 @@ npx hardhat verify --network cronosTestnet 'ADDRESS' --constructor-args .\script
 
 NFT and template:
 npx hardhat verify --network cronosTestnet 'ADDRESS'
+
+test
