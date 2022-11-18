@@ -18,6 +18,7 @@ export class SharedLibraryService {
 
     public static GetFreeShip() {
         return {
+            id: 'free',
             armor: 300,
             hull: 300,
             maxSpeed: 150,

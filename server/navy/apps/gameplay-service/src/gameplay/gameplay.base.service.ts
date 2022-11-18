@@ -1,10 +1,15 @@
-import { Ship, ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import { Logger } from "@nestjs/common";
-import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { AppEvents, PlayerDisconnectedEvent } from "../app.events";
-import { SectorContent, SocketClientMessageJoinGame, SocketClientMessageMove, SocketClientMessageSync } from "../ws/ws.protocol";
+import { OnEvent } from "@nestjs/event-emitter";
+import {
+    AppEvents,
+    PlayerDisconnectedEvent
+} from "../app.events";
+import {
+    SectorContent,
+    SocketClientMessageJoinGame,
+    SocketClientMessageMove,
+    SocketClientMessageSync
+} from "../ws/ws.protocol";
 import { BaseGameplayInstance } from "./gameplay.base.instance";
 
 export enum GameplayType {
@@ -17,12 +22,6 @@ export abstract class GameplayBaseService {
     readonly instances = new Map<string, BaseGameplayInstance>();
     readonly sectorInstance = new Map<string, string>();
     readonly playerInstanceMap = new Map<string, string>();
-
-    constructor(
-        @InjectModel(Ship.name) private shipModel: Model<ShipDocument>,
-        public eventEmitter: EventEmitter2,
-        private gameplayType: GameplayType) {
-    }
 
     // -------------------------------------
     // World managed api
@@ -45,12 +44,7 @@ export abstract class GameplayBaseService {
                 }
             }
         } else {
-            let instance: BaseGameplayInstance;
-            if (this.gameplayType == GameplayType.Island) {
-                instance = new GameplayIslandInstance(this.shipModel, this.eventEmitter, x, y);
-            } else {
-                instance = new GameplayBattleInstance(this.shipModel, this.eventEmitter, x, y, sectorContent);
-            }
+            const instance = this.initiateGameplayInstance(x, y, sectorContent);
             if (instance) {
                 this.instances.set(instance.instanceId, instance);
                 this.sectorInstance.set(x + '+' + y, instance.instanceId);
@@ -66,6 +60,8 @@ export abstract class GameplayBaseService {
             }
         }
     }
+
+    public abstract initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent): BaseGameplayInstance;
 
     // -------------------------------------
     // Admin api
@@ -86,7 +82,6 @@ export abstract class GameplayBaseService {
     // Client events from WebSocket
     // ------------------------------------- 
 
-    // TODO handle instance type here
     @OnEvent(AppEvents.PlayerJoinedInstance)
     async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
         if (!this.playerInstanceMap.has(data.playerId.toLowerCase())) {

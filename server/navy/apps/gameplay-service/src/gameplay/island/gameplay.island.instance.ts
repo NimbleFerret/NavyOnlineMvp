@@ -1,16 +1,25 @@
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { BaseGameplayEntity, BaseGameplayInstance } from "../gameplay.base.instance";
+import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayType } from "../gameplay.base.service";
-import { Model } from "mongoose";
-import { ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import { NotifyEachPlayerEventMsg, AppEvents } from "../../app.events";
-import { SocketServerMessageAddEntity, WsProtocol, SocketServerMessageRemoveEntity } from "../../ws/ws.protocol";
+import {
+    SocketServerMessageAddEntity,
+    SocketServerMessageRemoveEntity,
+    SectorContent,
+    WsProtocol,
+} from "../../ws/ws.protocol";
 import { engine } from "../../js/IslandEngine.js"
+import { BaseGameObject } from "@app/shared-library/entities/entity.base";
 
 export class GameplayIslandInstance extends BaseGameplayInstance {
 
-    constructor(shipModel: Model<ShipDocument>, eventEmitter: EventEmitter2, public worldX: number, public worldY: number) {
-        super(shipModel, eventEmitter, GameplayType.Island, new engine.IslandEngine());
+    constructor(
+        eventEmitter: EventEmitter2,
+        public x: number,
+        public y: number,
+        public sectorContent: SectorContent
+    ) {
+        super(eventEmitter, GameplayType.Island, new engine.IslandEngine());
 
         this.gameEngine.createMainEntityCallback = (entity: object) => {
             const socketServerMessageAddEntity = {
@@ -22,8 +31,8 @@ export class GameplayIslandInstance extends BaseGameplayInstance {
         this.gameEngine.deleteEntityCallback = (entity: object) => {
             const jsEntity = this.converJsEntityToTypeScript(entity);
 
-            if (this.playerEntityMap.has(jsEntity.ownerId)) {
-                this.playerEntityMap.delete(jsEntity.ownerId);
+            if (this.playerEntityMap.has(jsEntity.owner)) {
+                this.playerEntityMap.delete(jsEntity.owner);
             }
 
             const socketServerMessageRemoveEntity = {
@@ -39,13 +48,21 @@ export class GameplayIslandInstance extends BaseGameplayInstance {
         };
     }
 
-    public converJsEntityToTypeScript(jsEntity: any): BaseGameplayEntity {
+    // --------------------------
+    // Implementations
+    // --------------------------
+
+    public initiateEngineEntity(playerId: string, entityid: string) {
+        return this.gameEngine.createEntity(350, 290, undefined, playerId);
+    }
+
+    public converJsEntityToTypeScript(jsEntity: any) {
         const result = {
             y: jsEntity.y,
             x: jsEntity.x,
             id: jsEntity.id,
-            ownerId: jsEntity.ownerId
-        } as BaseGameplayEntity;
+            owner: jsEntity.ownerId
+        } as BaseGameObject;
         return result;
     }
 

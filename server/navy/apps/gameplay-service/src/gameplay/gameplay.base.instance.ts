@@ -2,8 +2,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { GameplayType } from './gameplay.base.service';
 import { Logger } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { ShipDocument } from '@app/shared-library/schemas/schema.ship';
 import {
     NotifyPlayerEventMsg,
     AppEvents,
@@ -20,13 +18,7 @@ import {
     SocketClientMessageSync,
     SocketServerMessageSync
 } from '../ws/ws.protocol';
-
-export interface BaseGameplayEntity {
-    y: number;
-    x: number;
-    id: string;
-    ownerId: string;
-}
+import { BaseGameObject } from '@app/shared-library/entities/entity.base';
 
 export abstract class BaseGameplayInstance {
 
@@ -38,7 +30,6 @@ export abstract class BaseGameplayInstance {
     notifyGameWorldStateTimer: NodeJS.Timer;
 
     constructor(
-        private shipModel: Model<ShipDocument>,
         public eventEmitter: EventEmitter2,
         public gameplayType: GameplayType,
         public gameEngine: any) {
@@ -48,69 +39,10 @@ export abstract class BaseGameplayInstance {
     // General
     // -------------------------------------
 
-    async addPlayer(playerId: string, shipId?: string) {
-        let engineEntity: any;
-        if (this.gameplayType == GameplayType.Battle) {
+    public abstract initiateEngineEntity(playerId: string, entityid: string): any;
 
-            // As stands for HAXE:
-            //
-            // enum ShipHullSize {
-            //     SMALL;
-            //     MEDIUM;
-            // }
-            // enum ShipWindows {
-            //     ONE;
-            //     TWO;
-            //     NONE;
-            // }
-            // enum ShipGuns {
-            //     ONE;
-            //     TWO;
-            //     THREE;
-            //     FOUR;
-            // }
-
-            const ship = await this.shipModel.findOne({ tokenId: shipId });
-
-            let windows = 'NONE';
-            if (ship.windows == 0) {
-                windows = 'ONE';
-            } else if (ship.windows == 1) {
-                windows = 'TWO';
-            }
-
-            let cannons = 'ONE';
-            if (ship.cannons == 2) {
-                cannons = 'TWO';
-            } else if (ship.cannons == 3) {
-                cannons = 'THREE';
-            } else if (ship.cannons == 4) {
-                cannons = 'FOUR';
-            }
-
-            engineEntity = this.gameEngine.createEntity(
-                shipId,
-                ship.tokenId == 'free',
-                'Player',
-                100,
-                (this.playerEntityMap.size) * 500,
-                ship.size == 1 ? 'SMALL' : 'MEDIUM',
-                windows,
-                cannons,
-                ship.cannonsRange,
-                ship.cannonsDamage,
-                ship.armor,
-                ship.hull,
-                ship.maxSpeed,
-                ship.accelerationStep,
-                ship.accelerationDelay / 1000,
-                ship.rotationDelay / 1000,
-                ship.fireDelay / 1000,
-                undefined,
-                playerId);
-        } else {
-            engineEntity = this.gameEngine.createEntity(350, 290, undefined, playerId);
-        }
+    async addPlayer(playerId: string, entityid: string) {
+        const engineEntity = this.initiateEngineEntity(playerId, entityid);
         if (engineEntity) {
             this.playerEntityMap.set(engineEntity.ownerId, engineEntity.id);
             this.entityPlayerMap.set(engineEntity.id, engineEntity.ownerId);
@@ -124,7 +56,7 @@ export abstract class BaseGameplayInstance {
         return this.playerEntityMap.size;
     }
 
-    notifyPlayer(playerId: string, message: object, event: string) {
+    protected notifyPlayer(playerId: string, message: object, event: string) {
         const notifyPlayerEventMsg = {
             playerId,
             socketEvent: event,
@@ -134,7 +66,7 @@ export abstract class BaseGameplayInstance {
         this.eventEmitter.emit(AppEvents.NotifyPlayer, notifyPlayerEventMsg);
     }
 
-    notifyAllPlayers(message: object, event: string) {
+    protected notifyAllPlayers(message: object, event: string) {
         const notifyEachPlayerEventMsg = {
             instanceId: this.instanceId,
             socketEvent: event,
@@ -144,7 +76,7 @@ export abstract class BaseGameplayInstance {
         this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
     }
 
-    destroy() {
+    public destroy() {
         try {
             clearInterval(this.notifyGameWorldStateTimer);
             this.playerEntityMap.clear();
@@ -160,7 +92,7 @@ export abstract class BaseGameplayInstance {
     // -------------------------------------
 
     async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
-        await this.addPlayer(data.playerId, data.shipId);
+        await this.addPlayer(data.playerId, data.entityId);
 
         const socketServerMessageGameInit = {
             instanceId: this.instanceId,
@@ -226,12 +158,12 @@ export abstract class BaseGameplayInstance {
     // -------------------------------------
 
     private collectEntities() {
-        const characters: BaseGameplayEntity[] = [];
+        const characters: BaseGameObject[] = [];
         for (const [key, value] of this.gameEngine.mainEntityManager.entities) {
             characters.push(this.converJsEntityToTypeScript(value));
         }
         return characters;
     }
 
-    public abstract converJsEntityToTypeScript(jsEntity: any): BaseGameplayEntity;
+    public abstract converJsEntityToTypeScript(jsEntity: any): BaseGameObject;
 }

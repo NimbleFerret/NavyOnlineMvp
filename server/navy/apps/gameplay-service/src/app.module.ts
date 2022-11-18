@@ -8,6 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { GameplayModule } from './gameplay/gameplay.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { AppService } from './app.service';
         ...GameplayBalancerServiceGrpcClientOptions,
       },
     ]),
-    MongooseModule.forRoot('mongodb://localhost/navy')
+    MongooseModule.forRoot('mongodb://localhost/navy'),
+    GameplayModule
   ],
   controllers: [AppController],
   providers: [AppService],

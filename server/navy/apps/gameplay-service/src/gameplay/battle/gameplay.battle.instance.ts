@@ -1,7 +1,7 @@
 import { Logger } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { AppEvents, PlayerKilledShip } from "../../app.events.js";
-import { BaseGameplayEntity, BaseGameplayInstance } from "../gameplay.base.instance";
+import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayType } from "../gameplay.base.service";
 import { Model } from "mongoose";
 import { engine } from "../../js/IslandEngine.js"
@@ -15,39 +15,23 @@ import {
     SocketClientMessageShoot,
     SocketClientMessageRespawn
 } from "../../ws/ws.protocol.js";
-
-export interface GameplayShipEntity extends BaseGameplayEntity {
-    role: string;
-    serverShipRef: string;
-    free: boolean;
-    currentArmor: number;
-    currentHull: number;
-    currentSpeed: number;
-    direction: string;
-    shipHullSize: number;
-    shipWindows: number;
-    shipGuns: number;
-    killerId: string;
-    cannonsRange: number;
-    cannonsDamage: number;
-    armor: number;
-    hull: number;
-    maxSpeed: number;
-    acc: number;
-    accDelay: number;
-    turnDelay: number;
-    fireDelay: number;
-    currentIntegrity: number;
-    maxIntegrity: number;
-}
+import { SharedLibraryService } from "@app/shared-library";
+import { GameObjectShipEntity, ShipEntity } from "@app/shared-library/entities/entity.ship.js";
+import { AssetType, Rarity, ShipSize } from "@app/shared-library/shared-library.main.js";
 
 export class GameplayBattleInstance extends BaseGameplayInstance {
 
-    constructor(shipModel: Model<ShipDocument>, eventEmitter: EventEmitter2, public worldX: number, public worldY: number, sectorContent: SectorContent) {
-        super(shipModel, eventEmitter, GameplayType.Battle, new engine.GameEngine());
+    constructor(
+        private shipModel: Model<ShipDocument>,
+        public x: number,
+        public y: number,
+        eventEmitter: EventEmitter2,
+        sectorContent: SectorContent
+    ) {
+        super(eventEmitter, GameplayType.Battle, new engine.GameEngine());
 
         this.gameEngine.deleteMainEntityCallback = async (ship: object) => {
-            const jsShip = this.converJsEntityToTypeScript(ship) as GameplayShipEntity;
+            const jsShip = this.converJsEntityToTypeScript(ship);
             console.log('deleteMainEntityCallback 1');
             if (jsShip.killerId) {
                 const killerId = this.entityPlayerMap.get(jsShip.killerId);
@@ -71,7 +55,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
                 }
 
                 console.log('deleteMainEntityCallback 5');
-                if (jsShip.role == 'Player' && !jsShip.free) {
+                if (jsShip.role == 'Player' && jsShip.type != AssetType.FREE) {
                     const shipToUpdate = await shipModel.findOne({ tokenId: jsShip.serverShipRef });
                     shipToUpdate.currentIntegrity -= 1;
                     await shipToUpdate.save();
@@ -137,7 +121,10 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         return this.gameEngine.mainEntityManager.entities.size;
     }
 
-    // Player commands
+    // --------------------------
+    // Player input
+    // --------------------------
+
     async handlePlayerShoot(data: SocketClientMessageShoot) {
         const ship = this.playerEntityMap.get(data.playerId);
         if (ship) {
@@ -153,7 +140,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
 
     async handlePlayerRespawn(data: SocketClientMessageRespawn) {
         if (!this.playerEntityMap.has(data.playerId)) {
-            const entity = await this.addPlayer(data.playerId);
+            const entity = await this.addPlayer(data.playerId, data.entityId);
             const socketServerMessageAddEntity = {
                 entity
             } as SocketServerMessageAddEntity;
@@ -163,8 +150,59 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         }
     }
 
-    // Impl
-    public converJsEntityToTypeScript(jsEntity: any): BaseGameplayEntity {
+    // --------------------------
+    // Implementations
+    // --------------------------
+
+    public async initiateEngineEntity(playerId: string, entityid: string) {
+        let ship: ShipEntity;
+        if (entityid == 'free') {
+            ship = SharedLibraryService.GetFreeShip();
+        } else {
+            ship = await this.shipModel.findOne({ tokenId: entityid });
+
+        }
+
+        let windows = 'NONE';
+        if (ship.windows == 0) {
+            windows = 'ONE';
+        } else if (ship.windows == 1) {
+            windows = 'TWO';
+        }
+
+        let cannons = 'ONE';
+        if (ship.cannons == 2) {
+            cannons = 'TWO';
+        } else if (ship.cannons == 3) {
+            cannons = 'THREE';
+        } else if (ship.cannons == 4) {
+            cannons = 'FOUR';
+        }
+
+        const engineEntity = this.gameEngine.createEntity(
+            entityid,
+            ship.id == 'free',
+            'Player',
+            100,
+            (this.playerEntityMap.size) * 500,
+            ship.size == 1 ? 'SMALL' : 'MEDIUM',
+            windows,
+            cannons,
+            ship.cannonsRange,
+            ship.cannonsDamage,
+            ship.armor,
+            ship.hull,
+            ship.maxSpeed,
+            ship.accelerationStep,
+            ship.accelerationDelay / 1000,
+            ship.rotationDelay / 1000,
+            ship.fireDelay / 1000,
+            undefined,
+            playerId);
+        return engineEntity;
+    }
+
+    public converJsEntityToTypeScript(jsEntity: any) {
         let shipHullSize = 0;
         let shipWindows = 2;
         let shipGuns = 2;
@@ -189,33 +227,37 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         }
 
         const result = {
-            serverShipRef: jsEntity.serverShipRef,
-            free: jsEntity.free,
-            killerId: jsEntity.killerId,
-            role: jsEntity.role,
-            currentArmor: jsEntity.currentArmor,
-            currentHull: jsEntity.currentHull,
-            y: jsEntity.y,
-            x: jsEntity.x,
-            currentSpeed: jsEntity.currentSpeed,
-            direction: jsEntity.direction._hx_name,
             id: jsEntity.id,
-            ownerId: jsEntity.ownerId,
-            shipHullSize,
-            shipWindows,
-            shipGuns,
-            cannonsRange: jsEntity.cannonsRange,
-            cannonsDamage: jsEntity.cannonsDamage,
+            owner: jsEntity.ownerId,
+            type: AssetType.FREE,
             armor: jsEntity.armor,
             hull: jsEntity.hull,
             maxSpeed: jsEntity.maxSpeed,
-            acc: jsEntity.acc,
-            accDelay: jsEntity.accDelay,
-            turnDelay: jsEntity.turnDelay,
+            accelerationStep: jsEntity.acc,
+            accelerationDelay: jsEntity.accDelay,
+            rotationDelay: jsEntity.turnDelay,
             fireDelay: jsEntity.fireDelay,
+            cannons: shipGuns,
+            cannonsRange: jsEntity.cannonsRange,
+            cannonsDamage: jsEntity.cannonsDamage,
+            level: 1,
+            traits: 0,
+            size: ShipSize.SMALL,
+            rarity: Rarity.COMMON,
+            windows: shipWindows,
+            anchor: 0,
             currentIntegrity: jsEntity.currentIntegrity,
-            maxIntegrity: jsEntity.maxIntegrity
-        } as GameplayShipEntity;
+            maxIntegrity: jsEntity.maxIntegrity,
+            x: jsEntity.x,
+            y: jsEntity.y,
+            direction: jsEntity.direction._hx_name,
+            role: jsEntity.role,
+            currentSpeed: jsEntity.currentSpeed,
+            serverShipRef: jsEntity.serverShipRef,
+            killerId: jsEntity.killerId,
+            currentArmor: jsEntity.currentArmor,
+            currentHull: jsEntity.currentHull,
+        } as GameObjectShipEntity;
         return result;
     }
 

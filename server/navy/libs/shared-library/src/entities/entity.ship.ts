@@ -1,7 +1,11 @@
+import { AssetType, Rarity, ShipSize } from "../shared-library.main";
+import { BaseGameObject } from "./entity.base";
+
+// Basic structure
 export interface ShipEntity {
     id: string;
     owner: string;
-    type: number;
+    type: AssetType;
     armor: number;
     hull: number;
     maxSpeed: number;
@@ -14,10 +18,22 @@ export interface ShipEntity {
     cannonsDamage: number;
     level: number;
     traits: number;
-    size: number;
-    rarity: number;
+    size: ShipSize;
+    rarity: Rarity;
     windows: number;
     anchor: number;
     currentIntegrity: number;
     maxIntegrity: number;
+}
+
+export interface GameObjectShipEntity extends ShipEntity, BaseGameObject {
+    // TODO replace by enum ?
+    direction: string;
+    role: string;
+    // TODO replace by enum ?
+    serverShipRef: string;
+    killerId: string;
+    currentSpeed: number;
+    currentArmor: number;
+    currentHull: number;
 }

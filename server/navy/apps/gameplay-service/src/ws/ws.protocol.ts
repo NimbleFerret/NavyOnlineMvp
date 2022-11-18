@@ -79,9 +79,9 @@ export interface SocketServerMessageSync {
 
 export interface SocketClientMessageJoinGame {
     playerId: string;
+    entityId: string;
     instanceId: string;
     sectorType: SectorContent;
-    shipId: string;
 }
 
 export interface SocketClientMessageLeaveGame {
@@ -115,6 +115,7 @@ export interface SocketClientMessageSync {
 
 export interface SocketClientMessageRespawn {
     playerId: string;
+    entityId: string;
 }
 
 export class WsProtocol {

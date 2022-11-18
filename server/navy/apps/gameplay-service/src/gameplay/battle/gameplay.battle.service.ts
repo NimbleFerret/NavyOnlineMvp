@@ -4,15 +4,20 @@ import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AppEvents } from "../../app.events";
-import { SocketClientMessageShoot, SocketClientMessageRespawn } from "../../ws/ws.protocol";
-import { GameplayBaseService, GameplayType } from "../gameplay.base.service";
-import { GameplayBattleInstance } from "./gameplay.gameplay.instance";
+import { SocketClientMessageShoot, SocketClientMessageRespawn, SectorContent } from "../../ws/ws.protocol";
+import { BaseGameplayInstance } from "../gameplay.base.instance";
+import { GameplayBaseService } from "../gameplay.base.service";
+import { GameplayBattleInstance } from "./gameplay.battle.instance";
 
 @Injectable()
 export class GameplayBattleService extends GameplayBaseService {
 
-    constructor(@InjectModel(Ship.name) shipModel: Model<ShipDocument>, private readonly emitter: EventEmitter2) {
-        super(shipModel, emitter, GameplayType.Battle);
+    constructor(@InjectModel(Ship.name) private shipModel: Model<ShipDocument>, private readonly emitter: EventEmitter2) {
+        super();
+    }
+
+    public initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent): BaseGameplayInstance {
+        return new GameplayBattleInstance(this.shipModel, x, y, this.emitter, sectorContent);
     }
 
     // Socket events
