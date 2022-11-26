@@ -3,6 +3,7 @@ import {
   GameplayBalancerServiceGrpcClientOptions
 } from '@app/shared-library/gprc/grpc.gameplay-balancer.service';
 import { Module } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -12,6 +13,7 @@ import { GameplayModule } from './gameplay/gameplay.module';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     ClientsModule.register([
       {

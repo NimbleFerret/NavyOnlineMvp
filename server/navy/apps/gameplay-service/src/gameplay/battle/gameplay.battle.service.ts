@@ -12,7 +12,7 @@ import { GameplayBattleInstance } from "./gameplay.battle.instance";
 @Injectable()
 export class GameplayBattleService extends GameplayBaseService {
 
-    constructor(@InjectModel(Ship.name) private shipModel: Model<ShipDocument>, private readonly emitter: EventEmitter2) {
+    constructor(@InjectModel(Ship.name) private shipModel: Model<ShipDocument>, private emitter: EventEmitter2) {
         super();
     }
 

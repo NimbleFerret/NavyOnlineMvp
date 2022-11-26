@@ -1,11 +1,11 @@
 import { Logger } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { AppEvents, PlayerKilledShip } from "../../app.events.js";
+import { AppEvents, PlayerKilledShip } from "../../app.events";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayType } from "../gameplay.base.service";
 import { Model } from "mongoose";
 import { engine } from "../../js/IslandEngine.js"
-import { ShipDocument } from "@app/shared-library/schemas/schema.ship.js";
+import { ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import {
     SectorContent,
     SocketServerMessageRemoveEntity,
@@ -14,10 +14,10 @@ import {
     SocketServerMessageAddEntity,
     SocketClientMessageShoot,
     SocketClientMessageRespawn
-} from "../../ws/ws.protocol.js";
+} from "../../ws/ws.protocol";
 import { SharedLibraryService } from "@app/shared-library";
-import { GameObjectShipEntity, ShipEntity } from "@app/shared-library/entities/entity.ship.js";
-import { AssetType, Rarity, ShipSize } from "@app/shared-library/shared-library.main.js";
+import { GameObjectShipEntity, ShipEntity } from "@app/shared-library/entities/entity.ship";
+import { AssetType, Rarity, ShipSize } from "@app/shared-library/shared-library.main";
 
 export class GameplayBattleInstance extends BaseGameplayInstance {
 

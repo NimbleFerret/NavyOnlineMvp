@@ -50,8 +50,6 @@ export class AppService {
     } as GetGameplayInstanceResponse;
   }
 
-
-
   @Cron(CronExpression.EVERY_10_SECONDS)
   balancerPing() {
     const now = new Date().getTime();
