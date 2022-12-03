@@ -1,10 +1,11 @@
+import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 import { Ship, ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AppEvents } from "../../app.events";
-import { SocketClientMessageShoot, SocketClientMessageRespawn, SectorContent } from "../../ws/ws.protocol";
+import { SocketClientMessageShoot, SocketClientMessageRespawn } from "../../ws/ws.protocol";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayBaseService } from "../gameplay.base.service";
 import { GameplayBattleInstance } from "./gameplay.battle.instance";

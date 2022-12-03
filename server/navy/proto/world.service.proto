@@ -24,12 +24,12 @@ message IslandPositionResponse {
 //-----------------------------
 
 enum SectorContent {
-  SECTOR_CONTENT_EMPTY = 1;
-  SECTOR_CONTENT_BASE = 2;
-  SECTOR_CONTENT_ISLAND = 3;
-  SECTOR_CONTENT_BOSS = 4;
-  SECTOR_CONTENT_PVE = 5;
-  SECTOR_CONTENT_PVP = 6;
+  SECTOR_CONTENT_EMPTY = 0;
+  SECTOR_CONTENT_BASE = 1;
+  SECTOR_CONTENT_ISLAND = 2;
+  SECTOR_CONTENT_BOSS = 3;
+  SECTOR_CONTENT_PVE = 4;
+  SECTOR_CONTENT_PVP = 5;
 }
 
 message SectorInfo {

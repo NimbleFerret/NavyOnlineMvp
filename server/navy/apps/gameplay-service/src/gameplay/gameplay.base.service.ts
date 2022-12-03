@@ -1,3 +1,4 @@
+import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 import { Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import {
@@ -5,7 +6,6 @@ import {
     PlayerDisconnectedEvent
 } from "../app.events";
 import {
-    SectorContent,
     SocketClientMessageJoinGame,
     SocketClientMessageMove,
     SocketClientMessageSync
@@ -15,6 +15,13 @@ import { BaseGameplayInstance } from "./gameplay.base.instance";
 export enum GameplayType {
     Battle,
     Island
+}
+
+export interface JoinWorldOrCreateResult {
+    result: boolean;
+    playersCount?: number;
+    instanceId?: string;
+    reason?: string;
 }
 
 export abstract class GameplayBaseService {
@@ -28,37 +35,33 @@ export abstract class GameplayBaseService {
     // -------------------------------------
 
     joinWorldOrCreate(x: number, y: number, sectorContent: SectorContent) {
+        const result: JoinWorldOrCreateResult = {
+            result: false
+        };
         const islandInstanceId = this.sectorInstance.get(x + '+' + y);
+
         if (islandInstanceId) {
             const islandInstance = this.instances.get(islandInstanceId);
             if (islandInstance.getPlayersCount() < this.maxPlayersPerInstance) {
-                return {
-                    result: true,
-                    playersCount: islandInstance.getPlayersCount(),
-                    instanceId: islandInstance.instanceId
-                }
+                result.result = true;
+                result.playersCount = islandInstance.getPlayersCount();
+                result.instanceId = islandInstance.instanceId;
             } else {
-                return {
-                    result: false,
-                    reason: 'Sector is full'
-                }
+                result.result = false;
+                result.reason = 'Sector is full';
             }
         } else {
             const instance = this.initiateGameplayInstance(x, y, sectorContent);
             if (instance) {
                 this.instances.set(instance.instanceId, instance);
                 this.sectorInstance.set(x + '+' + y, instance.instanceId);
-                return {
-                    result: true,
-                    playersCount: instance.getPlayersCount(),
-                    instanceId: instance.instanceId
-                }
-            } else {
-                return {
-                    result: false
-                }
+                result.result = true;
+                result.playersCount = instance.getPlayersCount();
+                result.instanceId = instance.instanceId;
             }
         }
+
+        return result;
     }
 
     public abstract initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent): BaseGameplayInstance;

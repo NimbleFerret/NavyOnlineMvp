@@ -127,7 +127,7 @@ export class AppService implements OnModuleInit {
 
   async getUserPos(request: GetUserPosRequest) {
     const user = await this.userModel.findOne({
-      ethAddress: request.user
+      ethAddress: request.user.toLocaleLowerCase()
     });
     if (user) {
       return {

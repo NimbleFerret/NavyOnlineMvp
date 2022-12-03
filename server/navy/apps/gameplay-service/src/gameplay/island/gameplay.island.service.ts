@@ -1,6 +1,6 @@
+import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { SectorContent } from "../../ws/ws.protocol";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayBaseService } from "../gameplay.base.service";
 import { GameplayIslandInstance } from "./gameplay.island.instance";

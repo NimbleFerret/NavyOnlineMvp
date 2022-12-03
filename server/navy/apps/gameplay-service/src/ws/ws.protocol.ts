@@ -6,15 +6,6 @@ export enum DailyTaskType {
     KILL_BOSSES = 3,
 }
 
-export enum SectorContent {
-    EMPTY = 1,
-    BASE = 2,
-    ISLAND = 3,
-    BOSS = 4,
-    PVE = 5,
-    PVP = 6
-}
-
 // -------------------------------------
 // WebSocket server messages
 // -------------------------------------
@@ -81,7 +72,6 @@ export interface SocketClientMessageJoinGame {
     playerId: string;
     entityId: string;
     instanceId: string;
-    sectorType: SectorContent;
 }
 
 export interface SocketClientMessageLeaveGame {

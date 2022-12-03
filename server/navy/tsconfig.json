@@ -26,5 +26,8 @@
         "libs/shared-library/src/*"
       ]
     }
-  }
+  },
+  "include": [
+    "src/**/*"
+  ]
 }

@@ -7,7 +7,6 @@ import { Model } from "mongoose";
 import { engine } from "../../js/IslandEngine.js"
 import { ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import {
-    SectorContent,
     SocketServerMessageRemoveEntity,
     WsProtocol,
     SocketServerMessageShipShoot,
@@ -18,6 +17,7 @@ import {
 import { SharedLibraryService } from "@app/shared-library";
 import { GameObjectShipEntity, ShipEntity } from "@app/shared-library/entities/entity.ship";
 import { AssetType, Rarity, ShipSize } from "@app/shared-library/shared-library.main";
+import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 
 export class GameplayBattleInstance extends BaseGameplayInstance {
 
@@ -96,13 +96,13 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         };
 
         switch (sectorContent) {
-            case SectorContent.BOSS: {
+            case SectorContent.SECTOR_CONTENT_BOSS: {
                 this.gameEngine.createEntity('', true, 'Boss', 200, 500, 'MEDIUM', 'TWO', 'FOUR',
                     2000, 80, 500, 500, 200, 100, 100 / 1000, 200 / 1000, 200 / 1000,
                     undefined, undefined);
                 break;
             }
-            case SectorContent.PVE: {
+            case SectorContent.SECTOR_CONTENT_PVE: {
                 this.gameEngine.createEntity('', true, 'Bot', 400, -200, 'Small', 'NONE', 'TWO',
                     600, 10, 300, 300, 200, 100, 100 / 1000, 200 / 1000, 200 / 1000,
                     undefined, undefined);
@@ -110,7 +110,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
                 // this.gameEngine.createEntity('Bot', 900, 500, 'Small', 'NONE', 'TWO', undefined, undefined);
                 break;
             }
-            case SectorContent.PVP: {
+            case SectorContent.SECTOR_CONTENT_PVP: {
                 // TODO enable pvp damage
                 break;
             }

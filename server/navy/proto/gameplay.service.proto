@@ -2,16 +2,21 @@ syntax = "proto3";
 
 package gameplayservice;
 
+import "world.service.proto";
+
 service GameplayService {
-  rpc CreareOrJoinGame (CreareOrJoinGameRequest) returns (CreareOrJoinGameResponse);
+  rpc CreateOrJoinGame (CreateOrJoinGameRequest) returns (CreateOrJoinGameResponse);
 }
 
 //-----------------------------
 
-message CreareOrJoinGameRequest {
+message CreateOrJoinGameRequest {
+  SectorInfo sectorInfo = 1;
 }
 
-message CreareOrJoinGameResponse {
+message CreateOrJoinGameResponse {
+  bool success = 1;
+  string instanceId = 2;
 }
 
 //-----------------------------

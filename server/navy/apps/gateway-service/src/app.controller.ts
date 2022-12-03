@@ -30,4 +30,9 @@ export class AppController {
     return this.appService.worldEnter(dto);
   }
 
+  @Get('gameplayInstance')
+  async gameplayInstance() {
+    return this.appService.getGameplayInstance();
+  }
+
 }

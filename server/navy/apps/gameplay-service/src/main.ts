@@ -14,6 +14,7 @@ async function bootstrap() {
   }
   const app = await NestFactory.create(AppModule);
   await app.listen(AppService.SERVICE_PORT);
+  app.enableCors();
   Logger.log(`Gameplay service started at port: ${AppService.SERVICE_PORT} and region: ${AppService.SERVICE_REGION}`);
 }
 bootstrap();

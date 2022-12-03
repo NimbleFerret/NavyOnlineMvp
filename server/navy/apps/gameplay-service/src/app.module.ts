@@ -2,6 +2,14 @@ import {
   GameplayBalancerServiceGrpcClientName,
   GameplayBalancerServiceGrpcClientOptions
 } from '@app/shared-library/gprc/grpc.gameplay-balancer.service';
+import {
+  UserServiceGrpcClientName,
+  UserServiceGrpcClientOptions
+} from '@app/shared-library/gprc/grpc.user.service';
+import {
+  WorldServiceGrpcClientName,
+  WorldServiceGrpcClientOptions
+} from '@app/shared-library/gprc/grpc.world.service';
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ClientsModule } from '@nestjs/microservices';
@@ -16,6 +24,14 @@ import { GameplayModule } from './gameplay/gameplay.module';
     EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     ClientsModule.register([
+      {
+        name: WorldServiceGrpcClientName,
+        ...WorldServiceGrpcClientOptions,
+      },
+      {
+        name: UserServiceGrpcClientName,
+        ...UserServiceGrpcClientOptions,
+      },
       {
         name: GameplayBalancerServiceGrpcClientName,
         ...GameplayBalancerServiceGrpcClientOptions,

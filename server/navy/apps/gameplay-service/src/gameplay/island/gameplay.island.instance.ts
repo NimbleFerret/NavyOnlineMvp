@@ -5,11 +5,11 @@ import { NotifyEachPlayerEventMsg, AppEvents } from "../../app.events";
 import {
     SocketServerMessageAddEntity,
     SocketServerMessageRemoveEntity,
-    SectorContent,
     WsProtocol,
 } from "../../ws/ws.protocol";
 import { engine } from "../../js/IslandEngine.js"
 import { BaseGameObject } from "@app/shared-library/entities/entity.base";
+import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 
 export class GameplayIslandInstance extends BaseGameplayInstance {
 
