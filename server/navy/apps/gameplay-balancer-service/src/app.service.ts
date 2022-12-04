@@ -10,7 +10,6 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 interface GameplayInstance {
   lastPingTime: number;
   instanceDetails: GameplayServicePingRequest;
-  active: boolean;
 }
 
 @Injectable()
@@ -21,8 +20,7 @@ export class AppService {
   gameplayServicePing(request: GameplayServicePingRequest) {
     const gameplayInstance: GameplayInstance = {
       lastPingTime: new Date().getTime(),
-      instanceDetails: request,
-      active: true
+      instanceDetails: request
     }
     this.gameplayInstances.set(request.address + '_' + request.region, gameplayInstance);
   }
@@ -50,15 +48,20 @@ export class AppService {
     } as GetGameplayInstanceResponse;
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
-  balancerPing() {
+  @Cron(CronExpression.EVERY_5_SECONDS)
+  checkInstanceLastPingTime() {
     const now = new Date().getTime();
-    this.gameplayInstances.forEach((value: GameplayInstance, key: string) => {
-      if (value.active && value.lastPingTime + 10000 < now) {
-        value.active = false;
-        console.log('Disable instance');
+    const instancesToDelete: string[] = [];
+    this.gameplayInstances.forEach((value: GameplayInstance) => {
+      if (value.lastPingTime + 6000 < now) {
+        console.log('Remove gameplay instance');
+        instancesToDelete.push(this.gameplayInstanceKey(value));
       }
     });
+  }
+
+  private gameplayInstanceKey(instance: GameplayInstance) {
+    return instance.instanceDetails.address + '_' + instance.instanceDetails.region;
   }
 
 }

@@ -70,6 +70,19 @@ export abstract class GameplayBaseService {
     // Admin api
     // -------------------------------------
 
+    destroyEmptyInstances() {
+        const instancedToDelete: string[] = [];
+        this.instances.forEach((v) => {
+            if (v.getPlayersCount() == 0) {
+                v.destroy();
+                instancedToDelete.push(v.instanceId);
+            }
+        });
+        instancedToDelete.forEach((f) => {
+            this.instances.delete(f);
+        });
+    }
+
     getInstancesInfo() {
         const result = [];
         this.instances.forEach((v) => {

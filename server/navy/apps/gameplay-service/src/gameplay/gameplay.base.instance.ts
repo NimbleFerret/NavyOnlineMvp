@@ -82,6 +82,7 @@ export abstract class BaseGameplayInstance {
             this.playerEntityMap.clear();
             this.entityPlayerMap.clear();
             this.gameEngine.destroy();
+            Logger.log('Destroy instance. Type: ' + this.gameplayType + ', id: ' + this.instanceId);
         } catch (e) {
             Logger.error(e);
         }
