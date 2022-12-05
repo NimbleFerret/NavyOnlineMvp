@@ -59,11 +59,10 @@ export class AppService implements OnModuleInit {
     return this.worldService.WorldMove(dto);
   }
 
-  async getGameplayInstance() {
-    const gameplayInstance = await lastValueFrom(this.gameplayBalancerService.GetGameplayInstance({
+  getGameplayInstance() {
+    return lastValueFrom(this.gameplayBalancerService.GetGameplayInstance({
       region: null
     }));
-    console.log(gameplayInstance);
   }
 
 }
