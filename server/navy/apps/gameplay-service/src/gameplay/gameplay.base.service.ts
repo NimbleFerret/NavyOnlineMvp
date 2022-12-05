@@ -1,4 +1,6 @@
+import { InstanceDetails } from "@app/shared-library/gprc/grpc.gameplay-balancer.service";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
+import { Utils } from "@app/shared-library/utils";
 import { Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import {
@@ -78,18 +80,19 @@ export abstract class GameplayBaseService {
                 instancedToDelete.push(v.instanceId);
             }
         });
-        instancedToDelete.forEach((f) => {
-            this.instances.delete(f);
-        });
+        Utils.DeleteKeysFromMap(this.instances, instancedToDelete);
     }
 
     getInstancesInfo() {
-        const result = [];
-        this.instances.forEach((v) => {
+        const result: InstanceDetails[] = [];
+        this.instances.forEach((inatance) => {
             result.push({
-                id: v.instanceId,
-                players: v.getPlayersCount()
-            });
+                id: inatance.instanceId,
+                players: inatance.getPlayersCount(),
+                bots: 0,
+                x: inatance.x,
+                y: inatance.y
+            } as InstanceDetails);
         });
         return result;
     }

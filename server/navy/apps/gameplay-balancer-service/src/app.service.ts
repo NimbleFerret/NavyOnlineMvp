@@ -4,7 +4,8 @@ import {
   GetGameplayInstanceRequest,
   GetGameplayInstanceResponse
 } from '@app/shared-library/gprc/grpc.gameplay-balancer.service';
-import { Injectable } from '@nestjs/common';
+import { Utils } from '@app/shared-library/utils';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 interface GameplayInstance {
@@ -48,16 +49,18 @@ export class AppService {
     } as GetGameplayInstanceResponse;
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_SECOND)
   checkInstanceLastPingTime() {
     const now = new Date().getTime();
     const instancesToDelete: string[] = [];
     this.gameplayInstances.forEach((value: GameplayInstance) => {
-      if (value.lastPingTime + 6000 < now) {
-        console.log('Remove gameplay instance');
+      Logger.log(value);
+      if (value.lastPingTime + 2000 < now) {
+        Logger.log('Remove gameplay instance' + this.gameplayInstanceKey(value));
         instancesToDelete.push(this.gameplayInstanceKey(value));
       }
     });
+    Utils.DeleteKeysFromMap(this.gameplayInstances, instancesToDelete);
   }
 
   private gameplayInstanceKey(instance: GameplayInstance) {

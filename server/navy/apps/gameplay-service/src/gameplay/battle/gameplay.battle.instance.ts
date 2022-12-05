@@ -23,12 +23,12 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
 
     constructor(
         private shipModel: Model<ShipDocument>,
-        public x: number,
-        public y: number,
+        x: number,
+        y: number,
         eventEmitter: EventEmitter2,
         sectorContent: SectorContent
     ) {
-        super(eventEmitter, GameplayType.Battle, new engine.GameEngine());
+        super(eventEmitter, GameplayType.Battle, new engine.GameEngine(), x, y);
 
         this.gameEngine.deleteMainEntityCallback = async (ship: object) => {
             const jsShip = this.converJsEntityToTypeScript(ship);

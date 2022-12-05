@@ -15,11 +15,11 @@ export class GameplayIslandInstance extends BaseGameplayInstance {
 
     constructor(
         eventEmitter: EventEmitter2,
-        public x: number,
-        public y: number,
+        x: number,
+        y: number,
         public sectorContent: SectorContent
     ) {
-        super(eventEmitter, GameplayType.Island, new engine.IslandEngine());
+        super(eventEmitter, GameplayType.Island, new engine.IslandEngine(), x, y);
 
         this.gameEngine.createMainEntityCallback = (entity: object) => {
             const socketServerMessageAddEntity = {

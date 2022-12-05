@@ -44,14 +44,20 @@ export class AppService implements OnModuleInit {
     this.gameplayBalancerService = this.gameplayBalancerServiceGrpcClient.getService<GameplayBalancerService>(GameplayBalancerServiceName);
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_SECOND)
   balancerPing() {
     this.gameplayBalancerService.GameplayServicePing({
       address: this.address,
       region: AppService.SERVICE_REGION,
-      battleInstances: [],
-      islandInstances: [],
+      battleInstances: this.gameplayBattleService.getInstancesInfo(),
+      islandInstances: this.gameplayIslandService.getInstancesInfo(),
     }).subscribe();
+  }
+
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  destroyEmptyInstances() {
+    this.gameplayBattleService.destroyEmptyInstances();
+    this.gameplayIslandService.destroyEmptyInstances();
   }
 
   async createOrJoinGame(dto: CreateOrJoinGameRequestDto) {

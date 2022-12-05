@@ -32,7 +32,9 @@ export abstract class BaseGameplayInstance {
     constructor(
         public eventEmitter: EventEmitter2,
         public gameplayType: GameplayType,
-        public gameEngine: any) {
+        public gameEngine: any,
+        public x: number,
+        public y: number) {
     }
 
     // -------------------------------------
