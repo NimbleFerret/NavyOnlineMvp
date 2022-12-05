@@ -3,7 +3,7 @@ import {
   GameplayServicePingRequest,
   GetGameplayInstanceRequest
 } from '@app/shared-library/gprc/grpc.gameplay-balancer.service';
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { AppService } from './app.service';
 
@@ -20,4 +20,10 @@ export class AppController {
   getGameplayInstance(request: GetGameplayInstanceRequest) {
     return this.appService.getGameplayInstance(request);
   }
+
+  @Get('info')
+  async getInfo() {
+    return this.appService.getInfo();
+  }
+
 }

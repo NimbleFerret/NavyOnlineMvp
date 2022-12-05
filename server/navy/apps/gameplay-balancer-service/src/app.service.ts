@@ -49,12 +49,19 @@ export class AppService {
     } as GetGameplayInstanceResponse;
   }
 
+  getInfo() {
+    const result = [];
+    this.gameplayInstances.forEach((value) => {
+      result.push(value);
+    });
+    return result;
+  }
+
   @Cron(CronExpression.EVERY_SECOND)
   checkInstanceLastPingTime() {
     const now = new Date().getTime();
     const instancesToDelete: string[] = [];
     this.gameplayInstances.forEach((value: GameplayInstance) => {
-      Logger.log(value);
       if (value.lastPingTime + 2000 < now) {
         Logger.log('Remove gameplay instance' + this.gameplayInstanceKey(value));
         instancesToDelete.push(this.gameplayInstanceKey(value));
