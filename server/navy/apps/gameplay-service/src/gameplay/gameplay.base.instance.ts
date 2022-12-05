@@ -22,11 +22,13 @@ import { BaseGameObject } from '@app/shared-library/entities/entity.base';
 
 export abstract class BaseGameplayInstance {
 
+    public readonly destroyEmptyInstanceTimeoutMS = 10000;
     public readonly worldStateUpdateIntervalMS = 2000;
     public readonly instanceId = uuidv4();
 
-    readonly playerEntityMap: Map<string, string> = new Map();
-    readonly entityPlayerMap: Map<string, string> = new Map();
+    readonly creationTime = new Date().getTime();
+    readonly playerEntityMap = new Map<string, string>();
+    readonly entityPlayerMap = new Map<string, string>();
     notifyGameWorldStateTimer: NodeJS.Timer;
 
     constructor(
@@ -78,13 +80,22 @@ export abstract class BaseGameplayInstance {
         this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
     }
 
+    public destroyByTimeIfNeeded() {
+        const now = new Date().getTime();
+        if (this.creationTime + this.destroyEmptyInstanceTimeoutMS < now && this.getPlayersCount() == 0) {
+            this.destroy();
+            return true;
+        }
+        return false;
+    }
+
     public destroy() {
         try {
             clearInterval(this.notifyGameWorldStateTimer);
             this.playerEntityMap.clear();
             this.entityPlayerMap.clear();
             this.gameEngine.destroy();
-            Logger.log('Destroy instance. Type: ' + this.gameplayType + ', id: ' + this.instanceId);
+            Logger.log('Destroy instance. Type: ' + GameplayType[this.gameplayType] + ', id: ' + this.instanceId);
         } catch (e) {
             Logger.error(e);
         }

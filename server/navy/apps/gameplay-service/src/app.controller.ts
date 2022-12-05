@@ -8,7 +8,7 @@ export class AppController {
 
   @Post('createOrJoinGame')
   async createOrJoinGame(@Body() dto: CreateOrJoinGameRequestDto) {
-    await this.appService.createOrJoinGame(dto);
+    return this.appService.createOrJoinGame(dto);
   }
 
 }

@@ -21,7 +21,6 @@ export enum GameplayType {
 
 export interface JoinWorldOrCreateResult {
     result: boolean;
-    playersCount?: number;
     instanceId?: string;
     reason?: string;
 }
@@ -42,11 +41,12 @@ export abstract class GameplayBaseService {
         };
         const islandInstanceId = this.sectorInstance.get(x + '+' + y);
 
+        // TODO players capacity per instance check
+
         if (islandInstanceId) {
             const islandInstance = this.instances.get(islandInstanceId);
             if (islandInstance.getPlayersCount() < this.maxPlayersPerInstance) {
                 result.result = true;
-                result.playersCount = islandInstance.getPlayersCount();
                 result.instanceId = islandInstance.instanceId;
             } else {
                 result.result = false;
@@ -58,7 +58,6 @@ export abstract class GameplayBaseService {
                 this.instances.set(instance.instanceId, instance);
                 this.sectorInstance.set(x + '+' + y, instance.instanceId);
                 result.result = true;
-                result.playersCount = instance.getPlayersCount();
                 result.instanceId = instance.instanceId;
             }
         }
@@ -72,12 +71,12 @@ export abstract class GameplayBaseService {
     // Admin api
     // -------------------------------------
 
-    destroyEmptyInstances() {
+    destroyEmptyInstancesIfNeeded() {
         const instancedToDelete: string[] = [];
-        this.instances.forEach((v) => {
-            if (v.getPlayersCount() == 0) {
-                v.destroy();
-                instancedToDelete.push(v.instanceId);
+        this.instances.forEach((instance) => {
+            if (instance.destroyByTimeIfNeeded()) {
+                instancedToDelete.push(instance.instanceId);
+                this.sectorInstance.delete(instance.x + '+' + instance.y);
             }
         });
         Utils.DeleteKeysFromMap(this.instances, instancedToDelete);
@@ -121,27 +120,21 @@ export abstract class GameplayBaseService {
 
     @OnEvent(AppEvents.PlayerDisconnected)
     async handlePlayerDisconnected(data: PlayerDisconnectedEvent) {
-        const instanceId = this.playerInstanceMap.get(data.playerId.toLowerCase());
+        const playerId = data.playerId.toLowerCase();
+        const instanceId = this.playerInstanceMap.get(playerId);
         if (instanceId) {
-            this.playerInstanceMap.delete(data.playerId.toLowerCase());
+            this.playerInstanceMap.delete(playerId);
             const instance = this.instances.get(instanceId);
             instance.handlePlayerDisconnected(data);
             if (instance.getPlayersCount() == 0) {
-                Logger.log(`No more player in instance: ${instanceId}, destroying...`);
+                Logger.log(`No more players in instance: ${instanceId}, destroying...`);
                 instance.destroy();
                 this.instances.delete(instanceId);
-
-                let sectorKeyToDelete: string;
-                this.sectorInstance.forEach((v, k) => {
-                    if (v == instanceId) {
-                        sectorKeyToDelete = k;
-                    }
-                });
-                this.sectorInstance.delete(sectorKeyToDelete);
+                this.sectorInstance.delete(instance.x + '+' + instance.y);
                 Logger.log(`Instance: ${instanceId} destroyed !`);
             }
         } else {
-            // TODO add logs
+            Logger.error('Unable to delete instance while player disconnected. Player id: ' + playerId);
         }
     }
 
