@@ -8,9 +8,7 @@ import * as Nvy from '../abi/Nvy.json';
 import * as Ship from '../abi/Ship.json';
 import * as Island from '../abi/Island.json';
 import * as ShipTemplate from '../abi/ShipTemplate.json';
-import * as FounderCaptainCollectionSale from '../abi/FounderCaptainCollectionSale.json';
-import * as FounderShipCollectionSale from '../abi/FounderShipCollectionSale.json';
-import * as FounderIslandCollectionSale from '../abi/FounderIslandCollectionSale.json';
+import * as CollectionSale from '../abi/CollectionSale.json';
 
 @Injectable()
 export class EthersProvider implements OnModuleInit {
@@ -30,9 +28,9 @@ export class EthersProvider implements OnModuleInit {
     public islandContract: Contract;
 
     // Sale contracts
-    public founderCaptainCollectionSaleContract: Contract;
-    public founderShipCollectionSaleContract: Contract;
-    public founderIslandCollectionSaleContract: Contract;
+    public captainCollectionSaleContract: Contract;
+    public shipCollectionSaleContract: Contract;
+    public islandCollectionSaleContract: Contract;
 
     // Ship stats contracts
     public shipTemplateContract: Contract;
@@ -50,8 +48,8 @@ export class EthersProvider implements OnModuleInit {
 
         this.shipTemplateContract = new ethers.Contract(Constants.ShipTemplateContractAddress, ShipTemplate, this.ethersProvider);
 
-        this.founderCaptainCollectionSaleContract = new ethers.Contract(Constants.FounderCaptainCollectionSaleContractAddress, FounderCaptainCollectionSale, this.ethersProvider);
-        this.founderShipCollectionSaleContract = new ethers.Contract(Constants.FounderShipCollectionSaleContractAddress, FounderShipCollectionSale, this.ethersProvider);
-        this.founderIslandCollectionSaleContract = new ethers.Contract(Constants.FounderIslandCollectionSaleContractAddress, FounderIslandCollectionSale, this.ethersProvider);
+        this.captainCollectionSaleContract = new ethers.Contract(Constants.CaptainCollectionSaleContractAddress, CollectionSale, this.ethersProvider);
+        this.shipCollectionSaleContract = new ethers.Contract(Constants.ShipCollectionSaleContractAddress, CollectionSale, this.ethersProvider);
+        this.islandCollectionSaleContract = new ethers.Contract(Constants.IslandCollectionSaleContractAddress, CollectionSale, this.ethersProvider);
     }
 }

@@ -270,19 +270,6 @@
                 "type": "uint256"
             }
         ],
-        "name": "collectMiningRewards",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "captainId",
-                "type": "uint256"
-            }
-        ],
         "name": "collectStakingRewards",
         "outputs": [],
         "stateMutability": "nonpayable",
@@ -337,18 +324,8 @@
                 "components": [
                     {
                         "internalType": "bool",
-                        "name": "mining",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "bool",
                         "name": "staking",
                         "type": "bool"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "miningRewardNVY",
-                        "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
@@ -357,21 +334,16 @@
                     },
                     {
                         "internalType": "uint256",
-                        "name": "miningStartedAt",
+                        "name": "stakingStartedAt",
                         "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "miningDurationSeconds",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "miningIsland",
+                        "name": "stakingDurationSeconds",
                         "type": "uint256"
                     }
                 ],
-                "internalType": "struct NVYGameLibrary.CaptainStats",
+                "internalType": "struct GameLibrary.CaptainStats",
                 "name": "captain",
                 "type": "tuple"
             },
@@ -464,18 +436,8 @@
         "outputs": [
             {
                 "internalType": "bool",
-                "name": "mining",
-                "type": "bool"
-            },
-            {
-                "internalType": "bool",
                 "name": "staking",
                 "type": "bool"
-            },
-            {
-                "internalType": "uint256",
-                "name": "miningRewardNVY",
-                "type": "uint256"
             },
             {
                 "internalType": "uint256",
@@ -484,17 +446,12 @@
             },
             {
                 "internalType": "uint256",
-                "name": "miningStartedAt",
+                "name": "stakingStartedAt",
                 "type": "uint256"
             },
             {
                 "internalType": "uint256",
-                "name": "miningDurationSeconds",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "miningIsland",
+                "name": "stakingDurationSeconds",
                 "type": "uint256"
             }
         ],
@@ -807,24 +764,6 @@
                 "internalType": "uint256",
                 "name": "captainId",
                 "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "islandId",
-                "type": "uint256"
-            }
-        ],
-        "name": "startMining",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "captainId",
-                "type": "uint256"
             }
         ],
         "name": "startStaking",
@@ -935,18 +874,8 @@
                 "components": [
                     {
                         "internalType": "bool",
-                        "name": "mining",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "bool",
                         "name": "staking",
                         "type": "bool"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "miningRewardNVY",
-                        "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
@@ -955,21 +884,16 @@
                     },
                     {
                         "internalType": "uint256",
-                        "name": "miningStartedAt",
+                        "name": "stakingStartedAt",
                         "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "miningDurationSeconds",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "miningIsland",
+                        "name": "stakingDurationSeconds",
                         "type": "uint256"
                     }
                 ],
-                "internalType": "struct NVYGameLibrary.CaptainStats",
+                "internalType": "struct GameLibrary.CaptainStats",
                 "name": "captain",
                 "type": "tuple"
             },

@@ -84,28 +84,19 @@ export class BlockchainService implements OnModuleInit {
         @InjectQueue('blockchain') private readonly blockchainQueue: Queue) { }
 
     async onModuleInit() {
-        // await this.updateAndSetShipStats(); 
-
-        // await this.mintTokenQueue.add({
-        //     id: uuidv4(),
-        //     transactionType: TransactionType.MINT_AKS,
-        //     amount: 100,
-        //     recipient: '12379345697324657893'
-        // });
-
-        this.ethersProvider.founderCaptainCollectionSaleContract.on(EthersProvider.EventGenerateCaptain, async (sender: string) => {
+        this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateCaptain, async (sender: string) => {
             try {
             } catch (e) {
             }
         });
 
-        this.ethersProvider.founderShipCollectionSaleContract.on(EthersProvider.EventGenerateShip, async (sender: string) => {
+        this.ethersProvider.shipCollectionSaleContract.on(EthersProvider.EventGenerateShip, async (sender: string) => {
             try {
             } catch (e) {
             }
         });
 
-        this.ethersProvider.founderIslandCollectionSaleContract.on(EthersProvider.EventGenerateIsland, async (sender: string) => {
+        this.ethersProvider.islandCollectionSaleContract.on(EthersProvider.EventGenerateIsland, async (sender: string) => {
             try {
             } catch (e) {
             }
