@@ -45,6 +45,7 @@ export class NFTService implements OnModuleInit {
         this.shipStatsStep = shipStatsStep;
     }
 
+    // TODO use this
     async createNewCaptain(index: number, maxIndex: number, recipient: string) {
         try {
             const captainStats = {

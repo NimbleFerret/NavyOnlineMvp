@@ -259,10 +259,10 @@ export class NftCaptainGenerator {
             description: 'Founders captain collection of Navy.online.',
             image: imagePathOnMoralis,
             attributes: [
-                { miningRewardNVY: captainStats.miningRewardNVY },
                 { stakingRewardNVY: captainStats.stakingRewardNVY },
                 { traits: captainStats.traits },
-                { level: captainStats.level },
+                { currentLevel: captainStats.currentLevel },
+                { maxLevel: captainStats.maxLevel },
                 { rarity: captainStats.rarity },
                 { bg: bgIndex },
                 { acc: accIndex },

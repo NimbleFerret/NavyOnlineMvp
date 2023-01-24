@@ -12,7 +12,7 @@ contract FounderCaptainCollectionSale is Ownable {
 
     constructor(uint256 _captainOnSaleTotal, uint256 _captainPrice) public {
         captainOnSaleTotal = _captainOnSaleTotal;
-        captainPrice = _captainPrice * 10**18;
+        captainPrice = _captainPrice * 10 ** 18;
     }
 
     function buyCaptain() public payable {

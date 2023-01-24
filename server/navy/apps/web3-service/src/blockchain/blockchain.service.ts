@@ -3,22 +3,24 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { v4 as uuidv4 } from 'uuid';
 import { EthersProvider } from './blockchain.ethers.provider';
+import { Constants } from '../app.constants';
+import { NftCaptainGenerator } from '../nft/nft.generator.captain';
+import { Rarity } from '@app/shared-library/shared-library.main';
+import { ethers } from 'ethers';
 
 // -----------------------------------------
 // These stats are used to generate new NFTs
 // -----------------------------------------
 
 export interface CaptainStats {
-    level: number;
-    traits: number;
+    currentLevel: number;
+    maxLevel: number;
+    traits: string;
     rarity: number;
-    mining: boolean,
     staking: boolean,
-    miningRewardNVY: number;
     stakingRewardNVY: number;
-    miningStartedAt: number;
-    miningDurationSeconds: number;
-    miningIsland: number;
+    stakingStartedAt: number;
+    stakingDurationSeconds: number;
 }
 
 export interface IslandStats {
@@ -75,6 +77,8 @@ export interface ShipStatsStep {
 @Injectable()
 export class BlockchainService implements OnModuleInit {
 
+    private nftCaptainGenerator = new NftCaptainGenerator();
+
     private shipStatsStep: ShipStatsStep;
     private smallShipStatsRange: ShipStatsRange;
     private middleShipStatsRange: ShipStatsRange;
@@ -84,21 +88,77 @@ export class BlockchainService implements OnModuleInit {
         @InjectQueue('blockchain') private readonly blockchainQueue: Queue) { }
 
     async onModuleInit() {
-        this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateCaptain, async (sender: string) => {
+        this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
             try {
+                Logger.log(`Generating new captain for user: ${sender}...`);
+                if (contractAddress == Constants.CaptainContractAddress) {
+                    // TODO replace tokens total by tokens left
+                    const tokensLeft = (await this.ethersProvider.captainCollectionSaleContract.tokensLeft()).toNumber();
+                    const tokensTotal = (await this.ethersProvider.captainCollectionSaleContract.tokensTotal()).toNumber();
+
+                    // TODO compare all on chain params and deploy a new contract
+                    const captainStats = {
+                        currentLevel: 1,
+                        maxLevel: 10,
+                        traits: '',
+                        rarity: Rarity.LEGENDARY,
+                        staking: false,
+                        stakingRewardNVY: 5,
+                        stakingStartedAt: 0,
+                        stakingDurationSeconds: 120,
+                    } as CaptainStats;
+
+                    const captainMetadata = await this.nftCaptainGenerator.generateFounderCaptain(
+                        tokensLeft,
+                        tokensTotal,
+                        captainStats
+                    );
+
+                    const captainStatsTuple: [
+                        boolean,
+                        ethers.BigNumber,
+                        ethers.BigNumber,
+                        ethers.BigNumber] = [
+                            false,
+                            ethers.BigNumber.from(5),
+                            ethers.BigNumber.from(0),
+                            ethers.BigNumber.from(120),
+                        ];
+
+                    Logger.log('Generated captain metadata: ' + captainMetadata);
+
+                    await this.ethersProvider.captainContract.grantCaptain(sender, captainStatsTuple, captainMetadata);
+                } else {
+                    Logger.error(`Wrong contract address! Expected captain address: ${Constants.CaptainContractAddress}, received: ${contractAddress}`);
+                }
             } catch (e) {
+                Logger.error(e);
             }
         });
 
-        this.ethersProvider.shipCollectionSaleContract.on(EthersProvider.EventGenerateShip, async (sender: string) => {
+        this.ethersProvider.shipCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
             try {
+                Logger.log(`Generating new ship for user: ${sender}...`);
+                if (contractAddress == Constants.ShipContractAddress) {
+
+                } else {
+                    Logger.error(`Wrong contract address! Expected ship address: ${Constants.ShipContractAddress}, received: ${contractAddress}`);
+                }
             } catch (e) {
+                Logger.error(e);
             }
         });
 
-        this.ethersProvider.islandCollectionSaleContract.on(EthersProvider.EventGenerateIsland, async (sender: string) => {
+        this.ethersProvider.islandCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
             try {
+                Logger.log(`Generating new island for user: ${sender}...`);
+                if (contractAddress == Constants.IslandContractAddress) {
+
+                } else {
+                    Logger.error(`Wrong contract address! Expected island address: ${Constants.IslandContractAddress}, received: ${contractAddress}`);
+                }
             } catch (e) {
+                Logger.error(e);
             }
         });
     }
