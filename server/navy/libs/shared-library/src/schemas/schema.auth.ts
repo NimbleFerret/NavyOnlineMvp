@@ -17,8 +17,6 @@ export class UserAuth {
 
     @Prop({ default: '' })
     nickname: string;
-
-
 }
 
 export const UserAuthSchema = SchemaFactory.createForClass(UserAuth);       

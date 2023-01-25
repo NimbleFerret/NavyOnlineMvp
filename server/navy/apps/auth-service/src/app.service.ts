@@ -10,16 +10,7 @@ export class AppService {
 
   }
 
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.findUserByEmail(email);
-    if (user && user.password === password) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
-  }
-
-  private async findUserByEmail(email: string): Promise<UserAuth | undefined> {
+  async findUserByEmail(email: string): Promise<UserAuth | undefined> {
     const user = await this.userAuthModel.findOne({
       email
     });
