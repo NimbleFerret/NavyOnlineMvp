@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package userservice;
+
+import "web3.service.proto";
+
+service UserService {
+  rpc SignInOrUp (SignInOrUpRequest) returns (SignInOrUpResponse);
+  rpc GetUserPos (GetUserPosRequest) returns (GetUserPosResponse);
+}
+
+//-----------------------------
+
+message SignInOrUpRequest {
+    string user = 1;
+}
+
+message SignInOrUpResponse {
+    string ethAddress = 1;
+    string nickname = 2;
+    int32 worldX = 3;
+    int32 worldY = 4;
+    int32 nvy = 5;
+    int32 aks = 6;
+    repeated Captain captains = 7;
+    repeated Ship ships = 8;
+    repeated Island islands = 9;
+    int32 dailyPlayersKilledCurrent = 10;
+    int32 dailyPlayersKilledMax = 11;
+    int32 dailyBotsKilledCurrent = 12;
+    int32 dailyBotsKilledMax = 13;
+    int32 dailyBossesKilledCurrent = 14;
+    int32 dailyBossesKilledMax = 15;
+}
+
+//-----------------------------
+
+message GetUserPosRequest {
+  string user = 1;
+}
+
+message GetUserPosResponse {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+//-----------------------------

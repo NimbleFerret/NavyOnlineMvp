@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package worldservice;
+
+service WorldService {
+  rpc GenerateNewIslandPosition (IslandPositionRequest) returns (IslandPositionResponse);
+  rpc GetWorldInfo (WorldInfoRequest) returns (WorldInfoResponse);
+  rpc GetSectorInfo (SectorInfoRequest) returns (SectorInfoResponse);
+  rpc WorldMove (WorldMoveRequest) returns (WorldMoveResponse);
+  rpc AddNewIslandToSector (AddNewIslandToSectorRequest) returns (AddNewIslandToSectorResponse);
+}
+
+//-----------------------------
+
+message IslandPositionRequest {
+}
+
+message IslandPositionResponse {
+  int32 x = 1;
+  int32 y = 2;
+  bool success = 3;
+}
+
+//-----------------------------
+
+enum SectorContent {
+  SECTOR_CONTENT_EMPTY = 0;
+  SECTOR_CONTENT_BASE = 1;
+  SECTOR_CONTENT_ISLAND = 2;
+  SECTOR_CONTENT_BOSS = 3;
+  SECTOR_CONTENT_PVE = 4;
+  SECTOR_CONTENT_PVP = 5;
+}
+
+message SectorInfo {
+  int32 x = 1;
+  int32 y = 2;
+  SectorContent sectorContent = 3;
+}
+
+message WorldInfoRequest {
+}
+
+message WorldInfoResponse {
+  repeated SectorInfo sectors = 1;
+}
+
+//-----------------------------
+
+message SectorInfoRequest {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message SectorInfoResponse {
+  SectorInfo sector = 1;
+}
+
+//-----------------------------
+
+message WorldMoveRequest {
+  string user = 1;
+  int32 x = 2;
+  int32 y = 3;
+}
+
+message WorldMoveResponse {
+  bool success = 1;
+}
+
+//-----------------------------
+
+message AddNewIslandToSectorRequest {
+  string tokenId = 1;
+}
+
+message AddNewIslandToSectorResponse {
+}
+
+//-----------------------------

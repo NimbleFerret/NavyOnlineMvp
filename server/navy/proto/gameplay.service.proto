@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package gameplayservice;
+
+import "world.service.proto";
+
+service GameplayService {
+  rpc CreateOrJoinGame (CreateOrJoinGameRequest) returns (CreateOrJoinGameResponse);
+}
+
+//-----------------------------
+
+message CreateOrJoinGameRequest {
+  SectorInfo sectorInfo = 1;
+}
+
+message CreateOrJoinGameResponse {
+  bool success = 1;
+  string instanceId = 2;
+}
+
+//-----------------------------

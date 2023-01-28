@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/gameplay-service/src",
+  "monorepo": true,
+  "root": "apps/gameplay-service",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/gameplay-service/tsconfig.app.json",
+    "assets": [
+      "**/*.proto"
+    ],
+    "watchAssets": true
+  },
+  "projects": {
+    "gameplay-service": {
+      "type": "application",
+      "root": "apps/gameplay-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/gameplay-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gameplay-service/tsconfig.app.json"
+      }
+    },
+    "web3-service": {
+      "type": "application",
+      "root": "apps/web3-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/web3-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/web3-service/tsconfig.app.json"
+      }
+    },
+    "shared-library": {
+      "type": "library",
+      "root": "libs/shared-library",
+      "entryFile": "index",
+      "sourceRoot": "libs/shared-library/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/shared-library/tsconfig.lib.json"
+      }
+    },
+    "world-service": {
+      "type": "application",
+      "root": "apps/world-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/world-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/world-service/tsconfig.app.json"
+      }
+    },
+    "gateway-service": {
+      "type": "application",
+      "root": "apps/gateway-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/gateway-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gateway-service/tsconfig.app.json"
+      }
+    },
+    "user-service": {
+      "type": "application",
+      "root": "apps/user-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/user-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/user-service/tsconfig.app.json"
+      }
+    },
+    "gameplay-balancer-service": {
+      "type": "application",
+      "root": "apps/gameplay-balancer-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/gameplay-balancer-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gameplay-balancer-service/tsconfig.app.json"
+      }
+    }
+  }
+}

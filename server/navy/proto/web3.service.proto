@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package web3service;
+
+service Web3Service {
+  rpc GetAndSyncUserAssets (GetAndSyncUserAssetsRequest) returns (GetAndSyncUserAssetsResponse);
+}
+
+//-----------------------------
+
+message Captain {
+  string id = 1;
+  string owner = 2;
+  int32 type = 3;
+  int32 number = 4;
+  int32 miningRewardNVY = 5;
+  int32 stakingRewardNVY = 6;
+  int32 miningStartedAt = 7;
+  int32 miningDurationSeconds = 8;
+  int32 traits = 9;
+  int32 level = 10;
+  int32 rarity = 11;
+  int32 bg = 12;
+  int32 acc = 13;
+  int32 head = 14;
+  int32 haircutOrHat = 15;
+  int32 clothes = 16;
+}
+
+message Ship {
+  string id = 1;
+  string owner = 2;
+  int32 type = 3;
+  int32 armor = 4;
+  int32 hull = 5;
+  int32 maxSpeed = 6;
+  int32 accelerationStep = 7;
+  int32 accelerationDelay = 8;
+  int32 rotationDelay = 9;
+  int32 fireDelay = 10;
+  int32 cannons = 11;
+  int32 cannonsRange = 12;
+  int32 cannonsDamage = 13;
+  int32 level = 14;
+  int32 traits = 15;
+  int32 size = 16;
+  int32 rarity = 17;
+  int32 windows = 18;
+  int32 anchor = 19;
+  int32 currentIntegrity = 20;
+  int32 maxIntegrity = 21;
+}
+
+message Island {
+  string id = 1;
+  string owner = 2;
+  int32 level = 3;
+  int32 size = 4;
+  int32 rarity = 5;
+  string terrain = 6;
+  int32 miningRewardNVY = 7;
+  int32 shipAndCaptainFee = 8;
+  int32 maxMiners = 9;
+  int32 miners = 10;
+  int32 minersFee = 11;
+  bool mining = 12;
+  int32 x = 13;
+  int32 y = 14;
+}
+
+message GetAndSyncUserAssetsRequest {
+    string address = 1;
+}
+
+message GetAndSyncUserAssetsResponse {
+  int32 nvy = 1;
+  int32 aks = 2;
+  repeated Captain captains = 3;
+  repeated Ship ships = 4;
+  repeated Island islands = 5;
+}
+
+//-----------------------------
