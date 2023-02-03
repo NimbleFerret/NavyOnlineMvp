@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { Island, IslandSchema } from '../../../libs/shared-library/src/schemas/schema.island';
 import { Sector, SectorSchema } from '@app/shared-library/schemas/schema.sector';
 import { World, WorldSchema } from '@app/shared-library/schemas/schema.world';
-import { User, UserSchema } from '@app/shared-library/schemas/schema.user';
+import { User, UserSchema } from '@app/shared-library/schemas/schema.user.avatar';
 
 @Module({
   imports: [

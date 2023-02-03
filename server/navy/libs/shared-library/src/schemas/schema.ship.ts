@@ -2,7 +2,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { Rarity, ShipSize } from '../shared-library.main';
-import { UserDocument } from './schema.user';
+import { UserAvatarDocument } from './schema.user.avatar';
 
 export type ShipDocument = Ship & Document;
 
@@ -13,7 +13,7 @@ export class Ship {
     tokenId: string;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-    owner: UserDocument;
+    owner: UserAvatarDocument;
 
     @Prop()
     hull: number;

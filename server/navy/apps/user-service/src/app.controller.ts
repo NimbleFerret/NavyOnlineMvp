@@ -1,5 +1,5 @@
-import { GetUserPosRequest, SignInOrUpRequest, UserServiceName } from '@app/shared-library/gprc/grpc.user.service';
-import { Controller } from '@nestjs/common';
+import { GetUserPosRequest, SignUpRequest, UserServiceName } from '@app/shared-library/gprc/grpc.user.service';
+import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { AppService } from './app.service';
 
@@ -8,8 +8,8 @@ export class AppController {
   constructor(private readonly appService: AppService) { }
 
   @GrpcMethod(UserServiceName)
-  signInOrUp(request: SignInOrUpRequest) {
-    return this.appService.signInOrUp(request);
+  signUp(request: SignUpRequest) {
+    return this.appService.signUp(request);
   }
 
   @GrpcMethod(UserServiceName)

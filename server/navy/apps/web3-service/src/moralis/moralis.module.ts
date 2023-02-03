@@ -2,7 +2,7 @@ import { WorldServiceGrpcClientName, WorldServiceGrpcClientOptions } from '@app/
 import { Captain, CaptainSchema } from '@app/shared-library/schemas/schema.captain';
 import { Island, IslandSchema } from '@app/shared-library/schemas/schema.island';
 import { Ship, ShipSchema } from '@app/shared-library/schemas/schema.ship';
-import { User, UserSchema } from '@app/shared-library/schemas/schema.user';
+import { User, UserSchema } from '@app/shared-library/schemas/schema.user.avatar';
 import { Module } from '@nestjs/common';
 import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';

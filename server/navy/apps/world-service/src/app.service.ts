@@ -12,7 +12,7 @@ import {
 import { Sector, SectorDocument } from '@app/shared-library/schemas/schema.sector';
 import { WorldDocument, World } from '@app/shared-library/schemas/schema.world';
 import { IslandDocument, Island } from '@app/shared-library/schemas/schema.island';
-import { User, UserDocument } from '@app/shared-library/schemas/schema.user';
+import { User, UserDocument } from '@app/shared-library/schemas/schema.user.avatar';
 
 @Injectable()
 export class AppService {

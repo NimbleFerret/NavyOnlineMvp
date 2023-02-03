@@ -4,6 +4,7 @@ import {
   GameplayBalancerServiceName
 } from '@app/shared-library/gprc/grpc.gameplay-balancer.service';
 import {
+  SignUpRequest,
   UserService,
   UserServiceGrpcClientName,
   UserServiceName
@@ -17,6 +18,7 @@ import {
 import {
   Inject,
   Injectable,
+  Logger,
   OnModuleInit
 } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
@@ -47,9 +49,13 @@ export class AppService implements OnModuleInit {
     this.gameplayBalancerService = this.gameplayBalancerServiceGrpcClient.getService<GameplayBalancerService>(GameplayBalancerServiceName);
   }
 
-  signInOrUp(dto: SignInOrUpDto) {
-    return this.userService.SignInOrUp(dto);
+  signUp(dto: SignUpRequest) {
+    return this.userService.SignUp(dto);
   }
+
+  // signInOrUp(dto: SignInOrUpDto) {
+  //   return this.userService.SignInOrUp(dto);
+  // }
 
   getWorldInfo() {
     return this.worldService.GetWorldInfo({});

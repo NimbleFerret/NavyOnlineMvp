@@ -3,27 +3,16 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { UserWorldState } from '../shared-library.main';
 
-export type UserDocument = User & Document;
+export type UserAvatarDocument = UserAvatar & Document;
 
 @Schema()
-export class User {
-    @Prop({ required: true, index: true })
-    ethAddress: string;
+export class UserAvatar {
 
     @Prop()
     worldX: number;
 
     @Prop()
     worldY: number;
-
-    @Prop({ default: '' })
-    nickname: string;
-
-    @Prop({ default: false })
-    paidSubscriptionActive: boolean;
-
-    @Prop()
-    paidSubscriptionEndDate: string;
 
     @Prop({
         type: String,
@@ -46,4 +35,4 @@ export class User {
     dailyBossesKilled: number;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserAvatarSchema = SchemaFactory.createForClass(UserAvatar);

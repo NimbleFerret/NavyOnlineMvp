@@ -16,7 +16,7 @@ import { Captain, CaptainDocument } from "@app/shared-library/schemas/schema.cap
 import { Island, IslandDocument } from "@app/shared-library/schemas/schema.island";
 import { WorldService, WorldServiceGrpcClientName, WorldServiceName } from "@app/shared-library/gprc/grpc.world.service";
 import { lastValueFrom } from "rxjs";
-import { User, UserDocument } from "@app/shared-library/schemas/schema.user";
+import { UserAvatar, UserAvatarDocument } from "@app/shared-library/schemas/schema.user.avatar";
 
 @Injectable()
 export class MoralisService implements OnModuleInit {
@@ -33,7 +33,7 @@ export class MoralisService implements OnModuleInit {
         @InjectModel(Captain.name) private captainModel: Model<CaptainDocument>,
         @InjectModel(Ship.name) private shipModel: Model<ShipDocument>,
         @InjectModel(Island.name) private islandModel: Model<IslandDocument>,
-        @InjectModel(User.name) private userModel: Model<UserDocument>,
+        @InjectModel(UserAvatar.name) private userAvatarModel: Model<UserAvatarDocument>,
     ) {
 
     }
@@ -80,7 +80,7 @@ export class MoralisService implements OnModuleInit {
         return result;
     }
 
-    private async getUserTokenBalances(user: UserDocument) {
+    private async getUserTokenBalances(user: UserAvatarDocument) {
         let nvy = 0;
         let aks = 0;
 
@@ -103,7 +103,7 @@ export class MoralisService implements OnModuleInit {
         }
     }
 
-    private async getUserNFTs(user: UserDocument) {
+    private async getUserNFTs(user: UserAvatarDocument) {
         const captains: CaptainEntity[] = [];
         const ships: ShipEntity[] = [];
         const islands: IslandEntity[] = [];
@@ -146,7 +146,7 @@ export class MoralisService implements OnModuleInit {
         }
     }
 
-    private async getCaptainNFTsByOwnerAddress(entity: any, user: UserDocument) {
+    private async getCaptainNFTsByOwnerAddress(entity: any, user: UserAvatarDocument) {
         const metadataAttributes = JSON.parse(entity.metadata).attributes;
         const playerCaptainEntity = {
             id: entity.token_id,
@@ -193,7 +193,7 @@ export class MoralisService implements OnModuleInit {
         return playerCaptainEntity;
     }
 
-    private async getShipNFTsByOwnerAddress(entity: any, user: UserDocument) {
+    private async getShipNFTsByOwnerAddress(entity: any, user: UserAvatarDocument) {
         const metadataAttributes = JSON.parse(entity.metadata).attributes;
         const playerShipEntity = {
             id: entity.token_id,
@@ -263,7 +263,7 @@ export class MoralisService implements OnModuleInit {
         return playerShipEntity;
     }
 
-    private async getIslandNFTsByOwnerAddress(entity: any, user: UserDocument) {
+    private async getIslandNFTsByOwnerAddress(entity: any, user: UserAvatarDocument) {
         const metadataAttributes = JSON.parse(entity.metadata).attributes;
         const playerIslandEntity = {
             id: entity.token_id,

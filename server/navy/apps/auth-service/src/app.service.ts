@@ -1,4 +1,4 @@
-import { UserAuth, UserAuthDocument } from '@app/shared-library/schemas/schema.auth';
+import { UserAuth, UserAuthDocument } from '@app/shared-library/schemas/schema.user.profile';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';

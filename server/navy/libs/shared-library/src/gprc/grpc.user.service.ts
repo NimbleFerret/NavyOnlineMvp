@@ -8,9 +8,14 @@ import { ShipEntity } from "../entities/entity.ship";
 
 //-----------------------------
 
-export interface SignInOrUpRequest {
+export interface SignUpRequest {
     email: string;
     password: string;
+}
+
+export interface SignUpResponse {
+    success: boolean;
+    reasonCode: number;
 }
 
 // TODO import ship, captain and island
@@ -46,7 +51,7 @@ export interface GetUserPosResponse {
 //-----------------------------
 
 export interface UserService {
-    SignInOrUp(request: SignInOrUpRequest): Observable<SignInOrUpResponse>;
+    SignUp(request: SignUpRequest): Observable<SignUpResponse>;
     GetUserPos(request: GetUserPosRequest): Observable<GetUserPosResponse>;
 }
 

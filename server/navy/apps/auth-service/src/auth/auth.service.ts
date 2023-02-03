@@ -1,4 +1,4 @@
-import { UserAuth } from '@app/shared-library/schemas/schema.auth';
+import { UserAuth } from '@app/shared-library/schemas/schema.user.profile';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDTO } from '../app.controller';
