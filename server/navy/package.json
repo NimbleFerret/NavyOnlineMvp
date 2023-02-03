@@ -15,6 +15,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "start:auth-service": "nest start auth-service --debug --watch",
     "start:web3-service": "nest start web3-service --debug --watch",
     "start:world-service": "nest start world-service --debug --watch",
     "start:gateway-service": "nest start gateway-service --debug --watch",
