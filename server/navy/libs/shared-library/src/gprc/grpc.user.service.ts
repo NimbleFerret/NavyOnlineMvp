@@ -7,8 +7,10 @@ import { IslandEntity } from "../entities/entity.island";
 import { ShipEntity } from "../entities/entity.ship";
 
 //-----------------------------
+
 export interface SignInOrUpRequest {
-    user: string;
+    email: string;
+    password: string;
 }
 
 // TODO import ship, captain and island

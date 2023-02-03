@@ -14,9 +14,7 @@ import * as CollectionSale from '../abi/CollectionSale.json';
 export class EthersProvider implements OnModuleInit {
 
     // Contract events
-    public static readonly EventGenerateCaptain = 'GenerateCaptain';
-    public static readonly EventGenerateShip = 'GenerateShip';
-    public static readonly EventGenerateIsland = 'GenerateIsland';
+    public static readonly EventGenerateToken = 'GenerateToken';
 
     // Token contracts
     public aksContract: Contract;

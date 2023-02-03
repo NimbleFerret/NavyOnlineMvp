@@ -202,8 +202,7 @@ export class CronosService implements OnModuleInit {
                 captainsOnSale = captainsOnSale.toNumber();
 
                 const captainStats = {
-                    level: 0,
-                    traits: 0,
+                    traits: "",
                     rarity: Rarity.LEGENDARY,
                     mining: false,
                     staking: false,
