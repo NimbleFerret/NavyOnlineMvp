@@ -6,6 +6,7 @@ import "web3.service.proto";
 
 service UserService {
   rpc SignUp (SignUpRequest) returns (SignUpResponse);
+  rpc FindUser (FindUserRequest) returns (FindUserResponse);
   rpc GetUserPos (GetUserPosRequest) returns (GetUserPosResponse);
 }
 
@@ -37,6 +38,20 @@ message SignInOrUpResponse {
     int32 dailyBotsKilledMax = 13;
     int32 dailyBossesKilledCurrent = 14;
     int32 dailyBossesKilledMax = 15;
+}
+
+//-----------------------------
+
+message FindUserRequest {
+  string email = 1;
+}
+
+message FindUserResponse {
+  string id = 1;
+  string email = 2;
+  string password = 3;
+  string ethAddress = 4;
+  string nickname = 5;
 }
 
 //-----------------------------

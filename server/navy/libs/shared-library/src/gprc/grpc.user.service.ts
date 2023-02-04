@@ -39,6 +39,20 @@ export interface SignInOrUpResponse {
 
 //-----------------------------
 
+export interface FindUserRequest {
+    email: string;
+}
+
+export interface FindUserResponse {
+    id: string;
+    email: string;
+    password: string;
+    ethAddress: string;
+    nickname: string;
+}
+
+//-----------------------------
+
 export interface GetUserPosRequest {
     user: string;
 }
@@ -52,6 +66,7 @@ export interface GetUserPosResponse {
 
 export interface UserService {
     SignUp(request: SignUpRequest): Observable<SignUpResponse>;
+    FindUser(request: FindUserRequest): Observable<FindUserResponse>;
     GetUserPos(request: GetUserPosRequest): Observable<GetUserPosResponse>;
 }
 

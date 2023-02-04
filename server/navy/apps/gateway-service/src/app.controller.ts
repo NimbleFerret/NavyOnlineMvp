@@ -1,18 +1,11 @@
-import { SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
-import { SignInOrUpDto, WorldEnterDto, WorldMoveDto } from './app.dto';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { WorldMoveDto } from './app.dto';
 import { AppService } from './app.service';
 
 // TODO add auth tokens
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) { }
-
-  @Post('signUp')
-  async signUp(@Body() dto: SignUpRequest) {
-    dto.email = dto.email.toLowerCase();
-    return this.appService.signUp(dto);
-  }
 
   // @Post('signInOrUp')
   // async signInOrUp(@Body() dto: SignInOrUpDto) {

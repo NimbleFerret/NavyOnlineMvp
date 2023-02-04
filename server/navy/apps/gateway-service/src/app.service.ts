@@ -49,14 +49,6 @@ export class AppService implements OnModuleInit {
     this.gameplayBalancerService = this.gameplayBalancerServiceGrpcClient.getService<GameplayBalancerService>(GameplayBalancerServiceName);
   }
 
-  signUp(dto: SignUpRequest) {
-    return this.userService.SignUp(dto);
-  }
-
-  // signInOrUp(dto: SignInOrUpDto) {
-  //   return this.userService.SignInOrUp(dto);
-  // }
-
   getWorldInfo() {
     return this.worldService.GetWorldInfo({});
   }

@@ -2,7 +2,7 @@ import { SharedLibraryService } from '@app/shared-library';
 import { CaptainEntity } from '@app/shared-library/entities/entity.captain';
 import { IslandEntity } from '@app/shared-library/entities/entity.island';
 import { ShipEntity } from '@app/shared-library/entities/entity.ship';
-import { GetUserPosRequest, GetUserPosResponse, SignUpRequest, SignInOrUpResponse, SignUpResponse } from '@app/shared-library/gprc/grpc.user.service';
+import { GetUserPosRequest, GetUserPosResponse, SignUpRequest, SignInOrUpResponse, SignUpResponse, FindUserRequest, FindUserResponse } from '@app/shared-library/gprc/grpc.user.service';
 import {
   Web3Service,
   Web3ServiceGrpcClientName,
@@ -57,99 +57,117 @@ export class AppService implements OnModuleInit {
     return response;
   }
 
-  async signInOrUp(request: SignInOrUpRequest) {
-    // const ethAddress = request.user.toLocaleLowerCase();
-    // let user = await this.userModel.findOne({
-    //   ethAddress
-    // });
+  async findUser(request: FindUserRequest) {
+    const user = await this.userProfileModel.findOne({
+      email: request.email
+    });
 
-    // if (!user) {
-    //   const userModel = new this.userModel({
-    //     ethAddress,
-    //     worldX: SharedLibraryService.BASE_POS_X,
-    //     worldY: SharedLibraryService.BASE_POS_Y
-    //   });
-    //   user = await userModel.save();
-    // }
-
-    // const userAssets = await this.getUserAssets(ethAddress);
-    // const captains = userAssets.captains.map(f => {
-    //   return {
-    //     id: f.id,
-    //     owner: f.owner,
-    //     level: f.level,
-    //     traits: f.traits,
-    //     miningRewardNVY: f.miningRewardNVY,
-    //     stakingRewardNVY: f.stakingRewardNVY,
-    //     miningStartedAt: f.miningStartedAt,
-    //     miningDurationSeconds: f.miningDurationSeconds,
-    //     rarity: f.rarity,
-    //     bg: f.bg,
-    //     acc: f.acc,
-    //     head: f.head,
-    //     haircutOrHat: f.haircutOrHat,
-    //     clothes: f.clothes,
-    //   } as CaptainEntity;
-    // });
-    // const ships = userAssets.ships.map(f => {
-    //   return {
-    //     id: f.id,
-    //     owner: f.owner,
-    //     armor: f.armor,
-    //     hull: f.hull,
-    //     maxSpeed: f.maxSpeed,
-    //     accelerationStep: f.accelerationStep,
-    //     accelerationDelay: f.accelerationDelay,
-    //     rotationDelay: f.rotationDelay,
-    //     fireDelay: f.fireDelay,
-    //     cannons: f.cannons,
-    //     cannonsRange: f.cannonsRange,
-    //     cannonsDamage: f.cannonsDamage,
-    //     level: f.level,
-    //     traits: f.traits,
-    //     size: f.size,
-    //     rarity: f.rarity,
-    //     windows: f.windows,
-    //     anchor: f.anchor,
-    //     currentIntegrity: f.currentIntegrity,
-    //     maxIntegrity: f.maxIntegrity
-    //   } as ShipEntity;
-    // });
-    // const islands = userAssets.islands.map(f => {
-    //   return {
-    //     id: f.id,
-    //     owner: f.owner,
-    //     level: f.level,
-    //     rarity: f.rarity,
-    //     terrain: f.terrain,
-    //     size: f.size,
-    //     miningRewardNVY: f.miningRewardNVY,
-    //     shipAndCaptainFee: f.shipAndCaptainFee,
-    //     minersFee: f.minersFee,
-    //     maxMiners: f.maxMiners,
-    //     miners: f.miners,
-    //     mining: f.mining
-    //   } as IslandEntity;
-    // });
-
-    // return {
-    //   ethAddress: user.ethAddress,
-    //   nickname: user.nickname,
-    //   worldX: user.worldX,
-    //   worldY: user.worldY,
-    //   nvy: userAssets.nvy,
-    //   aks: userAssets.aks,
-    //   captains,
-    //   ships,
-    //   islands,
-    //   dailyPlayersKilledCurrent: 0,
-    //   dailyPlayersKilledMax: 0,
-    //   dailyBotsKilledCurrent: 0,
-    //   dailyBotsKilledMax: 0,
-    //   dailyBossesKilledCurrent: 0,
-    //   dailyBossesKilledMax: 0,
-    // } as SignInOrUpResponse;
+    if (user) {
+      const response = {
+        id: user.id,
+        email: user.email,
+        password: user.password,
+        ethAddress: user.nickname,
+        nickname: user.ethAddress
+      } as FindUserResponse;
+      return response;
+    }
+    return {}
   }
+
+  // async signInOrUp(request: SignInOrUpRequest) {
+  // const ethAddress = request.user.toLocaleLowerCase();
+  // let user = await this.userModel.findOne({
+  //   ethAddress
+  // });
+
+  // if (!user) {
+  //   const userModel = new this.userModel({
+  //     ethAddress,
+  //     worldX: SharedLibraryService.BASE_POS_X,
+  //     worldY: SharedLibraryService.BASE_POS_Y
+  //   });
+  //   user = await userModel.save();
+  // }
+
+  // const userAssets = await this.getUserAssets(ethAddress);
+  // const captains = userAssets.captains.map(f => {
+  //   return {
+  //     id: f.id,
+  //     owner: f.owner,
+  //     level: f.level,
+  //     traits: f.traits,
+  //     miningRewardNVY: f.miningRewardNVY,
+  //     stakingRewardNVY: f.stakingRewardNVY,
+  //     miningStartedAt: f.miningStartedAt,
+  //     miningDurationSeconds: f.miningDurationSeconds,
+  //     rarity: f.rarity,
+  //     bg: f.bg,
+  //     acc: f.acc,
+  //     head: f.head,
+  //     haircutOrHat: f.haircutOrHat,
+  //     clothes: f.clothes,
+  //   } as CaptainEntity;
+  // });
+  // const ships = userAssets.ships.map(f => {
+  //   return {
+  //     id: f.id,
+  //     owner: f.owner,
+  //     armor: f.armor,
+  //     hull: f.hull,
+  //     maxSpeed: f.maxSpeed,
+  //     accelerationStep: f.accelerationStep,
+  //     accelerationDelay: f.accelerationDelay,
+  //     rotationDelay: f.rotationDelay,
+  //     fireDelay: f.fireDelay,
+  //     cannons: f.cannons,
+  //     cannonsRange: f.cannonsRange,
+  //     cannonsDamage: f.cannonsDamage,
+  //     level: f.level,
+  //     traits: f.traits,
+  //     size: f.size,
+  //     rarity: f.rarity,
+  //     windows: f.windows,
+  //     anchor: f.anchor,
+  //     currentIntegrity: f.currentIntegrity,
+  //     maxIntegrity: f.maxIntegrity
+  //   } as ShipEntity;
+  // });
+  // const islands = userAssets.islands.map(f => {
+  //   return {
+  //     id: f.id,
+  //     owner: f.owner,
+  //     level: f.level,
+  //     rarity: f.rarity,
+  //     terrain: f.terrain,
+  //     size: f.size,
+  //     miningRewardNVY: f.miningRewardNVY,
+  //     shipAndCaptainFee: f.shipAndCaptainFee,
+  //     minersFee: f.minersFee,
+  //     maxMiners: f.maxMiners,
+  //     miners: f.miners,
+  //     mining: f.mining
+  //   } as IslandEntity;
+  // });
+
+  // return {
+  //   ethAddress: user.ethAddress,
+  //   nickname: user.nickname,
+  //   worldX: user.worldX,
+  //   worldY: user.worldY,
+  //   nvy: userAssets.nvy,
+  //   aks: userAssets.aks,
+  //   captains,
+  //   ships,
+  //   islands,
+  //   dailyPlayersKilledCurrent: 0,
+  //   dailyPlayersKilledMax: 0,
+  //   dailyBotsKilledCurrent: 0,
+  //   dailyBotsKilledMax: 0,
+  //   dailyBossesKilledCurrent: 0,
+  //   dailyBossesKilledMax: 0,
+  // } as SignInOrUpResponse;
+  // }
 
   async getUserPos(request: GetUserPosRequest) {
     const user = await this.userAvatarModel.findOne({

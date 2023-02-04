@@ -1,7 +1,7 @@
-import { UserAuth } from '@app/shared-library/schemas/schema.user.profile';
+import { FindUserResponse, SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SignUpDTO } from '../app.controller';
+import { request } from 'http';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -11,21 +11,49 @@ export class AuthService {
         private jwtService: JwtService
     ) { }
 
-    async validateUser(email: string, pass: string): Promise<UserAuth | null> {
-        const user = await this.usersService.findUserByEmail(email);
-        if (user && user.password === pass) {
+    async validateUser(email: string, password: string): Promise<FindUserResponse | null> {
+        console.log('validateUser');
+        const user = await this.usersService.findUser({ email });
+        if (user && user.password === password) {
             return user;
         }
         return null;
     }
 
-    async signIn(user: any) {
-        const payload = { username: user.username, sub: user.userId };
-        return {
-            access_token: this.jwtService.sign(payload),
-        };
+    async signIn(email: string, password: string) {
+        console.log('signIn');
+        const validatedUser = await this.validateUser(email, password);
+
+        if (validatedUser) {
+            const payload = { email: validatedUser.email, id: validatedUser.id };
+            return {
+                success: true,
+                access_token: this.jwtService.sign(payload),
+            };
+        } else {
+            return {
+                success: false
+            }
+        }
+
+
     }
 
-    async signUp(signUpDTO: SignUpDTO) {
+    async signUp(request: SignUpRequest) {
+        const signUpResult = await this.usersService.signUp(request);
+        if (signUpResult.success) {
+            const user = await this.usersService.findUser({ email: request.email });
+            const payload = { email: user.email, id: user.id };
+            return {
+                success: true,
+                access_token: this.jwtService.sign(payload),
+            };
+        } else {
+            return {
+                success: false,
+                reason: signUpResult.reasonCode
+            };
+        }
+
     }
 }
