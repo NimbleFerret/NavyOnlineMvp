@@ -12,7 +12,7 @@ import {
 import { Sector, SectorDocument } from '@app/shared-library/schemas/schema.sector';
 import { WorldDocument, World } from '@app/shared-library/schemas/schema.world';
 import { IslandDocument, Island } from '@app/shared-library/schemas/schema.island';
-import { User, UserDocument } from '@app/shared-library/schemas/schema.user.avatar';
+import { UserProfile, UserProfileDocument } from '@app/shared-library/schemas/schema.user.profile';
 
 @Injectable()
 export class AppService {
@@ -21,7 +21,7 @@ export class AppService {
     @InjectModel(Sector.name) private sectorModel: Model<SectorDocument>,
     @InjectModel(World.name) private worldModel: Model<WorldDocument>,
     @InjectModel(Island.name) private islandModel: Model<IslandDocument>,
-    @InjectModel(User.name) private userModel: Model<UserDocument>
+    @InjectModel(UserProfile.name) private userProfileModel: Model<UserProfileDocument>
   ) { }
 
   async onModuleInit() {
@@ -134,19 +134,19 @@ export class AppService {
 
   public async worldMove(request: WorldMoveRequest) {
     let success = false;
-    const user = await this.userModel.findOne({
+    const user = await this.userProfileModel.findOne({
       ethAddress: request.user
     });
-    if (user && request.x <= SharedLibraryService.WORLD_SIZE && request.y <= SharedLibraryService.WORLD_SIZE) {
-      const x = Math.abs(user.worldX - request.x);
-      const y = Math.abs(user.worldY - request.y);
-      if (x <= 1 && y <= 1) {
-        user.worldX = request.x;
-        user.worldY = request.y;
-        await user.save();
-        success = true;
-      }
-    }
+    // if (user && request.x <= SharedLibraryService.WORLD_SIZE && request.y <= SharedLibraryService.WORLD_SIZE) {
+    //   const x = Math.abs(user.worldX - request.x);
+    //   const y = Math.abs(user.worldY - request.y);
+    //   if (x <= 1 && y <= 1) {
+    //     user.worldX = request.x;
+    //     user.worldY = request.y;
+    //     await user.save();
+    //     success = true;
+    //   }
+    // }
     return {
       success
     }

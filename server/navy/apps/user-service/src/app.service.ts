@@ -40,13 +40,11 @@ export class AppService implements OnModuleInit {
 
     const response = {
       success: false,
-      reasonCode: 0
     } as SignUpResponse;
 
     if (user) {
-      // TODO implement common errors here
-      Logger.log('User already exists error');
-      response.reasonCode = 1;
+      Logger.error(`signUp failed for ${request.email}, user already exists!`);
+      response.reasonCode = SharedLibraryService.ALREADY_EXISTS_ERROR;
     } else {
       const userModel = new this.userProfileModel({
         email: request.email,

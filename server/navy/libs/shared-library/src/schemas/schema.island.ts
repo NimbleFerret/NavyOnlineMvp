@@ -1,7 +1,8 @@
 import { IslandSize, Rarity, Terrain } from "@app/shared-library/shared-library.main";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { UserAvatarDocument } from "./schema.user.avatar";
 import mongoose, { Document } from 'mongoose';
-import { UserDocument } from "./schema.user.avatar";
+
 
 export type IslandDocument = Island & Document;
 
@@ -12,7 +13,7 @@ export class Island {
     tokenId: string;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-    owner: UserDocument;
+    owner: UserAvatarDocument;
 
     @Prop()
     x: number;
