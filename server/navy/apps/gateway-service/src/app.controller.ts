@@ -13,6 +13,11 @@ export class AppController {
   //   return this.appService.signInOrUp(dto);
   // }
 
+  @Get('auth/check')
+  async authChech() {
+
+  }
+
   @Get('world')
   async world() {
     return this.appService.getWorldInfo();

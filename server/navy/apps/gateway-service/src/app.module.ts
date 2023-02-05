@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ClientsModule } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -14,6 +14,7 @@ import {
   GameplayBalancerServiceGrpcClientName,
   GameplayBalancerServiceGrpcClientOptions
 } from '@app/shared-library/gprc/grpc.gameplay-balancer.service';
+import { AuthMiddleware } from './auth.middleware';
 
 @Module({
   imports: [
@@ -35,4 +36,10 @@ import {
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes({ path: 'auth/check', method: RequestMethod.GET });
+  }
+}

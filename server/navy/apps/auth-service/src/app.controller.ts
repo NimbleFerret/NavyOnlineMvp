@@ -1,27 +1,20 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { AuthServiceName, IssueTokenRequest, VerifyTokenRequest } from '@app/shared-library/gprc/grpc.auth.service';
+import { Controller } from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
 import { AuthService } from './auth/auth.service';
-
-export interface IssueTokenDto {
-  email: string;
-  password: string;
-}
-
-export interface VerifyTokenDto {
-  token: string;
-}
 
 @Controller()
 export class AppController {
   constructor(private readonly authService: AuthService) { }
 
-  @Post('token/issue')
-  async issueToken(@Body() dto: IssueTokenDto) {
-    return this.authService.issueAuthTokenForUser(dto.email, dto.password);
+  @GrpcMethod(AuthServiceName)
+  issueToken(request: IssueTokenRequest) {
+    return this.authService.issueToken(request);
   }
 
-  @Post('token/verify')
-  async verifyToken(@Body() dto: VerifyTokenDto) {
-    return this.authService.verifyAuthToken(dto.token);
+  @GrpcMethod(AuthServiceName)
+  async verifyToken(request: VerifyTokenRequest) {
+    return this.authService.verifyToken(request);
   }
 
 }
