@@ -1,3 +1,4 @@
+import { SharedLibraryService } from '@app/shared-library';
 import { AuthService, AuthServiceGrpcClientName, AuthServiceName } from '@app/shared-library/gprc/grpc.auth.service';
 import {
   GameplayBalancerService,
@@ -52,12 +53,29 @@ export class AppService implements OnModuleInit {
     this.worldService = this.worldServiceGrpcClient.getService<WorldService>(WorldServiceName);
     this.userService = this.userServiceGrpcClient.getService<UserService>(UserServiceName);
     this.gameplayBalancerService = this.gameplayBalancerServiceGrpcClient.getService<GameplayBalancerService>(GameplayBalancerServiceName);
+  }
 
-    const result = await lastValueFrom(this.authService.IssueToken({ email: 'john', password: 'changeme' }));
-    console.log(result);
+  async signUp(request: SignUpRequest) {
+    const result = await lastValueFrom(this.userService.SignUp(request));
 
-    const result2 = await lastValueFrom(this.authService.VerifyToken({ token: result.token }));
-    console.log(result2);
+    let response = {};
+
+    if (!result.success) {
+      response['success'] = false;
+      response['reasonCode'] = result.reasonCode;
+    } else {
+      const issueTokenResult = await lastValueFrom(this.authService.IssueToken({ email: request.email, password: request.password }));
+      console.log(issueTokenResult);
+      if (issueTokenResult.success) {
+        response['success'] = true;
+        response['token'] = issueTokenResult.token;
+      } else {
+        response['success'] = false;
+        response['reasonCode'] = SharedLibraryService.GENERAL_ERROR;
+      }
+    }
+
+    return response;
   }
 
   getWorldInfo() {

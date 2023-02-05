@@ -12,10 +12,17 @@ export class AuthService {
 
     async issueToken(request: IssueTokenRequest) {
         const user = await this.validateUser(request.email, request.password);
-        const data = { email: user.email, id: user.id };
-        return {
-            token: jwt.sign({ data }, Constants.jwtSecret, { expiresIn: '1h' })
-        } as IssueTokenResponse
+        if (user) {
+            const data = { email: user.email, id: user.id };
+            return {
+                success: true,
+                token: jwt.sign({ data }, Constants.jwtSecret, { expiresIn: '1h' })
+            } as IssueTokenResponse;
+        } else {
+            return {
+                success: false
+            } as IssueTokenResponse;
+        }
     }
 
     async verifyToken(request: VerifyTokenRequest) {
