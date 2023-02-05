@@ -1,3 +1,4 @@
+import { AuthService, AuthServiceGrpcClientName, AuthServiceName } from '@app/shared-library/gprc/grpc.auth.service';
 import {
   GameplayBalancerService,
   GameplayBalancerServiceGrpcClientName,
@@ -32,11 +33,14 @@ import {
 @Injectable()
 export class AppService implements OnModuleInit {
 
+  private authService: AuthService;
+
   private worldService: WorldService;
   private userService: UserService;
   private gameplayBalancerService: GameplayBalancerService;
 
   constructor(
+    @Inject(AuthServiceGrpcClientName) private readonly authServiceGrpcClient: ClientGrpc,
     @Inject(WorldServiceGrpcClientName) private readonly worldServiceGrpcClient: ClientGrpc,
     @Inject(UserServiceGrpcClientName) private readonly userServiceGrpcClient: ClientGrpc,
     @Inject(GameplayBalancerServiceGrpcClientName) private readonly gameplayBalancerServiceGrpcClient: ClientGrpc
@@ -44,9 +48,16 @@ export class AppService implements OnModuleInit {
   }
 
   async onModuleInit() {
+    this.authService = this.authServiceGrpcClient.getService<AuthService>(AuthServiceName);
     this.worldService = this.worldServiceGrpcClient.getService<WorldService>(WorldServiceName);
     this.userService = this.userServiceGrpcClient.getService<UserService>(UserServiceName);
     this.gameplayBalancerService = this.gameplayBalancerServiceGrpcClient.getService<GameplayBalancerService>(GameplayBalancerServiceName);
+
+    const result = await lastValueFrom(this.authService.IssueToken({ email: 'john', password: 'changeme' }));
+    console.log(result);
+
+    const result2 = await lastValueFrom(this.authService.VerifyToken({ token: result.token }));
+    console.log(result2);
   }
 
   getWorldInfo() {

@@ -2,7 +2,7 @@ import { FindUserResponse } from '@app/shared-library/gprc/grpc.user.service';
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { Constants } from '../app.constants';
-import { IssueTokenRequest, VerifyTokenRequest } from '@app/shared-library/gprc/grpc.auth.service';
+import { IssueTokenRequest, IssueTokenResponse, VerifyTokenRequest } from '@app/shared-library/gprc/grpc.auth.service';
 
 const jwt = require('jsonwebtoken');
 
@@ -13,7 +13,9 @@ export class AuthService {
     async issueToken(request: IssueTokenRequest) {
         const user = await this.validateUser(request.email, request.password);
         const data = { email: user.email, id: user.id };
-        return jwt.sign({ data }, Constants.jwtSecret, { expiresIn: '1h' });
+        return {
+            token: jwt.sign({ data }, Constants.jwtSecret, { expiresIn: '1h' })
+        } as IssueTokenResponse
     }
 
     async verifyToken(request: VerifyTokenRequest) {

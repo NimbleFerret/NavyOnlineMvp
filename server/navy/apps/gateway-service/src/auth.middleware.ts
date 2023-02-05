@@ -6,7 +6,6 @@ import { Request, Response, NextFunction } from 'express';
 export class AuthMiddleware implements NestMiddleware, OnModuleInit {
 
     onModuleInit() {
-        throw new Error('Method not implemented.');
     }
 
     use(req: Request, res: Response, next: NextFunction) {

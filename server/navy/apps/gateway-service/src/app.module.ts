@@ -14,6 +14,10 @@ import {
   GameplayBalancerServiceGrpcClientName,
   GameplayBalancerServiceGrpcClientOptions
 } from '@app/shared-library/gprc/grpc.gameplay-balancer.service';
+import {
+  AuthServiceGrpcClientName,
+  AuthServiceGrpcClientOptions
+} from '@app/shared-library/gprc/grpc.auth.service';
 import { AuthMiddleware } from './auth.middleware';
 
 @Module({
@@ -31,6 +35,10 @@ import { AuthMiddleware } from './auth.middleware';
         name: GameplayBalancerServiceGrpcClientName,
         ...GameplayBalancerServiceGrpcClientOptions,
       },
+      {
+        name: AuthServiceGrpcClientName,
+        ...AuthServiceGrpcClientOptions,
+      }
     ]),
   ],
   controllers: [AppController],
