@@ -1,8 +1,3 @@
-export class SignInOrUpDto {
-    email: string;
-    password: string;
-}
-
 export class WorldMoveDto {
     user: string;
     x: number;

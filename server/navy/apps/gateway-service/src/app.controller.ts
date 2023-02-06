@@ -1,5 +1,6 @@
+import { FindUserRequest, SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { SignInOrUpDto, WorldMoveDto } from './app.dto';
+import { WorldMoveDto } from './app.dto';
 import { AppService } from './app.service';
 
 @Controller()
@@ -7,17 +8,15 @@ export class AppController {
   constructor(private readonly appService: AppService) { }
 
   @Post('signUp')
-  async signUp(@Body() dto: SignInOrUpDto) {
-    dto.email = dto.email.toLowerCase();
-    return this.appService.signUp({
-      email: dto.email,
-      password: dto.password
-    });
+  async signUp(@Body() request: SignUpRequest) {
+    request.email = request.email.toLowerCase();
+    return this.appService.signUp(request);
   }
 
   @Post('signIn')
-  async signIn(@Body() dto: SignInOrUpDto) {
-    // TODO implement
+  async signIn(@Body() request: SignUpRequest) {
+    request.email = request.email.toLowerCase();
+    return this.appService.signIn(request);
   }
 
   @Get('auth/check')

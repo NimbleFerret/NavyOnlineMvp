@@ -44,6 +44,7 @@ export interface FindUserRequest {
 }
 
 export interface FindUserResponse {
+    success: boolean;
     id: string;
     email: string;
     password: string;

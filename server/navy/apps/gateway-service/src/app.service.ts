@@ -6,6 +6,7 @@ import {
   GameplayBalancerServiceName
 } from '@app/shared-library/gprc/grpc.gameplay-balancer.service';
 import {
+  FindUserRequest,
   SignUpRequest,
   UserService,
   UserServiceGrpcClientName,
@@ -26,11 +27,10 @@ import {
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import {
-  SignInOrUpDto,
-  WorldEnterDto,
   WorldMoveDto
 } from './app.dto';
 
+// TODO make all resonses more generic
 @Injectable()
 export class AppService implements OnModuleInit {
 
@@ -57,15 +57,12 @@ export class AppService implements OnModuleInit {
 
   async signUp(request: SignUpRequest) {
     const result = await lastValueFrom(this.userService.SignUp(request));
-
-    let response = {};
-
+    const response = {};
     if (!result.success) {
       response['success'] = false;
       response['reasonCode'] = result.reasonCode;
     } else {
       const issueTokenResult = await lastValueFrom(this.authService.IssueToken({ email: request.email, password: request.password }));
-      console.log(issueTokenResult);
       if (issueTokenResult.success) {
         response['success'] = true;
         response['token'] = issueTokenResult.token;
@@ -74,7 +71,24 @@ export class AppService implements OnModuleInit {
         response['reasonCode'] = SharedLibraryService.GENERAL_ERROR;
       }
     }
+    return response;
+  }
 
+  async signIn(request: SignUpRequest) {
+    const findUserReuqest = { email: request.email } as FindUserRequest;
+    const result = await lastValueFrom(this.userService.FindUser(findUserReuqest));
+    const response = {
+      success: false
+    };
+    if (result.success) {
+      if (result.password == request.password) {
+        const issueTokenResult = await lastValueFrom(this.authService.IssueToken({ email: request.email, password: request.password }));
+        if (issueTokenResult.success) {
+          response.success = true;
+          response['token'] = issueTokenResult.token;
+        }
+      }
+    }
     return response;
   }
 

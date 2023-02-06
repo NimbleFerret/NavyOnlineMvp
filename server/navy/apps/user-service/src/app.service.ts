@@ -58,21 +58,21 @@ export class AppService implements OnModuleInit {
   }
 
   async findUser(request: FindUserRequest) {
+    const response = {
+      success: false
+    } as FindUserResponse;
     const user = await this.userProfileModel.findOne({
       email: request.email
     });
-
     if (user) {
-      const response = {
-        id: user.id,
-        email: user.email,
-        password: user.password,
-        ethAddress: user.nickname,
-        nickname: user.ethAddress
-      } as FindUserResponse;
-      return response;
+      response.success = true;
+      response.id = user.id;
+      response.email = user.email;
+      response.password = user.password;
+      response.ethAddress = user.nickname;
+      response.nickname = user.ethAddress;
     }
-    return {}
+    return response;
   }
 
   // async signInOrUp(request: SignInOrUpRequest) {

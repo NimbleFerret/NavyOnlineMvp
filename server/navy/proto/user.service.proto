@@ -47,11 +47,12 @@ message FindUserRequest {
 }
 
 message FindUserResponse {
-  string id = 1;
-  string email = 2;
-  string password = 3;
-  string ethAddress = 4;
-  string nickname = 5;
+  bool success = 1;
+  string id = 2;
+  string email = 3;
+  string password = 4;
+  string ethAddress = 5;
+  string nickname = 6;
 }
 
 //-----------------------------
