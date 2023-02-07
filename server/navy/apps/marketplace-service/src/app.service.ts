@@ -1,5 +1,5 @@
 import { MintDetails, MintDetailsDocument } from '@app/shared-library/schemas/schema.mint.details';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { join } from 'path';
@@ -9,13 +9,12 @@ const fs = require('fs');
 @Injectable()
 export class AppService implements OnModuleInit {
 
-  constructor(@InjectModel(MintDetails.name) private mintDetailsModel: Model<MintDetailsDocument>,) {
+  constructor(@InjectModel(MintDetails.name) private mintDetailsModel: Model<MintDetailsDocument>) {
   }
 
   async onModuleInit() {
     const mintDetails = await this.mintDetailsModel.findOne();
     if (!mintDetails) {
-
       try {
         fs.readFile(join(__dirname, '..', 'marketplace-service') + '/fixtures/1_captains_mint.json', async (error: any, data: any) => {
           if (error) {
@@ -61,6 +60,15 @@ export class AppService implements OnModuleInit {
       } catch (error) {
         Logger.error('Unable to load 1_captains_mint.json fixture!', error);
       }
+    }
+  }
+
+  async getMintDetails() {
+    const mintDetails = await this.mintDetailsModel.findOne().select(['-_id', '-__v']);
+    if (mintDetails) {
+      return mintDetails;
+    } else {
+      throw new BadRequestException();
     }
   }
 }
