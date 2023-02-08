@@ -1,5 +1,5 @@
 import { MintDetails, MintDetailsDocument } from '@app/shared-library/schemas/marketplace/schema.mint.details';
-import { ProjectDetails, ProjectDetailsDocument } from '@app/shared-library/schemas/marketplace/schema.project';
+import { ProjectDetails, ProjectDetailsDocument, ProjectState } from '@app/shared-library/schemas/marketplace/schema.project';
 import { BadRequestException, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -79,8 +79,19 @@ export class AppService implements OnModuleInit {
     }
   }
 
-  async getMintDetails() {
-    const mintDetails = await this.mintDetailsModel.findOne().select(['-_id', '-__v']);
+  async getProjects() {
+    const projects = await this.projectDetailsModel.find({
+      projectState: {
+        "$ne": ProjectState.DISABLED
+      }
+    }).select(['-__v']);
+    return projects;
+  }
+
+  async getProjectMintDetails(id: string) {
+    const mintDetails = await this.mintDetailsModel.find({
+      projectDetails: id
+    }).select(['-_id', '-__v']);
     if (mintDetails) {
       return mintDetails;
     } else {
