@@ -4,6 +4,7 @@ package web3service;
 
 service Web3Service {
   rpc GetAndSyncUserAssets (GetAndSyncUserAssetsRequest) returns (GetAndSyncUserAssetsResponse);
+  rpc GetCollectionSaleDetails(GetCollectionSaleDetailsRequest) returns (GetCollectionSaleDetailsResponse);
 }
 
 //-----------------------------
@@ -78,6 +79,18 @@ message GetAndSyncUserAssetsResponse {
   repeated Captain captains = 3;
   repeated Ship ships = 4;
   repeated Island islands = 5;
+}
+
+//-----------------------------
+
+message GetCollectionSaleDetailsRequest {
+  string address = 1;
+}
+
+
+message GetCollectionSaleDetailsResponse {
+  int32 tokensTotal = 1;
+  int32 tokensLeft = 2;
 }
 
 //-----------------------------

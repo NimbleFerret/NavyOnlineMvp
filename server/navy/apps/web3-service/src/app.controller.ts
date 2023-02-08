@@ -1,21 +1,24 @@
-import { GetAndSyncUserAssetsRequest, Web3ServiceName } from '@app/shared-library/gprc/grpc.web3.service';
-import { Controller, Get } from '@nestjs/common';
+import { GetAndSyncUserAssetsRequest, GetCollectionOnSaleDetailsRequest, Web3ServiceName } from '@app/shared-library/gprc/grpc.web3.service';
+import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
+import { BlockchainService } from './blockchain/blockchain.service';
 import { MoralisService } from './moralis/moralis.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly moralisService: MoralisService) { }
+  constructor(
+    private readonly moralisService: MoralisService,
+    private readonly blockchainService: BlockchainService,
+  ) { }
 
   @GrpcMethod(Web3ServiceName)
   getAndSyncUserAssets(request: GetAndSyncUserAssetsRequest) {
     return this.moralisService.getAndSyncUserAssets(request.address);
   }
 
-  // TODO implement simple web3 http api here for testing purpose
-  @Get('test')
-  async web3Test() {
-    return 'this is web3 test';
+  @GrpcMethod(Web3ServiceName)
+  getCollectionSaleDetails(request: GetCollectionOnSaleDetailsRequest) {
+    return this.blockchainService.getCollectionSaleDetails(request);
   }
 
 }

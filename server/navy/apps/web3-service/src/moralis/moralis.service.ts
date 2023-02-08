@@ -60,8 +60,8 @@ export class MoralisService implements OnModuleInit {
     async getAndSyncUserAssets(ethAddress: string) {
         const result: GetAndSyncUserAssetsResponse = {};
 
-        const user = await this.userModel.findOne({
-            ethAddress
+        const user = await this.userAvatarModel.findOne({
+            'userProfile.ethAddress': ethAddress
         });
 
         if (user) {
@@ -80,12 +80,12 @@ export class MoralisService implements OnModuleInit {
         return result;
     }
 
-    private async getUserTokenBalances(user: UserAvatarDocument) {
+    private async getUserTokenBalances(userAvatar: UserAvatarDocument) {
         let nvy = 0;
         let aks = 0;
 
         const response = await Moralis.EvmApi.token.getWalletTokenBalances({
-            address: user.ethAddress,
+            address: userAvatar.userProfile.ethAddress,
             chain: this.chain,
         }) as any;
 
@@ -103,13 +103,13 @@ export class MoralisService implements OnModuleInit {
         }
     }
 
-    private async getUserNFTs(user: UserAvatarDocument) {
+    private async getUserNFTs(userAvatar: UserAvatarDocument) {
         const captains: CaptainEntity[] = [];
         const ships: ShipEntity[] = [];
         const islands: IslandEntity[] = [];
 
         const response = await Moralis.EvmApi.nft.getWalletNFTs({
-            address: user.ethAddress,
+            address: userAvatar.userProfile.ethAddress,
             chain: this.chain,
             tokenAddresses: [
                 Constants.CaptainContractAddress,
@@ -124,15 +124,15 @@ export class MoralisService implements OnModuleInit {
             for (const entity of response.data.result) {
                 switch (entity.token_address) {
                     case Constants.CaptainContractAddress: {
-                        captains.push(await this.getCaptainNFTsByOwnerAddress(entity, user));
+                        captains.push(await this.getCaptainNFTsByOwnerAddress(entity, userAvatar));
                         break;
                     }
                     case Constants.ShipContractAddress: {
-                        ships.push(await this.getShipNFTsByOwnerAddress(entity, user));
+                        ships.push(await this.getShipNFTsByOwnerAddress(entity, userAvatar));
                         break;
                     }
                     case Constants.IslandContractAddress: {
-                        islands.push(await this.getIslandNFTsByOwnerAddress(entity, user));
+                        islands.push(await this.getIslandNFTsByOwnerAddress(entity, userAvatar));
                         break;
                     }
                 }
@@ -146,7 +146,7 @@ export class MoralisService implements OnModuleInit {
         }
     }
 
-    private async getCaptainNFTsByOwnerAddress(entity: any, user: UserAvatarDocument) {
+    private async getCaptainNFTsByOwnerAddress(entity: any, userAvatar: UserAvatarDocument) {
         const metadataAttributes = JSON.parse(entity.metadata).attributes;
         const playerCaptainEntity = {
             id: entity.token_id,
@@ -169,7 +169,7 @@ export class MoralisService implements OnModuleInit {
         if (!captain) {
             const newCaptain = new this.captainModel();
             newCaptain.tokenId = playerCaptainEntity.id;
-            newCaptain.owner = user;
+            newCaptain.owner = userAvatar;
             newCaptain.miningRewardNVY = playerCaptainEntity.miningRewardNVY;
             newCaptain.stakingRewardNVY = playerCaptainEntity.stakingRewardNVY;
             newCaptain.traits = playerCaptainEntity.traits;
@@ -182,7 +182,7 @@ export class MoralisService implements OnModuleInit {
             newCaptain.clothes = playerCaptainEntity.clothes;
             await newCaptain.save();
         } else {
-            captain.owner = user;
+            captain.owner = userAvatar;
             captain.miningRewardNVY = playerCaptainEntity.miningRewardNVY;
             captain.stakingRewardNVY = playerCaptainEntity.stakingRewardNVY;
             captain.traits = playerCaptainEntity.traits;
@@ -193,7 +193,7 @@ export class MoralisService implements OnModuleInit {
         return playerCaptainEntity;
     }
 
-    private async getShipNFTsByOwnerAddress(entity: any, user: UserAvatarDocument) {
+    private async getShipNFTsByOwnerAddress(entity: any, userAvatar: UserAvatarDocument) {
         const metadataAttributes = JSON.parse(entity.metadata).attributes;
         const playerShipEntity = {
             id: entity.token_id,
@@ -225,7 +225,7 @@ export class MoralisService implements OnModuleInit {
         if (!ship) {
             const newShip = new this.shipModel();
             newShip.tokenId = playerShipEntity.id;
-            newShip.owner = user;
+            newShip.owner = userAvatar;
             newShip.hull = playerShipEntity.hull;
             newShip.armor = playerShipEntity.armor;
             newShip.maxSpeed = playerShipEntity.maxSpeed;
@@ -246,7 +246,7 @@ export class MoralisService implements OnModuleInit {
             await newShip.save();
         } else {
             ship.hull = playerShipEntity.hull;
-            ship.owner = user;
+            ship.owner = userAvatar;
             ship.armor = playerShipEntity.armor;
             ship.maxSpeed = playerShipEntity.maxSpeed;
             ship.accelerationStep = playerShipEntity.accelerationStep;

@@ -6,16 +6,8 @@ import { MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  // TODO uncomment and remove startAllMicroservices after all tests...
-  // const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, Web3ServiceGrpcClientOptions);
-  // await app.listen();
-
-  const app = await NestFactory.create(AppModule);
-  app.connectMicroservice<MicroserviceOptions>(Web3ServiceGrpcClientOptions);
-
-  await app.startAllMicroservices();
-  await app.listen(7777);
-
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, Web3ServiceGrpcClientOptions);
+  await app.listen();
   Logger.log(`Web3-Service started at port: ${Config.WEB3_SERVICE_PORT}`);
 }
 bootstrap();

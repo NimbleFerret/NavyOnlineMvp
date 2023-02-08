@@ -35,7 +35,6 @@ import {
 export class AppService implements OnModuleInit {
 
   private authService: AuthService;
-
   private worldService: WorldService;
   private userService: UserService;
   private gameplayBalancerService: GameplayBalancerService;

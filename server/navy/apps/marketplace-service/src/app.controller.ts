@@ -12,7 +12,6 @@ export class AppController {
 
   @Get('mint/details/:projectId')
   mintDetails(@Param('projectId') projectId: string) {
-    console.log(projectId);
     return this.appService.getProjectMintDetails(projectId)
   }
 }

@@ -1,12 +1,12 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { v4 as uuidv4 } from 'uuid';
 import { EthersProvider } from './blockchain.ethers.provider';
 import { Constants } from '../app.constants';
 import { NftCaptainGenerator } from '../nft/nft.generator.captain';
 import { Rarity } from '@app/shared-library/shared-library.main';
 import { ethers } from 'ethers';
+import { GetCollectionSaleDetailsRequest, GetCollectionSaleDetailsResponse } from '@app/shared-library/gprc/grpc.web3.service';
 
 // -----------------------------------------
 // These stats are used to generate new NFTs
@@ -161,6 +161,29 @@ export class BlockchainService implements OnModuleInit {
                 Logger.error(e);
             }
         });
+    }
+
+    async getCollectionSaleDetails(request: GetCollectionSaleDetailsRequest) {
+        const response = {} as GetCollectionSaleDetailsResponse;
+        if (request.address == Constants.CaptainCollectionSaleContractAddress) {
+            const tokensTotal = await this.ethersProvider.captainCollectionSaleContract.tokensTotal();
+            const tokensLeft = await this.ethersProvider.captainCollectionSaleContract.tokensLeft();
+            response.tokensTotal = tokensTotal;
+            response.tokensLeft = tokensLeft;
+        } else if (request.address == Constants.ShipCollectionSaleContractAddress) {
+            const tokensTotal = await this.ethersProvider.shipCollectionSaleContract.tokensTotal();
+            const tokensLeft = await this.ethersProvider.shipCollectionSaleContract.tokensLeft();
+            response.tokensTotal = tokensTotal;
+            response.tokensLeft = tokensLeft;
+        } else if (request.address == Constants.IslandCollectionSaleContractAddress) {
+            const tokensTotal = await this.ethersProvider.islandCollectionSaleContract.tokensTotal();
+            const tokensLeft = await this.ethersProvider.islandCollectionSaleContract.tokensLeft();
+            response.tokensTotal = tokensTotal;
+            response.tokensLeft = tokensLeft;
+        } else {
+            throw new BadRequestException();
+        }
+        return response;
     }
 
     private async updateAndSetShipStats() {

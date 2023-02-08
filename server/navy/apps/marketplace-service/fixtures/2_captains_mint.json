@@ -1,5 +1,7 @@
 {
     "active": true,
+    "saleContractAddress": "0xe0329c20d37d05806f73912b28f5434bcc56a8b7",
+    "tokenContractAddress": "TODO_PASTE_ME",
     "mintingEnabled": false,
     "mintingStartTime": "14/03/2023",
     "mintingEndTime": "14/07/2023",

@@ -22,8 +22,20 @@ export interface GetAndSyncUserAssetsResponse {
 
 //-----------------------------
 
+export interface GetCollectionSaleDetailsRequest {
+    address: string;
+}
+
+export interface GetCollectionSaleDetailsResponse {
+    tokensTotal: number;
+    tokensLeft: number;
+}
+
+//-----------------------------
+
 export interface Web3Service {
     GetAndSyncUserAssets(request: GetAndSyncUserAssetsRequest): Observable<GetAndSyncUserAssetsResponse>;
+    GetCollectionSaleDetails(request: GetCollectionSaleDetailsRequest): Observable<GetCollectionSaleDetailsResponse>;
 }
 
 export const Web3ServiceName = 'Web3Service';

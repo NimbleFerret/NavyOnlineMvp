@@ -34,6 +34,12 @@ export class MintDetails {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ProjectDetails' })
     projectDetails: ProjectDetails;
 
+    @Prop()
+    saleContractAddress: string;
+
+    @Prop()
+    tokenContractAddress: string;
+
     // ------------------------------
 
     @Prop()

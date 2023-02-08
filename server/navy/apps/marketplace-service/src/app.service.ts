@@ -1,18 +1,24 @@
+import { Web3Service, Web3ServiceGrpcClientName, Web3ServiceName } from '@app/shared-library/gprc/grpc.web3.service';
 import { MintDetails, MintDetailsDocument } from '@app/shared-library/schemas/marketplace/schema.mint.details';
 import { ProjectDetails, ProjectDetailsDocument, ProjectState } from '@app/shared-library/schemas/marketplace/schema.project';
-import { BadRequestException, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ClientGrpc } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { join } from 'path';
+import { lastValueFrom } from 'rxjs';
 
 const fs = require('fs');
 
 @Injectable()
 export class AppService implements OnModuleInit {
 
+  private web3Service: Web3Service;
+
   constructor(
     @InjectModel(ProjectDetails.name) private projectDetailsModel: Model<ProjectDetailsDocument>,
-    @InjectModel(MintDetails.name) private mintDetailsModel: Model<MintDetailsDocument>) {
+    @InjectModel(MintDetails.name) private mintDetailsModel: Model<MintDetailsDocument>,
+    @Inject(Web3ServiceGrpcClientName) private readonly web3ServiceGrpcClient: ClientGrpc) {
   }
 
   async onModuleInit() {
@@ -45,6 +51,8 @@ export class AppService implements OnModuleInit {
         loadFixture('2_captains_mint.json', async (fixture: any) => {
           const captainMintDetails = new this.mintDetailsModel();
           captainMintDetails.projectDetails = newProjectDetails;
+          captainMintDetails.saleContractAddress = fixture.saleContractAddress;
+          captainMintDetails.tokenContractAddress = fixture.tokenContractAddress;
 
           captainMintDetails.mintingEnabled = fixture.mintingEnabled;
           captainMintDetails.mintingStartTime = fixture.mintingStartTime;
@@ -77,6 +85,8 @@ export class AppService implements OnModuleInit {
         });
       });
     }
+
+    this.web3Service = this.web3ServiceGrpcClient.getService<Web3Service>(Web3ServiceName);
   }
 
   async getProjects() {
@@ -93,6 +103,11 @@ export class AppService implements OnModuleInit {
       projectDetails: id
     }).select(['-_id', '-__v']);
     if (mintDetails) {
+      for (const details of mintDetails) {
+        const collectionSaleDetails = await lastValueFrom(this.web3Service.GetCollectionSaleDetails({ address: details.saleContractAddress }));
+        details.collectionItemsLeft = collectionSaleDetails.tokensLeft;
+        details.collectionSize = collectionSaleDetails.tokensTotal;
+      }
       return mintDetails;
     } else {
       throw new BadRequestException();
