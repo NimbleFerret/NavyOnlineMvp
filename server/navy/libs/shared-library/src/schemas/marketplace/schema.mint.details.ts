@@ -1,8 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { Rarity } from '../shared-library.main';
-import { UserAvatarDocument } from './schema.user.avatar';
+import { ProjectDetails } from './schema.project';
 
 export type MintDetailsDocument = MintDetails & Document;
 
@@ -23,11 +22,17 @@ export interface NftCategoryDetails {
     rarity: string;
 }
 
+export interface MintDetails {
+    chainId: string;
+    chainName: string;
+    mintPriceEth: number;
+}
+
 @Schema()
 export class MintDetails {
 
-    @Prop()
-    active: boolean;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ProjectDetails' })
+    projectDetails: ProjectDetails;
 
     // ------------------------------
 
@@ -38,10 +43,10 @@ export class MintDetails {
     mintingStartTime: string;
 
     @Prop()
-    mintingPriceCronos: number;
+    mintingEndTime: string;
 
     @Prop()
-    mintingPriceUSD: number;
+    mintDetails: MintDetails[];
 
     // ------------------------------
 

@@ -3,7 +3,6 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { UserAvatarDocument } from "./schema.user.avatar";
 import mongoose, { Document } from 'mongoose';
 
-
 export type IslandDocument = Island & Document;
 
 @Schema()
@@ -12,7 +11,7 @@ export class Island {
     @Prop()
     tokenId: string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'UserAvatar' })
     owner: UserAvatarDocument;
 
     @Prop()

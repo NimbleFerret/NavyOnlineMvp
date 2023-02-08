@@ -1,4 +1,5 @@
-import { MintDetails, MintDetailsSchema } from '@app/shared-library/schemas/schema.mint.details';
+import { MintDetails, MintDetailsSchema } from '@app/shared-library/schemas/marketplace/schema.mint.details';
+import { ProjectDetails, ProjectDetailsSchema } from '@app/shared-library/schemas/marketplace/schema.project';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -14,6 +15,7 @@ import { MintModule } from './mint/mint.module';
       rootPath: join(__dirname, '..', 'marketplace-service'),
     }),
     MongooseModule.forFeature([
+      { name: ProjectDetails.name, schema: ProjectDetailsSchema },
       { name: MintDetails.name, schema: MintDetailsSchema },
     ]),
     MongooseModule.forRoot('mongodb://localhost/navy'),

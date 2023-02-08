@@ -2,8 +2,14 @@
     "active": true,
     "mintingEnabled": false,
     "mintingStartTime": "14/03/2023",
-    "mintingPriceCronos": 10,
-    "mintingPriceUSD": 5,
+    "mintingEndTime": "14/07/2023",
+    "mintDetails": [
+        {
+            "chainId": "123",
+            "chainName": "Cronos",
+            "mintPriceEth": 5
+        }
+    ],
     "collectionSize": 500,
     "collectionItemsLeft": 500,
     "collectionPreview": [
