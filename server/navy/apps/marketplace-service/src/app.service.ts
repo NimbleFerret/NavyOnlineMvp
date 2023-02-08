@@ -2,6 +2,7 @@ import { Web3Service, Web3ServiceGrpcClientName, Web3ServiceName } from '@app/sh
 import { MintDetails, MintDetailsDocument } from '@app/shared-library/schemas/marketplace/schema.mint.details';
 import { ProjectDetails, ProjectDetailsDocument, ProjectState } from '@app/shared-library/schemas/marketplace/schema.project';
 import { BadRequestException, Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { caching, MemoryCache } from 'cache-manager';
 import { ClientGrpc } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -14,6 +15,8 @@ const fs = require('fs');
 export class AppService implements OnModuleInit {
 
   private web3Service: Web3Service;
+
+  private memoryCache: MemoryCache;
 
   constructor(
     @InjectModel(ProjectDetails.name) private projectDetailsModel: Model<ProjectDetailsDocument>,
@@ -87,6 +90,11 @@ export class AppService implements OnModuleInit {
     }
 
     this.web3Service = this.web3ServiceGrpcClient.getService<Web3Service>(Web3ServiceName);
+
+    this.memoryCache = await caching('memory', {
+      max: 100,
+      ttl: 60 * 1000 * 15, // 15 mins cache
+    });
   }
 
   async getProjects() {
@@ -99,18 +107,25 @@ export class AppService implements OnModuleInit {
   }
 
   async getProjectMintDetails(id: string) {
-    const mintDetails = await this.mintDetailsModel.find({
-      projectDetails: id
-    }).select(['-_id', '-__v']);
-    if (mintDetails) {
-      for (const details of mintDetails) {
-        const collectionSaleDetails = await lastValueFrom(this.web3Service.GetCollectionSaleDetails({ address: details.saleContractAddress }));
-        details.collectionItemsLeft = collectionSaleDetails.tokensLeft;
-        details.collectionSize = collectionSaleDetails.tokensTotal;
-      }
-      return mintDetails;
+    const value = await this.memoryCache.get('projectMintDetails_' + id);
+    if (value) {
+      const cachedResponse = JSON.parse(value as string);
+      return cachedResponse;
     } else {
-      throw new BadRequestException();
+      const mintDetails = await this.mintDetailsModel.find({
+        projectDetails: id
+      }).select(['-_id', '-__v']);
+      if (mintDetails) {
+        for (const details of mintDetails) {
+          const collectionSaleDetails = await lastValueFrom(this.web3Service.GetCollectionSaleDetails({ address: details.saleContractAddress }));
+          details.collectionItemsLeft = collectionSaleDetails.tokensLeft;
+          details.collectionSize = collectionSaleDetails.tokensTotal;
+        }
+        await this.memoryCache.set('projectMintDetails_' + id, JSON.stringify(mintDetails));
+        return mintDetails;
+      } else {
+        throw new BadRequestException();
+      }
     }
   }
 }

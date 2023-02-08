@@ -1,7 +1,7 @@
 import { Web3ServiceGrpcClientName, Web3ServiceGrpcClientOptions } from '@app/shared-library/gprc/grpc.web3.service';
 import { MintDetails, MintDetailsSchema } from '@app/shared-library/schemas/marketplace/schema.mint.details';
 import { ProjectDetails, ProjectDetailsSchema } from '@app/shared-library/schemas/marketplace/schema.project';
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -13,6 +13,7 @@ import { MintModule } from './mint/mint.module';
 @Module({
   imports: [
     MintModule,
+    // CacheModule.register(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'marketplace-service'),
     }),
