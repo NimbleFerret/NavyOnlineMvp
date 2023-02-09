@@ -6,6 +6,7 @@ import "web3.service.proto";
 
 service UserService {
   rpc SignUp (SignUpRequest) returns (SignUpResponse);
+  rpc AttachEmailOrEthAddress (AttachEmailOrEthAddressRequest) returns (AttachEmailOrEthAddressResponse);
   rpc FindUser (FindUserRequest) returns (FindUserResponse);
   rpc GetUserPos (GetUserPosRequest) returns (GetUserPosResponse);
 }
@@ -15,12 +16,29 @@ service UserService {
 message SignUpRequest {
   string email = 1;
   string password = 2;
+  string ethAddress = 3;
+  string signedMessage = 4;
 }
 
 message SignUpResponse {
   bool success = 1;
   int32 reasonCode = 2;
+  string userId = 3;
 }
+
+//-----------------------------
+
+message AttachEmailOrEthAddressRequest {
+  string email = 1;
+  string ethAddress = 2;
+}
+
+message AttachEmailOrEthAddressResponse {
+  bool success = 1;
+  int32 reasonCode = 2;
+}
+
+//-----------------------------
 
 message SignInOrUpResponse {
     string ethAddress = 1;
@@ -44,6 +62,7 @@ message SignInOrUpResponse {
 
 message FindUserRequest {
   string email = 1;
+  string ethAddress = 2;
 }
 
 message FindUserResponse {

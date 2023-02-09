@@ -11,12 +11,29 @@ import { ShipEntity } from "../entities/entity.ship";
 export interface SignUpRequest {
     email: string;
     password: string;
+    ethAddress: string;
+    signedMessage: string;
 }
 
 export interface SignUpResponse {
     success: boolean;
     reasonCode: number;
+    userId: string;
 }
+
+//-----------------------------
+
+export interface AttachEmailOrEthAddressRequest {
+    email: string;
+    ethAddress: string;
+}
+
+export interface AttachEmailOrEthAddressResponse {
+    success: boolean;
+    reasonCode: number;
+}
+
+//-----------------------------
 
 // TODO import ship, captain and island
 export interface SignInOrUpResponse {
@@ -41,6 +58,7 @@ export interface SignInOrUpResponse {
 
 export interface FindUserRequest {
     email: string;
+    ethAddress: string;
 }
 
 export interface FindUserResponse {
@@ -67,6 +85,7 @@ export interface GetUserPosResponse {
 
 export interface UserService {
     SignUp(request: SignUpRequest): Observable<SignUpResponse>;
+    AttachEmailOrEthAddress(request: AttachEmailOrEthAddressRequest): Observable<AttachEmailOrEthAddressResponse>;
     FindUser(request: FindUserRequest): Observable<FindUserResponse>;
     GetUserPos(request: GetUserPosRequest): Observable<GetUserPosResponse>;
 }

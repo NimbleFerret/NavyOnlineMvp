@@ -1,4 +1,4 @@
-import { FindUserRequest, SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
+import { SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { WorldMoveDto } from './app.dto';
 import { AppService } from './app.service';
@@ -7,21 +7,14 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Post('signUp')
+  @Post('auth/signUp')
   async signUp(@Body() request: SignUpRequest) {
-    request.email = request.email.toLowerCase();
     return this.appService.signUp(request);
   }
 
-  @Post('signIn')
+  @Post('auth/signIn')
   async signIn(@Body() request: SignUpRequest) {
-    request.email = request.email.toLowerCase();
     return this.appService.signIn(request);
-  }
-
-  @Get('auth/check')
-  async authChech() {
-
   }
 
   @Get('world')

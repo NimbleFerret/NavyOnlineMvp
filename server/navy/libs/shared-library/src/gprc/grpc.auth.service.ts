@@ -6,12 +6,10 @@ import { Config } from "../config";
 //-----------------------------
 
 export interface IssueTokenRequest {
-    email: string;
-    password: string;
+    userId: string;
 }
 
 export interface IssueTokenResponse {
-    success: boolean;
     token: string;
 }
 

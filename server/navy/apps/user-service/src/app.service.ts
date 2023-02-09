@@ -2,7 +2,13 @@ import { SharedLibraryService } from '@app/shared-library';
 import { CaptainEntity } from '@app/shared-library/entities/entity.captain';
 import { IslandEntity } from '@app/shared-library/entities/entity.island';
 import { ShipEntity } from '@app/shared-library/entities/entity.ship';
-import { GetUserPosRequest, GetUserPosResponse, SignUpRequest, SignInOrUpResponse, SignUpResponse, FindUserRequest, FindUserResponse } from '@app/shared-library/gprc/grpc.user.service';
+import {
+  GetUserPosRequest,
+  GetUserPosResponse,
+  SignUpRequest, SignUpResponse,
+  FindUserRequest,
+  FindUserResponse
+} from '@app/shared-library/gprc/grpc.user.service';
 import {
   Web3Service,
   Web3ServiceGrpcClientName,
@@ -34,24 +40,54 @@ export class AppService implements OnModuleInit {
   }
 
   async signUp(request: SignUpRequest) {
-    const user = await this.userProfileModel.findOne({
-      email: request.email
-    });
-
     const response = {
       success: false,
     } as SignUpResponse;
 
-    if (user) {
-      Logger.error(`signUp failed for ${request.email}, user already exists!`);
-      response.reasonCode = SharedLibraryService.ALREADY_EXISTS_ERROR;
+    if (request.email && request.ethAddress) {
+      this.logger.error(`signUp failed for ${request.email} / ${request.ethAddress}, impossible to signUp by both identifiers!`);
+      response.reasonCode = SharedLibraryService.BAD_PARAMS;
     } else {
-      const userModel = new this.userProfileModel({
-        email: request.email,
-        password: request.password
-      });
-      await userModel.save();
-      response.success = true;
+      if (request.ethAddress) {
+        const user = await this.userProfileModel.findOne({
+          ethAddress: request.ethAddress
+        });
+
+        if (user) {
+          this.logger.error(`signUp failed for ${request.ethAddress}, user already exists!`);
+          response.reasonCode = SharedLibraryService.ALREADY_EXISTS_ERROR;
+        } else {
+          const userModel = new this.userProfileModel({
+            ethAddress: request.ethAddress
+          });
+          await userModel.save();
+          response.success = true;
+          response.userId = userModel._id;
+        }
+      } else if (request.email && request.password) {
+        request.email = request.email.toLowerCase();
+
+        const user = await this.userProfileModel.findOne({
+          email: request.email
+        });
+
+        if (user) {
+          this.logger.error(`signUp failed for ${request.email}, user already exists!`);
+          response.reasonCode = SharedLibraryService.ALREADY_EXISTS_ERROR;
+        } else {
+          const userModel = new this.userProfileModel({
+            email: request.email,
+            password: request.password
+          });
+
+          await userModel.save();
+          response.success = true;
+          response.userId = userModel._id;
+        }
+      } else {
+        this.logger.error(`signUp failed. Bad params: ${request.ethAddress} | (${request.email} / ${request.password})`);
+        response.reasonCode = SharedLibraryService.BAD_PARAMS;
+      }
     }
 
     return response;
@@ -61,9 +97,8 @@ export class AppService implements OnModuleInit {
     const response = {
       success: false
     } as FindUserResponse;
-    const user = await this.userProfileModel.findOne({
-      email: request.email
-    });
+    const findQuery = request.email ? { email: request.email } : { ethAddress: request.ethAddress };
+    const user = await this.userProfileModel.findOne(findQuery);
     if (user) {
       response.success = true;
       response.id = user.id;

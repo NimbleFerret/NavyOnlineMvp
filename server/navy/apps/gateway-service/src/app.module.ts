@@ -19,6 +19,7 @@ import {
   AuthServiceGrpcClientOptions
 } from '@app/shared-library/gprc/grpc.auth.service';
 import { AuthMiddleware } from './auth.middleware';
+import { Web3ServiceGrpcClientName, Web3ServiceGrpcClientOptions } from '@app/shared-library/gprc/grpc.web3.service';
 
 @Module({
   imports: [
@@ -38,7 +39,11 @@ import { AuthMiddleware } from './auth.middleware';
       {
         name: AuthServiceGrpcClientName,
         ...AuthServiceGrpcClientOptions,
-      }
+      },
+      {
+        name: Web3ServiceGrpcClientName,
+        ...Web3ServiceGrpcClientOptions,
+      },
     ]),
   ],
   controllers: [AppController],

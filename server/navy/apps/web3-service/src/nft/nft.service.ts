@@ -47,148 +47,148 @@ export class NFTService implements OnModuleInit {
 
     // TODO use this
     async createNewCaptain(index: number, maxIndex: number, recipient: string) {
-        try {
-            const captainStats = {
-                level: 0,
-                traits: 0,
-                rarity: Rarity.LEGENDARY,
-                mining: false,
-                staking: false,
-                miningRewardNVY: 15,
-                stakingRewardNVY: 5,
-                miningStartedAt: 0,
-                miningDurationSeconds: 120,
-                miningIsland: 0
-            } as CaptainStats;
+        // try {
+        //     const captainStats = {
+        //         level: 0,
+        //         traits: 0,
+        //         rarity: Rarity.LEGENDARY,
+        //         mining: false,
+        //         staking: false,
+        //         miningRewardNVY: 15,
+        //         stakingRewardNVY: 5,
+        //         miningStartedAt: 0,
+        //         miningDurationSeconds: 120,
+        //         miningIsland: 0
+        //     } as CaptainStats;
 
-            const metadata = await this.nftCaptainGenerator.generateFounderCaptain(index, maxIndex, captainStats)
+        //     const metadata = await this.nftCaptainGenerator.generateFounderCaptain(index, maxIndex, captainStats)
 
-            const tuple: [
-                boolean,
-                boolean,
-                ethers.BigNumber,
-                ethers.BigNumber,
-                ethers.BigNumber,
-                ethers.BigNumber,
-                ethers.BigNumber,
-                ethers.BigNumber,
-                ethers.BigNumber,
-                ethers.BigNumber] = [
-                    false,
-                    false,
-                    ethers.BigNumber.from(0),
-                    ethers.BigNumber.from(0),
-                    ethers.BigNumber.from(Rarity.LEGENDARY),
-                    ethers.BigNumber.from(captainStats.miningRewardNVY),
-                    ethers.BigNumber.from(captainStats.stakingRewardNVY),
-                    ethers.BigNumber.from(captainStats.miningStartedAt),
-                    ethers.BigNumber.from(captainStats.miningDurationSeconds),
-                    ethers.BigNumber.from(captainStats.miningIsland)
-                ];
+        //     const tuple: [
+        //         boolean,
+        //         boolean,
+        //         ethers.BigNumber,
+        //         ethers.BigNumber,
+        //         ethers.BigNumber,
+        //         ethers.BigNumber,
+        //         ethers.BigNumber,
+        //         ethers.BigNumber,
+        //         ethers.BigNumber,
+        //         ethers.BigNumber] = [
+        //             false,
+        //             false,
+        //             ethers.BigNumber.from(0),
+        //             ethers.BigNumber.from(0),
+        //             ethers.BigNumber.from(Rarity.LEGENDARY),
+        //             ethers.BigNumber.from(captainStats.miningRewardNVY),
+        //             ethers.BigNumber.from(captainStats.stakingRewardNVY),
+        //             ethers.BigNumber.from(captainStats.miningStartedAt),
+        //             ethers.BigNumber.from(captainStats.miningDurationSeconds),
+        //             ethers.BigNumber.from(captainStats.miningIsland)
+        //         ];
 
-            await this.blockchainQueue.add(BlockchainQueueProcessor.MINT_NFT_QUEUE, {
-                id: uuidv4(),
-                transactionType: TransactionType.MINT_FOUNDERS_CAPTAIN,
-                recipient,
-                tuple,
-                metadata
-            } as NFTJobData);
-        } catch (e) {
-            this.logger.error(`createNewCaptain for: ${recipient}, error`, e);
-        }
+        //     await this.blockchainQueue.add(BlockchainQueueProcessor.MINT_NFT_QUEUE, {
+        //         id: uuidv4(),
+        //         transactionType: TransactionType.MINT_FOUNDERS_CAPTAIN,
+        //         recipient,
+        //         tuple,
+        //         metadata
+        //     } as NFTJobData);
+        // } catch (e) {
+        //     this.logger.error(`createNewCaptain for: ${recipient}, error`, e);
+        // }
     }
 
     async createNewShip(index: number, maxIndex: number, recipient: string, preferredSize?: ShipSize) {
-        try {
-            const shipAttributes = this.generateShipAttributes(preferredSize);
-            shipAttributes.id = String(index);
-            shipAttributes.owner = recipient;
+        // try {
+        //     const shipAttributes = this.generateShipAttributes(preferredSize);
+        //     shipAttributes.id = String(index);
+        //     shipAttributes.owner = recipient;
 
-            const metadata = await this.nftShipGenerator.generateFounderShip(index, maxIndex, shipAttributes);
+        //     const metadata = await this.nftShipGenerator.generateFounderShip(index, maxIndex, shipAttributes);
 
-            const tuple: [ethers.BigNumber, ethers.BigNumber, ethers.BigNumber] =
-                [
-                    ethers.BigNumber.from(shipAttributes.maxIntegrity),
-                    ethers.BigNumber.from(1),
-                    ethers.BigNumber.from(55)
-                ];
+        //     const tuple: [ethers.BigNumber, ethers.BigNumber, ethers.BigNumber] =
+        //         [
+        //             ethers.BigNumber.from(shipAttributes.maxIntegrity),
+        //             ethers.BigNumber.from(1),
+        //             ethers.BigNumber.from(55)
+        //         ];
 
-            await this.blockchainQueue.add(BlockchainQueueProcessor.MINT_NFT_QUEUE, {
-                id: uuidv4(),
-                transactionType: TransactionType.MINT_FOUNDERS_SHIP,
-                recipient,
-                tuple,
-                metadata
-            } as NFTJobData);
-        } catch (e) {
-            this.logger.error(`createNewShip for: ${recipient}, error`, e);
-        }
+        //     await this.blockchainQueue.add(BlockchainQueueProcessor.MINT_NFT_QUEUE, {
+        //         id: uuidv4(),
+        //         transactionType: TransactionType.MINT_FOUNDERS_SHIP,
+        //         recipient,
+        //         tuple,
+        //         metadata
+        //     } as NFTJobData);
+        // } catch (e) {
+        //     this.logger.error(`createNewShip for: ${recipient}, error`, e);
+        // }
     }
 
     async createNewIsland(index: number, maxIndex: number, recipient: string) {
-        try {
-            const terrainRnd = SharedLibraryService.GetRandomIntInRange(1, 100);
-            let terrain = Terrain.GREEN;
-            if (100 - NftIslandGenerator.DarkTerrainChance < terrainRnd) {
-                terrain = Terrain.DARK
-            } else if (100 - NftIslandGenerator.SnowTerrainChance < terrainRnd) {
-                terrain = Terrain.SNOW;
-            }
+        // try {
+        //     const terrainRnd = SharedLibraryService.GetRandomIntInRange(1, 100);
+        //     let terrain = Terrain.GREEN;
+        //     if (100 - NftIslandGenerator.DarkTerrainChance < terrainRnd) {
+        //         terrain = Terrain.DARK
+        //     } else if (100 - NftIslandGenerator.SnowTerrainChance < terrainRnd) {
+        //         terrain = Terrain.SNOW;
+        //     }
 
-            this.worldService.GenerateNewIslandPosition({}).subscribe({
-                next: (response: IslandPositionResponse) => async () => {
-                    if (response.success) {
-                        const islandStats = {
-                            level: 0,
-                            rarity: Rarity.LEGENDARY,
-                            mining: false,
-                            terrain,
-                            miningStartedAt: 0,
-                            miningDurationSeconds: 120,
-                            miningRewardNVY: 45,
-                            shipAndCaptainFee: 10,
-                            currMiners: 0,
-                            maxMiners: 3,
-                            minersFee: 5,
-                            x: response.x,
-                            y: response.y
-                        } as IslandStats;
+        //     this.worldService.GenerateNewIslandPosition({}).subscribe({
+        //         next: (response: IslandPositionResponse) => async () => {
+        //             if (response.success) {
+        //                 const islandStats = {
+        //                     level: 0,
+        //                     rarity: Rarity.LEGENDARY,
+        //                     mining: false,
+        //                     terrain,
+        //                     miningStartedAt: 0,
+        //                     miningDurationSeconds: 120,
+        //                     miningRewardNVY: 45,
+        //                     shipAndCaptainFee: 10,
+        //                     currMiners: 0,
+        //                     maxMiners: 3,
+        //                     minersFee: 5,
+        //                     x: response.x,
+        //                     y: response.y
+        //                 } as IslandStats;
 
-                        const metadata = await this.nftIslandGenerator.generateFounderIsland(index, maxIndex, islandStats);
+        //                 const metadata = await this.nftIslandGenerator.generateFounderIsland(index, maxIndex, islandStats);
 
-                        const tuple: [
-                            boolean,
-                            ethers.BigNumber,
-                            ethers.BigNumber,
-                            ethers.BigNumber,
-                            ethers.BigNumber,
-                            ethers.BigNumber,
-                            ethers.BigNumber,
-                            ethers.BigNumber] = [
-                                false,
-                                ethers.BigNumber.from(islandStats.miningStartedAt),
-                                ethers.BigNumber.from(islandStats.miningDurationSeconds),
-                                ethers.BigNumber.from(islandStats.miningRewardNVY),
-                                ethers.BigNumber.from(islandStats.shipAndCaptainFee),
-                                ethers.BigNumber.from(islandStats.currMiners),
-                                ethers.BigNumber.from(islandStats.maxMiners),
-                                ethers.BigNumber.from(islandStats.minersFee)
-                            ];
+        //                 const tuple: [
+        //                     boolean,
+        //                     ethers.BigNumber,
+        //                     ethers.BigNumber,
+        //                     ethers.BigNumber,
+        //                     ethers.BigNumber,
+        //                     ethers.BigNumber,
+        //                     ethers.BigNumber,
+        //                     ethers.BigNumber] = [
+        //                         false,
+        //                         ethers.BigNumber.from(islandStats.miningStartedAt),
+        //                         ethers.BigNumber.from(islandStats.miningDurationSeconds),
+        //                         ethers.BigNumber.from(islandStats.miningRewardNVY),
+        //                         ethers.BigNumber.from(islandStats.shipAndCaptainFee),
+        //                         ethers.BigNumber.from(islandStats.currMiners),
+        //                         ethers.BigNumber.from(islandStats.maxMiners),
+        //                         ethers.BigNumber.from(islandStats.minersFee)
+        //                     ];
 
-                        await this.blockchainQueue.add(BlockchainQueueProcessor.MINT_NFT_QUEUE, {
-                            id: uuidv4(),
-                            transactionType: TransactionType.MINT_FOUNDERS_ISLAND,
-                            recipient,
-                            tuple,
-                            metadata
-                        } as NFTJobData);
-                    }
-                },
-                error: (e) => this.logger.error(`Cant get new island position`, e)
-            });
-        } catch (e) {
-            this.logger.error(`createNewIsland for: ${recipient}, error`, e);
-        }
+        //                 await this.blockchainQueue.add(BlockchainQueueProcessor.MINT_NFT_QUEUE, {
+        //                     id: uuidv4(),
+        //                     transactionType: TransactionType.MINT_FOUNDERS_ISLAND,
+        //                     recipient,
+        //                     tuple,
+        //                     metadata
+        //                 } as NFTJobData);
+        //             }
+        //         },
+        //         error: (e) => this.logger.error(`Cant get new island position`, e)
+        //     });
+        // } catch (e) {
+        //     this.logger.error(`createNewIsland for: ${recipient}, error`, e);
+        // }
     }
 
     // ---------------------------------

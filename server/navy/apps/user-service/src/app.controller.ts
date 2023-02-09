@@ -1,4 +1,9 @@
-import { FindUserRequest, GetUserPosRequest, SignUpRequest, UserServiceName } from '@app/shared-library/gprc/grpc.user.service';
+import {
+  FindUserRequest,
+  GetUserPosRequest,
+  SignUpRequest,
+  UserServiceName
+} from '@app/shared-library/gprc/grpc.user.service';
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { AppService } from './app.service';

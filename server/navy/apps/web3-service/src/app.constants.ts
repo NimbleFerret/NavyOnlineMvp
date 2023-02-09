@@ -1,5 +1,6 @@
 export class Constants {
-    // TODO implement better testnet / mainnet 
+
+    public static readonly AuthSignatureTemplate = 'Navy.online wants to use your address: @ for authentication';
 
     public static readonly AksContractAddress = '';
     public static readonly NvyContractAddress = '';

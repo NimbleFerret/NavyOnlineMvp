@@ -13,7 +13,7 @@ export class AppController {
   }
 
   @GrpcMethod(AuthServiceName)
-  async verifyToken(request: VerifyTokenRequest) {
+  verifyToken(request: VerifyTokenRequest) {
     return this.authService.verifyToken(request);
   }
 

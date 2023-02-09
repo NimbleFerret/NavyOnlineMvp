@@ -6,7 +6,7 @@ import { Constants } from '../app.constants';
 import { NftCaptainGenerator } from '../nft/nft.generator.captain';
 import { Rarity } from '@app/shared-library/shared-library.main';
 import { ethers } from 'ethers';
-import { GetCollectionSaleDetailsRequest, GetCollectionSaleDetailsResponse } from '@app/shared-library/gprc/grpc.web3.service';
+import { CheckEthersAuthSignatureRequest, CheckEthersAuthSignatureResponse, GetCollectionSaleDetailsRequest, GetCollectionSaleDetailsResponse } from '@app/shared-library/gprc/grpc.web3.service';
 
 // -----------------------------------------
 // These stats are used to generate new NFTs
@@ -161,6 +161,13 @@ export class BlockchainService implements OnModuleInit {
                 Logger.error(e);
             }
         });
+    }
+
+    checkEthersAuthSignature(request: CheckEthersAuthSignatureRequest) {
+        const signerAddr = ethers.utils.verifyMessage(Constants.AuthSignatureTemplate.replace('@', request.address), request.signedMessage)
+        return {
+            success: signerAddr == request.address
+        } as CheckEthersAuthSignatureResponse;
     }
 
     async getCollectionSaleDetails(request: GetCollectionSaleDetailsRequest) {

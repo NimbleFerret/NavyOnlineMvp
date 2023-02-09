@@ -5,6 +5,7 @@ package web3service;
 service Web3Service {
   rpc GetAndSyncUserAssets (GetAndSyncUserAssetsRequest) returns (GetAndSyncUserAssetsResponse);
   rpc GetCollectionSaleDetails(GetCollectionSaleDetailsRequest) returns (GetCollectionSaleDetailsResponse);
+  rpc CheckEthersAuthSignature(CheckEthersAuthSignatureRequest) returns (CheckEthersAuthSignatureResponse);
 }
 
 //-----------------------------
@@ -91,6 +92,18 @@ message GetCollectionSaleDetailsRequest {
 message GetCollectionSaleDetailsResponse {
   int32 tokensTotal = 1;
   int32 tokensLeft = 2;
+}
+
+//-----------------------------
+
+message CheckEthersAuthSignatureRequest {
+  string address = 1;
+  string signedMessage = 2;
+}
+
+
+message CheckEthersAuthSignatureResponse {
+  bool success = 1;
 }
 
 //-----------------------------

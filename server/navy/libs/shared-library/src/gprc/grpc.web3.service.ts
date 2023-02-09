@@ -33,9 +33,21 @@ export interface GetCollectionSaleDetailsResponse {
 
 //-----------------------------
 
+export interface CheckEthersAuthSignatureRequest {
+    address: string;
+    signedMessage: string;
+}
+
+export interface CheckEthersAuthSignatureResponse {
+    success: boolean;
+}
+
+//-----------------------------
+
 export interface Web3Service {
     GetAndSyncUserAssets(request: GetAndSyncUserAssetsRequest): Observable<GetAndSyncUserAssetsResponse>;
     GetCollectionSaleDetails(request: GetCollectionSaleDetailsRequest): Observable<GetCollectionSaleDetailsResponse>;
+    CheckEthersAuthSignature(request: CheckEthersAuthSignatureRequest): Observable<CheckEthersAuthSignatureResponse>;
 }
 
 export const Web3ServiceName = 'Web3Service';
