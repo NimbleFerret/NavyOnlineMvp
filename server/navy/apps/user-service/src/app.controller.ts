@@ -1,4 +1,5 @@
 import {
+  AttachEmailOrEthAddressRequest,
   FindUserRequest,
   GetUserPosRequest,
   SignUpRequest,
@@ -15,6 +16,11 @@ export class AppController {
   @GrpcMethod(UserServiceName)
   signUp(request: SignUpRequest) {
     return this.appService.signUp(request);
+  }
+
+  @GrpcMethod(UserServiceName)
+  attachEmailOrEthAddress(request: AttachEmailOrEthAddressRequest) {
+    return this.appService.attachEmailOrEthAddress(request);
   }
 
   @GrpcMethod(UserServiceName)

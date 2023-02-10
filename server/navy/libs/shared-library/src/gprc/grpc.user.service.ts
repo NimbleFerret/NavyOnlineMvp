@@ -23,7 +23,13 @@ export interface SignUpResponse {
 
 //-----------------------------
 
+export enum AttachOperation {
+    ATTACH_EMAIL,
+    ATTACH_ETH_ADDRESS
+}
+
 export interface AttachEmailOrEthAddressRequest {
+    operation: AttachOperation;
     email: string;
     ethAddress: string;
 }
@@ -83,9 +89,31 @@ export interface GetUserPosResponse {
 
 //-----------------------------
 
+export interface GenerateOneTimeEmailCodeRequest {
+    email: string;
+}
+
+export interface GenerateOneTimeEmailCodeResponse {
+    success: boolean;
+}
+
+export interface CheckOneTimeEmailCodeRequest {
+    email: string;
+    code: string;
+}
+
+export interface CheckOneTimeEmailCodeResponse {
+    success: boolean;
+    attemptsLeft: number;
+}
+
+//-----------------------------
+
 export interface UserService {
     SignUp(request: SignUpRequest): Observable<SignUpResponse>;
     AttachEmailOrEthAddress(request: AttachEmailOrEthAddressRequest): Observable<AttachEmailOrEthAddressResponse>;
+    GenerateOneTimeEmailCode(request: GenerateOneTimeEmailCodeRequest): Observable<GenerateOneTimeEmailCodeResponse>;
+    CheckOneTimeEmailCode(request: CheckOneTimeEmailCodeRequest): Observable<CheckOneTimeEmailCodeResponse>;
     FindUser(request: FindUserRequest): Observable<FindUserResponse>;
     GetUserPos(request: GetUserPosRequest): Observable<GetUserPosResponse>;
 }

@@ -18,8 +18,12 @@ import {
   AuthServiceGrpcClientName,
   AuthServiceGrpcClientOptions
 } from '@app/shared-library/gprc/grpc.auth.service';
+import {
+  Web3ServiceGrpcClientName,
+  Web3ServiceGrpcClientOptions
+} from '@app/shared-library/gprc/grpc.web3.service';
 import { AuthMiddleware } from './auth.middleware';
-import { Web3ServiceGrpcClientName, Web3ServiceGrpcClientOptions } from '@app/shared-library/gprc/grpc.web3.service';
+
 
 @Module({
   imports: [
@@ -53,6 +57,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes({ path: 'auth/check', method: RequestMethod.GET });
+      .forRoutes({ path: 'auth/update', method: RequestMethod.POST });
   }
 }

@@ -7,7 +7,9 @@ import {
   GetUserPosResponse,
   SignUpRequest, SignUpResponse,
   FindUserRequest,
-  FindUserResponse
+  FindUserResponse,
+  AttachEmailOrEthAddressRequest,
+  AttachEmailOrEthAddressResponse
 } from '@app/shared-library/gprc/grpc.user.service';
 import {
   Web3Service,
@@ -90,6 +92,20 @@ export class AppService implements OnModuleInit {
       }
     }
 
+    return response;
+  }
+
+  async attachEmailOrEthAddress(request: AttachEmailOrEthAddressRequest) {
+    const response = {
+      success: false
+    } as AttachEmailOrEthAddressResponse;
+    const findQuery = request.email ? { email: request.email } : { ethAddress: request.ethAddress };
+    const user = await this.userProfileModel.findOne(findQuery);
+    if (user) {
+      response.success = true;
+    } else {
+      response.reasonCode = SharedLibraryService.GENERAL_ERROR;
+    }
     return response;
   }
 

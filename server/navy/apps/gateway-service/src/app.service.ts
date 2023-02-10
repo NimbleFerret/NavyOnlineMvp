@@ -10,6 +10,7 @@ import {
   GameplayBalancerServiceName
 } from '@app/shared-library/gprc/grpc.gameplay-balancer.service';
 import {
+  AttachOperation,
   FindUserRequest,
   SignUpRequest,
   UserService,
@@ -32,6 +33,7 @@ import {
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import {
+  AuthUpdateDto,
   WorldMoveDto
 } from './app.dto';
 
@@ -64,7 +66,7 @@ export class AppService implements OnModuleInit {
     this.web3Service = this.web3ServiceGrpcClient.getService<Web3Service>(Web3ServiceName);
   }
 
-  async signUp(request: SignUpRequest) {
+  async authSignUp(request: SignUpRequest) {
     const response = {
       success: false
     };
@@ -84,7 +86,7 @@ export class AppService implements OnModuleInit {
     return response;
   }
 
-  async signIn(request: SignUpRequest) {
+  async authSignIn(request: SignUpRequest) {
     const response = {
       success: false
     };
@@ -99,6 +101,38 @@ export class AppService implements OnModuleInit {
           response['token'] = issueTokenResult.token;
         }
       }
+    }
+
+    return response;
+  }
+
+  // TODO implement email code check
+  async authUpdate(request: AuthUpdateDto) {
+    const response = {
+      success: false
+    };
+
+    let continueAuthUpdate = true;
+
+    if (request.operation == AttachOperation.ATTACH_ETH_ADDRESS && request.ethAddress && request.signedMessage && request.email) {
+      const checkSignatureResult = await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
+      if (!checkSignatureResult.success) {
+        continueAuthUpdate = false;
+        response['reasonCode'] = SharedLibraryService.GENERAL_ERROR;
+        this.logger.error(`signUp failed for ${request.ethAddress}, bad signature!`);
+      }
+    }
+
+    const attachResult = await lastValueFrom(this.userService.AttachEmailOrEthAddress({
+      operation: request.operation,
+      email: request.email,
+      ethAddress: request.ethAddress
+    }));
+
+    if (attachResult.success) {
+      response.success = true;
+    } else {
+      response['reasonCode'] = attachResult.reasonCode;
     }
 
     return response;
