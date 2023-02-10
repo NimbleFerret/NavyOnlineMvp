@@ -43,6 +43,7 @@
     "bull": "^4.10.0",
     "cache-manager": "^5.1.6",
     "canvas": "^2.10.1",
+    "email-validator": "^2.0.4",
     "ethers": "^5.7.1",
     "ip": "^2.0.0",
     "jsonwebtoken": "^9.0.0",

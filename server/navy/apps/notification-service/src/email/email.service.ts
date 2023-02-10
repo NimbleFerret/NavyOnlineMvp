@@ -1,4 +1,4 @@
-import { SendEmailRequest } from '@app/shared-library/gprc/grpc.notification.service';
+import { SendEmailRequest, SendEmailResponse } from '@app/shared-library/gprc/grpc.notification.service';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -24,6 +24,9 @@ export class EmailService {
     }
 
     async sendEmail(request: SendEmailRequest) {
+        const response = {
+            success: false
+        } as SendEmailResponse;
         try {
             await this.transporter.sendMail({
                 from: this.senderEmail,
@@ -31,9 +34,12 @@ export class EmailService {
                 subject: request.subject,
                 html: `<b>${request.message}</b>`
             });
+            response.success = true;
+            Logger.log('Email sent to ' + request.recipient);
         } catch (err) {
             Logger.error('Unable to send email to ' + request.recipient, err);
         }
+        return response;
     }
 
 }

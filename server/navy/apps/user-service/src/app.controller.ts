@@ -8,29 +8,30 @@ import {
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { AppService } from './app.service';
+import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) { }
+  constructor(private readonly authService: AuthService) { }
 
   @GrpcMethod(UserServiceName)
   signUp(request: SignUpRequest) {
-    return this.appService.signUp(request);
+    return this.authService.signUp(request);
   }
 
   @GrpcMethod(UserServiceName)
   attachEmailOrEthAddress(request: AttachEmailOrEthAddressRequest) {
-    return this.appService.attachEmailOrEthAddress(request);
+    return this.authService.attachEmailOrEthAddress(request);
   }
 
-  @GrpcMethod(UserServiceName)
-  findUser(request: FindUserRequest) {
-    return this.appService.findUser(request);
-  }
+  // @GrpcMethod(UserServiceName)
+  // findUser(request: FindUserRequest) {
+  //   return this.appService.findUser(request);
+  // }
 
-  @GrpcMethod(UserServiceName)
-  getUserPos(request: GetUserPosRequest) {
-    return this.appService.getUserPos(request);
-  }
+  // @GrpcMethod(UserServiceName)
+  // getUserPos(request: GetUserPosRequest) {
+  //   return this.appService.getUserPos(request);
+  // }
 
 }

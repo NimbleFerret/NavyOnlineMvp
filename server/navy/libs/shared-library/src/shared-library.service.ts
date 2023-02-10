@@ -10,6 +10,9 @@ export class SharedLibraryService {
     public static readonly NOT_FOUND_ERROR = 2;
     public static readonly ALREADY_EXISTS_ERROR = 3;
     public static readonly BAD_PARAMS = 4;
+    public static readonly UNABLE_TO_GENERATE_CONFIRMATION_CODE = 5;
+    public static readonly CONFIRMATION_CODE_MISSMATCH = 6;
+    public static readonly CONFIRMATION_CODE_EXPIRED = 7;
 
     public static readonly WORLD_SIZE = 15;
     public static readonly BASE_POS_X = 5;

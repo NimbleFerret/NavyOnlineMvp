@@ -13,6 +13,7 @@ import {
   AttachOperation,
   FindUserRequest,
   SignUpRequest,
+  SignUpState,
   UserService,
   UserServiceGrpcClientName,
   UserServiceName
@@ -76,10 +77,14 @@ export class AppService implements OnModuleInit {
       if (!signUpResult.success) {
         response['reasonCode'] = signUpResult.reasonCode;
       } else {
-        const issueTokenResult = await lastValueFrom(this.authService.IssueToken({ userId: signUpResult.userId }));
         response.success = true;
-        response['token'] = issueTokenResult.token;
-        response['userId'] = signUpResult.userId
+        if (signUpResult.signUpState == SignUpState.DONE) {
+          const issueTokenResult = await lastValueFrom(this.authService.IssueToken({ userId: signUpResult.userId }));
+          response['token'] = issueTokenResult.token;
+          response['userId'] = signUpResult.userId
+        } else {
+          response['signUpState'] = SignUpState.WAITING_FOR_EMAIL_CONFIRMATION;
+        }
       }
     }
 

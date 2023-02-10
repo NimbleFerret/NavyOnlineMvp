@@ -41,90 +41,7 @@ export class AppService implements OnModuleInit {
     this.web3Service = this.web3ServiceGrpcClient.getService<Web3Service>(Web3ServiceName);
   }
 
-  async signUp(request: SignUpRequest) {
-    const response = {
-      success: false,
-    } as SignUpResponse;
 
-    if (request.email && request.ethAddress) {
-      this.logger.error(`signUp failed for ${request.email} / ${request.ethAddress}, impossible to signUp by both identifiers!`);
-      response.reasonCode = SharedLibraryService.BAD_PARAMS;
-    } else {
-      if (request.ethAddress) {
-        const user = await this.userProfileModel.findOne({
-          ethAddress: request.ethAddress
-        });
-
-        if (user) {
-          this.logger.error(`signUp failed for ${request.ethAddress}, user already exists!`);
-          response.reasonCode = SharedLibraryService.ALREADY_EXISTS_ERROR;
-        } else {
-          const userModel = new this.userProfileModel({
-            ethAddress: request.ethAddress
-          });
-          await userModel.save();
-          response.success = true;
-          response.userId = userModel._id;
-        }
-      } else if (request.email && request.password) {
-        request.email = request.email.toLowerCase();
-
-        const user = await this.userProfileModel.findOne({
-          email: request.email
-        });
-
-        if (user) {
-          this.logger.error(`signUp failed for ${request.email}, user already exists!`);
-          response.reasonCode = SharedLibraryService.ALREADY_EXISTS_ERROR;
-        } else {
-          const userModel = new this.userProfileModel({
-            email: request.email,
-            password: request.password
-          });
-
-          await userModel.save();
-          response.success = true;
-          response.userId = userModel._id;
-        }
-      } else {
-        this.logger.error(`signUp failed. Bad params: ${request.ethAddress} | (${request.email} / ${request.password})`);
-        response.reasonCode = SharedLibraryService.BAD_PARAMS;
-      }
-    }
-
-    return response;
-  }
-
-  async attachEmailOrEthAddress(request: AttachEmailOrEthAddressRequest) {
-    const response = {
-      success: false
-    } as AttachEmailOrEthAddressResponse;
-    const findQuery = request.email ? { email: request.email } : { ethAddress: request.ethAddress };
-    const user = await this.userProfileModel.findOne(findQuery);
-    if (user) {
-      response.success = true;
-    } else {
-      response.reasonCode = SharedLibraryService.GENERAL_ERROR;
-    }
-    return response;
-  }
-
-  async findUser(request: FindUserRequest) {
-    const response = {
-      success: false
-    } as FindUserResponse;
-    const findQuery = request.email ? { email: request.email } : { ethAddress: request.ethAddress };
-    const user = await this.userProfileModel.findOne(findQuery);
-    if (user) {
-      response.success = true;
-      response.id = user.id;
-      response.email = user.email;
-      response.password = user.password;
-      response.ethAddress = user.nickname;
-      response.nickname = user.ethAddress;
-    }
-    return response;
-  }
 
   // async signInOrUp(request: SignInOrUpRequest) {
   // const ethAddress = request.user.toLocaleLowerCase();
@@ -220,22 +137,22 @@ export class AppService implements OnModuleInit {
   // } as SignInOrUpResponse;
   // }
 
-  async getUserPos(request: GetUserPosRequest) {
-    const user = await this.userAvatarModel.findOne({
-      ethAddress: request.user.toLocaleLowerCase()
-    });
-    if (user) {
-      return {
-        x: user.worldX,
-        y: user.worldY
-      } as GetUserPosResponse;
-    };
-  }
+  // async getUserPos(request: GetUserPosRequest) {
+  //   const user = await this.userAvatarModel.findOne({
+  //     ethAddress: request.user.toLocaleLowerCase()
+  //   });
+  //   if (user) {
+  //     return {
+  //       x: user.worldX,
+  //       y: user.worldY
+  //     } as GetUserPosResponse;
+  //   };
+  // }
 
-  private async getUserAssets(address: string) {
-    return lastValueFrom(this.web3Service.GetAndSyncUserAssets({
-      address
-    }));
-  }
+  // private async getUserAssets(address: string) {
+  //   return lastValueFrom(this.web3Service.GetAndSyncUserAssets({
+  //     address
+  //   }));
+  // }
 
 }

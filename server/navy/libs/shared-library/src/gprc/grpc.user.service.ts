@@ -8,9 +8,15 @@ import { ShipEntity } from "../entities/entity.ship";
 
 //-----------------------------
 
+export enum SignUpState {
+    WAITING_FOR_EMAIL_CONFIRMATION,
+    DONE
+}
+
 export interface SignUpRequest {
     email: string;
     password: string;
+    confirmationCode: string;
     ethAddress: string;
     signedMessage: string;
 }
@@ -19,6 +25,7 @@ export interface SignUpResponse {
     success: boolean;
     reasonCode: number;
     userId: string;
+    signUpState: SignUpState;
 }
 
 //-----------------------------
