@@ -7,6 +7,8 @@ import "web3.service.proto";
 service UserService {
   rpc SignUp (SignUpRequest) returns (SignUpResponse);
   rpc AttachEmailOrEthAddress (AttachEmailOrEthAddressRequest) returns (AttachEmailOrEthAddressResponse);
+  rpc GenerateOneTimeEmailCode(GenerateOneTimeEmailCodeRequest) returns (GenerateOneTimeEmailCodeResponse);
+  rpc CheckOneTimeEmailCode(CheckOneTimeEmailCodeRequest) returns (CheckOneTimeEmailCodeResponse);
   rpc FindUser (FindUserRequest) returns (FindUserResponse);
   rpc GetUserPos (GetUserPosRequest) returns (GetUserPosResponse);
 }
@@ -28,9 +30,15 @@ message SignUpResponse {
 
 //-----------------------------
 
+enum AttachOperation {
+  ATTACH_EMAIL = 0;
+  ATTACH_ETH_ADDRESS = 1;
+}
+
 message AttachEmailOrEthAddressRequest {
-  string email = 1;
-  string ethAddress = 2;
+  AttachOperation operation = 1;
+  string email = 2;
+  string ethAddress = 3;
 }
 
 message AttachEmailOrEthAddressResponse {
@@ -83,6 +91,26 @@ message GetUserPosRequest {
 message GetUserPosResponse {
   int32 x = 1;
   int32 y = 2;
+}
+
+//-----------------------------
+
+message GenerateOneTimeEmailCodeRequest {
+  string email = 1;
+}
+
+message GenerateOneTimeEmailCodeResponse {
+  bool success = 1;
+}
+
+message CheckOneTimeEmailCodeRequest {
+  string email = 1;
+  string code = 2;
+}
+
+message CheckOneTimeEmailCodeResponse {
+  bool success = 1;
+  int32 attemptsLeft = 2;
 }
 
 //-----------------------------
