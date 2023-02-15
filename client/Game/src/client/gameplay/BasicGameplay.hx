@@ -159,6 +159,7 @@ abstract class BasicGameplay {
 			this.playerId = playerId;
 			gameState = GameState.Playing;
 
+			trace("startGame");
 			customStartGame();
 		}
 	}

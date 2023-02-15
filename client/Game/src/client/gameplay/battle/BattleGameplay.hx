@@ -311,6 +311,7 @@ class BattleGameplay extends BasicGameplay {
 			gameState = GameState.Playing;
 
 			hud.show(true);
+
 			// retryDialogComp.alpha = 0;
 			// startGameDialogComp.alpha = 0;
 		}
@@ -376,7 +377,7 @@ class BattleGameplay extends BasicGameplay {
 			final playerShip = cast(getPlayerEntity(), ClientShip);
 
 			if (playerShip != null) {
-				waterScene.updatePlayerMovement(playerShip.isMoving, playerShip.isMovingForward, playerShip.direction, playerShip.currentSpeed);
+				waterScene.updatePlayerMovement(playerShip.isMoving, playerShip.isMovingForward, playerShip.localDirection, playerShip.currentSpeed);
 			} else {
 				waterScene.updatePlayerMovement(false);
 			}
@@ -386,6 +387,7 @@ class BattleGameplay extends BasicGameplay {
 	}
 
 	public function customStartGame() {
+		trace('customStartGame');
 		hud.show(true);
 	}
 

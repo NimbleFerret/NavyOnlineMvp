@@ -71,10 +71,11 @@ class EngineBaseGameEntity {
 	public var isCollides = true;
 	public var serverSide = true;
 	public var killerId:String;
+
 	// ----------------------
 	// Movement
 	// ----------------------
-	public var direction = GameEntityDirection.East;
+	public var direction = GameEntityDirection.North;
 	public var rotation = 0.0;
 	public var x = 0.0;
 	public var y = 0.0;
@@ -85,6 +86,7 @@ class EngineBaseGameEntity {
 	public var minSpeed = -50;
 	public var maxSpeed = 150;
 	public var canMove = true;
+
 	// ----------------------
 	// Geom shape
 	// ----------------------

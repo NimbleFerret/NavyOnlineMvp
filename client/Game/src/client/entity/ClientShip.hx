@@ -43,11 +43,15 @@ class ClientShip extends ClientBaseGameEntity {
 
 	public var isMoving = false;
 	public var isMovingForward = false;
-	public var direction:GameEntityDirection = East;
+
+	// TODO must be the same as on the backend
+	public var localDirection:GameEntityDirection;
 	public var currentSpeed:Float;
 
 	public function new(s2d:h2d.Scene, engineShipEntity:EngineShipEntity) {
 		super();
+
+		localDirection = engineShipEntity.direction;
 
 		engineShipEntity.speedChangeCallback = function callback(speed) {
 			if (speed != 0) {
@@ -63,8 +67,7 @@ class ClientShip extends ClientBaseGameEntity {
 			isMovingForward = speed > 0;
 		};
 		engineShipEntity.directionChangeCallbackLeft = function callback(dir) {
-			direction = dir;
-
+			localDirection = dir;
 			shipTemplate.changeDirLeft();
 
 			final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
@@ -72,8 +75,7 @@ class ClientShip extends ClientBaseGameEntity {
 			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
 		engineShipEntity.directionChangeCallbackRight = function callback(dir) {
-			direction = dir;
-
+			localDirection = dir;
 			shipTemplate.changeDirRight();
 
 			final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
@@ -105,7 +107,7 @@ class ClientShip extends ClientBaseGameEntity {
 		rippleAnim.scaleY = 0.9 * (engineShipEntity.shipHullSize == SMALL ? 1 : 1.5);
 		rippleAnim.alpha = 0;
 
-		shipTemplate = new ShipTemplate(engineShipEntity.shipHullSize, engineShipEntity.shipWindows, engineShipEntity.shipGuns);
+		shipTemplate = new ShipTemplate(engineShipEntity.direction, engineShipEntity.shipHullSize, engineShipEntity.shipWindows, engineShipEntity.shipGuns);
 		addChild(shipTemplate);
 
 		final nickname = new h2d.Text(hxd.res.DefaultFont.get(), this);

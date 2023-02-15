@@ -29,17 +29,17 @@ class SectorRectObject {
 
 		switch (sectorType) {
 			case GameWorldData.SectorBaseType:
-				contentBmp = new h2d.Bitmap(SceneGlobalMode.AcnhorTile);
+				contentBmp = new h2d.Bitmap(SceneWorldMap.AcnhorTile);
 			case GameWorldData.SectorIslandType:
-				contentBmp = new h2d.Bitmap(SceneGlobalMode.IslandTile);
+				contentBmp = new h2d.Bitmap(SceneWorldMap.IslandTile);
 			case GameWorldData.SectorBossType:
-				contentBmp = new h2d.Bitmap(SceneGlobalMode.BlueSkullTile);
+				contentBmp = new h2d.Bitmap(SceneWorldMap.BlueSkullTile);
 				isSkull = true;
 			case GameWorldData.SectorPVEType:
-				contentBmp = new h2d.Bitmap(SceneGlobalMode.CommonSkullTile);
+				contentBmp = new h2d.Bitmap(SceneWorldMap.CommonSkullTile);
 				isSkull = true;
 			case GameWorldData.SectorPVPType:
-				contentBmp = new h2d.Bitmap(SceneGlobalMode.PinkSkullTile);
+				contentBmp = new h2d.Bitmap(SceneWorldMap.PinkSkullTile);
 				isSkull = true;
 		}
 
@@ -64,8 +64,8 @@ class EnterSectorCallback {
 	}
 }
 
-class SceneGlobalMode extends Scene {
-	public final hud:SceneGlobalModeUi;
+class SceneWorldMap extends Scene {
+	public final hud:SceneWorldMapUi;
 
 	var playerBmp:h2d.Bitmap;
 
@@ -87,13 +87,13 @@ class SceneGlobalMode extends Scene {
 
 		scaleMode = LetterBox(1920, 1080, false, Left, Center);
 
-		SceneGlobalMode.AcnhorTile = hxd.Res.anchor.toTile();
-		SceneGlobalMode.IslandTile = hxd.Res.small_palm.toTile();
-		SceneGlobalMode.CommonSkullTile = hxd.Res.common_skull.toTile();
-		SceneGlobalMode.BlueSkullTile = hxd.Res.blue_skull.toTile();
-		SceneGlobalMode.PinkSkullTile = hxd.Res.pink_skull.toTile();
+		SceneWorldMap.AcnhorTile = hxd.Res.anchor.toTile();
+		SceneWorldMap.IslandTile = hxd.Res.small_palm.toTile();
+		SceneWorldMap.CommonSkullTile = hxd.Res.common_skull.toTile();
+		SceneWorldMap.BlueSkullTile = hxd.Res.blue_skull.toTile();
+		SceneWorldMap.PinkSkullTile = hxd.Res.pink_skull.toTile();
 
-		hud = new SceneGlobalModeUi(mainMenuCallback);
+		hud = new SceneWorldMapUi(mainMenuCallback);
 
 		this.enterSectorCallback = enterSectorCallback;
 	}

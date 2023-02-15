@@ -2,7 +2,7 @@ package client.scene;
 
 import client.gameplay.BaiscHud.BasicHud;
 
-class SceneGlobalModeUi extends BasicHud {
+class SceneWorldMapUi extends BasicHud {
 	public function new(mainMenuCallback:Void->Void) {
 		super();
 
@@ -20,7 +20,7 @@ class SceneGlobalModeUi extends BasicHud {
 		final menuPlate = newCustomPlate(this, 5, 7);
 		menuPlate.setPosition(1086, 128);
 
-		final sanctuaryIcon = new h2d.Bitmap(SceneGlobalMode.AcnhorTile);
+		final sanctuaryIcon = new h2d.Bitmap(SceneWorldMap.AcnhorTile);
 		sanctuaryIcon.setScale(0.75);
 		sanctuaryIcon.setPosition(menuPlate.x + 20, menuPlate.y + 20);
 		this.addChild(sanctuaryIcon);
@@ -28,7 +28,7 @@ class SceneGlobalModeUi extends BasicHud {
 		final sanctuaryText = addText2(this, "Sanctuary");
 		sanctuaryText.setPosition(menuPlate.x + 100, menuPlate.y + 40);
 
-		final islandIcon = new h2d.Bitmap(SceneGlobalMode.IslandTile);
+		final islandIcon = new h2d.Bitmap(SceneWorldMap.IslandTile);
 		islandIcon.setScale(0.75);
 		islandIcon.setPosition(menuPlate.x + 20, menuPlate.y + 90);
 		this.addChild(islandIcon);
@@ -36,19 +36,19 @@ class SceneGlobalModeUi extends BasicHud {
 		final islandText = addText2(this, "Island");
 		islandText.setPosition(menuPlate.x + 100, menuPlate.y + 110);
 
-		final pinkSkullIcon = new h2d.Bitmap(SceneGlobalMode.PinkSkullTile);
+		final pinkSkullIcon = new h2d.Bitmap(SceneWorldMap.PinkSkullTile);
 		pinkSkullIcon.setPosition(menuPlate.x + 10, menuPlate.y + 150);
 
 		final pvpText = addText2(this, "PVP");
 		pvpText.setPosition(menuPlate.x + 100, menuPlate.y + 175);
 
-		final blueSkullIcon = new h2d.Bitmap(SceneGlobalMode.BlueSkullTile);
+		final blueSkullIcon = new h2d.Bitmap(SceneWorldMap.BlueSkullTile);
 		blueSkullIcon.setPosition(menuPlate.x + 10, menuPlate.y + 210);
 
 		final bossText = addText2(this, "BOSS");
 		bossText.setPosition(menuPlate.x + 100, menuPlate.y + 235);
 
-		final commonSkullIcon = new h2d.Bitmap(SceneGlobalMode.CommonSkullTile);
+		final commonSkullIcon = new h2d.Bitmap(SceneWorldMap.CommonSkullTile);
 		commonSkullIcon.setPosition(menuPlate.x + 10, menuPlate.y + 270);
 
 		final piratesText = addText2(this, "Pirates");

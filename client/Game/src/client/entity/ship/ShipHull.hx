@@ -27,7 +27,24 @@ class ShipHull extends ShipVisualComponent {
 		southWestShipTile = getHullByDirectionAndSize(GameEntityDirection.SouthWest, size).center();
 		westShipTile = getHullByDirectionAndSize(GameEntityDirection.West, size).center();
 
-		bmp_hull = new h2d.Bitmap(eastShipTile);
+		switch (direction) {
+			case East:
+				bmp_hull = new h2d.Bitmap(eastShipTile);
+			case NorthEast:
+				bmp_hull = new h2d.Bitmap(northEastShipTile);
+			case North:
+				bmp_hull = new h2d.Bitmap(northShipTile);
+			case NorthWest:
+				bmp_hull = new h2d.Bitmap(northWestShipTile);
+			case West:
+				bmp_hull = new h2d.Bitmap(westShipTile);
+			case SouthWest:
+				bmp_hull = new h2d.Bitmap(southWestShipTile);
+			case South:
+				bmp_hull = new h2d.Bitmap(southShipTile);
+			case SouthEast:
+				bmp_hull = new h2d.Bitmap(southEastShipTile);
+		}
 
 		addChild(bmp_hull);
 	}

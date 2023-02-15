@@ -35,7 +35,24 @@ class ShipSailAndMast extends ShipVisualComponent {
 		southWestSailTile = getSailByDirectionAndSize(SouthWest, size).center();
 		westSailTile = getSailByDirectionAndSize(West, size).center();
 
-		bmp_sail = new h2d.Bitmap(eastSailTile);
+		switch (direction) {
+			case East:
+				bmp_sail = new h2d.Bitmap(eastSailTile);
+			case NorthEast:
+				bmp_sail = new h2d.Bitmap(northEastSailTile);
+			case North:
+				bmp_sail = new h2d.Bitmap(northSailTile);
+			case NorthWest:
+				bmp_sail = new h2d.Bitmap(northWestSailTile);
+			case West:
+				bmp_sail = new h2d.Bitmap(westSailTile);
+			case SouthWest:
+				bmp_sail = new h2d.Bitmap(southWestSailTile);
+			case South:
+				bmp_sail = new h2d.Bitmap(southSailTile);
+			case SouthEast:
+				bmp_sail = new h2d.Bitmap(southEastSailTile);
+		}
 
 		final mastTile = getMastByDirectionAndSize(size).center();
 		final bmp_mast = new h2d.Bitmap(mastTile);

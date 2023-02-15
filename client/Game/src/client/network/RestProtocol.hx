@@ -41,6 +41,7 @@ typedef ShipEntity = {
 	hull:Int,
 	armor:Int,
 	maxSpeed:Int,
+	direction:String,
 	accelerationStep:Int,
 	accelerationDelay:Int,
 	rotationDelay:Int,

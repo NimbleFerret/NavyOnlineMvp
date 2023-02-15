@@ -160,6 +160,26 @@ class EngineShipEntity extends EngineBaseGameEntity {
 			shapeWidth = 300;
 			shapeHeight = 120;
 		}
+
+		// switch (direction) {
+		// case North:
+		this.rotation = MathUtils.degreeToRads(-90);
+		// case NorthEast:
+		// 	rotation = MathUtils.degreeToRads(-45);
+		// case NorthWest:
+		// 	rotation -= MathUtils.degreeToRads(45);
+		// case South:
+		// 	rotation -= MathUtils.degreeToRads(45);
+		// case SouthEast:
+		// 	rotation -= MathUtils.degreeToRads(45);
+		// case SouthWest:
+		// 	rotation -= MathUtils.degreeToRads(45);
+		// case West:
+		// 	rotation -= MathUtils.degreeToRads(45);
+		// case East:
+		// 	rotation = MathUtils.degreeToRads(0);
+		// }
+		trace(direction);
 	}
 
 	// -----------------------

@@ -205,10 +205,12 @@ class BattleHud extends BasicHud {
 		leaveButton = addGuiButton(this, 'Leave sector', false, leaveCallback, 2, 2);
 		leaveButton.setPosition(0, 390);
 
-		show(true);
+		show(false);
 	}
 
 	public function show(show:Bool) {
+		// visible = show;
+
 		if (show) {
 			if (Player.instance.ethAddress.length >= 42) {
 				dailyTasksFui.alpha = 1;

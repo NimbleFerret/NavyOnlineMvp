@@ -114,6 +114,7 @@ class GameEngine extends BaseEngine {
 		shipHitByShellCallback = null;
 	}
 
+	// TODO pass dir parameter here
 	public function createEntity(serverShipRef:String, free:Bool, role:Role, x:Float, y:Float, size:ShipHullSize, windows:ShipWindows, cannons:ShipGuns,
 			cannonsRange:Int, cannonsDamage:Int, armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float, id:String,
 			?ownerId:String) {
@@ -163,6 +164,7 @@ class GameEngine extends BaseEngine {
 	public function shipShootBySide(side:Side, shipId:String, serverSide:Bool = true, ?shellRnd:Array<ShellRnd>) {
 		final ship = cast(mainEntityManager.getEntityById(shipId), EngineShipEntity);
 		if (ship != null && ship.tryShoot(side)) {
+			trace(ship.rotation);
 			final shipSideRadRotation = ship.rotation + MathUtils.degreeToRads(side == Left ? -90 : 90);
 
 			final pos1 = ship.getCanonOffsetBySideAndIndex(side, 0);

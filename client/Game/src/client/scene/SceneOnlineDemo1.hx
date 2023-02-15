@@ -10,23 +10,23 @@ import h3d.Engine;
 import h2d.Scene;
 
 class SceneOnlineDemo1 extends Scene implements EventListener {
-	public var instanceId:String;
-
+	private var instanceId:String;
 	private var game:BattleGameplay;
 	private var leaveCallback:Void->Void;
 	private var diedCallback:Void->Void;
 
 	public function new(leaveCallback:Void->Void, diedCallback:Void->Void) {
 		super();
+
 		this.leaveCallback = leaveCallback;
 		this.diedCallback = diedCallback;
 		scaleMode = LetterBox(1920, 1080, true, Center, Center);
 		camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
-
-		// camera.scale(0.7, 0.7);
 	}
 
-	public function start() {
+	public function start(instanceId:String) {
+		this.instanceId = instanceId;
+
 		game = new BattleGameplay(this, EngineMode.Server, function callbackLeave() {
 			if (leaveCallback != null) {
 				game = null;

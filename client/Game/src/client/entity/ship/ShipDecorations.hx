@@ -59,7 +59,6 @@ class ShipDecorations extends ShipVisualComponent {
 
 		this.size = size;
 
-		// Wheel
 		eastWheelTile = getWheelByDirectionAndSize(East, size).center();
 		northWheelTile = getWheelByDirectionAndSize(North, size).center();
 		northEastWheelTile = getWheelByDirectionAndSize(NorthEast, size).center();
@@ -68,12 +67,6 @@ class ShipDecorations extends ShipVisualComponent {
 		southEastWheelTile = getWheelByDirectionAndSize(SouthEast, size).center();
 		southWestWheelTile = getWheelByDirectionAndSize(SouthWest, size).center();
 		westWheelTile = getWheelByDirectionAndSize(West, size).center();
-
-		bmp_wheel = new h2d.Bitmap(eastWheelTile);
-
-		addChild(bmp_wheel);
-
-		// Capt
 
 		eastCaptainTile = hxd.Res.captain.captain_e.toTile().center();
 		northCaptainTile = hxd.Res.captain.captain_n.toTile().center();
@@ -84,11 +77,37 @@ class ShipDecorations extends ShipVisualComponent {
 		southWestCaptainTile = hxd.Res.captain.captain_sw.toTile().center();
 		westCaptainTile = hxd.Res.captain.captain_w.toTile().center();
 
-		bmp_captain = new h2d.Bitmap(eastCaptainTile);
+		switch (direction) {
+			case East:
+				bmp_wheel = new h2d.Bitmap(eastWheelTile);
+				bmp_captain = new h2d.Bitmap(eastCaptainTile);
+			case NorthEast:
+				bmp_wheel = new h2d.Bitmap(northEastWheelTile);
+				bmp_captain = new h2d.Bitmap(northEastCaptainTile);
+			case North:
+				bmp_wheel = new h2d.Bitmap(northWheelTile);
+				bmp_captain = new h2d.Bitmap(northCaptainTile);
+			case NorthWest:
+				bmp_wheel = new h2d.Bitmap(northWestWheelTile);
+				bmp_captain = new h2d.Bitmap(northWestCaptainTile);
+			case West:
+				bmp_wheel = new h2d.Bitmap(westWheelTile);
+				bmp_captain = new h2d.Bitmap(westCaptainTile);
+			case SouthWest:
+				bmp_wheel = new h2d.Bitmap(southWestWheelTile);
+				bmp_captain = new h2d.Bitmap(southWestCaptainTile);
+			case South:
+				bmp_wheel = new h2d.Bitmap(southWheelTile);
+				bmp_captain = new h2d.Bitmap(southCaptainTile);
+			case SouthEast:
+				bmp_wheel = new h2d.Bitmap(southEastWheelTile);
+				bmp_captain = new h2d.Bitmap(southEastCaptainTile);
+		}
 
 		final captainPos = size == MEDIUM ? CaptainPosMid.get(direction) : CaptainPosSmall.get(direction);
 		bmp_captain.setPosition(captainPos.x, captainPos.y);
 
+		addChild(bmp_wheel);
 		addChild(bmp_captain);
 	}
 

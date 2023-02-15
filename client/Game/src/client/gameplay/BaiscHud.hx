@@ -35,7 +35,7 @@ class BasicHud extends h2d.Scene {
 	private final longButtonTile:h2d.Tile;
 	private final midButtonTile:h2d.Tile;
 
-	public function new() {
+	public function new(fuiSpacingX = 10, fuiSpacingY = 10) {
 		super();
 
 		scaleMode = LetterBox(1920, 1080, false, Left, Center);
@@ -44,8 +44,8 @@ class BasicHud extends h2d.Scene {
 		fui.layout = Vertical;
 		fui.verticalSpacing = 5;
 		fui.padding = 10;
-		fui.x = 10;
-		fui.y = 10;
+		fui.x = fuiSpacingX;
+		fui.y = fuiSpacingY;
 
 		// Ui stuff
 

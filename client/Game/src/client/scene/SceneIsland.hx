@@ -11,8 +11,7 @@ import h2d.Scene;
 import h3d.Engine;
 
 class SceneIsland extends Scene implements EventListener {
-	public var instanceId:String;
-
+	private var instanceId:String;
 	private var game:IslandGameplay;
 	private var leaveCallback:Void->Void;
 
@@ -25,6 +24,8 @@ class SceneIsland extends Scene implements EventListener {
 	}
 
 	public function start(response:JoinSectorResponse) {
+		this.instanceId = response.instanceId;
+
 		game = new IslandGameplay(this, response.islandId, response.islandOwner, response.islandTerrain, response.islandMining, function callback() {
 			if (leaveCallback != null) {
 				game = null;

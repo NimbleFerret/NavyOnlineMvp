@@ -1,5 +1,6 @@
 package client.scene;
 
+import engine.entity.EngineBaseGameEntity.GameEntityDirection;
 import client.network.RestProtocol.PlayerData;
 import client.network.RestProtocol.CaptainEntity;
 import client.network.RestProtocol.ShipEntity;
@@ -13,7 +14,7 @@ import engine.entity.EngineShipEntity;
 import h3d.Engine;
 import h2d.Scene;
 
-class SceneMain extends Scene {
+class SceneHomeMenu extends Scene {
 	public final hud:SceneMainHud;
 
 	private final baseShipX:Float;
@@ -207,7 +208,8 @@ class SceneMain extends Scene {
 			if (currentShip != null) {
 				removeChild(currentShip);
 			}
-			currentShip = new ShipTemplate(shipSize, shipWindows, shipCannons);
+
+			// currentShip = new ShipTemplate(GameEntityDirection.createByName(newShipInfo.direction), shipSize, shipWindows, shipCannons);
 			if (currentShip.shipSize == SMALL) {
 				currentShip.setPosition(1150, 260);
 			} else {

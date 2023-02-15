@@ -1,9 +1,9 @@
 import client.network.RestProtocol.JoinSectorResponse;
 import client.network.RestProtocol.GameWorldData;
-import client.scene.SceneGlobalMode;
+import client.scene.SceneWorldMap;
 import client.scene.SceneIsland;
 import client.scene.SceneShipsDemo;
-import client.scene.SceneMain;
+import client.scene.SceneHomeMenu;
 import client.scene.SceneDemo1;
 import client.scene.SceneOnlineDemo1;
 import client.GuiApp;
@@ -13,69 +13,82 @@ interface Updatable {
 }
 
 enum Scene {
-	SceneMain;
+	SceneHomeMenu;
 	SceneDemo1;
 	SceneOnlineDemo1;
 	SceneShipsDemo;
 	SceneIsland;
-	SceneGlobalMode;
+	SceneWorldMap;
 }
 
 class Main extends GuiApp {
-	private var sceneMain:SceneMain;
+	private final defaultScene = Scene.SceneDemo1;
+
+	private var sceneHomeMenu:SceneHomeMenu;
 	private var sceneDemo1:SceneDemo1;
 	private var sceneShipsDemo:SceneShipsDemo;
 	private var sceneOnlineDemo1:SceneOnlineDemo1;
 	private var sceneIsland:SceneIsland;
-	private var sceneGlobalMode:SceneGlobalMode;
-
-	private final defaultScene = Scene.SceneMain;
+	private var sceneWorldMap:SceneWorldMap;
 	private var currentScene:Scene;
 	private var lastAddedIteractiveScene:hxd.SceneEvents.InteractiveScene;
 
 	public static var ScreenWidth:Int = 1920;
 	public static var ScreenHeight:Int = 1080;
-
 	public static var IsWeb3Available = false;
 
+	// TODO refactor game input scenes
 	override function init() {
 		super.init();
 
 		engine.backgroundColor = 0xFCDCA1;
 
-		sceneMain = new SceneMain(function startCallback() {
-			initGlobalMode();
+		// Init scene home menu
+		sceneHomeMenu = new SceneHomeMenu(function startCallback() {
+			initiateSceneWorldMap();
 		});
 
-		lastAddedIteractiveScene = sceneMain.getHud();
-		sevents.addScene(lastAddedIteractiveScene);
-
+		// Init scene demo 1
 		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
 
+		// Init scene ships demo
 		sceneShipsDemo = new SceneShipsDemo();
+
+		// Init scene island
 		sceneIsland = new SceneIsland(engine.width, engine.height, function leaveCallback() {
-			currentScene = SceneGlobalMode;
-			sceneGlobalMode.start();
-
-			sevents.removeScene(lastAddedIteractiveScene);
-			lastAddedIteractiveScene = sceneGlobalMode.getHud();
-			sevents.addScene(lastAddedIteractiveScene);
-
-			setScene2D(sceneGlobalMode);
+			initiateSceneWorldMap();
 		});
 
-		// TODO refactor scene load and unload
+		// init scene world map
+		sceneWorldMap = new SceneWorldMap(function callback(sector:EnterSectorCallback) {
+			if (sector.joinSectorResponse.sectorType == GameWorldData.SectorIslandType) {
+				initiateSceneIsland(sector.joinSectorResponse);
+			} else {
+				initiateSceneOnlineDemo1(sector.joinSectorResponse.instanceId);
+			}
+		}, function mainMenuCallback() {
+			initiateSceneHomeMenu();
+		});
+
+		// init scene online demo 1
+		sceneOnlineDemo1 = new SceneOnlineDemo1(function leaveCallback() {
+			initiateSceneWorldMap();
+		}, function diedCallback() {});
+
+		// TODO better start scene selection
+		// Start default scene
 		switch (defaultScene) {
-			case SceneMain:
-				sceneMain.start();
-				setScene2D(sceneMain);
+			case SceneHomeMenu:
+				sceneHomeMenu.start();
+				setScene2D(sceneHomeMenu);
 			case SceneDemo1:
 				sceneDemo1.start();
-				sevents.addScene(sceneDemo1.getHud());
+				// sevents.addScene(sceneDemo1.getHud());
+				sevents.addScene(sceneDemo1.testHud);
 				setScene2D(sceneDemo1);
 			case SceneOnlineDemo1:
-				sceneOnlineDemo1.start();
-				setScene2D(sceneOnlineDemo1);
+				sceneWorldMap.start();
+				setScene2D(sceneWorldMap);
 			case SceneShipsDemo:
 				setScene2D(sceneShipsDemo);
 			case SceneIsland:
@@ -83,38 +96,50 @@ class Main extends GuiApp {
 				sceneIsland.start(response);
 				sevents.addScene(sceneIsland.getHud());
 				setScene2D(sceneIsland);
-			case SceneGlobalMode:
-				setScene2D(sceneGlobalMode);
+			case SceneWorldMap:
+				setScene2D(sceneWorldMap);
 		}
 
 		currentScene = defaultScene;
 	}
 
-	private function initOnlineScene(instanceId:String) {
+	private function initiateSceneHomeMenu() {
+		currentScene = SceneHomeMenu;
+		sceneHomeMenu.start();
+
+		sevents.removeScene(lastAddedIteractiveScene);
+		lastAddedIteractiveScene = sceneHomeMenu.getHud();
+		sevents.addScene(lastAddedIteractiveScene);
+
+		setScene2D(sceneHomeMenu);
+	}
+
+	private function initiateSceneWorldMap() {
+		currentScene = SceneWorldMap;
+		sceneWorldMap.start();
+
+		sevents.removeScene(lastAddedIteractiveScene);
+		lastAddedIteractiveScene = sceneWorldMap.getHud();
+		sevents.addScene(lastAddedIteractiveScene);
+
+		setScene2D(sceneWorldMap);
+	}
+
+	private function initiateSceneIsland(joinSectorResponse:JoinSectorResponse) {
+		currentScene = SceneIsland;
+		sceneIsland.start(joinSectorResponse);
+
+		sevents.removeScene(lastAddedIteractiveScene);
+		lastAddedIteractiveScene = sceneIsland.getHud();
+		sevents.addScene(lastAddedIteractiveScene);
+
+		setScene2D(sceneIsland);
+	}
+
+	private function initiateSceneOnlineDemo1(instanceId:String) {
 		currentScene = SceneOnlineDemo1;
 
-		sceneOnlineDemo1 = new SceneOnlineDemo1(function leaveCallback() {
-			currentScene = SceneGlobalMode;
-			sceneGlobalMode.start();
-
-			sevents.removeScene(lastAddedIteractiveScene);
-			lastAddedIteractiveScene = sceneGlobalMode.getHud();
-			sevents.addScene(lastAddedIteractiveScene);
-
-			setScene2D(sceneGlobalMode);
-		}, function diedCallback() {
-			currentScene = SceneMain;
-			sceneMain.start();
-
-			sevents.removeScene(lastAddedIteractiveScene);
-			lastAddedIteractiveScene = sceneMain.getHud();
-			sevents.addScene(lastAddedIteractiveScene);
-
-			setScene2D(sceneMain);
-		});
-
-		sceneOnlineDemo1.instanceId = instanceId;
-		sceneOnlineDemo1.start();
+		sceneOnlineDemo1.start(instanceId);
 
 		sevents.removeScene(lastAddedIteractiveScene);
 		lastAddedIteractiveScene = sceneOnlineDemo1.getHud();
@@ -123,56 +148,17 @@ class Main extends GuiApp {
 		setScene2D(sceneOnlineDemo1);
 	}
 
-	private function initGlobalMode() {
-		currentScene = SceneGlobalMode;
-
-		sceneGlobalMode = new SceneGlobalMode(function callback(sector:EnterSectorCallback) {
-			if (sector.joinSectorResponse.sectorType == GameWorldData.SectorIslandType) {
-				currentScene = SceneIsland;
-
-				sceneIsland.instanceId = sector.joinSectorResponse.instanceId;
-				sceneIsland.start(sector.joinSectorResponse);
-
-				sevents.removeScene(lastAddedIteractiveScene);
-				lastAddedIteractiveScene = sceneIsland.getHud();
-				sevents.addScene(lastAddedIteractiveScene);
-
-				setScene2D(sceneIsland);
-			} else {
-				initOnlineScene(sector.joinSectorResponse.instanceId);
-			}
-		}, function mainMenuCallback() {
-			currentScene = SceneMain;
-			sceneMain.start();
-
-			sevents.removeScene(lastAddedIteractiveScene);
-			lastAddedIteractiveScene = sceneMain.getHud();
-			sevents.addScene(lastAddedIteractiveScene);
-
-			setScene2D(sceneMain);
-		});
-
-		sevents.removeScene(lastAddedIteractiveScene);
-		lastAddedIteractiveScene = sceneGlobalMode.getHud();
-		sevents.addScene(lastAddedIteractiveScene);
-
-		sceneGlobalMode.start();
-
-		setScene2D(sceneGlobalMode);
-	}
-
 	override function update(dt:Float) {
-		if (currentScene == SceneOnlineDemo1) {
-			sceneOnlineDemo1.update(dt, engine.fps);
-		}
-		if (currentScene == SceneShipsDemo) {
-			sceneShipsDemo.update();
-		}
-		if (currentScene == SceneIsland) {
-			sceneIsland.update(dt, engine.fps);
-		}
-		if (currentScene == SceneDemo1) {
-			sceneDemo1.update(dt, engine.fps);
+		switch (currentScene) {
+			case SceneOnlineDemo1:
+				sceneOnlineDemo1.update(dt, engine.fps);
+			case SceneShipsDemo:
+				sceneShipsDemo.update();
+			case SceneIsland:
+				sceneIsland.update(dt, engine.fps);
+			case SceneDemo1:
+				sceneDemo1.update(dt, engine.fps);
+			case _:
 		}
 	}
 

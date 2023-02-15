@@ -7,7 +7,7 @@ import engine.entity.EngineShipEntity;
 class ShipTemplate extends h2d.Object {
 	public var layers:h2d.Layers;
 
-	public var direction = GameEntityDirection.East;
+	public var direction:GameEntityDirection;
 
 	public final shipSize:ShipHullSize;
 	public final shipWindows:ShipWindows;
@@ -39,9 +39,10 @@ class ShipTemplate extends h2d.Object {
 
 	private var decorWasChanged = false;
 
-	public function new(shipSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns) {
+	public function new(direction:GameEntityDirection, shipSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns) {
 		super();
 
+		this.direction = direction;
 		this.shipSize = shipSize;
 		this.shipWindows = shipWindows;
 		this.shipGuns = shipGuns;
