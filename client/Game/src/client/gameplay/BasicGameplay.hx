@@ -1,5 +1,6 @@
 package client.gameplay;
 
+import utils.Utils;
 import client.entity.ClientShip;
 import client.entity.ClientCharacter;
 import client.entity.ClientBaseGameEntity;
@@ -25,6 +26,10 @@ enum GameState {
 abstract class BasicGameplay {
 	public final baseEngine:BaseEngine;
 
+	private final debugGraphics:h2d.Graphics;
+	private final GameEntityLayer = 1;
+	private final DebugLayer = 2;
+
 	public var gameState = GameState.Init;
 
 	public var playerId:String;
@@ -36,8 +41,9 @@ abstract class BasicGameplay {
 	final clientMainEntities = new Map<String, ClientBaseGameEntity>();
 	var clientMainEntitiesCount = 0;
 
-	private final scene:h2d.Scene;
+	public final scene:h2d.Scene;
 
+	// debugGraphics = new h2d.Graphics(s2d);
 	private var isDragging = false;
 	private var dragMousePosStart:Point;
 	private var currentDrag = new Point(0, 0);
@@ -45,8 +51,9 @@ abstract class BasicGameplay {
 	public function new(scene:h2d.Scene, baseEngine:BaseEngine) {
 		this.scene = scene;
 		this.baseEngine = baseEngine;
+		this.debugGraphics = new h2d.Graphics();
+		this.scene.add(this.debugGraphics, DebugLayer);
 
-		scene.camera.x = 700;
 		scene.camera.y = 300;
 	}
 
@@ -70,13 +77,23 @@ abstract class BasicGameplay {
 		}
 	}
 
+	public function debugDraw() {
+		debugGraphics.clear();
+		if (GameConfig.DebugDraw) {
+			for (entity in clientMainEntities) {
+				entity.debugDraw(debugGraphics);
+			}
+		}
+	}
+
 	private function getPlayerEntity() {
 		return clientMainEntities.get(playerEntityId);
 	}
 
 	private function updateInput() {
+		final newMousePos = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
+
 		if (isDragging) {
-			final newMousePos = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
 			currentDrag.x = newMousePos.x - dragMousePosStart.x;
 			currentDrag.y = newMousePos.y - dragMousePosStart.y;
 
@@ -128,12 +145,14 @@ abstract class BasicGameplay {
 			});
 		}
 
-		customInput();
+		// trace(K.isPressed(hxd.Key.MOUSE_LEFT));
+
+		customInput(newMousePos, K.isPressed(hxd.Key.MOUSE_LEFT), hxd.Key.isPressed(hxd.Key.MOUSE_RIGHT));
 	}
 
 	public abstract function customUpdate(dt:Float, fps:Float):Void;
 
-	public abstract function customInput():Void;
+	public abstract function customInput(mousePos:Point, mouseLeft:Bool, mouseRight:Bool):Void;
 
 	public abstract function customUpdateWorldState():Void;
 
@@ -142,21 +161,36 @@ abstract class BasicGameplay {
 	public abstract function customStartGame():Void;
 
 	// --------------------------------------
-	// Online
+	// Simgleplayer
 	// --------------------------------------
 
-	public function startGame(playerId:String, message:SocketServerMessageGameInit) {
+	public function startGameSingleplayer(playerId:String, entities:Array<EngineBaseGameEntity>) {
 		if (gameState == GameState.Init) {
+			this.playerId = playerId;
+			for (entitty in entities) {
+				createNewMainEntity(entitty);
+			}
+			gameState = GameState.Playing;
+		}
+	}
+
+	// --------------------------------------
+	// Multiplayer
+	// --------------------------------------
+
+	public function startGameMultiplayer(playerId:String, message:SocketServerMessageGameInit) {
+		if (gameState == GameState.Init) {
+			this.playerId = playerId;
+
 			final entities = jsEntitiesToEngineEntities(message.entities);
 
 			for (entity in entities) {
-				createNewEntity(entity);
+				createNewMainEntity(entity);
 
 				if (entity.ownerId.toLowerCase() == playerId) {
 					playerEntityId = entity.id;
 				}
 			}
-			this.playerId = playerId;
 			gameState = GameState.Playing;
 
 			trace("startGame");
@@ -169,7 +203,7 @@ abstract class BasicGameplay {
 			final entity = jsEntityToEngineEntity(message.entity);
 
 			if (!clientMainEntities.exists(entity.id)) {
-				createNewEntity(entity);
+				createNewMainEntity(entity);
 			}
 		}
 	}
@@ -226,15 +260,57 @@ abstract class BasicGameplay {
 					clientEntity.updateEntityPosition(entity.x, entity.y);
 				} else {
 					final newEntity = jsEntityToEngineEntity(entity);
-					createNewEntity(newEntity);
+					createNewMainEntity(newEntity);
 				}
 			}
 		}
 	}
 
 	// --------------------------------------
-	// Abstract impl
+	// Entities manipulation
 	// --------------------------------------
+
+	function createNewMainEntity(entity:EngineBaseGameEntity) {
+		var newClientEntity:Null<ClientBaseGameEntity> = null;
+
+		if (baseEngine.mainEntityType == GameEntityType.Ship) {
+			final gameEngine = cast(baseEngine, GameEngine);
+			final shipEntity = cast(entity, EngineShipEntity);
+
+			if (shipEntity.ownerId == playerId) {
+				playerEntityId = shipEntity.id;
+			}
+
+			// TODO RMK, look really ugly
+			final newEngineEnity = gameEngine.createEntity('', shipEntity.free, shipEntity.role, shipEntity.x, shipEntity.y, shipEntity.shipHullSize,
+				shipEntity.shipWindows, shipEntity.shipCannons, shipEntity.cannonsRange, shipEntity.cannonsDamage, shipEntity.armor, shipEntity.hull,
+				shipEntity.maxSpeed, shipEntity.acc, shipEntity.accDelay, shipEntity.turnDelay, shipEntity.fireDelay, shipEntity.id, shipEntity.ownerId);
+
+			newClientEntity = new ClientShip(newEngineEnity);
+		} else if (baseEngine.mainEntityType == GameEntityType.Character) {
+			final islandEngine = cast(baseEngine, IslandEngine);
+			final newEngineEnity = islandEngine.createEntity(entity.x, entity.y, entity.id, entity.ownerId);
+
+			var characterName = Utils.MaskEthAddress(entity.ownerId);
+			if (newEngineEnity.ownerId == playerId) {
+				playerEntityId = newEngineEnity.id;
+				characterName = 'You';
+			}
+
+			newClientEntity = new ClientCharacter(characterName, newEngineEnity);
+		}
+
+		if (newClientEntity != null) {
+			clientMainEntities.set(entity.id, newClientEntity);
+			clientMainEntitiesCount++;
+		}
+
+		addGameEntityToScene(newClientEntity);
+	}
+
+	function addGameEntityToScene(entity:ClientBaseGameEntity) {
+		scene.add(entity, GameEntityLayer);
+	}
 
 	private function moveUp(entityId:String) {
 		return baseEngine.entityMoveUp(entityId);
@@ -252,34 +328,16 @@ abstract class BasicGameplay {
 		return baseEngine.entityMoveRight(entityId);
 	}
 
-	private function createNewEntity(entity:EngineBaseGameEntity) {
-		var newClientEntity:Null<ClientBaseGameEntity> = null;
-
-		if (baseEngine.mainEntityType == GameEntityType.Ship) {
-			final gameEngine = cast(baseEngine, GameEngine);
-			final shipEntity = cast(entity, EngineShipEntity);
-
-			final newEngineEnity = gameEngine.createEntity('', shipEntity.free, shipEntity.role, shipEntity.x, shipEntity.y, shipEntity.shipHullSize,
-				shipEntity.shipWindows, shipEntity.shipGuns, shipEntity.cannonsRange, shipEntity.cannonsDamage, shipEntity.armor, shipEntity.hull,
-				shipEntity.maxSpeed, shipEntity.acc, shipEntity.accDelay, shipEntity.turnDelay, shipEntity.fireDelay, shipEntity.id, shipEntity.ownerId);
-
-			newClientEntity = new ClientShip(scene, newEngineEnity);
-		} else if (baseEngine.mainEntityType == GameEntityType.Character) {
-			final islandEngine = cast(baseEngine, IslandEngine);
-			final newEngineEnity = islandEngine.createEntity(entity.x, entity.y, entity.id, entity.ownerId);
-
-			newClientEntity = new ClientCharacter(scene, Utils.MaskEthAddress(entity.ownerId), newEngineEnity);
-		}
-
-		if (newClientEntity != null) {
-			clientMainEntities.set(entity.id, newClientEntity);
-			clientMainEntitiesCount++;
-		}
-	}
-
 	// --------------------------------------
 	// Utils
 	// --------------------------------------
+
+	public function mouseCoordsToCamera() {
+		final mousePos = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
+		final mouseToCameraPos = new Point(mousePos.x, mousePos.y);
+		scene.camera.sceneToCamera(mouseToCameraPos);
+		return mouseToCameraPos;
+	}
 
 	public abstract function jsEntityToEngineEntity(message:Dynamic):EngineBaseGameEntity;
 

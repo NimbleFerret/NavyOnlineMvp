@@ -1,17 +1,25 @@
 package client.entity.ship;
 
+import h2d.Graphics;
+import utils.ReverseIterator;
+import haxe.Int32;
 import h2d.Layers;
 import engine.entity.EngineBaseGameEntity;
 import engine.entity.EngineShipEntity;
 
 class ShipTemplate extends h2d.Object {
 	public var layers:h2d.Layers;
-
 	public var direction:GameEntityDirection;
 
+	// Is it possible to reuse from engine entity ?
 	public final shipSize:ShipHullSize;
 	public final shipWindows:ShipWindows;
-	public final shipGuns:ShipGuns;
+	public final shipCannons:ShipCannons;
+
+	// Cannons
+	public var cannonsTotal:Int32;
+	public final rightSideCannons = new Array<ShipCannon>();
+	public final leftSideCannons = new Array<ShipCannon>();
 
 	// Hull
 	private final hull:ShipHull;
@@ -22,30 +30,35 @@ class ShipTemplate extends h2d.Object {
 	// Decorative parts
 	private final decor:ShipDecorations;
 
-	// Guns
-	public final rightSideGun1:ShipGun;
-	public final rightSideGun2:ShipGun;
-	public final rightSideGun3:ShipGun;
-	public final rightSideGun4:ShipGun;
-
-	public final leftSideGun1:ShipGun;
-	public final leftSideGun2:ShipGun;
-	public final leftSideGun3:ShipGun;
-	public final leftSideGun4:ShipGun;
+	private final rightCannonsLayer = 4;
+	private final leftCannonsLayer = 5;
 
 	// 1 - 4 > 3 > 2 > 1
 	// 2 - 1 > 2 > 3 > 4
-	private var gunsDrawingOrder = 1;
+	private var cannonsDrawingOrder = 1;
 
 	private var decorWasChanged = false;
 
-	public function new(direction:GameEntityDirection, shipSize:ShipHullSize, shipWindows:ShipWindows, shipGuns:ShipGuns) {
+	public function new(direction:GameEntityDirection, shipSize:ShipHullSize, shipWindows:ShipWindows, shipCannons:ShipCannons) {
 		super();
 
 		this.direction = direction;
 		this.shipSize = shipSize;
 		this.shipWindows = shipWindows;
-		this.shipGuns = shipGuns;
+		this.shipCannons = shipCannons;
+
+		switch (shipCannons) {
+			case ONE:
+				cannonsTotal = 1;
+			case TWO:
+				cannonsTotal = 2;
+			case THREE:
+				cannonsTotal = 3;
+			case FOUR:
+				cannonsTotal = 4;
+			case ZERO:
+				cannonsTotal = 0;
+		}
 
 		layers = new Layers(this);
 
@@ -61,90 +74,44 @@ class ShipTemplate extends h2d.Object {
 		sailAndMast = new ShipSailAndMast(direction, shipSize);
 		layers.add(sailAndMast, 10);
 
-		// Right side guns
+		final cannonsInitialPosRight = shipSize == SMALL ? EngineShipEntity.RightCannonsOffsetByDirSm.get(direction) : EngineShipEntity.RightCannonsOffsetByDirMid.get(direction);
+		final cannonsInitialPosLeft = shipSize == SMALL ? EngineShipEntity.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntity.LeftCannonsOffsetByDirMid.get(direction);
 
-		final canonsInitialPosRight = shipSize == SMALL ? EngineShipEntity.RightCanonsOffsetByDirSm.get(direction) : EngineShipEntity.RightCanonsOffsetByDirMid.get(direction);
+		for (i in 0...cannonsTotal) {
+			final rightSideCannon = new ShipCannon(this, shipSize, direction, Right);
+			rightSideCannon.setPosition(cannonsInitialPosRight.positions[i].x, cannonsInitialPosRight.positions[i].y);
+			rightSideCannons.push(rightSideCannon);
 
-		rightSideGun1 = new ShipGun(shipSize, direction, Right);
-		rightSideGun1.setPosition(canonsInitialPosRight.one.x, canonsInitialPosRight.one.y);
-
-		if (shipGuns == TWO || shipGuns == THREE || shipGuns == FOUR) {
-			rightSideGun2 = new ShipGun(shipSize, direction, Right);
-			rightSideGun2.setPosition(canonsInitialPosRight.two.x, canonsInitialPosRight.two.y);
+			final leftSideCannon = new ShipCannon(this, shipSize, direction, Left);
+			leftSideCannon.setPosition(cannonsInitialPosLeft.positions[i].x, cannonsInitialPosLeft.positions[i].y);
+			leftSideCannons.push(leftSideCannon);
 		}
 
-		if (shipGuns == THREE || shipGuns == FOUR) {
-			rightSideGun3 = new ShipGun(shipSize, direction, Right);
-			rightSideGun3.setPosition(canonsInitialPosRight.three.x, canonsInitialPosRight.three.y);
+		for (i in new ReverseIterator(cannonsTotal - 1, 0)) {
+			layers.add(rightSideCannons[i], rightCannonsLayer);
+			layers.add(leftSideCannons[i], leftCannonsLayer);
 		}
-
-		// TODO qfix
-		if (shipGuns == FOUR && shipSize != SMALL) {
-			rightSideGun4 = new ShipGun(shipSize, direction, Right);
-			rightSideGun4.setPosition(canonsInitialPosRight.four.x, canonsInitialPosRight.four.y);
-		}
-
-		// Left side guns
-		final canonsInitialPosLeft = shipSize == SMALL ? EngineShipEntity.LeftCanonsOffsetByDirSm.get(direction) : EngineShipEntity.LeftCanonsOffsetByDirMid.get(direction);
-
-		leftSideGun1 = new ShipGun(shipSize, direction, Left);
-		leftSideGun1.setPosition(canonsInitialPosLeft.one.x, canonsInitialPosLeft.one.y);
-
-		if (shipGuns == TWO || shipGuns == THREE || shipGuns == FOUR) {
-			leftSideGun2 = new ShipGun(shipSize, direction, Left);
-			leftSideGun2.setPosition(canonsInitialPosLeft.two.x, canonsInitialPosLeft.two.y);
-		}
-
-		if (shipGuns == THREE || shipGuns == FOUR) {
-			leftSideGun3 = new ShipGun(shipSize, direction, Left);
-			leftSideGun3.setPosition(canonsInitialPosLeft.three.x, canonsInitialPosLeft.three.y);
-		}
-
-		if (shipGuns == FOUR && shipSize != SMALL) {
-			leftSideGun4 = new ShipGun(shipSize, direction, Left);
-			leftSideGun4.setPosition(canonsInitialPosLeft.four.x, canonsInitialPosLeft.four.y);
-		}
-
-		if (rightSideGun4 != null)
-			layers.add(rightSideGun4, 4);
-		if (rightSideGun3 != null)
-			layers.add(rightSideGun3, 4);
-		if (rightSideGun2 != null)
-			layers.add(rightSideGun2, 4);
-		layers.add(rightSideGun1, 4);
-
-		if (leftSideGun4 != null)
-			layers.add(leftSideGun4, 5);
-		if (leftSideGun3 != null)
-			layers.add(leftSideGun3, 5);
-		if (leftSideGun2 != null)
-			layers.add(leftSideGun2, 5);
-		layers.add(leftSideGun1, 5);
 	}
 
 	public function update() {
-		rightSideGun1.update();
-		if (leftSideGun2 != null)
-			rightSideGun2.update();
-		if (rightSideGun3 != null)
-			rightSideGun3.update();
-		if (rightSideGun4 != null)
-			rightSideGun4.update();
+		for (i in 0...cannonsTotal) {
+			rightSideCannons[i].update();
+			leftSideCannons[i].update();
+		}
+	}
 
-		leftSideGun1.update();
-		if (leftSideGun2 != null)
-			leftSideGun2.update();
-		if (leftSideGun3 != null)
-			leftSideGun3.update();
-		if (leftSideGun4 != null)
-			leftSideGun4.update();
+	public function drawCannonsFiringArea(graphics:Graphics) {
+		for (i in 0...cannonsTotal) {
+			rightSideCannons[i].drawFiringArea(graphics);
+			leftSideCannons[i].drawFiringArea(graphics);
+		}
 	}
 
 	public function changeDirRight() {
 		switch (direction) {
 			case East:
 				direction = SouthEast;
-				changeGunsDrawingOrder();
+				changeCannonsDrawingOrder();
 			case SouthEast:
 				direction = South;
 			case South:
@@ -157,7 +124,7 @@ class ShipTemplate extends h2d.Object {
 				direction = North;
 			case North:
 				direction = NorthEast;
-				changeGunsDrawingOrder();
+				changeCannonsDrawingOrder();
 			case NorthEast:
 				direction = East;
 		}
@@ -176,7 +143,7 @@ class ShipTemplate extends h2d.Object {
 				direction = West;
 			case West:
 				direction = SouthWest;
-				changeGunsDrawingOrder();
+				changeCannonsDrawingOrder();
 				decor.changeDrawingOrder();
 				decorWasChanged = true;
 			case SouthWest:
@@ -185,46 +152,39 @@ class ShipTemplate extends h2d.Object {
 				direction = SouthEast;
 			case SouthEast:
 				direction = East;
-				changeGunsDrawingOrder();
+				changeCannonsDrawingOrder();
 				decor.changeDrawingOrder();
 				decorWasChanged = true;
 		}
 		hanldeDirectionChange();
 	}
 
-	private function changeGunsDrawingOrder() {
-		var length = 1;
-		if (shipGuns == ShipGuns.TWO) {
-			length = 2;
-		} else if (shipGuns == ShipGuns.THREE) {
-			length = 3;
-		} else if (shipGuns == ShipGuns.FOUR) {
-			length = 4;
-		}
+	private function changeCannonsDrawingOrder() {
+		var length = cannonsTotal;
 
-		// Right side guns
-		final removedRightGuns = new Array<h2d.Object>();
+		// Right side cannons
+		final removedRightCannons = new Array<h2d.Object>();
 		for (i in 0...length) {
-			final rightGun = layers.getChildAtLayer(0, 4);
-			removedRightGuns.push(rightGun);
-			layers.removeChild(rightGun);
+			final rightCannon = layers.getChildAtLayer(0, rightCannonsLayer);
+			removedRightCannons.push(rightCannon);
+			layers.removeChild(rightCannon);
 		}
 		var i = length - 1;
 		while (i >= 0) {
-			layers.add(removedRightGuns[i], 4);
+			layers.add(removedRightCannons[i], rightCannonsLayer);
 			i--;
 		}
 
-		// Left side guns
-		final removedLeftGuns = new Array<h2d.Object>();
+		// Left side cannons
+		final removedLeftCannons = new Array<h2d.Object>();
 		for (i in 0...length) {
-			final leftGun = layers.getChildAtLayer(0, 5);
-			removedLeftGuns.push(leftGun);
-			layers.removeChild(leftGun);
+			final leftCannon = layers.getChildAtLayer(0, leftCannonsLayer);
+			removedLeftCannons.push(leftCannon);
+			layers.removeChild(leftCannon);
 		}
 		i = length - 1;
 		while (i >= 0) {
-			layers.add(removedLeftGuns[i], 5);
+			layers.add(removedLeftCannons[i], leftCannonsLayer);
 			i--;
 		}
 	}
@@ -234,62 +194,27 @@ class ShipTemplate extends h2d.Object {
 		sailAndMast.updateDirection(direction);
 		decor.updateDirection(direction);
 
-		// Handle right side guns
-		final rightSideGunsPos = shipSize == SMALL ? EngineShipEntity.RightCanonsOffsetByDirSm.get(direction) : EngineShipEntity.RightCanonsOffsetByDirMid.get(direction);
+		final rightSideCannonsPos = shipSize == SMALL ? EngineShipEntity.RightCannonsOffsetByDirSm.get(direction) : EngineShipEntity.RightCannonsOffsetByDirMid.get(direction);
+		final leftSideCannonsPos = shipSize == SMALL ? EngineShipEntity.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntity.LeftCannonsOffsetByDirMid.get(direction);
 
-		rightSideGun1.updateDirection(direction);
-		rightSideGun1.setPosition(rightSideGunsPos.one.x, rightSideGunsPos.one.y);
+		for (i in 0...cannonsTotal) {
+			rightSideCannons[i].updateDirection(direction);
+			rightSideCannons[i].setPosition(rightSideCannonsPos.positions[i].x, rightSideCannonsPos.positions[i].y);
 
-		if (rightSideGun2 != null) {
-			rightSideGun2.updateDirection(direction);
-			rightSideGun2.setPosition(rightSideGunsPos.two.x, rightSideGunsPos.two.y);
-		}
-		if (rightSideGun3 != null) {
-			rightSideGun3.updateDirection(direction);
-			rightSideGun3.setPosition(rightSideGunsPos.three.x, rightSideGunsPos.three.y);
-		}
-		if (rightSideGun4 != null) {
-			rightSideGun4.updateDirection(direction);
-			rightSideGun4.setPosition(rightSideGunsPos.four.x, rightSideGunsPos.four.y);
-		}
-
-		// Handle left side guns
-		final leftSideGunsPos = shipSize == SMALL ? EngineShipEntity.LeftCanonsOffsetByDirSm.get(direction) : EngineShipEntity.LeftCanonsOffsetByDirMid.get(direction);
-
-		leftSideGun1.updateDirection(direction);
-		leftSideGun1.setPosition(leftSideGunsPos.one.x, leftSideGunsPos.one.y);
-
-		if (leftSideGun2 != null) {
-			leftSideGun2.updateDirection(direction);
-			leftSideGun2.setPosition(leftSideGunsPos.two.x, leftSideGunsPos.two.y);
-		}
-		if (leftSideGun3 != null) {
-			leftSideGun3.updateDirection(direction);
-			leftSideGun3.setPosition(leftSideGunsPos.three.x, leftSideGunsPos.three.y);
-		}
-		if (rightSideGun4 != null) {
-			leftSideGun4.updateDirection(direction);
-			leftSideGun4.setPosition(leftSideGunsPos.four.x, leftSideGunsPos.four.y);
+			leftSideCannons[i].updateDirection(direction);
+			leftSideCannons[i].setPosition(leftSideCannonsPos.positions[i].x, leftSideCannonsPos.positions[i].y);
 		}
 	}
 
 	public function shootRight() {
-		rightSideGun1.shoot();
-		if (rightSideGun2 != null)
-			rightSideGun2.shoot();
-		if (rightSideGun3 != null)
-			rightSideGun3.shoot();
-		if (rightSideGun4 != null)
-			rightSideGun4.shoot();
+		for (cannon in rightSideCannons) {
+			cannon.shoot();
+		}
 	}
 
 	public function shootLeft() {
-		leftSideGun1.shoot();
-		if (leftSideGun2 != null)
-			leftSideGun2.shoot();
-		if (leftSideGun3 != null)
-			leftSideGun3.shoot();
-		if (leftSideGun4 != null)
-			leftSideGun4.shoot();
+		for (cannon in leftSideCannons) {
+			cannon.shoot();
+		}
 	}
 }

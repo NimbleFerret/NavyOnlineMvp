@@ -1,8 +1,10 @@
 package client.gameplay.island;
 
+import utils.Utils;
 import client.entity.ClientCharacter;
 import client.network.Socket;
 import client.gameplay.BasicGameplay.GameState;
+import client.manager.IslandsManager;
 import engine.IslandEngine;
 import engine.BaseEngine.EngineMode;
 import engine.entity.EngineBaseGameEntity;
@@ -164,7 +166,7 @@ class IslandGameplay extends BasicGameplay {
 
 	public function customStartGame() {}
 
-	public function customInput() {
+	public function customInput(mousePos:Point, mouseLeft:Bool, mouseRight:Bool) {
 		// final space = K.isPressed(K.SPACE);
 		// if (space) {
 		// 	for (value in contour) {
@@ -188,23 +190,6 @@ class IslandGameplay extends BasicGameplay {
 	public function addCharacterByClient(x:Int, y:Int, charId:String, ownerId:String) {
 		final islandEngine = cast(baseEngine, IslandEngine);
 		return islandEngine.createEntity(x, y, charId, ownerId);
-	}
-
-	public function startGameByClient(playerId:String, characters:Array<EngineCharacterEntity>) {
-		if (gameState == GameState.Init) {
-			for (character in characters) {
-				var characterName = Utils.MaskEthAddress(character.ownerId);
-				if (character.ownerId == playerId) {
-					playerEntityId = character.id;
-					characterName = 'You';
-				}
-
-				final newClientCharacter = new ClientCharacter(scene, characterName, character);
-				clientMainEntities.set(character.id, newClientCharacter);
-			}
-			this.playerId = playerId;
-			gameState = GameState.Playing;
-		}
 	}
 
 	// --------------------------------------

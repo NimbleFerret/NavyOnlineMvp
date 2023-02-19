@@ -1,5 +1,7 @@
 package client.entity;
 
+import utils.Utils;
+import h2d.col.Point;
 import client.entity.ship.ShipTemplate;
 import client.gameplay.battle.BattleGameplay;
 import engine.entity.EngineBaseGameEntity;
@@ -48,7 +50,9 @@ class ClientShip extends ClientBaseGameEntity {
 	public var localDirection:GameEntityDirection;
 	public var currentSpeed:Float;
 
-	public function new(s2d:h2d.Scene, engineShipEntity:EngineShipEntity) {
+	// TODO cast engine entity once ?
+
+	public function new(engineShipEntity:EngineShipEntity) {
 		super();
 
 		localDirection = engineShipEntity.direction;
@@ -107,7 +111,7 @@ class ClientShip extends ClientBaseGameEntity {
 		rippleAnim.scaleY = 0.9 * (engineShipEntity.shipHullSize == SMALL ? 1 : 1.5);
 		rippleAnim.alpha = 0;
 
-		shipTemplate = new ShipTemplate(engineShipEntity.direction, engineShipEntity.shipHullSize, engineShipEntity.shipWindows, engineShipEntity.shipGuns);
+		shipTemplate = new ShipTemplate(engineShipEntity.direction, engineShipEntity.shipHullSize, engineShipEntity.shipWindows, engineShipEntity.shipCannons);
 		addChild(shipTemplate);
 
 		final nickname = new h2d.Text(hxd.res.DefaultFont.get(), this);
@@ -141,8 +145,6 @@ class ClientShip extends ClientBaseGameEntity {
 			color: 0x000000,
 			alpha: 0.9
 		};
-
-		s2d.addChild(this);
 	}
 
 	public function updateHullAndArmor(currentHull:Int, currentArmor:Int) {
@@ -151,10 +153,32 @@ class ClientShip extends ClientBaseGameEntity {
 		shipEntity.currentArmor = currentArmor;
 	}
 
+	public function getCannonPos() {
+		// return shipTemplate.leftSideCannons[0].getAbsPos();
+		return new Point();
+	}
+
+	public function getGunsPos() {
+		// return shipTemplate.leftSideCannons[0].getAbsPos();
+		return new Point();
+	}
+
 	public function update(dt:Float) {
 		x = hxd.Math.lerp(x, engineEntity.x, 0.1);
 		y = hxd.Math.lerp(y, engineEntity.y, 0.1);
 		shipTemplate.update();
+	}
+
+	public function debugDraw(graphics:h2d.Graphics) {
+		final shipEntity = cast(engineEntity, EngineShipEntity);
+		Utils.DrawRect(graphics, shipEntity.getBodyRectangle(), GameConfig.BodyRectColor);
+
+		if (GameConfig.DebugCannonFiringArea) {
+			shipTemplate.drawCannonsFiringArea(graphics);
+		}
+		if (GameConfig.DebugCannonSight) {
+			shipTemplate.drawCannonsFiringArea(graphics);
+		}
 	}
 
 	public function getStats() {
@@ -174,9 +198,14 @@ class ClientShip extends ClientBaseGameEntity {
 		}
 	}
 
-	public function getCanonOffsetBySideAndIndex(side:Side, index:Int) {
+	public function getCannonsFiringAreaBySide(side:Side) {
 		final shipEntity = cast(engineEntity, EngineShipEntity);
-		return shipEntity.getCanonOffsetBySideAndIndex(side, index);
+		return shipEntity.getCannonsFiringAreaBySide(side);
+	}
+
+	public function getCannonPositionBySideAndIndex(side:Side, index:Int) {
+		final shipEntity = cast(engineEntity, EngineShipEntity);
+		return shipEntity.getCannonPositionBySideAndIndex(side, index);
 	}
 
 	public function clearDebugGraphics(s2d:h2d.Scene) {
@@ -192,7 +221,7 @@ class ClientShip extends ClientBaseGameEntity {
 	}
 
 	function toggleDebugDraw() {
-		if (BattleGameplay.DebugDraw) {
+		if (GameConfig.DebugDraw) {
 			// leftCanon1.alpha = 1;
 			// leftCanon2.alpha = 1;
 			// leftCanon3.alpha = 1;

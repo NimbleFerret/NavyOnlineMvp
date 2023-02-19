@@ -1,48 +1,101 @@
 package engine;
 
+import engine.geometry.Line;
+import h2d.col.Point;
 import engine.entity.EngineBaseGameEntity.GameEntityDirection;
 
 class MathUtils {
+	public static function getHullRadByDir(dir:GameEntityDirection) {
+		var degree = 0;
+		switch (dir) {
+			case North:
+				degree = 0;
+			case NorthWest:
+				degree = -65;
+			case West:
+				degree = -90;
+			case SouthWest:
+				degree = -115;
+			case South:
+				degree = -180;
+			case SouthEast:
+				degree = -245;
+			case East:
+				degree = -270;
+			case NorthEast:
+				degree = -335;
+		}
+		return degreeToRads(degree);
+	}
+
+	public static function getGunRadByDir(dir:GameEntityDirection) {
+		var degree = 0;
+		switch (dir) {
+			case North:
+				degree = 0;
+			case NorthWest:
+				degree = -45;
+			case West:
+				degree = -90;
+			case SouthWest:
+				degree = -135;
+			case South:
+				degree = -180;
+			case SouthEast:
+				degree = -225;
+			case East:
+				degree = -270;
+			case NorthEast:
+				degree = -315;
+		}
+		return degreeToRads(degree);
+	}
+
 	public static function dirToRad(dir:GameEntityDirection) {
-		var result = 0;
+		var degree = 0;
 		switch (dir) {
 			case East:
-				result = 0;
+				degree = 0;
 			case NorthEast:
-				result = -25;
+				degree = -25;
 			case North:
-				result = -90;
+				degree = -90;
 			case NorthWest:
-				result = -155;
+				degree = -155;
 			case West:
-				result = 0;
+				degree = 0;
 			case SouthWest:
-				result = -25;
+				degree = -25;
 			case South:
-				result = -90;
+				degree = -90;
 			case SouthEast:
-				result = 25;
+				degree = 25;
 		}
-		return degreeToRads(result);
+		return degreeToRads(degree);
+	}
+
+	public static function angleBetweenPoints(point1:Point, point2:Point) {
+		return Math.atan2(point2.y - point1.y, point2.x - point1.x);
 	}
 
 	public static function degreeToRads(degrees:Float) {
-		return degrees * Math.PI / 180;
+		return (Math.PI / 180) * degrees;
+	}
+
+	public static function radsToDegree(rads:Float) {
+		return rads * (180 / Math.PI);
 	}
 
 	public static function rotatePointAroundCenter(x:Float, y:Float, cx:Float, cy:Float, r:Float) {
 		final cos = Math.cos(r);
 		final sin = Math.sin(r);
-		return {
-			x: (cos * (x - cx)) - (sin * (y - cy)) + cx,
-			y: (cos * (y - cy)) + (sin * (x - cx)) + cy
-		}
+		return new Point((cos * (x - cx)) - (sin * (y - cy)) + cx, (cos * (y - cy)) + (sin * (x - cx)) + cy);
 	}
 
-	public static function lineToLineIntersection(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, x4:Float, y4:Float) {
-		final numA = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
-		final numB = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
-		final deNom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+	public static function lineToLineIntersection(lineA:Line, lineB:Line) {
+		final numA = (lineB.x2 - lineB.x1) * (lineA.y1 - lineB.y1) - (lineB.y2 - lineB.y1) * (lineA.x1 - lineB.x1);
+		final numB = (lineA.x2 - lineA.x1) * (lineA.y1 - lineB.y1) - (lineA.y2 - lineA.y1) * (lineA.x1 - lineB.x1);
+		final deNom = (lineB.y2 - lineB.y1) * (lineA.x2 - lineA.x1) - (lineB.x2 - lineB.x1) * (lineA.y2 - lineA.y1);
 		if (deNom == 0) {
 			return false;
 		}

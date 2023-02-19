@@ -1,6 +1,7 @@
 package client.gameplay.island;
 
 import client.gameplay.BaiscHud.BasicHud;
+import utils.Utils;
 
 class IslandHud extends BasicHud {
 	public function new(islandId:String, islandOwner:String, leaveCallback:Void->Void) {

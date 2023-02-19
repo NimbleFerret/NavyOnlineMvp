@@ -1,6 +1,7 @@
 package engine.entity;
 
 import engine.entity.EngineBaseGameEntity;
+import engine.GameEngineConfig;
 import engine.MathUtils;
 
 typedef ShellRnd = {
@@ -23,7 +24,7 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 
 	public var dieEffect = DieEffect.Splash;
 
-	var distanceTraveled = 0.0;
+	private var distanceTraveled = 0.0;
 
 	public function new(side:Side, pos:Int, x:Float, y:Float, rotation:Float, damage:Int, range:Int, ownerId:String, ?shellRnd:ShellRnd) {
 		super(GameEntityType.Shell, x, y, rotation, null, ownerId);
@@ -40,14 +41,13 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 			this.shellRnd = shellRnd;
 		} else {
 			this.shellRnd = {
-				speed: Std.random(30),
+				speed: Std.random(GameEngineConfig.ShellRandomSpeedFactor),
 				dir: Std.random(2),
-				rotation: Std.random(7)
+				rotation: Std.random(GameEngineConfig.ShellRandomAngleSpreadDegree)
 			};
 		}
 
-		// currentSpeed = 0;
-		currentSpeed = 380;
+		currentSpeed = GameEngineConfig.ShellDefaultSpeed;
 		currentSpeed += this.shellRnd.speed;
 
 		this.rotation += MathUtils.degreeToRads(this.shellRnd.dir == 1 ? this.shellRnd.rotation : -this.shellRnd.rotation);

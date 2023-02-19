@@ -2,7 +2,7 @@ package client.scene;
 
 import client.gameplay.battle.BattleGameplay;
 import client.gameplay.battle.TestHud;
-import engine.entity.EngineShipEntity.Role;
+import client.manager.IslandsManager;
 import engine.entity.EngineShipEntity;
 import engine.BaseEngine.EngineMode;
 import h3d.Engine;
@@ -19,8 +19,9 @@ class SceneDemo1 extends Scene {
 
 	public function new(width:Int, height:Int) {
 		super();
-		scaleMode = LetterBox(1920, 1080, true, Center, Center);
+		// scaleMode = LetterBox(1920, 1080, true, Center, Center);
 		camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
+		// camera.setScale(2, 2);
 		testHud = new TestHud();
 	}
 
@@ -34,7 +35,7 @@ class SceneDemo1 extends Scene {
 		// cannonsRange:Int, cannonsDamage:Int, armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float
 
 		final playerId = 'Player1';
-		final ship1 = game.addShipByClient(Role.Player, -200, 100, ShipHullSize.SMALL, ShipWindows.NONE, ShipGuns.THREE, 300, 100, 500, 500, 300, 50, 0.500,
+		final ship1 = game.addShipByClient(Role.Player, 300, 300, ShipHullSize.SMALL, ShipWindows.NONE, ShipCannons.ONE, 500, 100, 500, 500, 300, 50, 0.500,
 			0.500, 0.500, null, playerId);
 
 		// final ship2 = game.addShipByClient(Role.Boss, -200, -200, ShipHullSize.MEDIUM, ShipWindows.NONE, ShipGuns.THREE, 300, 400, 500, 500, 300, 50, 0.500,
@@ -43,12 +44,10 @@ class SceneDemo1 extends Scene {
 		// final ship4 = game.addShipByClient(Role.Bot, 300, -100, null, null);
 		// final ship5 = game.addShipByClient(Role.Bot, 300, -600, null, null);
 
-		game.startGameByClient(playerId, [ship1]);
+		game.startGameSingleplayer(playerId, [ship1]);
 		// game.startGameByClient(playerId, [ship1, ship2, ship3, ship4, ship5]);
 
 		// camera.scale(2, 2);
-
-		trace('HERE');
 	}
 
 	public override function render(e:Engine) {

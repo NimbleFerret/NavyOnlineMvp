@@ -94,7 +94,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 	public function notify(event:String, message:Dynamic) {
 		switch (event) {
 			case SocketProtocol.SocketServerEventGameInit:
-				game.startGame(Player.instance.playerData.ethAddress.toLowerCase(), message);
+				game.startGameMultiplayer(Player.instance.playerData.ethAddress.toLowerCase(), message);
 			case SocketProtocol.SocketServerEventAddEntity:
 				game.addEntity(message);
 			case SocketProtocol.SocketServerEventRemoveEntity:

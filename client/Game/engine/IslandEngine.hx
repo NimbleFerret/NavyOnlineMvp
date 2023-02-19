@@ -1,14 +1,14 @@
 package engine;
 
 import engine.BaseEngine;
-import engine.entity.EngineGameLine;
+import engine.geometry.Line;
 import engine.entity.EngineCharacterEntity;
 import engine.entity.EngineBaseGameEntity;
 import engine.entity.manager.CharacterManager;
 
 @:expose
 class IslandEngine extends BaseEngine {
-	public final lineColliders = new Array<EngineGameLine>();
+	public final lineColliders = new Array<Line>();
 
 	public static function main() {}
 
@@ -81,7 +81,7 @@ class IslandEngine extends BaseEngine {
 			var revertMovement = false;
 
 			for (lineCollider in lineColliders) {
-				if (character.getGameRect().intersectsWithLine(lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2)) {
+				if (character.getBodyRectangle().intersectsWithLine(lineCollider)) {
 					character.collides(true);
 					revertMovement = true;
 				}
@@ -118,8 +118,7 @@ class IslandEngine extends BaseEngine {
 	}
 
 	public function addLineCollider(x1:Int, y1:Int, x2:Int, y2:Int) {
-		final collider = new EngineGameLine(x1, y1, x2, y2);
-		lineColliders.push(collider);
+		lineColliders.push(new Line(x1, y1, x2, y2));
 	}
 
 	public function entityMoveUp(id:String) {

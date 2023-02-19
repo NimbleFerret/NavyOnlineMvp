@@ -50,7 +50,7 @@ class SceneIsland extends Scene implements EventListener {
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
 		} else {
 			final char1 = game.addCharacterByClient(350, 290, '123', '0x87400A03678dd03c8BF536404B5B14C609a23b79');
-			game.startGameByClient('0x87400A03678dd03c8BF536404B5B14C609a23b79', [char1]);
+			game.startGameSingleplayer('0x87400A03678dd03c8BF536404B5B14C609a23b79', [char1]);
 		}
 	}
 
@@ -73,7 +73,7 @@ class SceneIsland extends Scene implements EventListener {
 	public function notify(event:String, message:Dynamic) {
 		switch (event) {
 			case SocketProtocol.SocketServerEventGameInit:
-				game.startGame(Player.instance.playerData.ethAddress.toLowerCase(), message);
+				game.startGameMultiplayer(Player.instance.playerData.ethAddress.toLowerCase(), message);
 			case SocketProtocol.SocketServerEventAddEntity:
 				game.addEntity(message);
 			case SocketProtocol.SocketServerEventRemoveEntity:

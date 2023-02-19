@@ -1,5 +1,6 @@
 package client.scene;
 
+import client.web3.Moralis;
 import engine.entity.EngineBaseGameEntity.GameEntityDirection;
 import client.network.RestProtocol.PlayerData;
 import client.network.RestProtocol.CaptainEntity;
@@ -189,13 +190,13 @@ class SceneHomeMenu extends Scene {
 			final newShipInfo = ships[currentShipIndex];
 			final shipSize = newShipInfo.size == 1 ? SMALL : MEDIUM;
 
-			var shipCannons = ShipGuns.ONE;
+			var shipCannons = ShipCannons.ONE;
 			if (newShipInfo.cannons == 2) {
-				shipCannons = ShipGuns.TWO;
+				shipCannons = ShipCannons.TWO;
 			} else if (newShipInfo.cannons == 3) {
-				shipCannons = ShipGuns.THREE;
+				shipCannons = ShipCannons.THREE;
 			} else if (newShipInfo.cannons == 4) {
-				shipCannons = ShipGuns.FOUR;
+				shipCannons = ShipCannons.FOUR;
 			}
 
 			var shipWindows = ShipWindows.NONE;

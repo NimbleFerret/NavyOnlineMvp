@@ -1,7 +1,7 @@
 package engine.entity;
 
 import uuid.Uuid;
-import engine.entity.EngineGameRect;
+import engine.geometry.Rectangle;
 import engine.MathUtils;
 
 enum GameEntityType {
@@ -39,16 +39,10 @@ class PosOffset {
 }
 
 class PosOffsetArray {
-	public var one:PosOffset;
-	public var two:PosOffset;
-	public var three:PosOffset;
-	public var four:PosOffset;
+	public var positions = new Array<PosOffset>();
 
-	public function new(one, two, three, ?four) {
-		this.one = one;
-		this.two = two;
-		this.three = three;
-		this.four = four;
+	public function new(positions:Array<PosOffset>) {
+		this.positions = positions;
 	}
 }
 
@@ -75,7 +69,7 @@ class EngineBaseGameEntity {
 	// ----------------------
 	// Movement
 	// ----------------------
-	public var direction = GameEntityDirection.North;
+	public var direction = GameEntityDirection.East;
 	public var rotation = 0.0;
 	public var x = 0.0;
 	public var y = 0.0;
@@ -138,8 +132,8 @@ class EngineBaseGameEntity {
 			move(dt);
 	}
 
-	public function getGameRect() {
-		return new EngineGameRect(x + rectOffsetX, y + rectOffsetY, shapeWidth, shapeHeight, MathUtils.dirToRad(direction));
+	public function getBodyRectangle() {
+		return new Rectangle(x + rectOffsetX, y + rectOffsetY, shapeWidth, shapeHeight, MathUtils.dirToRad(direction));
 	}
 
 	public function collides(isCollides:Bool) {

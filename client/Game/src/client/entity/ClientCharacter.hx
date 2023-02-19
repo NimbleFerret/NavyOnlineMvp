@@ -14,7 +14,7 @@ class ClientCharacter extends ClientBaseGameEntity {
 	var leftAnim:h2d.Anim;
 	var rightAnim:h2d.Anim;
 
-	public function new(s2d:h2d.Scene, name:String, engineCharacterEntity:EngineCharacterEntity) {
+	public function new(name:String, engineCharacterEntity:EngineCharacterEntity) {
 		super();
 
 		initiateEngineEntity(engineCharacterEntity);
@@ -106,7 +106,7 @@ class ClientCharacter extends ClientBaseGameEntity {
 		nickname.text = name;
 		nickname.setPosition(20, 0);
 
-		s2d.addChild(this);
+		// s2d.addChild(this);
 
 		setScale(1.5);
 	}
@@ -149,6 +149,8 @@ class ClientCharacter extends ClientBaseGameEntity {
 			idleAnim.alpha = 1;
 		}
 	}
+
+	public function debugDraw(graphics:h2d.Graphics) {}
 
 	public function moveUp() {
 		if (getCharacterEngineEntity().moveUp()) {

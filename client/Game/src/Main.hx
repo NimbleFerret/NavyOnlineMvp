@@ -5,8 +5,8 @@ import client.scene.SceneIsland;
 import client.scene.SceneShipsDemo;
 import client.scene.SceneHomeMenu;
 import client.scene.SceneDemo1;
+import client.scene.SceneGeomTest;
 import client.scene.SceneOnlineDemo1;
-import client.GuiApp;
 
 interface Updatable {
 	public function update(dt:Float):Void;
@@ -15,17 +15,19 @@ interface Updatable {
 enum Scene {
 	SceneHomeMenu;
 	SceneDemo1;
+	SceneGeomTest;
 	SceneOnlineDemo1;
 	SceneShipsDemo;
 	SceneIsland;
 	SceneWorldMap;
 }
 
-class Main extends GuiApp {
+class Main extends hxd.App {
 	private final defaultScene = Scene.SceneDemo1;
 
 	private var sceneHomeMenu:SceneHomeMenu;
 	private var sceneDemo1:SceneDemo1;
+	private var sceneGeomTest:SceneGeomTest;
 	private var sceneShipsDemo:SceneShipsDemo;
 	private var sceneOnlineDemo1:SceneOnlineDemo1;
 	private var sceneIsland:SceneIsland;
@@ -50,6 +52,9 @@ class Main extends GuiApp {
 
 		// Init scene demo 1
 		sceneDemo1 = new SceneDemo1(engine.width, engine.height);
+
+		// Init scene geometry test
+		sceneGeomTest = new SceneGeomTest(engine.width, engine.height);
 
 		// Init scene ships demo
 		sceneShipsDemo = new SceneShipsDemo();
@@ -86,6 +91,9 @@ class Main extends GuiApp {
 				// sevents.addScene(sceneDemo1.getHud());
 				sevents.addScene(sceneDemo1.testHud);
 				setScene2D(sceneDemo1);
+			case SceneGeomTest:
+				sceneGeomTest.start();
+				setScene2D(sceneGeomTest);
 			case SceneOnlineDemo1:
 				sceneWorldMap.start();
 				setScene2D(sceneWorldMap);
@@ -152,6 +160,8 @@ class Main extends GuiApp {
 		switch (currentScene) {
 			case SceneOnlineDemo1:
 				sceneOnlineDemo1.update(dt, engine.fps);
+			case SceneGeomTest:
+				sceneGeomTest.update(dt, engine.fps);
 			case SceneShipsDemo:
 				sceneShipsDemo.update();
 			case SceneIsland:
