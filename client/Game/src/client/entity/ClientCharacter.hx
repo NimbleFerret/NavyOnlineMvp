@@ -1,6 +1,6 @@
 package client.entity;
 
-import engine.entity.EngineCharacterEntity;
+import game.engine.entity.EngineCharacterEntity;
 
 class ClientCharacter extends ClientBaseGameEntity {
 	var idleTile:h2d.Tile;
@@ -112,13 +112,13 @@ class ClientCharacter extends ClientBaseGameEntity {
 	}
 
 	public function update(dt:Float) {
-		final lerpX = hxd.Math.lerp(x, engineEntity.x, 0.1);
-		final lerpY = hxd.Math.lerp(y, engineEntity.y, 0.1);
+		final lerpX = hxd.Math.lerp(x, engineEntity.getX(), 0.1);
+		final lerpY = hxd.Math.lerp(y, engineEntity.getY(), 0.1);
 
-		final intEngineX = Std.int(engineEntity.x);
+		final intEngineX = Std.int(engineEntity.getX());
 		final intClientX = Std.int(x);
 
-		final intEngineY = Std.int(engineEntity.y);
+		final intEngineY = Std.int(engineEntity.getY());
 		final intClientY = Std.int(y);
 
 		idleAnim.alpha = 0;

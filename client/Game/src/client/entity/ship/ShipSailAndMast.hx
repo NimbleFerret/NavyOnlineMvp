@@ -2,8 +2,7 @@ package client.entity.ship;
 
 import h2d.Layers;
 import client.entity.ship.ShipTemplate;
-import engine.entity.EngineBaseGameEntity;
-import engine.entity.EngineShipEntity;
+import game.engine.entity.TypesAndClasses;
 
 class ShipSailAndMast extends ShipVisualComponent {
 	private final bmp_sail:h2d.Bitmap;

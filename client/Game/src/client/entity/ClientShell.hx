@@ -1,6 +1,6 @@
 package client.entity;
 
-import engine.entity.EngineShellEntity;
+import game.engine.entity.EngineShellEntity;
 
 class ClientShell extends ClientBaseGameEntity {
 	public function new(engineShellEntity:EngineShellEntity, ownerShip:ClientShip) {
@@ -8,7 +8,7 @@ class ClientShell extends ClientBaseGameEntity {
 		initiateEngineEntity(engineShellEntity);
 
 		// Correct initial pos due to ship's position interpolation
-		final offset = ownerShip.getCannonPositionBySideAndIndex(engineShellEntity.side, engineShellEntity.pos);
+		final offset = ownerShip.getCannonPositionBySideAndIndex(engineShellEntity.getSide(), engineShellEntity.getPos());
 		final posX = offset.x;
 		final posY = offset.y;
 

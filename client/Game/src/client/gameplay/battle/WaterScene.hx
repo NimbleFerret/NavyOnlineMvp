@@ -1,6 +1,6 @@
 package client.gameplay.battle;
 
-import engine.entity.EngineBaseGameEntity.GameEntityDirection;
+import game.engine.entity.TypesAndClasses;
 
 class WaterScene extends h2d.Scene {
 	private final waterBg:WaterBg;

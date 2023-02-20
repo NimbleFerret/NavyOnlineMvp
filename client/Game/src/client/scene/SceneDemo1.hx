@@ -3,8 +3,8 @@ package client.scene;
 import client.gameplay.battle.BattleGameplay;
 import client.gameplay.battle.TestHud;
 import client.manager.IslandsManager;
-import engine.entity.EngineShipEntity;
-import engine.BaseEngine.EngineMode;
+import game.engine.entity.TypesAndClasses;
+import game.engine.BaseEngine.EngineMode;
 import h3d.Engine;
 import h2d.Scene;
 
@@ -32,11 +32,31 @@ class SceneDemo1 extends Scene {
 		// Mocked client data
 		// --------------------------------------
 
-		// cannonsRange:Int, cannonsDamage:Int, armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float
-
 		final playerId = 'Player1';
-		final ship1 = game.addShipByClient(Role.Player, 300, 300, ShipHullSize.SMALL, ShipWindows.NONE, ShipCannons.ONE, 500, 100, 500, 500, 300, 50, 0.500,
-			0.500, 0.500, null, playerId);
+
+		final ship1 = game.addShipByClient({
+			x: 300,
+			y: 300,
+			minSpeed: 50,
+			maxSpeed: 300,
+			acceleration: 50,
+			direction: GameEntityDirection.East,
+			id: null,
+			ownerId: playerId,
+			serverShipRef: "",
+			free: true,
+			role: Role.Player,
+			shipHullSize: ShipHullSize.SMALL,
+			shipWindows: ShipWindows.NONE,
+			shipCannons: ShipCannons.ONE,
+			cannonsRange: 500,
+			cannonsDamage: 50,
+			armor: 100,
+			hull: 100,
+			accDelay: 0.500,
+			turnDelay: 0.500,
+			fireDelay: 0.500
+		});
 
 		// final ship2 = game.addShipByClient(Role.Boss, -200, -200, ShipHullSize.MEDIUM, ShipWindows.NONE, ShipGuns.THREE, 300, 400, 500, 500, 300, 50, 0.500,
 		// 0.500, 0.500, null, null);

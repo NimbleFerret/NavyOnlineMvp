@@ -3,10 +3,9 @@ package client.entity;
 import utils.Utils;
 import h2d.col.Point;
 import client.entity.ship.ShipTemplate;
-import client.gameplay.battle.BattleGameplay;
-import engine.entity.EngineBaseGameEntity;
-import engine.entity.EngineShipEntity;
-import engine.MathUtils;
+import game.engine.entity.EngineShipEntity;
+import game.engine.entity.TypesAndClasses;
+import game.engine.MathUtils;
 
 final RippleOffsetByDirSmall:Map<GameEntityDirection, PosOffset> = [
 	GameEntityDirection.East => new PosOffset(-20, 0, 90),
@@ -55,7 +54,11 @@ class ClientShip extends ClientBaseGameEntity {
 	public function new(engineShipEntity:EngineShipEntity) {
 		super();
 
-		localDirection = engineShipEntity.direction;
+		final direction = engineShipEntity.getDirection();
+		final shipHullSize = engineShipEntity.getShipHullSize();
+		final ownerId = engineShipEntity.getOwnerId();
+
+		localDirection = direction;
 
 		engineShipEntity.speedChangeCallback = function callback(speed) {
 			if (speed != 0) {
@@ -74,7 +77,7 @@ class ClientShip extends ClientBaseGameEntity {
 			localDirection = dir;
 			shipTemplate.changeDirLeft();
 
-			final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
+			final rippleOffsetByDir = shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
 			rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
 			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
@@ -82,7 +85,7 @@ class ClientShip extends ClientBaseGameEntity {
 			localDirection = dir;
 			shipTemplate.changeDirRight();
 
-			final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
+			final rippleOffsetByDir = shipHullSize == SMALL ? RippleOffsetByDirSmall.get(dir) : RippleOffsetByDirMiddle.get(dir);
 			rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
 			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
@@ -103,23 +106,23 @@ class ClientShip extends ClientBaseGameEntity {
 
 		rippleAnim = new h2d.Anim([rippleTile1, rippleTile2, rippleTile3, rippleTile4, rippleTile5], this);
 
-		final rippleOffsetByDir = engineShipEntity.shipHullSize == SMALL ? RippleOffsetByDirSmall.get(engineShipEntity.direction) : RippleOffsetByDirMiddle.get(engineShipEntity.direction);
+		final rippleOffsetByDir = shipHullSize == SMALL ? RippleOffsetByDirSmall.get(direction) : RippleOffsetByDirMiddle.get(direction);
 
 		rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
 		rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
-		rippleAnim.scaleX = 1.5 * (engineShipEntity.shipHullSize == SMALL ? 1 : 1.5);
-		rippleAnim.scaleY = 0.9 * (engineShipEntity.shipHullSize == SMALL ? 1 : 1.5);
+		rippleAnim.scaleX = 1.5 * (shipHullSize == SMALL ? 1 : 1.5);
+		rippleAnim.scaleY = 0.9 * (shipHullSize == SMALL ? 1 : 1.5);
 		rippleAnim.alpha = 0;
 
-		shipTemplate = new ShipTemplate(engineShipEntity.direction, engineShipEntity.shipHullSize, engineShipEntity.shipWindows, engineShipEntity.shipCannons);
+		shipTemplate = new ShipTemplate(direction, shipHullSize, engineShipEntity.getShipWindows(), engineShipEntity.getShipCannons());
 		addChild(shipTemplate);
 
 		final nickname = new h2d.Text(hxd.res.DefaultFont.get(), this);
 		if (engineShipEntity.role == Role.Player) {
-			if (engineShipEntity.ownerId == client.Player.instance.ethAddress || engineShipEntity.ownerId == 'Player1') {
+			if (ownerId == client.Player.instance.ethAddress || ownerId == 'Player1') {
 				nickname.text = 'You';
 			} else {
-				nickname.text = Utils.MaskEthAddress(engineShipEntity.ownerId);
+				nickname.text = Utils.MaskEthAddress(ownerId);
 			}
 			nickname.textColor = 0xFBF0DD;
 		} else if (engineShipEntity.role == Role.Bot) {
@@ -129,7 +132,7 @@ class ClientShip extends ClientBaseGameEntity {
 			nickname.text = 'BOSS Pirate';
 			nickname.textColor = 0xFF0000;
 		}
-		if (engineShipEntity.shipHullSize == ShipHullSize.SMALL) {
+		if (shipHullSize == ShipHullSize.SMALL) {
 			nickname.setPosition(-50, -180);
 		} else {
 			if (engineShipEntity.role == Role.Player) {
@@ -164,8 +167,8 @@ class ClientShip extends ClientBaseGameEntity {
 	}
 
 	public function update(dt:Float) {
-		x = hxd.Math.lerp(x, engineEntity.x, 0.1);
-		y = hxd.Math.lerp(y, engineEntity.y, 0.1);
+		x = hxd.Math.lerp(x, engineEntity.getX(), 0.1);
+		y = hxd.Math.lerp(y, engineEntity.getY(), 0.1);
 		shipTemplate.update();
 	}
 
@@ -184,17 +187,17 @@ class ClientShip extends ClientBaseGameEntity {
 	public function getStats() {
 		final shipEntity = cast(engineEntity, EngineShipEntity);
 		return {
-			hull: shipEntity.hull,
+			hull: shipEntity.getHull(),
 			currentHull: shipEntity.currentHull,
-			armor: shipEntity.armor,
+			armor: shipEntity.getArmor(),
 			currentArmor: shipEntity.currentArmor,
 			currentSpeed: shipEntity.currentSpeed,
-			maxSpeed: shipEntity.maxSpeed,
-			dir: shipEntity.direction,
+			maxSpeed: shipEntity.getMaxSpeed(),
+			dir: shipEntity.getDirection(),
 			allowShootLeft: shipEntity.shootAllowanceBySide(Left),
 			allowShootRight: shipEntity.shootAllowanceBySide(Right),
-			x: shipEntity.x,
-			y: shipEntity.y
+			x: shipEntity.getX(),
+			y: shipEntity.getY()
 		}
 	}
 

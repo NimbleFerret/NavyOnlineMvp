@@ -2,12 +2,12 @@ package client.gameplay.battle;
 
 import haxe.Timer;
 import client.network.SocketProtocol.SocketServerDailyTaskComplete;
-import h2d.Bitmap;
-import h2d.Object;
 import client.gameplay.BaiscHud.BasicHud;
 import client.ui.UiComponents;
 import client.network.Socket;
 import client.entity.ClientShip;
+import h2d.Bitmap;
+import h2d.Object;
 
 class HorizontalStatsBar {
 	final guiObject:h2d.Object;

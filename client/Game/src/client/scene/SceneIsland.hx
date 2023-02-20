@@ -1,7 +1,7 @@
 package client.scene;
 
+import game.engine.BaseEngine.EngineMode;
 import client.network.RestProtocol.JoinSectorResponse;
-import engine.BaseEngine.EngineMode;
 import client.event.EventManager;
 import client.event.EventManager.EventListener;
 import client.gameplay.island.IslandGameplay;

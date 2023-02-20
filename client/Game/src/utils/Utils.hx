@@ -1,7 +1,7 @@
 package utils;
 
 import client.GameConfig;
-import engine.geometry.Rectangle;
+import game.engine.geometry.Rectangle;
 
 class Utils {
 	public static function MaskEthAddress(text:String) {

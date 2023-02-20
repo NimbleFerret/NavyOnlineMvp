@@ -1,6 +1,6 @@
 package client.scene;
 
-import engine.BaseEngine.EngineMode;
+import game.engine.BaseEngine.EngineMode;
 import client.gameplay.battle.BattleGameplay;
 import client.event.EventManager;
 import client.event.EventManager.EventListener;

@@ -1,16 +1,17 @@
 package client.gameplay;
 
+import game.engine.entity.EngineCharacterEntity;
 import utils.Utils;
 import client.entity.ClientShip;
 import client.entity.ClientCharacter;
 import client.entity.ClientBaseGameEntity;
 import client.network.Socket;
 import client.network.SocketProtocol;
-import engine.BaseEngine;
-import engine.GameEngine;
-import engine.IslandEngine;
-import engine.entity.EngineBaseGameEntity;
-import engine.entity.EngineShipEntity;
+import game.engine.BaseEngine;
+import game.engine.GameEngine;
+import game.engine.IslandEngine;
+import game.engine.entity.EngineBaseGameEntity;
+import game.engine.entity.EngineShipEntity;
 import hxd.Key in K;
 import hxd.Window;
 import h2d.col.Point;
@@ -187,8 +188,8 @@ abstract class BasicGameplay {
 			for (entity in entities) {
 				createNewMainEntity(entity);
 
-				if (entity.ownerId.toLowerCase() == playerId) {
-					playerEntityId = entity.id;
+				if (entity.getOwnerId().toLowerCase() == playerId) {
+					playerEntityId = entity.getId();
 				}
 			}
 			gameState = GameState.Playing;
@@ -202,7 +203,7 @@ abstract class BasicGameplay {
 		if (gameState == GameState.Playing) {
 			final entity = jsEntityToEngineEntity(message.entity);
 
-			if (!clientMainEntities.exists(entity.id)) {
+			if (!clientMainEntities.exists(entity.getId())) {
 				createNewMainEntity(entity);
 			}
 		}
@@ -273,35 +274,31 @@ abstract class BasicGameplay {
 	function createNewMainEntity(entity:EngineBaseGameEntity) {
 		var newClientEntity:Null<ClientBaseGameEntity> = null;
 
-		if (baseEngine.mainEntityType == GameEntityType.Ship) {
+		if (baseEngine.engineGameMode == EngineGameMode.Sea) {
 			final gameEngine = cast(baseEngine, GameEngine);
 			final shipEntity = cast(entity, EngineShipEntity);
-
-			if (shipEntity.ownerId == playerId) {
-				playerEntityId = shipEntity.id;
+			if (shipEntity.getOwnerId() == playerId) {
+				playerEntityId = shipEntity.getId();
 			}
-
-			// TODO RMK, look really ugly
-			final newEngineEnity = gameEngine.createEntity('', shipEntity.free, shipEntity.role, shipEntity.x, shipEntity.y, shipEntity.shipHullSize,
-				shipEntity.shipWindows, shipEntity.shipCannons, shipEntity.cannonsRange, shipEntity.cannonsDamage, shipEntity.armor, shipEntity.hull,
-				shipEntity.maxSpeed, shipEntity.acc, shipEntity.accDelay, shipEntity.turnDelay, shipEntity.fireDelay, shipEntity.id, shipEntity.ownerId);
-
-			newClientEntity = new ClientShip(newEngineEnity);
-		} else if (baseEngine.mainEntityType == GameEntityType.Character) {
+			gameEngine.createMainEntity(shipEntity, true);
+			newClientEntity = new ClientShip(shipEntity);
+		} else if (baseEngine.engineGameMode == EngineGameMode.Island) {
 			final islandEngine = cast(baseEngine, IslandEngine);
-			final newEngineEnity = islandEngine.createEntity(entity.x, entity.y, entity.id, entity.ownerId);
+			final islandEntity = cast(entity, EngineCharacterEntity);
 
-			var characterName = Utils.MaskEthAddress(entity.ownerId);
-			if (newEngineEnity.ownerId == playerId) {
-				playerEntityId = newEngineEnity.id;
+			islandEngine.createMainEntity(islandEntity, true);
+
+			var characterName = Utils.MaskEthAddress(entity.getOwnerId());
+			if (islandEntity.getOwnerId() == playerId) {
+				playerEntityId = islandEntity.getId();
 				characterName = 'You';
 			}
 
-			newClientEntity = new ClientCharacter(characterName, newEngineEnity);
+			newClientEntity = new ClientCharacter(characterName, islandEntity);
 		}
 
 		if (newClientEntity != null) {
-			clientMainEntities.set(entity.id, newClientEntity);
+			clientMainEntities.set(entity.getId(), newClientEntity);
 			clientMainEntitiesCount++;
 		}
 

@@ -1,7 +1,6 @@
 package client.scene;
 
 import client.web3.Moralis;
-import engine.entity.EngineBaseGameEntity.GameEntityDirection;
 import client.network.RestProtocol.PlayerData;
 import client.network.RestProtocol.CaptainEntity;
 import client.network.RestProtocol.ShipEntity;
@@ -11,7 +10,7 @@ import client.ui.UiIsland;
 import client.ui.UiToken;
 import client.ui.UiAvatar;
 import client.entity.ship.ShipTemplate;
-import engine.entity.EngineShipEntity;
+import game.engine.entity.TypesAndClasses;
 import h3d.Engine;
 import h2d.Scene;
 

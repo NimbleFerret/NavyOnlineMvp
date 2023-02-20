@@ -4,8 +4,8 @@ import h2d.Graphics;
 import utils.ReverseIterator;
 import haxe.Int32;
 import h2d.Layers;
-import engine.entity.EngineBaseGameEntity;
-import engine.entity.EngineShipEntity;
+import game.engine.entity.TypesAndClasses;
+import game.engine.entity.EngineShipEntityConfig;
 
 class ShipTemplate extends h2d.Object {
 	public var layers:h2d.Layers;
@@ -74,8 +74,8 @@ class ShipTemplate extends h2d.Object {
 		sailAndMast = new ShipSailAndMast(direction, shipSize);
 		layers.add(sailAndMast, 10);
 
-		final cannonsInitialPosRight = shipSize == SMALL ? EngineShipEntity.RightCannonsOffsetByDirSm.get(direction) : EngineShipEntity.RightCannonsOffsetByDirMid.get(direction);
-		final cannonsInitialPosLeft = shipSize == SMALL ? EngineShipEntity.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntity.LeftCannonsOffsetByDirMid.get(direction);
+		final cannonsInitialPosRight = shipSize == SMALL ? EngineShipEntityConfig.RightCannonsOffsetByDirSm.get(direction) : EngineShipEntityConfig.RightCannonsOffsetByDirMid.get(direction);
+		final cannonsInitialPosLeft = shipSize == SMALL ? EngineShipEntityConfig.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntityConfig.LeftCannonsOffsetByDirMid.get(direction);
 
 		for (i in 0...cannonsTotal) {
 			final rightSideCannon = new ShipCannon(this, shipSize, direction, Right);
@@ -194,8 +194,8 @@ class ShipTemplate extends h2d.Object {
 		sailAndMast.updateDirection(direction);
 		decor.updateDirection(direction);
 
-		final rightSideCannonsPos = shipSize == SMALL ? EngineShipEntity.RightCannonsOffsetByDirSm.get(direction) : EngineShipEntity.RightCannonsOffsetByDirMid.get(direction);
-		final leftSideCannonsPos = shipSize == SMALL ? EngineShipEntity.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntity.LeftCannonsOffsetByDirMid.get(direction);
+		final rightSideCannonsPos = shipSize == SMALL ? EngineShipEntityConfig.RightCannonsOffsetByDirSm.get(direction) : EngineShipEntityConfig.RightCannonsOffsetByDirMid.get(direction);
+		final leftSideCannonsPos = shipSize == SMALL ? EngineShipEntityConfig.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntityConfig.LeftCannonsOffsetByDirMid.get(direction);
 
 		for (i in 0...cannonsTotal) {
 			rightSideCannons[i].updateDirection(direction);

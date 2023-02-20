@@ -1,6 +1,6 @@
 package client.entity.ship;
 
-import engine.entity.EngineBaseGameEntity;
+import game.engine.entity.TypesAndClasses;
 
 abstract class ShipVisualComponent extends h2d.Object {
 	var direction:GameEntityDirection;

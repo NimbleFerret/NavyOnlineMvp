@@ -1,6 +1,5 @@
 package client.gameplay.battle;
 
-import engine.geometry.Line;
 import h2d.col.Point;
 import h2d.Scene;
 import hxd.Key in K;
@@ -10,13 +9,14 @@ import client.network.SocketProtocol;
 import client.network.Socket;
 import client.gameplay.BasicGameplay.GameState;
 import client.manager.EffectsManager;
-import engine.BaseEngine;
-import engine.GameEngine;
-import engine.MathUtils;
-import engine.entity.EngineBaseGameEntity;
-import engine.entity.EngineShellEntity;
-import engine.entity.EngineShipEntity;
-import engine.geometry.Rectangle;
+import game.engine.BaseEngine;
+import game.engine.GameEngine;
+import game.engine.MathUtils;
+import game.engine.entity.EngineBaseGameEntity;
+import game.engine.entity.EngineShellEntity;
+import game.engine.entity.EngineShipEntity;
+import game.engine.entity.TypesAndClasses;
+import game.engine.geometry.Line;
 
 enum InputType {
 	Game;
@@ -53,26 +53,26 @@ class BattleGameplay extends BasicGameplay {
 		gameEngine.createMainEntityCallback = function callback(engineShipEntity:EngineBaseGameEntity) {}
 		gameEngine.createShellCallback = function callback(engineShellEntities:Array<EngineShellEntity>) {
 			if (gameState == GameState.Playing) {
-				final ownerEntity = clientMainEntities.get(engineShellEntities[0].ownerId);
+				final ownerEntity = clientMainEntities.get(engineShellEntities[0].getOwnerId());
 				final shotParams = new Array<ShotParams>();
 				if (ownerEntity != null) {
 					final ownerShip = cast(ownerEntity, ClientShip);
 					for (engineShell in engineShellEntities) {
 						final clientShell = new ClientShell(engineShell, ownerShip);
-						clientShells.set(engineShell.id, clientShell);
+						clientShells.set(engineShell.getId(), clientShell);
 						addGameEntityToScene(clientShell);
 
 						shotParams.push({
-							speed: engineShell.shellRnd.speed,
-							dir: engineShell.shellRnd.dir,
-							rotation: engineShell.shellRnd.rotation
+							speed: engineShell.getShellRnd().speed,
+							dir: engineShell.getShellRnd().dir,
+							rotation: engineShell.getShellRnd().rotation
 						});
 					}
 				}
 				if (gameEngine.engineMode == EngineMode.Server && !engineShellEntities[0].serverSide) {
 					Socket.instance.shoot({
 						playerId: playerId,
-						left: engineShellEntities[0].side == Side.Left ? true : false,
+						left: engineShellEntities[0].getSide() == Side.Left ? true : false,
 						shotParams: shotParams
 					});
 				}
@@ -88,7 +88,7 @@ class BattleGameplay extends BasicGameplay {
 
 		gameEngine.deleteMainEntityCallback = function callback(engineShipEntity:EngineBaseGameEntity) {
 			if (gameState == GameState.Playing) {
-				final clientEntity = clientMainEntities.get(engineShipEntity.id);
+				final clientEntity = clientMainEntities.get(engineShipEntity.getId());
 				if (clientEntity != null) {
 					final clientShip = cast(clientEntity, ClientShip);
 
@@ -103,10 +103,10 @@ class BattleGameplay extends BasicGameplay {
 					clientShip.clearDebugGraphics(scene);
 					scene.removeChild(clientShip);
 
-					clientMainEntities.remove(engineShipEntity.id);
+					clientMainEntities.remove(engineShipEntity.getId());
 					clientMainEntitiesCount--;
 
-					if (engineShipEntity.ownerId == playerId) {
+					if (engineShipEntity.getOwnerId() == playerId) {
 						gameState = GameState.Died;
 						hud.show(false);
 						hud.showDieDialog(client.Player.instance.isCurrentShipIsFree);
@@ -118,7 +118,7 @@ class BattleGameplay extends BasicGameplay {
 
 		gameEngine.shipHitByShellCallback = function callback(params:ShipHitByShellCallbackParams) {
 			if (gameState == GameState.Playing) {
-				final clientShip = clientMainEntities.get(params.ship.id);
+				final clientShip = clientMainEntities.get(params.ship.getId());
 				if (clientShip != null) {
 					effectsManager.addDamageText(clientShip.x, clientShip.y, params.damage);
 				}
@@ -183,12 +183,11 @@ class BattleGameplay extends BasicGameplay {
 		// startGameDialogComp.alpha = 0;
 	}
 
-	// TODO rmk !!!
-	public function addShipByClient(role:Role, x:Int, y:Int, size:ShipHullSize, windows:ShipWindows, cannons:ShipCannons, cannonsRange:Int, cannonsDamage:Int,
-			armor:Int, hull:Int, maxSpeed:Int, acc:Int, accDelay:Float, turnDelay:Float, fireDelay:Float, shipId:String, ?ownerId:String) {
+	public function addShipByClient(shipObjectEntity:ShipObjectEntity) {
 		final gameEngine = cast(baseEngine, GameEngine);
-		return gameEngine.createEntity('', true, role, x, y, size, windows, cannons, cannonsRange, cannonsDamage, armor, hull, maxSpeed, acc, accDelay,
-			turnDelay, fireDelay, shipId, ownerId);
+		final shipEntity = new EngineShipEntity(shipObjectEntity);
+		gameEngine.createMainEntity(shipEntity);
+		return shipEntity;
 	}
 
 	// --------------------------------------
@@ -207,8 +206,8 @@ class BattleGameplay extends BasicGameplay {
 			updateInput();
 
 			for (ship in baseEngine.getMainEntities()) {
-				if (clientMainEntities.exists(ship.id)) {
-					final clientShip = clientMainEntities.get(ship.id);
+				if (clientMainEntities.exists(ship.getId())) {
+					final clientShip = clientMainEntities.get(ship.getId());
 					clientShip.update(dt);
 				}
 			}
@@ -301,39 +300,46 @@ class BattleGameplay extends BasicGameplay {
 	// Utils
 
 	public function jsEntityToEngineEntity(message:Dynamic):EngineBaseGameEntity {
-		final shipHullSize = ShipHullSize.createByIndex(message.shipHullSize);
-		final shipWindows = ShipWindows.createByIndex(message.shipWindows);
-		final shipCannons = ShipCannons.createByIndex(message.shipCannons);
-
-		var role = Role.Player;
-		if (message.role == 'Bot') {
-			role = Role.Bot;
-		} else if (message.role == 'Boss') {
-			role = Role.Boss;
-		}
-
-		return new EngineShipEntity('', message.free, role, message.x, message.y, shipHullSize, shipWindows, shipCannons, message.cannonsRange,
-			message.cannonsDamage, message.armor, message.hull, message.maxSpeed, message.acc, message.accDelay, message.turnDelay, message.fireDelay,
-			message.id, message.ownerId);
+		return new EngineShipEntity(serverMessageToObjectEntity(message));
 	}
 
 	public function jsEntitiesToEngineEntities(entities:Dynamic):Array<EngineBaseGameEntity> {
 		return entities.map(entity -> {
-			final shipHullSize = ShipHullSize.createByIndex(entity.shipHullSize);
-			final shipWindows = ShipWindows.createByIndex(entity.shipWindows);
-			final shipCannons = ShipCannons.createByIndex(entity.shipCannons);
-
-			var role = Role.Player;
-			if (entity.role == 'Bot') {
-				role = Role.Bot;
-			} else if (entity.role == 'Boss') {
-				role = Role.Boss;
-			}
-
-			return new EngineShipEntity('', entity.free, role, entity.x, entity.y, shipHullSize, shipWindows, shipCannons, entity.cannonsRange,
-				entity.cannonsDamage, entity.armor, entity.hull, entity.maxSpeed, entity.acc, entity.accDelay, entity.turnDelay, entity.fireDelay, entity.id,
-				entity.ownerId);
+			return new EngineShipEntity(serverMessageToObjectEntity(entity));
 		});
+	}
+
+	private function serverMessageToObjectEntity(message:Dynamic):ShipObjectEntity {
+		var shipRole = Role.Player;
+		if (message.role == 'Bot') {
+			shipRole = Role.Bot;
+		} else if (message.role == 'Boss') {
+			shipRole = Role.Boss;
+		}
+
+		return {
+			x: message.x,
+			y: message.y,
+			minSpeed: message.minSpeed,
+			maxSpeed: message.maxSpeed,
+			acceleration: message.acceleration,
+			direction: GameEntityDirection.createByIndex(message.direction),
+			id: null,
+			ownerId: playerId,
+			serverShipRef: "",
+			free: true,
+			role: shipRole,
+			shipHullSize: ShipHullSize.createByIndex(message.shipHullSize),
+			shipWindows: ShipWindows.createByIndex(message.shipWindows),
+			shipCannons: ShipCannons.createByIndex(message.shipCannons),
+			cannonsRange: message.cannonsRange,
+			cannonsDamage: message.cannonsDamage,
+			armor: message.armor,
+			hull: message.hull,
+			accDelay: message.accDelay,
+			turnDelay: message.turnDelay,
+			fireDelay: message.fireDelay
+		}
 	}
 
 	private function clearObjects() {

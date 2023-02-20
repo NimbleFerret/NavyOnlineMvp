@@ -5,10 +5,11 @@ import client.entity.ClientCharacter;
 import client.network.Socket;
 import client.gameplay.BasicGameplay.GameState;
 import client.manager.IslandsManager;
-import engine.IslandEngine;
-import engine.BaseEngine.EngineMode;
-import engine.entity.EngineBaseGameEntity;
-import engine.entity.EngineCharacterEntity;
+import game.engine.IslandEngine;
+import game.engine.BaseEngine.EngineMode;
+import game.engine.entity.EngineBaseGameEntity;
+import game.engine.entity.EngineCharacterEntity;
+import game.engine.entity.TypesAndClasses;
 import h2d.col.Point;
 import hxd.Window;
 
@@ -45,10 +46,10 @@ class IslandGameplay extends BasicGameplay {
 		final islandEngine = cast(baseEngine, IslandEngine);
 		islandEngine.deleteMainEntityCallback = function callback(engineCharacterEntity:EngineBaseGameEntity) {
 			if (gameState == GameState.Playing) {
-				final clientEntity = clientMainEntities.get(engineCharacterEntity.id);
+				final clientEntity = clientMainEntities.get(engineCharacterEntity.getId());
 				if (clientEntity != null) {
 					scene.removeChild(clientEntity);
-					clientMainEntities.remove(engineCharacterEntity.id);
+					clientMainEntities.remove(engineCharacterEntity.getId());
 					clientMainEntitiesCount--;
 				}
 			}
@@ -189,7 +190,14 @@ class IslandGameplay extends BasicGameplay {
 
 	public function addCharacterByClient(x:Int, y:Int, charId:String, ownerId:String) {
 		final islandEngine = cast(baseEngine, IslandEngine);
-		return islandEngine.createEntity(x, y, charId, ownerId);
+		final charEntity = jsEntityToEngineEntity({
+			x: x,
+			y: y,
+			id: charId,
+			ownerId: ownerId
+		});
+		islandEngine.createMainEntity(charEntity, true);
+		return charEntity;
 	}
 
 	// --------------------------------------
@@ -197,12 +205,21 @@ class IslandGameplay extends BasicGameplay {
 	// --------------------------------------
 
 	public function jsEntityToEngineEntity(message:Dynamic):EngineBaseGameEntity {
-		return new EngineCharacterEntity(message.x, message.y, message.id, message.ownerId);
+		return new EngineCharacterEntity(serverMessageToObjectEntity(message));
 	}
 
 	public function jsEntitiesToEngineEntities(entities:Dynamic):Array<EngineBaseGameEntity> {
 		return entities.map(entity -> {
-			return new EngineCharacterEntity(entity.x, entity.y, entity.id, entity.ownerId);
+			return new EngineCharacterEntity(serverMessageToObjectEntity(entity));
 		});
+	}
+
+	private function serverMessageToObjectEntity(message:Dynamic):BaseObjectEntity {
+		return {
+			x: message.x,
+			y: message.y,
+			id: message.id,
+			ownerId: message.ownerId
+		}
 	}
 }

@@ -1,7 +1,6 @@
 package client.entity.ship;
 
-import engine.entity.EngineBaseGameEntity;
-import engine.entity.EngineShipEntity;
+import game.engine.entity.TypesAndClasses;
 
 class ShipHull extends ShipVisualComponent {
 	private final bmp_hull:h2d.Bitmap;

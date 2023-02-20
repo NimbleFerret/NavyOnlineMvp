@@ -1,7 +1,7 @@
 package client.entity.ship;
 
 import client.entity.ship.ShipCannon.CannonParams;
-import engine.entity.EngineBaseGameEntity.GameEntityDirection;
+import game.engine.entity.TypesAndClasses;
 
 class ShipCannonsConfig {
 	// Mid

@@ -4,9 +4,9 @@ import utils.Utils;
 import hxd.Window;
 import h2d.col.Point;
 import h2d.Scene;
-import engine.geometry.Rectangle;
-import engine.geometry.Line;
-import engine.MathUtils;
+import game.engine.geometry.Rectangle;
+import game.engine.geometry.Line;
+import game.engine.MathUtils;
 
 class SceneGeomTest extends Scene {
 	public var debugGraphics:h2d.Graphics;

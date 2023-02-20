@@ -1,10 +1,9 @@
 package client.entity.ship;
 
 import client.entity.ship.ShipCannonConfig.ShipCannonsConfig;
-import engine.geometry.Line;
-import engine.MathUtils;
-import engine.entity.EngineBaseGameEntity;
-import engine.entity.EngineShipEntity;
+import game.engine.MathUtils;
+import game.engine.geometry.Line;
+import game.engine.entity.TypesAndClasses;
 
 using tweenxcore.Tools;
 

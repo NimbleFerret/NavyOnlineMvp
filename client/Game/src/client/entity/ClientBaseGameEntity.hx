@@ -1,7 +1,7 @@
 package client.entity;
 
-import engine.entity.EngineBaseGameEntity;
 import h2d.Layers;
+import game.engine.entity.EngineBaseGameEntity;
 
 abstract class ClientBaseGameEntity extends h2d.Object {
 	var engineEntity:EngineBaseGameEntity;
@@ -17,13 +17,13 @@ abstract class ClientBaseGameEntity extends h2d.Object {
 
 	public function initiateEngineEntity(engineEntity:EngineBaseGameEntity) {
 		this.engineEntity = engineEntity;
-		setPosition(engineEntity.x, engineEntity.y);
+		setPosition(engineEntity.getX(), engineEntity.getY());
 		// set_rotation(engineEntity.rotation);
 	}
 
 	public function updateEntityPosition(x:Float, y:Float) {
-		engineEntity.x = x;
-		engineEntity.y = y;
+		engineEntity.setX(x);
+		engineEntity.setY(y);
 	}
 
 	public function getBodyRectangle() {
@@ -31,7 +31,7 @@ abstract class ClientBaseGameEntity extends h2d.Object {
 	}
 
 	public function getId() {
-		return engineEntity.id;
+		return engineEntity.getId();
 	}
 
 	public function isAlive() {
