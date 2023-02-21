@@ -1,5 +1,6 @@
 package client.entity.ship;
 
+import h2d.col.Point;
 import h2d.Graphics;
 import utils.ReverseIterator;
 import haxe.Int32;
@@ -99,6 +100,32 @@ class ShipTemplate extends h2d.Object {
 			leftSideCannons[i].update();
 		}
 	}
+
+	// --------------------------------------
+	// Cannons management
+	// --------------------------------------
+
+	public function updateCannonSightPos(side:Side, index:Int, point:Point) {
+		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		cannons[index].lastSightEndPointPos = point;
+	}
+
+	public function getCannonSightPos(side:Side, index:Int) {
+		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		return cannons[index].lastSightEndPointPos;
+	}
+
+	public function updateCannonFiringAreaAngle(side:Side, index:Int, angle:Float) {
+		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		cannons[index].lastSignAngle = angle;
+	}
+
+	public function getCannonFiringAreaAngle(side:Side, index:Int) {
+		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		return cannons[index].lastSignAngle;
+	}
+
+	// --------------------------------------
 
 	public function changeDirRight() {
 		switch (direction) {

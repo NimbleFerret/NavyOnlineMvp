@@ -100,7 +100,6 @@ class BattleGameplay extends BasicGameplay {
 						effectsManager.addShipExplosion(clientShip.x + (dirX == 1 ? offsetX : -offsetX), clientShip.y + (dirY == 1 ? offsetY : -offsetY));
 					}
 
-					clientShip.clearDebugGraphics(scene);
 					scene.removeChild(clientShip);
 
 					clientMainEntities.remove(engineShipEntity.getId());
@@ -216,7 +215,6 @@ class BattleGameplay extends BasicGameplay {
 
 			for (shell in clientShells) {
 				shell.update(dt);
-
 				if (!shell.isAlive()) {
 					shellsToDelete.push(shell.getId());
 				}
@@ -240,6 +238,11 @@ class BattleGameplay extends BasicGameplay {
 			final playerShip = cast(getPlayerEntity(), ClientShip);
 
 			if (playerShip != null) {
+				final mouseToShipRelation = getMouseToShipRelation();
+				if (mouseToShipRelation.toTheLeft || mouseToShipRelation.toTheRight) {
+					playerShip.updateCannonsSight(debugGraphics, mouseToShipRelation.toTheLeft ? Left : Right, mouseToShipRelation.projectedMouseCoords);
+				}
+
 				waterScene.updatePlayerMovement(playerShip.isMoving, playerShip.isMovingForward, playerShip.localDirection, playerShip.currentSpeed);
 			} else {
 				waterScene.updatePlayerMovement(false);
@@ -257,29 +260,13 @@ class BattleGameplay extends BasicGameplay {
 	public function customInput(mousePos:Point, mouseLeft:Bool, mouseRight:Bool) {
 		final leftClick = K.isPressed(K.MOUSE_LEFT);
 		if (leftClick) {
+			final mouseToShipRelation = getMouseToShipRelation();
 			final gameEngine = cast(baseEngine, GameEngine);
-			final projectedMouseCoords = mouseCoordsToCamera();
 			final playerShip = cast(getPlayerEntity(), ClientShip);
-			final playerShipRect = playerShip.getBodyRectangle();
-			final cursorToPlayerShipLine = new Line(projectedMouseCoords.x, projectedMouseCoords.y, playerShip.x, playerShip.y);
-
-			// TODO
-			final cannonsFiringRange = playerShip.getCannonsFiringAreaBySide(Left);
-
-			// TODO refactor it by one event !!!
-			for (cannonFiringRange in cannonsFiringRange) {
-				final shootAngle = MathUtils.angleBetweenPoints(new Point(cannonFiringRange.center.x, cannonFiringRange.center.y),
-					new Point(projectedMouseCoords.x, projectedMouseCoords.y));
-
-				// trace('Shoot: ' + MathUtils.radsToDegree(shootAngle));
-
-				// final shootAngle = MathUtils.degreeToRads(20);
-
-				if (playerShipRect.getLines().lineA.intersectsWithLine(cursorToPlayerShipLine)) {
-					gameEngine.shipShootBySide(Left, playerEntityId, false, shootAngle);
-				} else if (playerShipRect.getLines().lineC.intersectsWithLine(cursorToPlayerShipLine)) {
-					// gameEngine.shipShootBySide(Right, playerEntityId, false, shootAngle);
-				}
+			final side = mouseToShipRelation.toTheLeft ? Left : Right;
+			final cannonsFiringRange = playerShip.getCannonsFiringAreaBySide(side);
+			for (index in 0...cannonsFiringRange.length) {
+				gameEngine.shipShootBySide(side, playerEntityId, false, playerShip.getCannonFiringAreaAngle(side, index));
 			}
 		}
 	}
@@ -295,6 +282,28 @@ class BattleGameplay extends BasicGameplay {
 
 	public function customSync() {
 		// clientShip.updateHullAndArmor(ship.currentHull, ship.currentArmor);
+	}
+
+	private function getMouseToShipRelation() {
+		final result = {
+			toTheLeft: false,
+			toTheRight: false,
+			projectedMouseCoords: mouseCoordsToCamera()
+		}
+
+		// If mouse is within firing area ?
+
+		final playerShip = cast(getPlayerEntity(), ClientShip);
+		final playerShipRect = playerShip.getBodyRectangle();
+		final cursorToPlayerShipLine = new Line(result.projectedMouseCoords.x, result.projectedMouseCoords.y, playerShip.x, playerShip.y);
+
+		if (playerShipRect.getLines().lineA.intersectsWithLine(cursorToPlayerShipLine)) {
+			result.toTheLeft = true;
+		} else if (playerShipRect.getLines().lineC.intersectsWithLine(cursorToPlayerShipLine)) {
+			result.toTheRight = true;
+		}
+
+		return result;
 	}
 
 	// Utils

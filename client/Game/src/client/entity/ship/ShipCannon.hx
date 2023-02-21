@@ -1,5 +1,6 @@
 package client.entity.ship;
 
+import h2d.col.Point;
 import client.entity.ship.ShipCannonConfig.ShipCannonsConfig;
 import game.engine.MathUtils;
 import game.engine.geometry.Line;
@@ -146,6 +147,9 @@ class ShipCannon extends ShipVisualComponent {
 
 	public final leftFiringAreaLine = new Line();
 	public final rightFiringAreaLine = new Line();
+
+	public var lastSightEndPointPos = new Point(0, 0);
+	public var lastSignAngle = 0.0;
 
 	private var bmp_wood_top:h2d.Bitmap;
 	private var bmp_wood_bottom:h2d.Bitmap;

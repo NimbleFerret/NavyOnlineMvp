@@ -12,5 +12,4 @@ class GameConfig {
 	public static var ShowWaterBackground = false;
 	public static var DebugDraw = true;
 	public static var DebugCannonFiringArea = true;
-	public static var DebugCannonSight = true;
 }

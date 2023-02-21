@@ -273,9 +273,10 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// General
 	// -----------------------
 
-	public function getCannonsFiringAreaBySide(side:Side) {
-		final result = new Array<CannonFiringRangeDetails>();
+	public function getCannonsPositionBySide(side:Side) {
+		final result = new Array<Point>();
 		var cannonsTotal = 0;
+
 		switch (shipObjectEntity.shipCannons) {
 			case ONE:
 				cannonsTotal = 1;
@@ -287,6 +288,31 @@ class EngineShipEntity extends EngineBaseGameEntity {
 				cannonsTotal = 4;
 			case _:
 		}
+
+		for (i in 0...cannonsTotal) {
+			final cannonPosition = getCannonPositionBySideAndIndex(side, i);
+			result.push(cannonPosition);
+		}
+
+		return result;
+	}
+
+	public function getCannonsFiringAreaBySide(side:Side) {
+		final result = new Array<CannonFiringRangeDetails>();
+		var cannonsTotal = 0;
+
+		switch (shipObjectEntity.shipCannons) {
+			case ONE:
+				cannonsTotal = 1;
+			case TWO:
+				cannonsTotal = 2;
+			case THREE:
+				cannonsTotal = 3;
+			case FOUR:
+				cannonsTotal = 4;
+			case _:
+		}
+
 		for (i in 0...cannonsTotal) {
 			final cannonPosition = getCannonPositionBySideAndIndex(side, i);
 
@@ -299,7 +325,8 @@ class EngineShipEntity extends EngineBaseGameEntity {
 			final rightLineEndPoint = MathUtils.rotatePointAroundCenter(centralLineEndPoint.x, centralLineEndPoint.y, x, y, -spreadDegree);
 
 			result.push({
-				center: cannonPosition,
+				origin: cannonPosition,
+				center: centralLineEndPoint,
 				left: leftLineEndPoint,
 				right: rightLineEndPoint
 			});

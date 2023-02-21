@@ -168,17 +168,52 @@ class ClientShip extends ClientBaseGameEntity {
 
 		if (GameConfig.DebugCannonFiringArea) {
 			for (firingRange in shipEntity.getCannonsFiringAreaBySide(Left)) {
-				Utils.DrawLine(graphics, firingRange.center, firingRange.left, GameConfig.YellowColor);
-				Utils.DrawLine(graphics, firingRange.center, firingRange.right, GameConfig.YellowColor);
+				Utils.DrawLine(graphics, firingRange.origin, firingRange.left, GameConfig.YellowColor);
+				Utils.DrawLine(graphics, firingRange.origin, firingRange.right, GameConfig.YellowColor);
 			}
 			for (firingRange in shipEntity.getCannonsFiringAreaBySide(Right)) {
-				Utils.DrawLine(graphics, firingRange.center, firingRange.left, GameConfig.YellowColor);
-				Utils.DrawLine(graphics, firingRange.center, firingRange.right, GameConfig.YellowColor);
+				Utils.DrawLine(graphics, firingRange.origin, firingRange.left, GameConfig.YellowColor);
+				Utils.DrawLine(graphics, firingRange.origin, firingRange.right, GameConfig.YellowColor);
 			}
 		}
-		if (GameConfig.DebugCannonSight) {
-			// shipTemplate.drawCannonsFiringArea(graphics);
+	}
+
+	public function updateCannonsSight(graphics:h2d.Graphics, mouseSide:Side, mousePos:Point) {
+		final shipEntity = cast(engineEntity, EngineShipEntity);
+		var index = 0;
+		for (cannonFiringArea in shipEntity.getCannonsFiringAreaBySide(mouseSide)) {
+			final origin = cannonFiringArea.origin;
+			final left = cannonFiringArea.left;
+			final right = cannonFiringArea.right;
+			final cannonAndMouse = MathUtils.angleBetweenPoints(origin, mousePos);
+			final cannonAndLeftArea = MathUtils.angleBetweenPoints(origin, left);
+			final cannonAndRightArea = MathUtils.angleBetweenPoints(origin, right);
+
+			Utils.DrawLine(graphics, origin, shipTemplate.getCannonSightPos(mouseSide, index), GameConfig.YellowColor);
+
+			if (cannonAndMouse < cannonAndLeftArea && cannonAndMouse > cannonAndRightArea) {
+				final lineLength = origin.x + shipEntity.getCannonsRange();
+				final lineEndPoint = MathUtils.rotatePointAroundCenter(lineLength, origin.y, origin.x, origin.y, cannonAndMouse);
+				shipTemplate.updateCannonSightPos(mouseSide, index, lineEndPoint);
+				shipTemplate.updateCannonFiringAreaAngle(mouseSide, index, cannonAndMouse);
+			}
+
+			index++;
 		}
+	}
+
+	public function getCannonFiringAreaAngle(side:Side, index:Int) {
+		return shipTemplate.getCannonFiringAreaAngle(side, index);
+	}
+
+	public function getCannonsFiringAreaBySide(side:Side) {
+		final shipEntity = cast(engineEntity, EngineShipEntity);
+		return shipEntity.getCannonsFiringAreaBySide(side);
+	}
+
+	public function getCannonPositionBySideAndIndex(side:Side, index:Int) {
+		final shipEntity = cast(engineEntity, EngineShipEntity);
+		return shipEntity.getCannonPositionBySideAndIndex(side, index);
 	}
 
 	public function getStats() {
@@ -195,46 +230,6 @@ class ClientShip extends ClientBaseGameEntity {
 			allowShootRight: shipEntity.shootAllowanceBySide(Right),
 			x: shipEntity.getX(),
 			y: shipEntity.getY()
-		}
-	}
-
-	public function getCannonsFiringAreaBySide(side:Side) {
-		final shipEntity = cast(engineEntity, EngineShipEntity);
-		return shipEntity.getCannonsFiringAreaBySide(side);
-	}
-
-	public function getCannonPositionBySideAndIndex(side:Side, index:Int) {
-		final shipEntity = cast(engineEntity, EngineShipEntity);
-		return shipEntity.getCannonPositionBySideAndIndex(side, index);
-	}
-
-	public function clearDebugGraphics(s2d:h2d.Scene) {
-		// if (debugRect != null) {
-		// 	debugRect.clear();
-		// 	leftSideCanonDebugRect1.clear();
-		// 	leftSideCanonDebugRect2.clear();
-		// 	leftSideCanonDebugRect3.clear();
-		// 	rightSideCanonDebugRect1.clear();
-		// 	rightSideCanonDebugRect2.clear();
-		// 	rightSideCanonDebugRect3.clear();
-		// }
-	}
-
-	function toggleDebugDraw() {
-		if (GameConfig.DebugDraw) {
-			// leftCanon1.alpha = 1;
-			// leftCanon2.alpha = 1;
-			// leftCanon3.alpha = 1;
-			// rightCanon1.alpha = 1;
-			// rightCanon2.alpha = 1;
-			// rightCanon3.alpha = 1;
-		} else {
-			// leftCanon1.alpha = 0;
-			// leftCanon2.alpha = 0;
-			// leftCanon3.alpha = 0;
-			// rightCanon1.alpha = 0;
-			// rightCanon2.alpha = 0;
-			// rightCanon3.alpha = 0;
 		}
 	}
 }

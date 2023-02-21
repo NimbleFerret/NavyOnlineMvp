@@ -139,6 +139,7 @@ typedef ShellObjectEntity = {
 }
 
 typedef CannonFiringRangeDetails = {
+	var origin:Point;
 	var center:Point;
 	var right:Point;
 	var left:Point;
