@@ -242,7 +242,6 @@ class BattleGameplay extends BasicGameplay {
 				if (mouseToShipRelation.toTheLeft || mouseToShipRelation.toTheRight) {
 					playerShip.updateCannonsSight(debugGraphics, mouseToShipRelation.toTheLeft ? Left : Right, mouseToShipRelation.projectedMouseCoords);
 				}
-
 				waterScene.updatePlayerMovement(playerShip.isMoving, playerShip.isMovingForward, playerShip.localDirection, playerShip.currentSpeed);
 			} else {
 				waterScene.updatePlayerMovement(false);
@@ -257,6 +256,7 @@ class BattleGameplay extends BasicGameplay {
 		hud.show(true);
 	}
 
+	// This is called twice ?
 	public function customInput(mousePos:Point, mouseLeft:Bool, mouseRight:Bool) {
 		final leftClick = K.isPressed(K.MOUSE_LEFT);
 		if (leftClick) {

@@ -48,7 +48,7 @@ class SceneDemo1 extends Scene {
 			role: Role.Player,
 			shipHullSize: ShipHullSize.SMALL,
 			shipWindows: ShipWindows.NONE,
-			shipCannons: ShipCannons.ONE,
+			shipCannons: ShipCannons.TWO,
 			cannonsRange: 500,
 			cannonsDamage: 50,
 			armor: 100,

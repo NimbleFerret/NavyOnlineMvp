@@ -1,5 +1,7 @@
 package game.engine.entity;
 
+import hxd.Math;
+import h2d.col.Point;
 import game.engine.entity.EngineBaseGameEntity;
 import game.engine.entity.TypesAndClasses;
 
@@ -11,6 +13,7 @@ enum DieEffect {
 class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustomUpdate implements GameEntityCustomCollide {
 	private final shellObjectEntity:ShellObjectEntity;
 	private var distanceTraveled = 0.0;
+	private var preUpdatePos = new Point();
 
 	public var dieEffect = DieEffect.Splash;
 
@@ -40,7 +43,13 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 	}
 
 	public function onUpdate() {
-		distanceTraveled += Math.abs(dx) + Math.abs(dy);
+		preUpdatePos.x = getX();
+		preUpdatePos.y = getY();
+	}
+
+	public function postUpdate() {
+		final newPos = new Point(getX(), getY());
+		distanceTraveled += newPos.distance(preUpdatePos);
 		if (distanceTraveled >= shellObjectEntity.range) {
 			isAlive = false;
 		}

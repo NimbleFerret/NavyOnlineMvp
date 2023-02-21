@@ -7,6 +7,7 @@ import game.engine.geometry.Rectangle;
 
 interface GameEntityCustomUpdate {
 	public function onUpdate():Void;
+	public function postUpdate():Void;
 }
 
 interface GameEntityCustomCollide {
@@ -68,6 +69,8 @@ class EngineBaseGameEntity {
 			customUpdate.onUpdate();
 		if (canMove)
 			move(dt);
+		if (customUpdate != null)
+			customUpdate.postUpdate();
 	}
 
 	public function getBodyRectangle() {
