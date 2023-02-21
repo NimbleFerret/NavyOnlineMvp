@@ -18,6 +18,7 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 		super(GameEntityType.Shell, shellObjectEntity);
 
 		this.shellObjectEntity = shellObjectEntity;
+		this.rotation = shellObjectEntity.rotation;
 
 		customUpdate = this;
 		customCollide = this;

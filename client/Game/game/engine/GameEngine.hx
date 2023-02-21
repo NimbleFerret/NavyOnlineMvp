@@ -152,7 +152,7 @@ class GameEngine extends BaseEngine {
 	public function shipShootBySide(side:Side, shipId:String, serverSide:Bool = true, aimAngleRads:Float, ?shellRnd:Array<ShellRnd>) {
 		final ship = cast(mainEntityManager.getEntityById(shipId), EngineShipEntity);
 		if (ship != null && ship.tryShoot(side)) {
-			final shipSideRadRotation = aimAngleRads == 0 ? ship.rotation + MathUtils.degreeToRads(side == Left ? -90 : 90) : aimAngleRads;
+			final shipSideRadRotation = aimAngleRads == 0 ? ship.rotation + MathUtils.degreeToRads(side == Left ? 90 : -90) : aimAngleRads;
 			final shells = new Array<EngineShellEntity>();
 
 			var cannonsTotal = 0;

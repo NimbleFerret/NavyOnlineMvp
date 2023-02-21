@@ -264,22 +264,22 @@ class BattleGameplay extends BasicGameplay {
 			final cursorToPlayerShipLine = new Line(projectedMouseCoords.x, projectedMouseCoords.y, playerShip.x, playerShip.y);
 
 			// TODO
-			playerShip.getCannonsFiringAreaBySide(Left);
+			final cannonsFiringRange = playerShip.getCannonsFiringAreaBySide(Left);
 
-			// TODO get shooting angle for each cannon
-			final leftCannonPos = playerShip.getCannonPos();
+			// TODO refactor it by one event !!!
+			for (cannonFiringRange in cannonsFiringRange) {
+				final shootAngle = MathUtils.angleBetweenPoints(new Point(cannonFiringRange.center.x, cannonFiringRange.center.y),
+					new Point(projectedMouseCoords.x, projectedMouseCoords.y));
 
-			final shootAngle = MathUtils.angleBetweenPoints(new Point(leftCannonPos.x, leftCannonPos.y),
-				new Point(projectedMouseCoords.x, projectedMouseCoords.y));
+				// trace('Shoot: ' + MathUtils.radsToDegree(shootAngle));
 
-			trace(MathUtils.radsToDegree(shootAngle));
+				// final shootAngle = MathUtils.degreeToRads(20);
 
-			// final shootAngle = MathUtils.degreeToRads(20);
-
-			if (playerShipRect.getLines().lineA.intersectsWithLine(cursorToPlayerShipLine)) {
-				gameEngine.shipShootBySide(Left, playerEntityId, false, shootAngle);
-			} else if (playerShipRect.getLines().lineC.intersectsWithLine(cursorToPlayerShipLine)) {
-				// gameEngine.shipShootBySide(Right, playerEntityId, false, shootAngle);
+				if (playerShipRect.getLines().lineA.intersectsWithLine(cursorToPlayerShipLine)) {
+					gameEngine.shipShootBySide(Left, playerEntityId, false, shootAngle);
+				} else if (playerShipRect.getLines().lineC.intersectsWithLine(cursorToPlayerShipLine)) {
+					// gameEngine.shipShootBySide(Right, playerEntityId, false, shootAngle);
+				}
 			}
 		}
 	}

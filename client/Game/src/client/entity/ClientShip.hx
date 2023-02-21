@@ -156,16 +156,6 @@ class ClientShip extends ClientBaseGameEntity {
 		shipEntity.currentArmor = currentArmor;
 	}
 
-	public function getCannonPos() {
-		// return shipTemplate.leftSideCannons[0].getAbsPos();
-		return new Point();
-	}
-
-	public function getGunsPos() {
-		// return shipTemplate.leftSideCannons[0].getAbsPos();
-		return new Point();
-	}
-
 	public function update(dt:Float) {
 		x = hxd.Math.lerp(x, engineEntity.getX(), 0.1);
 		y = hxd.Math.lerp(y, engineEntity.getY(), 0.1);
@@ -177,10 +167,17 @@ class ClientShip extends ClientBaseGameEntity {
 		Utils.DrawRect(graphics, shipEntity.getBodyRectangle(), GameConfig.BodyRectColor);
 
 		if (GameConfig.DebugCannonFiringArea) {
-			shipTemplate.drawCannonsFiringArea(graphics);
+			for (firingRange in shipEntity.getCannonsFiringAreaBySide(Left)) {
+				Utils.DrawLine(graphics, firingRange.center, firingRange.left, GameConfig.YellowColor);
+				Utils.DrawLine(graphics, firingRange.center, firingRange.right, GameConfig.YellowColor);
+			}
+			for (firingRange in shipEntity.getCannonsFiringAreaBySide(Right)) {
+				Utils.DrawLine(graphics, firingRange.center, firingRange.left, GameConfig.YellowColor);
+				Utils.DrawLine(graphics, firingRange.center, firingRange.right, GameConfig.YellowColor);
+			}
 		}
 		if (GameConfig.DebugCannonSight) {
-			shipTemplate.drawCannonsFiringArea(graphics);
+			// shipTemplate.drawCannonsFiringArea(graphics);
 		}
 	}
 

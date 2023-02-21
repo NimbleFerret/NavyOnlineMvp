@@ -100,13 +100,6 @@ class ShipTemplate extends h2d.Object {
 		}
 	}
 
-	public function drawCannonsFiringArea(graphics:Graphics) {
-		for (i in 0...cannonsTotal) {
-			rightSideCannons[i].drawFiringArea(graphics);
-			leftSideCannons[i].drawFiringArea(graphics);
-		}
-	}
-
 	public function changeDirRight() {
 		switch (direction) {
 			case East:

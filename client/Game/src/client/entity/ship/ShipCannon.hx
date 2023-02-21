@@ -347,51 +347,10 @@ class ShipCannon extends ShipVisualComponent {
 
 	public function update() {
 		recoilAnim.update();
-
-		// final range = 500;
-		// final spreadDegree = MathUtils.degreeToRads(20);
-		// final absPos = getAbsPos();
-		// final centerX = absPos.x;
-		// final centerY = absPos.y;
-		// final centralLineX2 = centerX + (side == Right ? range : -range);
-
-		// final centralLineXY = MathUtils.rotatePointAroundCenter(centralLineX2, centerY, centerX, centerY, MathUtils.getGunRadByDir(direction));
-
-		// final leftLineXY = MathUtils.rotatePointAroundCenter(centralLineXY.x, centralLineXY.y, centerX, centerY, spreadDegree);
-		// final rightLineXY = MathUtils.rotatePointAroundCenter(centralLineXY.x, centralLineXY.y, centerX, centerY, -spreadDegree);
-
-		// leftFiringAreaLine.x1 = centerX;
-		// leftFiringAreaLine.y1 = centerY;
-		// leftFiringAreaLine.x2 = leftLineXY.x;
-		// leftFiringAreaLine.y2 = leftLineXY.y;
-
-		// rightFiringAreaLine.x1 = centerX;
-		// rightFiringAreaLine.y1 = centerY;
-		// rightFiringAreaLine.x2 = rightLineXY.x;
-		// rightFiringAreaLine.y2 = rightLineXY.y;
 	}
 
 	public function shoot() {
 		recoilAnim.reset();
-	}
-
-	public function drawFiringArea(graphics:h2d.Graphics) {
-		graphics.lineStyle(1, GameConfig.YellowColor);
-
-		// left line
-		graphics.moveTo(leftFiringAreaLine.x1, leftFiringAreaLine.y1);
-		graphics.lineTo(leftFiringAreaLine.x2, leftFiringAreaLine.y2);
-
-		// graphics.moveTo(centralLineX1, centralLineY1);
-		// graphics.lineTo(leftLineXY.x, leftLineXY.y);
-
-		// right line
-		graphics.moveTo(rightFiringAreaLine.x1, rightFiringAreaLine.y1);
-		graphics.lineTo(rightFiringAreaLine.x2, rightFiringAreaLine.y2);
-		// graphics.moveTo(centralLineX1, centralLineY1);
-		// graphics.lineTo(rightLineXY.x, rightLineXY.y);
-
-		graphics.endFill();
 	}
 
 	private function getCannonParams() {

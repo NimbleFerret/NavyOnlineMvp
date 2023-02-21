@@ -1,5 +1,6 @@
 package game.engine.entity;
 
+import h2d.col.Line;
 import h2d.col.Point;
 import game.engine.entity.EngineBaseGameEntity;
 import game.engine.entity.TypesAndClasses;
@@ -287,9 +288,24 @@ class EngineShipEntity extends EngineBaseGameEntity {
 			case _:
 		}
 		for (i in 0...cannonsTotal) {
-			final cannonOffset = getCannonPositionBySideAndIndex(side, i);
-			trace(cannonOffset);
+			final cannonPosition = getCannonPositionBySideAndIndex(side, i);
+
+			final x = cannonPosition.x, y = cannonPosition.y;
+			final spreadDegree = MathUtils.degreeToRads(20);
+			final lineHorizontalLength = x + (side == Right ? shipObjectEntity.cannonsRange : -shipObjectEntity.cannonsRange);
+
+			final centralLineEndPoint = MathUtils.rotatePointAroundCenter(lineHorizontalLength, y, x, y, MathUtils.getGunRadByDir(shipObjectEntity.direction));
+			final leftLineEndPoint = MathUtils.rotatePointAroundCenter(centralLineEndPoint.x, centralLineEndPoint.y, x, y, spreadDegree);
+			final rightLineEndPoint = MathUtils.rotatePointAroundCenter(centralLineEndPoint.x, centralLineEndPoint.y, x, y, -spreadDegree);
+
+			result.push({
+				center: cannonPosition,
+				left: leftLineEndPoint,
+				right: rightLineEndPoint
+			});
 		}
+
+		return result;
 	}
 
 	public function getCannonPositionBySideAndIndex(side:Side, index:Int) {
@@ -379,30 +395,6 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		final offsetY = offset.positions[index].y - additionalOffsetY;
 
 		return new Point(shipObjectEntity.x + offsetX, shipObjectEntity.y + offsetY);
-	}
-
-	public static function calculateFiringArea(cannonPos:Point, cannonRange:Float, cannonSpreadAngle:Float) {
-		// final range = 500;
-		// final spreadDegree = MathUtils.degreeToRads(20);
-		// final absPos = getAbsPos();
-		// final centerX = absPos.x;
-		// final centerY = absPos.y;
-		// final centralLineX2 = centerX + (side == Right ? range : -range);
-
-		// final centralLineXY = MathUtils.rotatePointAroundCenter(centralLineX2, centerY, centerX, centerY, MathUtils.getGunRadByDir(direction));
-
-		// final leftLineXY = MathUtils.rotatePointAroundCenter(centralLineXY.x, centralLineXY.y, centerX, centerY, spreadDegree);
-		// final rightLineXY = MathUtils.rotatePointAroundCenter(centralLineXY.x, centralLineXY.y, centerX, centerY, -spreadDegree);
-
-		// leftFiringAreaLine.x1 = centerX;
-		// leftFiringAreaLine.y1 = centerY;
-		// leftFiringAreaLine.x2 = leftLineXY.x;
-		// leftFiringAreaLine.y2 = leftLineXY.y;
-
-		// rightFiringAreaLine.x1 = centerX;
-		// rightFiringAreaLine.y1 = centerY;
-		// rightFiringAreaLine.x2 = rightLineXY.x;
-		// rightFiringAreaLine.y2 = rightLineXY.y;
 	}
 
 	private static function getShipTypeBySize(size:ShipHullSize) {

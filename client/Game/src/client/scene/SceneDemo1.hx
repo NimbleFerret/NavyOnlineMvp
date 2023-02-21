@@ -20,8 +20,8 @@ class SceneDemo1 extends Scene {
 	public function new(width:Int, height:Int) {
 		super();
 		// scaleMode = LetterBox(1920, 1080, true, Center, Center);
-		camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
-		// camera.setScale(2, 2);
+		camera.setViewport(1920, 1080, 0, 0);
+		camera.setScale(2, 2);
 		testHud = new TestHud();
 	}
 
@@ -37,7 +37,7 @@ class SceneDemo1 extends Scene {
 		final ship1 = game.addShipByClient({
 			x: 300,
 			y: 300,
-			minSpeed: 50,
+			minSpeed: 0,
 			maxSpeed: 300,
 			acceleration: 50,
 			direction: GameEntityDirection.East,
