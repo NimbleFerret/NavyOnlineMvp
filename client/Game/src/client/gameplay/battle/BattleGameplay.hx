@@ -343,6 +343,7 @@ class BattleGameplay extends BasicGameplay {
 			shipCannons: ShipCannons.createByIndex(message.shipCannons),
 			cannonsRange: message.cannonsRange,
 			cannonsDamage: message.cannonsDamage,
+			cannonsAngleSpread: message.cannonsAngleSpread,
 			armor: message.armor,
 			hull: message.hull,
 			accDelay: message.accDelay,

@@ -1,6 +1,5 @@
 package game.engine.entity;
 
-import h2d.col.Line;
 import h2d.col.Point;
 import game.engine.entity.EngineBaseGameEntity;
 import game.engine.entity.TypesAndClasses;
@@ -25,25 +24,15 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// -----------------------
 	public final shipObjectEntity:ShipObjectEntity;
 
-	// public final shipHullSize:ShipHullSize;
-	// public final shipWindows:ShipWindows;
-	// public final shipCannons:ShipCannons;
 	// -----------------------
 	// Health and damage stuff
 	// -----------------------
-	// public var hull = 1000;
-	// public var armor = 1000;
 	public var currentHull = 1000;
 	public var currentArmor = 1000;
 
-	// public var cannonsRange = 600;
-	// public var cannonsDamage = 50;
 	// -----------------------
 	// Input
 	// -----------------------
-	// public var accDelay = 1.0;
-	// public var turnDelay = 1.0;
-	// public var fireDelay = 0.200;
 	private var timeSinceLastShipsPosUpdate = 0.0;
 	private var lastMovementInputCheck = 0.0;
 	private var lastRotationInputCheck = 0.0;
@@ -57,29 +46,9 @@ class EngineShipEntity extends EngineBaseGameEntity {
 
 	public function new(shipObjectEntity:ShipObjectEntity) {
 		super(getShipTypeBySize(shipObjectEntity.shipHullSize), shipObjectEntity);
-		// super(GameEntityType.Ship, x, y, 0, id, ownerId);
 
 		this.shipObjectEntity = shipObjectEntity;
 
-		// this.serverShipRef = serverShipRef;
-		// this.free = free;
-		// this.role = role;
-		// this.shipHullSize = shipHullSize;
-		// this.shipWindows = shipWindows;
-		// this.shipCannons = shipCannons;
-		// this.hull = hull;
-		// this.currentHull = hull;
-		// this.armor = armor;
-		// this.currentArmor = armor;
-		// this.maxSpeed = maxSpeed;
-		// this.acc = acc;
-		// this.accDelay = accDelay;
-		// this.turnDelay = turnDelay;
-		// this.fireDelay = fireDelay;
-		// this.cannonsRange = cannonsRange;
-		// this.cannonsDamage = cannonsDamage;
-
-		// Need it in future ?
 		switch (this.shipObjectEntity.direction) {
 			case North:
 				rotation = MathUtils.degreeToRads(-90);
@@ -317,7 +286,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 			final cannonPosition = getCannonPositionBySideAndIndex(side, i);
 
 			final x = cannonPosition.x, y = cannonPosition.y;
-			final spreadDegree = MathUtils.degreeToRads(20);
+			final spreadDegree = MathUtils.degreeToRads(shipObjectEntity.cannonsAngleSpread / 2);
 			final lineHorizontalLength = x + (side == Right ? shipObjectEntity.cannonsRange : -shipObjectEntity.cannonsRange);
 
 			final centralLineEndPoint = MathUtils.rotatePointAroundCenter(lineHorizontalLength, y, x, y, MathUtils.getGunRadByDir(shipObjectEntity.direction));

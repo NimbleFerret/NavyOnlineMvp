@@ -185,11 +185,20 @@ class ClientShip extends ClientBaseGameEntity {
 			final origin = cannonFiringArea.origin;
 			final left = cannonFiringArea.left;
 			final right = cannonFiringArea.right;
-			final cannonAndMouse = MathUtils.angleBetweenPoints(origin, mousePos);
+
+			final adjustedMousePos = mousePos;
+
+			if (index > 0) {
+				adjustedMousePos.x += 28;
+			}
+
+			final cannonAndMouse = MathUtils.angleBetweenPoints(origin, adjustedMousePos);
 			final cannonAndLeftArea = MathUtils.angleBetweenPoints(origin, left);
 			final cannonAndRightArea = MathUtils.angleBetweenPoints(origin, right);
 
-			Utils.DrawLine(graphics, origin, shipTemplate.getCannonSightPos(mouseSide, index), GameConfig.YellowColor);
+			if (GameConfig.DrawCannonsSight) {
+				Utils.DrawLine(graphics, origin, shipTemplate.getCannonSightPos(mouseSide, index), GameConfig.YellowColor);
+			}
 
 			if (cannonAndMouse < cannonAndLeftArea && cannonAndMouse > cannonAndRightArea) {
 				final lineLength = origin.x + shipEntity.getCannonsRange();

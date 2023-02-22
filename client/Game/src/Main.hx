@@ -89,7 +89,7 @@ class Main extends hxd.App {
 			case SceneDemo1:
 				sceneDemo1.start();
 				// sevents.addScene(sceneDemo1.getHud());
-				sevents.addScene(sceneDemo1.testHud);
+				sevents.addScene(sceneDemo1.debugHud);
 				setScene2D(sceneDemo1);
 			case SceneGeomTest:
 				sceneGeomTest.start();

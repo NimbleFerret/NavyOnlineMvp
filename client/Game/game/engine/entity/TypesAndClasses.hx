@@ -115,6 +115,7 @@ typedef ShipObjectEntity = {
 	shipCannons:ShipCannons,
 	cannonsRange:Int,
 	cannonsDamage:Int,
+	cannonsAngleSpread:Int,
 	armor:Int,
 	hull:Int,
 	accDelay:Float,

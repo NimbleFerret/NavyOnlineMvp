@@ -1,7 +1,7 @@
 package client.scene;
 
 import client.gameplay.battle.BattleGameplay;
-import client.gameplay.battle.TestHud;
+import client.gameplay.battle.DebugHud;
 import client.manager.IslandsManager;
 import game.engine.entity.TypesAndClasses;
 import game.engine.BaseEngine.EngineMode;
@@ -13,7 +13,7 @@ class SceneDemo1 extends Scene {
 	private var islandsManager:IslandsManager;
 
 	// UI parts
-	public final testHud:TestHud;
+	public final debugHud:DebugHud;
 
 	private var allowSomething = false;
 
@@ -22,7 +22,7 @@ class SceneDemo1 extends Scene {
 		// scaleMode = LetterBox(1920, 1080, true, Center, Center);
 		camera.setViewport(1920, 1080, 0, 0);
 		camera.setScale(2, 2);
-		testHud = new TestHud();
+		debugHud = new DebugHud();
 	}
 
 	public function start() {
@@ -48,9 +48,10 @@ class SceneDemo1 extends Scene {
 			role: Role.Player,
 			shipHullSize: ShipHullSize.SMALL,
 			shipWindows: ShipWindows.NONE,
-			shipCannons: ShipCannons.TWO,
+			shipCannons: ShipCannons.ONE,
 			cannonsRange: 500,
 			cannonsDamage: 50,
+			cannonsAngleSpread: 40,
 			armor: 100,
 			hull: 100,
 			accDelay: 0.500,
@@ -73,7 +74,7 @@ class SceneDemo1 extends Scene {
 	public override function render(e:Engine) {
 		game.waterScene.render(e);
 		super.render(e);
-		testHud.render(e);
+		debugHud.render(e);
 		game.debugDraw();
 	}
 

@@ -512,44 +512,47 @@ class BasicHud extends h2d.Scene {
 		return sli;
 	}
 
-	public function addCheck(label:String, get:Void->Bool, set:Bool->Void) {
-		var f = new h2d.Flow(fui);
+	public function addCheck(label:String, get:Void->Bool, set:Bool->Void, scale = 1.0) {
+		final f = new h2d.Flow(fui);
 		f.horizontalSpacing = 5;
-		var tf = new h2d.Text(getFont(), f);
+		final tf = new h2d.Text(getFont(), f);
 		tf.text = label;
 		tf.maxWidth = 70;
 		tf.textAlign = Right;
-		var size = 10;
-		var b = new h2d.Graphics(f);
+		tf.setScale(scale);
+		final size = 10 * scale;
+		final b = new h2d.Graphics(f);
 		function redraw() {
 			b.clear();
 			b.beginFill(0x808080);
-			b.drawRect(0, 0, size, size);
+			b.drawRect(size, size, size, size);
 			b.beginFill(0);
-			b.drawRect(1, 1, size - 2, size - 2);
+			b.drawRect(1 + size, 1 + size, size - 2, size - 2);
 			if (get()) {
 				b.beginFill(0xC0C0C0);
-				b.drawRect(2, 2, size - 4, size - 4);
+				b.drawRect(2 + size, 2 + size, size - 4, size - 4);
 			}
 		}
-		var i = new h2d.Interactive(size, size, b);
+		final i = new h2d.Interactive(size, size, b);
 		i.onClick = function(_) {
 			set(!get());
 			redraw();
 		};
+		i.setScale(scale);
 		redraw();
 		return i;
 	}
 
-	public function addChoice(text, choices, callb:Int->Void, value = 0) {
-		var font = getFont();
-		var i = new h2d.Interactive(110, font.lineHeight, fui);
+	public function addChoice(text, choices, callb:Int->Void, value = 0, scale = 1.0) {
+		final font = getFont();
+		final i = new h2d.Interactive(110, font.lineHeight, fui);
 		i.backgroundColor = 0xFF808080;
 		fui.getProperties(i).paddingLeft = 20;
-		var t = new h2d.Text(font, i);
+		final t = new h2d.Text(font, i);
 		t.maxWidth = i.width;
 		t.text = text + ":" + choices[value];
 		t.textAlign = Center;
+		t.setScale(scale);
 		i.onClick = function(_) {
 			value++;
 			value %= choices.length;
@@ -566,7 +569,7 @@ class BasicHud extends h2d.Scene {
 		return i;
 	}
 
-	public function addText(text = "") {
+	public function addText(text = "", scale = 1.0) {
 		final tf = new h2d.Text(getFont(), fui);
 		tf.text = text;
 		tf.textColor = 0xFBF0DD;
@@ -576,6 +579,7 @@ class BasicHud extends h2d.Scene {
 			color: 0x000000,
 			alpha: 0.9
 		};
+		tf.setScale(scale);
 		return tf;
 	}
 
