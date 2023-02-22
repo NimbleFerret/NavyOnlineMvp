@@ -20,8 +20,6 @@ class EngineBaseGameEntity {
 	// ----------------------
 	private var baseObjectEntity:BaseObjectEntity;
 
-	// public var id:String;
-	// public var ownerId:String;
 	public var entityType:GameEntityType;
 	public var isAlive = true;
 	public var isCollides = true;
@@ -31,16 +29,10 @@ class EngineBaseGameEntity {
 	// ----------------------
 	// Movement
 	// ----------------------
-	// public var direction = GameEntityDirection.East;
 	public var rotation = 0.0;
-	// public var x = 0.0;
-	// public var y = 0.0;
 	public var dx = 0.0;
 	public var dy = 0.0;
 	public var currentSpeed = 0.0;
-	// public var acceleration = 50;
-	// public var minSpeed = -50;
-	// public var maxSpeed = 150;
 	public var canMove = true;
 
 	// ----------------------
@@ -81,7 +73,7 @@ class EngineBaseGameEntity {
 		final x = baseObjectEntity.x;
 		final y = baseObjectEntity.y;
 		final direction = baseObjectEntity.direction;
-		return new Rectangle(x + rectOffsetX, y + rectOffsetY, shapeWidth, shapeHeight, MathUtils.dirToRad(direction));
+		return new Rectangle(x + rectOffsetX, y + rectOffsetY, shapeWidth, shapeHeight, MathUtils.dirToRad(direction) + shape.angle);
 	}
 
 	public function collides(isCollides:Bool) {

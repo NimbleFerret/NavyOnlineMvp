@@ -148,7 +148,9 @@ class ShipCannon extends ShipVisualComponent {
 	public final leftFiringAreaLine = new Line();
 	public final rightFiringAreaLine = new Line();
 
-	public var lastSightEndPointPos = new Point(0, 0);
+	public var positionOffset = new Point();
+
+	public var lastSightEndPointPos = new Point();
 	public var lastSignAngle = 0.0;
 
 	private var bmp_wood_top:h2d.Bitmap;
@@ -158,7 +160,7 @@ class ShipCannon extends ShipVisualComponent {
 	private final shipHullSize:ShipHullSize;
 	private final recoilAnim:CannonRecoilTween;
 
-	public function new(parent:h2d.Object, shipHullSize:ShipHullSize, direction:GameEntityDirection, side:Side) {
+	public function new(parent:h2d.Object, shipHullSize:ShipHullSize, direction:GameEntityDirection, side:Side, defaultPosition:PosOffset) {
 		super(direction, side);
 
 		this.shipHullSize = shipHullSize;
@@ -298,7 +300,7 @@ class ShipCannon extends ShipVisualComponent {
 			tilesInitialized = true;
 		}
 
-		var paramsByDir = getCannonParams();
+		final paramsByDir = getCannonParams();
 
 		if (paramsByDir.w_b_t != null) {
 			bmp_wood_bottom = new h2d.Bitmap(paramsByDir.w_b_t);
@@ -319,6 +321,8 @@ class ShipCannon extends ShipVisualComponent {
 
 			recoilAnim = new CannonRecoilTween(this.direction, side, bmp_cannon);
 		}
+
+		setPosition(defaultPosition.x, defaultPosition.y);
 	}
 
 	public function changeTilesDirection() {
@@ -351,6 +355,17 @@ class ShipCannon extends ShipVisualComponent {
 
 	public function update() {
 		recoilAnim.update();
+	}
+
+	public function updatePosition() {
+		if (GameConfig.ShipConfigMode) {
+			final paramsByDir = getCannonParams();
+			if (bmp_wood_bottom != null) {
+				bmp_wood_bottom.setPosition(paramsByDir.w_b_x + positionOffset.x, paramsByDir.w_b_y + positionOffset.y);
+			}
+			bmp_wood_top.setPosition(paramsByDir.w_t_x + positionOffset.x, paramsByDir.w_t_y + positionOffset.y);
+			bmp_cannon.setPosition(paramsByDir.c_x + positionOffset.x, paramsByDir.c_y + positionOffset.y);
+		}
 	}
 
 	public function shoot() {

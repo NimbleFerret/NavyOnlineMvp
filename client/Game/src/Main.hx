@@ -98,6 +98,8 @@ class Main extends hxd.App {
 				sceneWorldMap.start();
 				setScene2D(sceneWorldMap);
 			case SceneShipConfig:
+				sceneShipConfig.start();
+				sevents.addScene(sceneShipConfig.hud);
 				setScene2D(sceneShipConfig);
 			case SceneIsland:
 				final response = new JoinSectorResponse(true, null, 0, 'instance', 1, 'islandId', '0x87400A03678dd03c8BF536404B5B14C609a23b79', 'Green', true);

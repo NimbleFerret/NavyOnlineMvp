@@ -1,11 +1,11 @@
 package client.entity;
 
-import utils.Utils;
 import h2d.col.Point;
+import utils.Utils;
 import client.entity.ship.ShipTemplate;
+import game.engine.MathUtils;
 import game.engine.entity.EngineShipEntity;
 import game.engine.entity.TypesAndClasses;
-import game.engine.MathUtils;
 
 final RippleOffsetByDirSmall:Map<GameEntityDirection, PosOffset> = [
 	GameEntityDirection.East => new PosOffset(-20, 0, 90),
@@ -40,7 +40,7 @@ class ClientShip extends ClientBaseGameEntity {
 	public var shape_x:Float = -100;
 	public var shape_y:Float = -40;
 
-	private final shipTemplate:ShipTemplate;
+	public final shipTemplate:ShipTemplate;
 
 	public var isMoving = false;
 	public var isMovingForward = false;
@@ -164,7 +164,7 @@ class ClientShip extends ClientBaseGameEntity {
 
 	public function debugDraw(graphics:h2d.Graphics) {
 		final shipEntity = cast(engineEntity, EngineShipEntity);
-		Utils.DrawRect(graphics, shipEntity.getBodyRectangle(), GameConfig.BodyRectColor);
+		Utils.DrawRect(graphics, shipEntity.getBodyRectangle(), GameConfig.GreenColor);
 
 		if (GameConfig.DebugCannonFiringArea) {
 			for (firingRange in shipEntity.getCannonsFiringAreaBySide(Left)) {
@@ -240,5 +240,17 @@ class ClientShip extends ClientBaseGameEntity {
 			x: shipEntity.getX(),
 			y: shipEntity.getY()
 		}
+	}
+
+	public function getBodyShape() {
+		final shipEntity = cast(engineEntity, EngineShipEntity);
+		return shipEntity.shape;
+	}
+
+	public function updateBodyShape(x:Float, y:Float, angle:Float) {
+		final shipEntity = cast(engineEntity, EngineShipEntity);
+		shipEntity.shape.rectOffsetX = x;
+		shipEntity.shape.rectOffsetY = y;
+		shipEntity.shape.angle = angle;
 	}
 }

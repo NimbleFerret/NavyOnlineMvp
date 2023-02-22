@@ -29,7 +29,7 @@ class ShipTemplate extends h2d.Object {
 	private final sailAndMast:ShipSailAndMast;
 
 	// Decorative parts
-	private final decor:ShipDecorations;
+	private final shipDecorations:ShipDecorations;
 
 	private final rightCannonsLayer = 4;
 	private final leftCannonsLayer = 5;
@@ -38,7 +38,7 @@ class ShipTemplate extends h2d.Object {
 	// 2 - 1 > 2 > 3 > 4
 	private var cannonsDrawingOrder = 1;
 
-	private var decorWasChanged = false;
+	private var decorationsChanged = false;
 
 	public function new(direction:GameEntityDirection, shipSize:ShipHullSize, shipWindows:ShipWindows, shipCannons:ShipCannons) {
 		super();
@@ -68,8 +68,8 @@ class ShipTemplate extends h2d.Object {
 		layers.add(hull, 0);
 
 		// Decor
-		decor = new ShipDecorations(direction, shipSize);
-		layers.add(decor, 6);
+		shipDecorations = new ShipDecorations(direction, shipSize);
+		layers.add(shipDecorations, 6);
 
 		// Sail and mast
 		sailAndMast = new ShipSailAndMast(direction, shipSize);
@@ -79,13 +79,8 @@ class ShipTemplate extends h2d.Object {
 		final cannonsInitialPosLeft = shipSize == SMALL ? EngineShipEntityConfig.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntityConfig.LeftCannonsOffsetByDirMid.get(direction);
 
 		for (i in 0...cannonsTotal) {
-			final rightSideCannon = new ShipCannon(this, shipSize, direction, Right);
-			rightSideCannon.setPosition(cannonsInitialPosRight.positions[i].x, cannonsInitialPosRight.positions[i].y);
-			rightSideCannons.push(rightSideCannon);
-
-			final leftSideCannon = new ShipCannon(this, shipSize, direction, Left);
-			leftSideCannon.setPosition(cannonsInitialPosLeft.positions[i].x, cannonsInitialPosLeft.positions[i].y);
-			leftSideCannons.push(leftSideCannon);
+			rightSideCannons.push(new ShipCannon(this, shipSize, direction, Right, cannonsInitialPosRight.positions[i]));
+			leftSideCannons.push(new ShipCannon(this, shipSize, direction, Left, cannonsInitialPosLeft.positions[i]));
 		}
 
 		for (i in new ReverseIterator(cannonsTotal - 1, 0)) {
@@ -99,6 +94,14 @@ class ShipTemplate extends h2d.Object {
 			rightSideCannons[i].update();
 			leftSideCannons[i].update();
 		}
+	}
+
+	public function updateVisualComponents() {
+		for (i in 0...cannonsTotal) {
+			// rightSideCannons[i].setPosition(cannonsInitialPosRight.positions[i].x, cannonsInitialPosRight.positions[i].y);
+			// leftSideCannons[i].setPosition(cannonsInitialPosLeft.positions[i].x, cannonsInitialPosLeft.positions[i].y);
+		}
+		shipDecorations.update();
 	}
 
 	// --------------------------------------
@@ -123,6 +126,18 @@ class ShipTemplate extends h2d.Object {
 	public function getCannonFiringAreaAngle(side:Side, index:Int) {
 		final cannons = side == Left ? leftSideCannons : rightSideCannons;
 		return cannons[index].lastSignAngle;
+	}
+
+	public function updateCannonPositionOffset(side:Side, index:Int, x:Float, y:Float) {
+		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		cannons[index].positionOffset.x = x;
+		cannons[index].positionOffset.y = y;
+		cannons[index].updatePosition();
+	}
+
+	public function getCannonPositionOffset(side:Side, index:Int) {
+		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		return cannons[index].positionOffset;
 	}
 
 	// --------------------------------------
@@ -164,8 +179,8 @@ class ShipTemplate extends h2d.Object {
 			case West:
 				direction = SouthWest;
 				changeCannonsDrawingOrder();
-				decor.changeDrawingOrder();
-				decorWasChanged = true;
+				shipDecorations.changeDrawingOrder();
+				decorationsChanged = true;
 			case SouthWest:
 				direction = South;
 			case South:
@@ -173,8 +188,8 @@ class ShipTemplate extends h2d.Object {
 			case SouthEast:
 				direction = East;
 				changeCannonsDrawingOrder();
-				decor.changeDrawingOrder();
-				decorWasChanged = true;
+				shipDecorations.changeDrawingOrder();
+				decorationsChanged = true;
 		}
 		hanldeDirectionChange();
 	}
@@ -212,7 +227,7 @@ class ShipTemplate extends h2d.Object {
 	private function hanldeDirectionChange() {
 		hull.updateDirection(direction);
 		sailAndMast.updateDirection(direction);
-		decor.updateDirection(direction);
+		shipDecorations.updateDirection(direction);
 
 		final rightSideCannonsPos = shipSize == SMALL ? EngineShipEntityConfig.RightCannonsOffsetByDirSm.get(direction) : EngineShipEntityConfig.RightCannonsOffsetByDirMid.get(direction);
 		final leftSideCannonsPos = shipSize == SMALL ? EngineShipEntityConfig.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntityConfig.LeftCannonsOffsetByDirMid.get(direction);

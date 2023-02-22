@@ -484,18 +484,18 @@ class BasicHud extends h2d.Scene {
 		return f;
 	}
 
-	public function addSlider(label:String, get:Void->Float, set:Float->Void, min:Float = 0., max:Float = 1.) {
-		var f = new h2d.Flow(fui);
+	public function addSlider(label:String, get:Void->Float, set:Float->Void, min:Float = 0., max:Float = 1., scale = 1.0) {
+		final f = new h2d.Flow(fui);
 		f.horizontalSpacing = 5;
-		var tf = new h2d.Text(getFont(), f);
+		final tf = new h2d.Text(getFont(), f);
 		tf.text = label;
-		tf.maxWidth = 70;
+		tf.maxWidth = 150;
 		tf.textAlign = Right;
-		var sli = new h2d.Slider(100, 10, f);
+		final sli = new h2d.Slider(100, 10, f);
 		sli.minValue = min;
 		sli.maxValue = max;
 		sli.value = get();
-		var tf = new h2d.TextInput(getFont(), f);
+		final tf = new h2d.TextInput(getFont(), f);
 		tf.text = "" + hxd.Math.fmt(sli.value);
 		sli.onChange = function() {
 			set(sli.value);
@@ -503,12 +503,13 @@ class BasicHud extends h2d.Scene {
 			f.needReflow = true;
 		};
 		tf.onChange = function() {
-			var v = Std.parseFloat(tf.text);
+			final v = Std.parseFloat(tf.text);
 			if (Math.isNaN(v))
 				return;
 			sli.value = v;
 			set(v);
 		};
+		f.setScale(scale);
 		return sli;
 	}
 
@@ -519,7 +520,6 @@ class BasicHud extends h2d.Scene {
 		tf.text = label;
 		tf.maxWidth = 70;
 		tf.textAlign = Right;
-		tf.setScale(scale);
 		final size = 10 * scale;
 		final b = new h2d.Graphics(f);
 		function redraw() {
@@ -538,8 +538,8 @@ class BasicHud extends h2d.Scene {
 			set(!get());
 			redraw();
 		};
-		i.setScale(scale);
 		redraw();
+		f.setScale(scale);
 		return i;
 	}
 
@@ -552,7 +552,6 @@ class BasicHud extends h2d.Scene {
 		t.maxWidth = i.width;
 		t.text = text + ":" + choices[value];
 		t.textAlign = Center;
-		t.setScale(scale);
 		i.onClick = function(_) {
 			value++;
 			value %= choices.length;
@@ -566,6 +565,8 @@ class BasicHud extends h2d.Scene {
 			t.textColor = 0xEEEEEE;
 		};
 		i.onOut(null);
+		t.setScale(scale);
+		i.setScale(scale);
 		return i;
 	}
 

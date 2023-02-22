@@ -66,7 +66,7 @@ class EnterSectorCallback {
 }
 
 class SceneWorldMap extends Scene {
-	public final hud:SceneWorldMapUi;
+	public final hud:SceneWorldMapHud;
 
 	var playerBmp:h2d.Bitmap;
 
@@ -94,7 +94,7 @@ class SceneWorldMap extends Scene {
 		SceneWorldMap.BlueSkullTile = hxd.Res.blue_skull.toTile();
 		SceneWorldMap.PinkSkullTile = hxd.Res.pink_skull.toTile();
 
-		hud = new SceneWorldMapUi(mainMenuCallback);
+		hud = new SceneWorldMapHud(mainMenuCallback);
 
 		this.enterSectorCallback = enterSectorCallback;
 	}

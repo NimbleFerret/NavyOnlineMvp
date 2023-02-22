@@ -6,8 +6,7 @@ class GameConfig {
 	public static final BlueColor = 0x0000FF;
 	public static final YellowColor = 0xFFFF00;
 
-	public static final BodyRectColor = 0x00FF00;
-	public static final ShipSideRectColor = 0xFFFF00;
+	public static var ShipConfigMode = false;
 
 	public static var ShowWaterBackground = false;
 	public static var DebugDraw = true;

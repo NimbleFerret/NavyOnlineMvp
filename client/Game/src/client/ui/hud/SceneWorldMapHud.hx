@@ -3,7 +3,7 @@ package client.ui.hud;
 import client.scene.SceneWorldMap;
 import client.ui.hud.BasicHud;
 
-class SceneWorldMapUi extends BasicHud {
+class SceneWorldMapHud extends BasicHud {
 	public function new(mainMenuCallback:Void->Void) {
 		super();
 

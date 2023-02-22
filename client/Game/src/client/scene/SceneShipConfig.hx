@@ -1,43 +1,114 @@
 package client.scene;
 
 import h2d.Scene;
+import h3d.Engine;
 import hxd.Key in K;
-import client.entity.ship.ShipTemplate;
+import client.entity.ClientShip;
+import client.entity.ship.ShipDecorations.CaptainConfigPosition;
+import client.ui.hud.BasicHud;
+import game.engine.entity.EngineShipEntity;
 import game.engine.entity.TypesAndClasses;
 
 class SceneShipConfig extends Scene {
-	private final ship:ShipTemplate;
+	public final hud:BasicHud;
+
+	private final debugGraphics:h2d.Graphics;
+	private final ship:ClientShip;
 
 	public function new() {
 		super();
 
 		camera.setViewport(1920, 1080, 0, 0);
-		camera.setScale(2, 2);
+		camera.setScale(3.5, 3.5);
 
-		ship = new ShipTemplate(GameEntityDirection.East, ShipHullSize.SMALL, ShipWindows.NONE, ShipCannons.ONE);
-		ship.setPosition(-600, -200);
+		ship = new ClientShip(new EngineShipEntity({
+			x: -100,
+			y: -100,
+			minSpeed: 0,
+			maxSpeed: 300,
+			acceleration: 50,
+			direction: GameEntityDirection.East,
+			id: null,
+			ownerId: "123",
+			serverShipRef: "",
+			free: true,
+			role: Role.Player,
+			shipHullSize: ShipHullSize.SMALL,
+			shipWindows: ShipWindows.NONE,
+			shipCannons: ShipCannons.TWO,
+			cannonsRange: 500,
+			cannonsDamage: 50,
+			cannonsAngleSpread: 40,
+			armor: 100,
+			hull: 100,
+			accDelay: 0.500,
+			turnDelay: 0.500,
+			fireDelay: 0.500
+		}));
 
 		addChild(ship);
+		this.debugGraphics = new h2d.Graphics(this);
+		hud = new BasicHud(0, 20);
 
-		// mediumShip = new ShipTemplate(this, MEDIUM, ONE, FOUR);
-		// mediumShip.setPosition(800, 300);
+		// -------------------------------
+		// Captain position
+		// -------------------------------
 
-		// addCheck("Relative", function() return g.isRelative, function(v) g.isRelative = v);
+		final defaultCaptainPosition = CaptainConfigPosition;
+		final captainMinX = defaultCaptainPosition.x - 300;
+		final captainMaxX = defaultCaptainPosition.x + 300;
+		final captainMinY = defaultCaptainPosition.y - 200;
+		final captainMaxY = defaultCaptainPosition.y + 200;
 
-		// addSlider("Capt X ", function() return ShipDecorations.bmp_captain.x, function(v) ShipDecorations.bmp_captain.x = v, -300, 300);
-		// addSlider("Capt Y ", function() return ShipDecorations.bmp_captain.y, function(v) ShipDecorations.bmp_captain.y = v, -300, 300);
+		hud.addSlider("Capt X ", function() return CaptainConfigPosition.x, function(v) CaptainConfigPosition.x = v, captainMinX, captainMaxX, 2);
+		hud.addSlider("Capt Y ", function() return CaptainConfigPosition.y, function(v) CaptainConfigPosition.y = v, captainMinY, captainMaxY, 2);
 
-		// addSlider("Right gun2 X ", function() return smallShip.rightSideGun2.x, function(v) smallShip.rightSideGun2.x = v, -300, 300);
-		// addSlider("Right gun2 Y ", function() return smallShip.rightSideGun2.y, function(v) smallShip.rightSideGun2.y = v, -300, 300);
-		// addSlider("Right gun3 X ", function() return smallShip.rightSideGun3.x, function(v) smallShip.rightSideGun3.x = v, -300, 300);
-		// addSlider("Right gun3 Y ", function() return smallShip.rightSideGun3.y, function(v) smallShip.rightSideGun3.y = v, -300, 300);
+		// -------------------------------
+		// Cannons position
+		// -------------------------------
 
-		// addSlider("Left gun1 X ", function() return smallShip.leftSideGun1.x, function(v) smallShip.leftSideGun1.x = v, -300, 300);
-		// addSlider("Left gun1 Y ", function() return smallShip.leftSideGun1.y, function(v) smallShip.leftSideGun1.y = v, -300, 300);
-		// addSlider("Left gun2 X ", function() return smallShip.leftSideGun2.x, function(v) smallShip.leftSideGun2.x = v, -300, 300);
-		// addSlider("Left gun2 Y ", function() return smallShip.leftSideGun2.y, function(v) smallShip.leftSideGun2.y = v, -300, 300);
-		// addSlider("Left gun3 X ", function() return smallShip.leftSideGun3.x, function(v) smallShip.leftSideGun3.x = v, -300, 300);
-		// addSlider("Left gun3 Y ", function() return smallShip.leftSideGun3.y, function(v) smallShip.leftSideGun3.y = v, -300, 300);
+		final s = ship.shipTemplate;
+
+		for (i in 0...s.cannonsTotal) {
+			hud.addSlider("Left cannon " + (i + 1) + " X offset ", function() return s.getCannonPositionOffset(Left, i).x,
+				function(v) s.updateCannonPositionOffset(Left, i, v, 0), -200, 200, 2);
+			hud.addSlider("Left cannon " + (i + 1) + " Y offset ", function() return s.getCannonPositionOffset(Left, i).y,
+				function(v) s.updateCannonPositionOffset(Left, i, 0, v), -200, 200, 2);
+		}
+		for (i in 0...s.cannonsTotal) {
+			hud.addSlider("Right cannon " + (i + 1) + " X offset ", function() return s.getCannonPositionOffset(Right, i).x,
+				function(v) s.updateCannonPositionOffset(Right, i, v, 0), -200, 200, 2);
+			hud.addSlider("Right cannon " + (i + 1) + " Y offset ", function() return s.getCannonPositionOffset(Right, i).y,
+				function(v) s.updateCannonPositionOffset(Right, i, 0, v), -200, 200, 2);
+		}
+
+		// -------------------------------
+		// Collider rect
+		// -------------------------------
+
+		final minBodyOffsetX = ship.getBodyShape().rectOffsetX - 200;
+		final maxBodyOffsetX = ship.getBodyShape().rectOffsetX + 200;
+		final minBodyOffsetY = ship.getBodyShape().rectOffsetY - 200;
+		final maxBodyOffsetY = ship.getBodyShape().rectOffsetY + 200;
+
+		final minBodyOffsetAngle = ship.getBodyShape().angle - Math.PI;
+		final maxBodyOffsetAngle = ship.getBodyShape().angle + Math.PI;
+
+		hud.addSlider("Body offset X ", function() return ship.getBodyShape().rectOffsetX, function(v) ship.updateBodyShape(v, 0, 0), minBodyOffsetX,
+			maxBodyOffsetX, 2);
+		hud.addSlider("Body offset Y ", function() return ship.getBodyShape().rectOffsetY, function(v) ship.updateBodyShape(0, v, 0), minBodyOffsetY,
+			maxBodyOffsetY, 2);
+		hud.addSlider("Body offset angle ", function() return ship.getBodyShape().angle, function(v) ship.updateBodyShape(0, 0, v), minBodyOffsetAngle,
+			maxBodyOffsetAngle, 2);
+	}
+
+	public override function render(e:Engine) {
+		super.render(e);
+		hud.render(e);
+	}
+
+	public function start() {
+		GameConfig.ShipConfigMode = true;
 	}
 
 	public function update() {
@@ -50,24 +121,28 @@ class SceneShipConfig extends Scene {
 
 		final left = K.isPressed(K.LEFT);
 		if (left) {
-			ship.changeDirLeft();
+			ship.shipTemplate.changeDirLeft();
 		}
 
 		final right = K.isPressed(K.RIGHT);
 		if (right) {
-			ship.changeDirRight();
+			ship.shipTemplate.changeDirRight();
 		}
 
 		final e = K.isPressed(K.E);
 		if (e) {
-			ship.shootRight();
+			ship.shipTemplate.shootRight();
 		}
 
 		final q = K.isPressed(K.Q);
 		if (q) {
-			ship.shootLeft();
+			ship.shipTemplate.shootLeft();
 		}
 
-		ship.update();
+		ship.shipTemplate.update();
+		ship.shipTemplate.updateVisualComponents();
+
+		debugGraphics.clear();
+		ship.debugDraw(debugGraphics);
 	}
 }

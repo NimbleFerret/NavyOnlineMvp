@@ -1,5 +1,6 @@
 package client.entity.ship;
 
+import h2d.col.Point;
 import client.entity.ship.ShipTemplate;
 import game.engine.entity.TypesAndClasses;
 
@@ -26,6 +27,10 @@ class ShipDecorations extends ShipVisualComponent {
 		GameEntityDirection.SouthEast => new PosOffset(25, -11)
 	];
 
+	// Config
+	public static final CaptainConfigPosition = new Point(0, 0);
+
+	// Visuals
 	private final eastWheelTile:h2d.Tile;
 	private final northWheelTile:h2d.Tile;
 	private final northEastWheelTile:h2d.Tile;
@@ -105,6 +110,7 @@ class ShipDecorations extends ShipVisualComponent {
 
 		final captainPos = size == MEDIUM ? CaptainPosMid.get(direction) : CaptainPosSmall.get(direction);
 		bmp_captain.setPosition(captainPos.x, captainPos.y);
+		CaptainConfigPosition.set(captainPos.x, captainPos.y);
 
 		addChild(bmp_wheel);
 		addChild(bmp_captain);
@@ -159,7 +165,11 @@ class ShipDecorations extends ShipVisualComponent {
 		}
 	}
 
-	public function update() {}
+	public function update() {
+		if (GameConfig.ShipConfigMode) {
+			bmp_captain.setPosition(CaptainConfigPosition.x, CaptainConfigPosition.y);
+		}
+	}
 
 	private function getWheelByDirectionAndSize(dir:GameEntityDirection, size:ShipHullSize) {
 		switch (dir) {

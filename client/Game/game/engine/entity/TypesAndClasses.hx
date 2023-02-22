@@ -55,6 +55,7 @@ class EntityShape {
 	public var height:Float;
 	public var rectOffsetX:Float;
 	public var rectOffsetY:Float;
+	public var angle = 0.0;
 
 	public function new(width:Float, height:Float, rectOffsetX:Float = 0, rectOffsetY:Float = 0) {
 		this.width = width;
