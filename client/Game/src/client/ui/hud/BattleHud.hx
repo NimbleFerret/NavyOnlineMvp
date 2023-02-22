@@ -1,9 +1,9 @@
-package client.gameplay.battle;
+package client.ui.hud;
 
 import haxe.Timer;
 import client.network.SocketProtocol.SocketServerDailyTaskComplete;
-import client.gameplay.BaiscHud.BasicHud;
-import client.ui.UiComponents;
+import client.ui.hud.BasicHud;
+import client.ui.components.UiComponents;
 import client.network.Socket;
 import client.entity.ClientShip;
 import h2d.Bitmap;

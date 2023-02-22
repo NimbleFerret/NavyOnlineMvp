@@ -1,4 +1,4 @@
-package client.ui;
+package client.ui.components;
 
 class UiAvatar extends h2d.Object {
 	final boardTile = hxd.Res.board.toTile();

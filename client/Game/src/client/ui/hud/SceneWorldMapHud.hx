@@ -1,6 +1,7 @@
-package client.scene;
+package client.ui.hud;
 
-import client.gameplay.BaiscHud.BasicHud;
+import client.scene.SceneWorldMap;
+import client.ui.hud.BasicHud;
 
 class SceneWorldMapUi extends BasicHud {
 	public function new(mainMenuCallback:Void->Void) {

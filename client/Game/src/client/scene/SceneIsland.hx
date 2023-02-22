@@ -1,14 +1,14 @@
 package client.scene;
 
-import game.engine.BaseEngine.EngineMode;
+import h2d.Scene;
+import h3d.Engine;
 import client.network.RestProtocol.JoinSectorResponse;
 import client.event.EventManager;
 import client.event.EventManager.EventListener;
 import client.gameplay.island.IslandGameplay;
 import client.network.Socket;
 import client.network.SocketProtocol;
-import h2d.Scene;
-import h3d.Engine;
+import game.engine.BaseEngine.EngineMode;
 
 class SceneIsland extends Scene implements EventListener {
 	private var instanceId:String;

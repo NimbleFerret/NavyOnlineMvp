@@ -2,7 +2,7 @@ import client.network.RestProtocol.JoinSectorResponse;
 import client.network.RestProtocol.GameWorldData;
 import client.scene.SceneWorldMap;
 import client.scene.SceneIsland;
-import client.scene.SceneShipsDemo;
+import client.scene.SceneShipConfig;
 import client.scene.SceneHomeMenu;
 import client.scene.SceneDemo1;
 import client.scene.SceneGeomTest;
@@ -17,18 +17,18 @@ enum Scene {
 	SceneDemo1;
 	SceneGeomTest;
 	SceneOnlineDemo1;
-	SceneShipsDemo;
+	SceneShipConfig;
 	SceneIsland;
 	SceneWorldMap;
 }
 
 class Main extends hxd.App {
-	private final defaultScene = Scene.SceneDemo1;
+	private final defaultScene = Scene.SceneShipConfig;
 
 	private var sceneHomeMenu:SceneHomeMenu;
 	private var sceneDemo1:SceneDemo1;
 	private var sceneGeomTest:SceneGeomTest;
-	private var sceneShipsDemo:SceneShipsDemo;
+	private var sceneShipConfig:SceneShipConfig;
 	private var sceneOnlineDemo1:SceneOnlineDemo1;
 	private var sceneIsland:SceneIsland;
 	private var sceneWorldMap:SceneWorldMap;
@@ -56,8 +56,8 @@ class Main extends hxd.App {
 		// Init scene geometry test
 		sceneGeomTest = new SceneGeomTest(engine.width, engine.height);
 
-		// Init scene ships demo
-		sceneShipsDemo = new SceneShipsDemo();
+		// Init scene ship config
+		sceneShipConfig = new SceneShipConfig();
 
 		// Init scene island
 		sceneIsland = new SceneIsland(engine.width, engine.height, function leaveCallback() {
@@ -97,8 +97,8 @@ class Main extends hxd.App {
 			case SceneOnlineDemo1:
 				sceneWorldMap.start();
 				setScene2D(sceneWorldMap);
-			case SceneShipsDemo:
-				setScene2D(sceneShipsDemo);
+			case SceneShipConfig:
+				setScene2D(sceneShipConfig);
 			case SceneIsland:
 				final response = new JoinSectorResponse(true, null, 0, 'instance', 1, 'islandId', '0x87400A03678dd03c8BF536404B5B14C609a23b79', 'Green', true);
 				sceneIsland.start(response);
@@ -162,8 +162,8 @@ class Main extends hxd.App {
 				sceneOnlineDemo1.update(dt, engine.fps);
 			case SceneGeomTest:
 				sceneGeomTest.update(dt, engine.fps);
-			case SceneShipsDemo:
-				sceneShipsDemo.update();
+			case SceneShipConfig:
+				sceneShipConfig.update();
 			case SceneIsland:
 				sceneIsland.update(dt, engine.fps);
 			case SceneDemo1:

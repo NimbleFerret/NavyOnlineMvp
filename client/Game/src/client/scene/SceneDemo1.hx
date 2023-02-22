@@ -1,12 +1,12 @@
 package client.scene;
 
+import h2d.Scene;
+import h3d.Engine;
 import client.gameplay.battle.BattleGameplay;
-import client.gameplay.battle.DebugHud;
+import client.ui.hud.DebugHud;
 import client.manager.IslandsManager;
 import game.engine.entity.TypesAndClasses;
 import game.engine.BaseEngine.EngineMode;
-import h3d.Engine;
-import h2d.Scene;
 
 class SceneDemo1 extends Scene {
 	private var game:BattleGameplay;

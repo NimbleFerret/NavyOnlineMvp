@@ -1,13 +1,13 @@
 package client.scene;
 
-import game.engine.BaseEngine.EngineMode;
+import h2d.Scene;
+import h3d.Engine;
 import client.gameplay.battle.BattleGameplay;
 import client.event.EventManager;
 import client.event.EventManager.EventListener;
 import client.network.Socket;
 import client.network.SocketProtocol;
-import h3d.Engine;
-import h2d.Scene;
+import game.engine.BaseEngine.EngineMode;
 
 class SceneOnlineDemo1 extends Scene implements EventListener {
 	private var instanceId:String;

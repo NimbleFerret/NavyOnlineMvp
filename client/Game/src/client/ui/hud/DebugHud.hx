@@ -1,6 +1,6 @@
-package client.gameplay.battle;
+package client.ui.hud;
 
-import client.gameplay.BaiscHud.BasicHud;
+import client.ui.hud.BasicHud;
 
 class DebugHud extends BasicHud {
 	public function new() {

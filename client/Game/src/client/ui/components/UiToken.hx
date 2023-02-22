@@ -1,4 +1,4 @@
-package client.ui;
+package client.ui.components;
 
 import haxe.CallStack.StackItem;
 import h2d.Anim;

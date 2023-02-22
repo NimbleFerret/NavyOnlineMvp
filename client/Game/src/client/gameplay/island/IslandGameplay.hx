@@ -1,17 +1,18 @@
 package client.gameplay.island;
 
+import h2d.col.Point;
+import hxd.Window;
 import utils.Utils;
 import client.entity.ClientCharacter;
-import client.network.Socket;
 import client.gameplay.BasicGameplay.GameState;
 import client.manager.IslandsManager;
+import client.network.Socket;
+import client.ui.hud.IslandHud;
 import game.engine.IslandEngine;
 import game.engine.BaseEngine.EngineMode;
 import game.engine.entity.EngineBaseGameEntity;
 import game.engine.entity.EngineCharacterEntity;
 import game.engine.entity.TypesAndClasses;
-import h2d.col.Point;
-import hxd.Window;
 
 class Contour {
 	private final from:Point;

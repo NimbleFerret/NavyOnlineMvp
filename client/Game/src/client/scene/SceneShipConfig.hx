@@ -1,20 +1,23 @@
 package client.scene;
 
-import client.entity.ship.ShipTemplate;
 import h2d.Scene;
 import hxd.Key in K;
+import client.entity.ship.ShipTemplate;
+import game.engine.entity.TypesAndClasses;
 
-class SceneShipsDemo extends Scene {
-	var smallShip:ShipTemplate;
-	var mediumShip:ShipTemplate;
+class SceneShipConfig extends Scene {
+	private final ship:ShipTemplate;
 
 	public function new() {
 		super();
 
-		// smallShip = new ShipTemplate(MEDIUM, NONE, THREE);
-		// smallShip.setPosition(400, 300);
+		camera.setViewport(1920, 1080, 0, 0);
+		camera.setScale(2, 2);
 
-		// addChild(smallShip);
+		ship = new ShipTemplate(GameEntityDirection.East, ShipHullSize.SMALL, ShipWindows.NONE, ShipCannons.ONE);
+		ship.setPosition(-600, -200);
+
+		addChild(ship);
 
 		// mediumShip = new ShipTemplate(this, MEDIUM, ONE, FOUR);
 		// mediumShip.setPosition(800, 300);
@@ -47,29 +50,24 @@ class SceneShipsDemo extends Scene {
 
 		final left = K.isPressed(K.LEFT);
 		if (left) {
-			smallShip.changeDirLeft();
-			// mediumShip.changeDirLeft();
+			ship.changeDirLeft();
 		}
 
 		final right = K.isPressed(K.RIGHT);
 		if (right) {
-			smallShip.changeDirRight();
-			// mediumShip.changeDirRight();
+			ship.changeDirRight();
 		}
 
 		final e = K.isPressed(K.E);
 		if (e) {
-			smallShip.shootRight();
-			// mediumShip.shootRight();
+			ship.shootRight();
 		}
 
 		final q = K.isPressed(K.Q);
 		if (q) {
-			smallShip.shootLeft();
-			mediumShip.shootLeft();
+			ship.shootLeft();
 		}
 
-		smallShip.update();
-		// mediumShip.update();
+		ship.update();
 	}
 }

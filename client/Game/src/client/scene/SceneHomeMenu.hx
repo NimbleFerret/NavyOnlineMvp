@@ -1,18 +1,19 @@
 package client.scene;
 
-import client.web3.Moralis;
+import h2d.Scene;
+import h3d.Engine;
+import client.entity.ship.ShipTemplate;
 import client.network.RestProtocol.PlayerData;
 import client.network.RestProtocol.CaptainEntity;
 import client.network.RestProtocol.ShipEntity;
 import client.network.RestProtocol.IslandEntity;
 import client.network.Rest;
-import client.ui.UiIsland;
-import client.ui.UiToken;
-import client.ui.UiAvatar;
-import client.entity.ship.ShipTemplate;
+import client.ui.components.UiIsland;
+import client.ui.components.UiToken;
+import client.ui.components.UiAvatar;
+import client.ui.hud.SceneMainHud;
+import client.web3.Moralis;
 import game.engine.entity.TypesAndClasses;
-import h3d.Engine;
-import h2d.Scene;
 
 class SceneHomeMenu extends Scene {
 	public final hud:SceneMainHud;

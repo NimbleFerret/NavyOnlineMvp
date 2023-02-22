@@ -1,9 +1,9 @@
 package client.scene;
 
-import utils.Utils;
-import hxd.Window;
 import h2d.col.Point;
 import h2d.Scene;
+import hxd.Window;
+import utils.Utils;
 import game.engine.geometry.Rectangle;
 import game.engine.geometry.Line;
 import game.engine.MathUtils;

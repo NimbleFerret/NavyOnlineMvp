@@ -1,8 +1,8 @@
 package client.manager;
 
-import client.ui.UiToken.TokenType;
-import client.ui.UiToken.TokenAnimation;
 import haxe.Timer;
+import client.ui.components.UiToken.TokenType;
+import client.ui.components.UiToken.TokenAnimation;
 
 using tweenxcore.Tools;
 

@@ -1,6 +1,6 @@
-package client.gameplay;
+package client.ui.hud;
 
-import client.ui.UiToken;
+import client.ui.components.UiToken;
 import h2d.Object;
 
 class BasicHud extends h2d.Scene {

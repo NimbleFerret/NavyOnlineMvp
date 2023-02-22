@@ -1,6 +1,6 @@
-package client.gameplay.island;
+package client.ui.hud;
 
-import client.gameplay.BaiscHud.BasicHud;
+import client.ui.hud.BasicHud;
 import utils.Utils;
 
 class IslandHud extends BasicHud {

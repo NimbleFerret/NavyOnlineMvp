@@ -1,13 +1,14 @@
 package client.scene;
 
-import h3d.Engine;
 import haxe.Timer;
-import client.network.RestProtocol;
-import client.network.Rest;
-import client.Player;
 import h2d.Bitmap;
 import h2d.Tile;
 import h2d.Scene;
+import h3d.Engine;
+import client.Player;
+import client.network.RestProtocol;
+import client.network.Rest;
+import client.ui.hud.SceneWorldMapHud;
 
 final SectorSize = 64;
 
