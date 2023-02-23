@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
+import { Collection } from './schema.collection';
 
-export type ProjectDetailsDocument = ProjectDetails & Document;
+export type ProjectDocument = Project & Document;
 
 export enum ProjectState {
     DISABLED = 1,
@@ -13,7 +14,7 @@ export enum ProjectState {
 }
 
 @Schema()
-export class ProjectDetails {
+export class Project {
 
     @Prop()
     active: boolean;
@@ -37,6 +38,9 @@ export class ProjectDetails {
     @Prop()
     supportedChains: string[];
 
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Collection' }] })
+    collections: Collection[];
+
 }
 
-export const ProjectDetailsSchema = SchemaFactory.createForClass(ProjectDetails);
+export const ProjectSchema = SchemaFactory.createForClass(Project);

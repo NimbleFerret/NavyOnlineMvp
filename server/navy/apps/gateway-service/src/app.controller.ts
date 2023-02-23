@@ -1,6 +1,6 @@
 import { SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { AuthUpdateDto, WorldMoveDto } from './app.dto';
+import { AuthUpdateDto, WorldMoveDto } from './dto/app.dto';
 import { AppService } from './app.service';
 
 @Controller()

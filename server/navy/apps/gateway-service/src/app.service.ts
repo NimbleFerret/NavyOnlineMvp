@@ -36,7 +36,7 @@ import { lastValueFrom } from 'rxjs';
 import {
   AuthUpdateDto,
   WorldMoveDto
-} from './app.dto';
+} from './dto/app.dto';
 
 // TODO make all resonses more generic
 @Injectable()

@@ -23,10 +23,11 @@ import {
   Web3ServiceGrpcClientOptions
 } from '@app/shared-library/gprc/grpc.web3.service';
 import { AuthMiddleware } from './auth.middleware';
-
+import { MarketplaceModule } from './marketplace/marketplace.module';
 
 @Module({
   imports: [
+    MarketplaceModule,
     ClientsModule.register([
       {
         name: WorldServiceGrpcClientName,

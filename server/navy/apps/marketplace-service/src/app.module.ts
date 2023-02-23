@@ -1,7 +1,8 @@
 import { Web3ServiceGrpcClientName, Web3ServiceGrpcClientOptions } from '@app/shared-library/gprc/grpc.web3.service';
-import { MintDetails, MintDetailsSchema } from '@app/shared-library/schemas/marketplace/schema.mint.details';
-import { ProjectDetails, ProjectDetailsSchema } from '@app/shared-library/schemas/marketplace/schema.project';
-import { CacheModule, Module } from '@nestjs/common';
+import { Project, ProjectSchema } from '@app/shared-library/schemas/marketplace/schema.project';
+import { Collection, CollectionSchema } from '@app/shared-library/schemas/marketplace/schema.collection';
+import { Mint, MintSchema } from '@app/shared-library/schemas/marketplace/schema.mint';
+import { Module } from '@nestjs/common';
 import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -13,13 +14,13 @@ import { MintModule } from './mint/mint.module';
 @Module({
   imports: [
     MintModule,
-    // CacheModule.register(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'marketplace-service'),
     }),
     MongooseModule.forFeature([
-      { name: ProjectDetails.name, schema: ProjectDetailsSchema },
-      { name: MintDetails.name, schema: MintDetailsSchema },
+      { name: Project.name, schema: ProjectSchema },
+      { name: Mint.name, schema: MintSchema },
+      { name: Collection.name, schema: CollectionSchema }
     ]),
     MongooseModule.forRoot('mongodb://localhost/navy'),
     ClientsModule.register([

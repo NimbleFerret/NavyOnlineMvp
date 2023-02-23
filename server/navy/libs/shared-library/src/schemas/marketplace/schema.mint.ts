@@ -1,17 +1,16 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
-import { ProjectDetails } from './schema.project';
+import { Document } from 'mongoose';
 
-export type MintDetailsDocument = MintDetails & Document;
+export type MintDocument = Mint & Document;
 
-export interface RarityDetails {
+export interface RarityItem {
     titleText: string;
     titleColor: string;
     description: string;
 }
 
-export interface NftPartsDetails {
+export interface NftPartItem {
     categoryTitle: string;
     categoryDetails: NftCategoryDetails[];
 }
@@ -26,19 +25,12 @@ export interface MintDetails {
     chainId: string;
     chainName: string;
     mintPriceEth: number;
+    saleContractAddress: string;
+    tokenContractAddress: string;
 }
 
 @Schema()
-export class MintDetails {
-
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ProjectDetails' })
-    projectDetails: ProjectDetails;
-
-    @Prop()
-    saleContractAddress: string;
-
-    @Prop()
-    tokenContractAddress: string;
+export class Mint {
 
     // ------------------------------
 
@@ -52,7 +44,7 @@ export class MintDetails {
     mintingEndTime: string;
 
     @Prop()
-    mintDetails: MintDetails[];
+    mintingDetails: MintDetails[];
 
     // ------------------------------
 
@@ -60,7 +52,7 @@ export class MintDetails {
     collectionSize: number;
 
     @Prop()
-    collectionItemsLeft: number;
+    collectionTokensMinted: number;
 
     @Prop()
     collectionPreview: string[];
@@ -99,7 +91,7 @@ export class MintDetails {
     rarityDescription: string;
 
     @Prop()
-    rarityItems: RarityDetails[];
+    rarityItems: RarityItem[];
 
     // ------------------------------
 
@@ -113,10 +105,8 @@ export class MintDetails {
     nftPartsDescription: string;
 
     @Prop()
-    nftPartsItems: NftPartsDetails[];
-
-    // ------------------------------
+    nftPartsItems: NftPartItem[];
 
 }
 
-export const MintDetailsSchema = SchemaFactory.createForClass(MintDetails);
+export const MintSchema = SchemaFactory.createForClass(Mint);

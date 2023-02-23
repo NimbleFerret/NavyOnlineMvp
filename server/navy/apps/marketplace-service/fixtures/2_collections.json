@@ -1,0 +1,15 @@
+[
+    {
+        "name": "Captains",
+        "description": "Captains collection",
+        "size": 500,
+        "tokensMinted": 0,
+        "preview": [
+            "captain/preview_1.png",
+            "captain/preview_2.png",
+            "captain/preview_3.png",
+            "captain/preview_4.png",
+            "captain/preview_5.png"
+        ]
+    }
+]

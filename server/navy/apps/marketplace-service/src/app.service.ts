@@ -1,13 +1,13 @@
 import { Web3Service, Web3ServiceGrpcClientName, Web3ServiceName } from '@app/shared-library/gprc/grpc.web3.service';
-import { MintDetails, MintDetailsDocument } from '@app/shared-library/schemas/marketplace/schema.mint.details';
-import { ProjectDetails, ProjectDetailsDocument, ProjectState } from '@app/shared-library/schemas/marketplace/schema.project';
-import { BadRequestException, Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Project, ProjectDocument, ProjectState } from '@app/shared-library/schemas/marketplace/schema.project';
+import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
+import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { caching, MemoryCache } from 'cache-manager';
 import { ClientGrpc } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { join } from 'path';
-import { lastValueFrom } from 'rxjs';
 
 const fs = require('fs');
 
@@ -19,8 +19,9 @@ export class AppService implements OnModuleInit {
   private memoryCache: MemoryCache;
 
   constructor(
-    @InjectModel(ProjectDetails.name) private projectDetailsModel: Model<ProjectDetailsDocument>,
-    @InjectModel(MintDetails.name) private mintDetailsModel: Model<MintDetailsDocument>,
+    @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
+    @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
+    @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
     @Inject(Web3ServiceGrpcClientName) private readonly web3ServiceGrpcClient: ClientGrpc) {
   }
 
@@ -41,50 +42,61 @@ export class AppService implements OnModuleInit {
       }
     }
 
-    const projectDetails = await this.projectDetailsModel.findOne();
+    const projectDetails = await this.projectModel.findOne();
     if (!projectDetails) {
-      loadFixture('1_navy_project_details.json', async (fixture: any) => {
-        const projectDetails = new this.projectDetailsModel();
-        projectDetails.active = fixture.active;
-        projectDetails.name = fixture.name;
-        projectDetails.state = fixture.state;
-        projectDetails.supportedChains = fixture.supportedChains;
-        const newProjectDetails = await projectDetails.save();
+      loadFixture('1_projects.json', async (fixtures: any) => {
+        const fixture = fixtures[0];
+        const project = new this.projectModel();
+        project.name = fixture.name;
+        project.active = fixture.active;
+        project.state = fixture.state;
+        project.supportedChains = fixture.supportedChains;
 
-        loadFixture('2_captains_mint.json', async (fixture: any) => {
-          const captainMintDetails = new this.mintDetailsModel();
-          captainMintDetails.projectDetails = newProjectDetails;
-          captainMintDetails.saleContractAddress = fixture.saleContractAddress;
-          captainMintDetails.tokenContractAddress = fixture.tokenContractAddress;
+        loadFixture('2_collections.json', async (fixtures: any) => {
+          const fixture = fixtures[0];
+          const captainsCollection = new this.collectionModel();
 
-          captainMintDetails.mintingEnabled = fixture.mintingEnabled;
-          captainMintDetails.mintingStartTime = fixture.mintingStartTime;
-          captainMintDetails.mintingEndTime = fixture.mintingEndTime;
-          captainMintDetails.mintDetails = fixture.mintDetails;
+          captainsCollection.name = fixture.name;
+          captainsCollection.description = fixture.description;
+          captainsCollection.size = fixture.size;
+          captainsCollection.tokensMinted = fixture.tokensMinted;
+          captainsCollection.preview = fixture.preview;
 
-          captainMintDetails.collectionSize = fixture.collectionSize;
-          captainMintDetails.collectionItemsLeft = fixture.collectionItemsLeft;
-          captainMintDetails.collectionPreview = fixture.collectionPreview;
+          loadFixture('3_mints.json', async (fixtures: any) => {
+            const fixture = fixtures[0];
+            const captainsMint = new this.mintModel();
 
-          captainMintDetails.descriptionTitle = fixture.descriptionTitle;
-          captainMintDetails.descriptionDescription = fixture.descriptionDescription;
+            captainsMint.mintingEnabled = fixture.mintingEnabled;
+            captainsMint.mintingStartTime = fixture.mintingStartTime;
+            captainsMint.mintingEndTime = fixture.mintingEndTime;
+            captainsMint.mintingDetails = fixture.mintingDetails;
 
-          captainMintDetails.profitability = fixture.profitability;
-          captainMintDetails.profitabilityTitle = fixture.profitabilityTitle;
-          captainMintDetails.profitabilityValue = fixture.profitabilityValue;
-          captainMintDetails.profitabilityDescription = fixture.profitabilityDescription;
+            captainsMint.collectionSize = fixture.collectionSize;
+            captainsMint.collectionTokensMinted = fixture.collectionTokensMinted;
+            captainsMint.collectionPreview = fixture.collectionPreview;
 
-          captainMintDetails.rarity = fixture.rarity;
-          captainMintDetails.rarityTitle = fixture.rarityTitle;
-          captainMintDetails.rarityDescription = fixture.rarityDescription;
-          captainMintDetails.rarityItems = fixture.rarityItems;
+            captainsMint.descriptionTitle = fixture.descriptionTitle;
+            captainsMint.descriptionDescription = fixture.descriptionDescription;
 
-          captainMintDetails.nftParts = fixture.nftParts;
-          captainMintDetails.nftPartsTitle = fixture.nftPartsTitle;
-          captainMintDetails.nftPartsDescription = fixture.nftPartsDescription;
-          captainMintDetails.nftPartsItems = fixture.nftPartsItems;
+            captainsMint.profitability = fixture.profitability;
+            captainsMint.profitabilityTitle = fixture.profitabilityTitle;
+            captainsMint.profitabilityValue = fixture.profitabilityValue;
+            captainsMint.profitabilityDescription = fixture.profitabilityDescription;
 
-          await captainMintDetails.save();
+            captainsMint.rarity = fixture.rarity;
+            captainsMint.rarityTitle = fixture.rarityTitle;
+            captainsMint.rarityDescription = fixture.rarityDescription;
+            captainsMint.rarityItems = fixture.rarityItems;
+
+            captainsMint.nftParts = fixture.nftParts;
+            captainsMint.nftPartsTitle = fixture.nftPartsTitle;
+            captainsMint.nftPartsDescription = fixture.nftPartsDescription;
+            captainsMint.nftPartsItems = fixture.nftPartsItems;
+
+            captainsCollection.mint = await captainsMint.save();
+            project.collections.push(await captainsCollection.save());
+            await project.save();
+          });
         });
       });
     }
@@ -98,7 +110,7 @@ export class AppService implements OnModuleInit {
   }
 
   async getProjects() {
-    const projects = await this.projectDetailsModel.find({
+    const projects = await this.projectModel.find({
       projectState: {
         "$ne": ProjectState.DISABLED
       }
@@ -106,26 +118,35 @@ export class AppService implements OnModuleInit {
     return projects;
   }
 
-  async getProjectMintDetails(id: string) {
-    const value = await this.memoryCache.get('projectMintDetails_' + id);
-    if (value) {
-      const cachedResponse = JSON.parse(value as string);
-      return cachedResponse;
-    } else {
-      const mintDetails = await this.mintDetailsModel.find({
-        projectDetails: id
-      }).select(['-_id', '-__v']);
-      if (mintDetails) {
-        for (const details of mintDetails) {
-          const collectionSaleDetails = await lastValueFrom(this.web3Service.GetCollectionSaleDetails({ address: details.saleContractAddress }));
-          details.collectionItemsLeft = collectionSaleDetails.tokensLeft;
-          details.collectionSize = collectionSaleDetails.tokensTotal;
-        }
-        await this.memoryCache.set('projectMintDetails_' + id, JSON.stringify(mintDetails));
-        return mintDetails;
-      } else {
-        throw new BadRequestException();
-      }
-    }
+  async getCollection(id: string) {
+    return this.collectionModel.findOne({ _id: id }).select(['-_id', '-__v']);
   }
+
+  async getMint(id: string) {
+    return this.mintModel.findOne({ _id: id }).select(['-_id', '-__v']);
+  }
+
+  // const value = await this.memoryCache.get('projectMintDetails_' + id);
+  // if (value) {
+  //   const cachedResponse = JSON.parse(value as string);
+  //   return cachedResponse;
+  // } else {
+  //   const mintDetails = await this.mintModel.find({
+  //     projectDetails: id
+  //   }).select(['-_id', '-__v']);
+  //   if (mintDetails) {
+  //     for (const details of mintDetails) {
+  //       const collectionSaleDetails = await lastValueFrom(this.web3Service.GetCollectionSaleDetails({ address: details.saleContractAddress }));
+
+  //       details.mintDetails.
+
+  //         details.tokensLeft = collectionSaleDetails.tokensLeft;
+  //       details.tokensTotal = collectionSaleDetails.tokensTotal;
+  //     }
+  //     await this.memoryCache.set('projectMintDetails_' + id, JSON.stringify(mintDetails));
+  //     return mintDetails;
+  //   } else {
+  //     throw new BadRequestException();
+  //   }
+  // }
 }
