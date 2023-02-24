@@ -1,4 +1,5 @@
 import { WorldServiceGrpcClientName, WorldServiceGrpcClientOptions } from '@app/shared-library/gprc/grpc.world.service';
+import { CollectionItem, CollectionItemSchema } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { Captain, CaptainSchema } from '@app/shared-library/schemas/schema.captain';
 import { Island, IslandSchema } from '@app/shared-library/schemas/schema.island';
 import { Ship, ShipSchema } from '@app/shared-library/schemas/schema.ship';
@@ -20,7 +21,8 @@ import { MoralisService } from './moralis.service';
       { name: Captain.name, schema: CaptainSchema },
       { name: Ship.name, schema: ShipSchema },
       { name: Island.name, schema: IslandSchema },
-      { name: UserAvatar.name, schema: UserAvatarSchema }
+      { name: UserAvatar.name, schema: UserAvatarSchema },
+      { name: CollectionItem.name, schema: CollectionItemSchema },
     ]),
   ],
   providers: [MoralisService],

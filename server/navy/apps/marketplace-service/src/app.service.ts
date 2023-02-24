@@ -8,6 +8,8 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { join } from 'path';
+import { ProjectCollection, ProjectDto } from './dto/dto.projects';
+import { CollectionItem, CollectionItemDocument } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 
 const fs = require('fs');
 
@@ -21,6 +23,7 @@ export class AppService implements OnModuleInit {
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
     @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
+    @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
     @Inject(Web3ServiceGrpcClientName) private readonly web3ServiceGrpcClient: ClientGrpc) {
   }
 
@@ -57,6 +60,8 @@ export class AppService implements OnModuleInit {
           for (let i = 0; i < fixtures.length; i++) {
             collections[i].name = fixtures[i].name;
             collections[i].description = fixtures[i].description;
+            collections[i].chainId = fixtures[i].chainId;
+            collections[i].address = fixtures[i].address;
             collections[i].size = fixtures[i].size;
             collections[i].tokensMinted = fixtures[i].tokensMinted;
             collections[i].preview = fixtures[i].preview;
@@ -112,16 +117,43 @@ export class AppService implements OnModuleInit {
   }
 
   async getProjects() {
+    const result: ProjectDto[] = [];
+
     const projects = await this.projectModel.find({
       projectState: {
         "$ne": ProjectState.DISABLED
       }
-    }).select(['-__v']);
-    return projects;
+    });
+
+    for (const p of projects) {
+      const project: ProjectDto = {
+        name: p.name,
+        state: p.state,
+        active: p.active,
+        collections: []
+      };
+
+      for (const c of p.collections) {
+        const collection = await this.collectionModel.findById(c);
+        project.collections.push({
+          name: collection.name,
+          address: collection.address,
+          chainId: collection.chainId,
+        } as ProjectCollection);
+      }
+
+      result.push(project);
+    }
+
+    return result;
   }
 
-  async getCollection(id: string) {
-    return this.collectionModel.findOne({ _id: id }).select(['-_id', '-__v']);
+  async getCollection(address: string) {
+    return this.collectionModel.findOne({ address: address }).select(['-_id', '-__v']);
+  }
+
+  async getCollectionItems(address: string) {
+    return this.collectionItemModel.find({ tokenAddress: address.toLowerCase() }).select(['-_id', '-__v']);
   }
 
   async getMint(id: string) {

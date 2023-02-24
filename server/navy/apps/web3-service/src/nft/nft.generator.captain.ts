@@ -36,50 +36,50 @@ export class NftCaptainGenerator {
     private readonly HairOrHat7Chance = 7;
     private readonly HairOrHat8Chance = 3;
 
-    async generateFounderCaptain(index: number, maxIndex: number, captainStats: CaptainStats) {
-        const bodyImagePath = __dirname.split('dist')[0] + 'assets\\captain\\body.png';
+    async generateCaptain(index: number, maxIndex: number, captainStats: CaptainStats) {
+        const bodyImagePath = __dirname.split('dist')[0] + 'static\\captain\\body.png';
 
-        const acc1ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\accessories\\acc_1.png';
-        const acc2ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\accessories\\acc_2.png';
-        const acc3ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\accessories\\acc_3.png';
-        const acc4ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\accessories\\acc_4.png';
-        const acc5ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\accessories\\acc_5.png';
+        const acc1ImagePath = __dirname.split('dist')[0] + 'static\\captain\\accessories\\acc_1.png';
+        const acc2ImagePath = __dirname.split('dist')[0] + 'static\\captain\\accessories\\acc_2.png';
+        const acc3ImagePath = __dirname.split('dist')[0] + 'static\\captain\\accessories\\acc_3.png';
+        const acc4ImagePath = __dirname.split('dist')[0] + 'static\\captain\\accessories\\acc_4.png';
+        const acc5ImagePath = __dirname.split('dist')[0] + 'static\\captain\\accessories\\acc_5.png';
 
-        const bg1ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_1.png';
-        const bg2ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_2.png';
-        const bg3ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_3.png';
-        const bg4ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_4.png';
-        const bg5ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_5.png';
-        const bg6ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_6.png';
-        const bg7ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_7.png';
-        const bg8ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_8.png';
-        const bg9ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_9.png';
-        const bg10ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_10.png';
-        const bg11ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_11.png';
-        const bg12ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\bgs\\bg_12.png';
+        const bg1ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_1.png';
+        const bg2ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_2.png';
+        const bg3ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_3.png';
+        const bg4ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_4.png';
+        const bg5ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_5.png';
+        const bg6ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_6.png';
+        const bg7ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_7.png';
+        const bg8ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_8.png';
+        const bg9ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_9.png';
+        const bg10ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_10.png';
+        const bg11ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_11.png';
+        const bg12ImagePath = __dirname.split('dist')[0] + 'static\\captain\\backgrounds\\bg_12.png';
 
-        const clothes1ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\clothes\\clothes_1.png';
-        const clothes2ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\clothes\\clothes_2.png';
-        const clothes3ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\clothes\\clothes_3.png';
-        const clothes4ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\clothes\\clothes_4.png';
-        const clothes5ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\clothes\\clothes_5.png';
-        const clothes6ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\clothes\\clothes_6.png';
+        const clothes1ImagePath = __dirname.split('dist')[0] + 'static\\captain\\clothes\\clothes_1.png';
+        const clothes2ImagePath = __dirname.split('dist')[0] + 'static\\captain\\clothes\\clothes_2.png';
+        const clothes3ImagePath = __dirname.split('dist')[0] + 'static\\captain\\clothes\\clothes_3.png';
+        const clothes4ImagePath = __dirname.split('dist')[0] + 'static\\captain\\clothes\\clothes_4.png';
+        const clothes5ImagePath = __dirname.split('dist')[0] + 'static\\captain\\clothes\\clothes_5.png';
+        const clothes6ImagePath = __dirname.split('dist')[0] + 'static\\captain\\clothes\\clothes_6.png';
 
-        const haircut1ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\haircuts\\haircut_1.png';
-        const haircut2ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\haircuts\\haircut_2.png';
-        const haircut3ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\haircuts\\haircut_3.png';
-        const haircut4ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\haircuts\\haircuts_4.png';
+        const haircut1ImagePath = __dirname.split('dist')[0] + 'static\\captain\\haircuts\\haircut_1.png';
+        const haircut2ImagePath = __dirname.split('dist')[0] + 'static\\captain\\haircuts\\haircut_2.png';
+        const haircut3ImagePath = __dirname.split('dist')[0] + 'static\\captain\\haircuts\\haircut_3.png';
+        const haircut4ImagePath = __dirname.split('dist')[0] + 'static\\captain\\haircuts\\haircuts_4.png';
 
-        const hat1ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\hats\\hat_1.png';
-        const hat2ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\hats\\hat_2.png';
-        const hat3ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\hats\\hat_3.png';
-        const hat4ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\hats\\hat_4.png';
-        const hat5ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\hats\\hat_5.png';
+        const hat1ImagePath = __dirname.split('dist')[0] + 'static\\captain\\hats\\hat_1.png';
+        const hat2ImagePath = __dirname.split('dist')[0] + 'static\\captain\\hats\\hat_2.png';
+        const hat3ImagePath = __dirname.split('dist')[0] + 'static\\captain\\hats\\hat_3.png';
+        const hat4ImagePath = __dirname.split('dist')[0] + 'static\\captain\\hats\\hat_4.png';
+        const hat5ImagePath = __dirname.split('dist')[0] + 'static\\captain\\hats\\hat_5.png';
 
-        const head1ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\heads\\head_1.png';
-        const head2ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\heads\\head_2.png';
-        const head3ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\heads\\head_3.png';
-        const head4ImagePath = __dirname.split('dist')[0] + 'assets\\captain\\heads\\head_4.png';
+        const head1ImagePath = __dirname.split('dist')[0] + 'static\\captain\\heads\\head_1.png';
+        const head2ImagePath = __dirname.split('dist')[0] + 'static\\captain\\heads\\head_2.png';
+        const head3ImagePath = __dirname.split('dist')[0] + 'static\\captain\\heads\\head_3.png';
+        const head4ImagePath = __dirname.split('dist')[0] + 'static\\captain\\heads\\head_4.png';
 
         const canvas = createCanvas(72, 72);
         const ctx = canvas.getContext('2d');

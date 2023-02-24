@@ -2,6 +2,8 @@
     {
         "name": "Captains",
         "description": "Captains collection",
+        "chainId": "25",
+        "address": "0xe1efC3399717e1076fe3bAD99adbFB6D68699D83",
         "size": 500,
         "tokensMinted": 0,
         "preview": [
@@ -15,6 +17,8 @@
     {
         "name": "Ships",
         "description": "Ships collection",
+        "chainId": "25",
+        "address": "0xe0329c20d37d05806f73912b28f5434bcc56a8b7",
         "size": 500,
         "tokensMinted": 0,
         "preview": [

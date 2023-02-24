@@ -266,6 +266,34 @@
         "inputs": [
             {
                 "internalType": "uint256",
+                "name": "level",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "chance",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "nvy",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "aks",
+                "type": "uint256"
+            }
+        ],
+        "name": "changeUpgradeRequirementsByLevel",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
                 "name": "captainId",
                 "type": "uint256"
             }
@@ -528,19 +556,6 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "levelUpNFT",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -871,6 +886,11 @@
                 "type": "uint256"
             },
             {
+                "internalType": "uint256",
+                "name": "level",
+                "type": "uint256"
+            },
+            {
                 "components": [
                     {
                         "internalType": "bool",
@@ -899,7 +919,7 @@
             },
             {
                 "internalType": "string",
-                "name": "newMetadataURI",
+                "name": "metadataURI",
                 "type": "string"
             }
         ],

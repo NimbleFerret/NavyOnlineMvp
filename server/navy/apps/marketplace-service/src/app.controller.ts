@@ -14,9 +14,14 @@ export class AppController {
     return this.appService.getProjects()
   }
 
-  @Get('collection/:collectionId')
-  getCollection(@Param('collectionId') collectionId: string) {
-    return this.appService.getCollection(collectionId);
+  @Get('collection/:address')
+  getCollection(@Param('address') address: string) {
+    return this.appService.getCollection(address);
+  }
+
+  @Get('collection/items/:address')
+  getCollectionItems(@Param('address') address: string) {
+    return this.appService.getCollectionItems(address);
   }
 
   @Get('mint/:mintId')

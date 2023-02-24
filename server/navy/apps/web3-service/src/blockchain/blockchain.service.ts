@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    Logger,
+    OnModuleInit
+} from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { EthersProvider } from './blockchain.ethers.provider';
@@ -6,7 +11,12 @@ import { Constants } from '../app.constants';
 import { NftCaptainGenerator } from '../nft/nft.generator.captain';
 import { Rarity } from '@app/shared-library/shared-library.main';
 import { ethers } from 'ethers';
-import { CheckEthersAuthSignatureRequest, CheckEthersAuthSignatureResponse, GetCollectionSaleDetailsRequest, GetCollectionSaleDetailsResponse } from '@app/shared-library/gprc/grpc.web3.service';
+import {
+    CheckEthersAuthSignatureRequest,
+    CheckEthersAuthSignatureResponse,
+    GetCollectionSaleDetailsRequest,
+    GetCollectionSaleDetailsResponse
+} from '@app/shared-library/gprc/grpc.web3.service';
 
 // -----------------------------------------
 // These stats are used to generate new NFTs
@@ -90,12 +100,14 @@ export class BlockchainService implements OnModuleInit {
     async onModuleInit() {
         this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
             try {
-                Logger.log(`Generating new captain for user: ${sender}...`);
-                if (contractAddress == Constants.CaptainContractAddress) {
+                Logger.log(`Generating new captain for user: ${sender}. contractAddress: ${contractAddress}`);
+
+                if (contractAddress.toLocaleLowerCase() == Constants.CaptainContractAddress) {
                     // TODO replace tokens total by tokens left
+                    console.log(1);
                     const tokensLeft = (await this.ethersProvider.captainCollectionSaleContract.tokensLeft()).toNumber();
                     const tokensTotal = (await this.ethersProvider.captainCollectionSaleContract.tokensTotal()).toNumber();
-
+                    console.log(2);
                     // TODO compare all on chain params and deploy a new contract
                     const captainStats = {
                         currentLevel: 1,
@@ -107,13 +119,14 @@ export class BlockchainService implements OnModuleInit {
                         stakingStartedAt: 0,
                         stakingDurationSeconds: 120,
                     } as CaptainStats;
-
-                    const captainMetadata = await this.nftCaptainGenerator.generateFounderCaptain(
+                    console.log(3);
+                    const captainMetadata = await this.nftCaptainGenerator.generateCaptain(
                         tokensLeft,
                         tokensTotal,
                         captainStats
                     );
-
+                    console.log(captainMetadata);
+                    console.log(4);
                     const captainStatsTuple: [
                         boolean,
                         ethers.BigNumber,
@@ -126,8 +139,8 @@ export class BlockchainService implements OnModuleInit {
                         ];
 
                     Logger.log('Generated captain metadata: ' + captainMetadata);
-
                     await this.ethersProvider.captainContract.grantCaptain(sender, captainStatsTuple, captainMetadata);
+                    console.log(5);
                 } else {
                     Logger.error(`Wrong contract address! Expected captain address: ${Constants.CaptainContractAddress}, received: ${contractAddress}`);
                 }
@@ -136,31 +149,31 @@ export class BlockchainService implements OnModuleInit {
             }
         });
 
-        this.ethersProvider.shipCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
-            try {
-                Logger.log(`Generating new ship for user: ${sender}...`);
-                if (contractAddress == Constants.ShipContractAddress) {
+        // this.ethersProvider.shipCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
+        //     try {
+        //         Logger.log(`Generating new ship for user: ${sender}...`);
+        //         if (contractAddress == Constants.ShipContractAddress) {
 
-                } else {
-                    Logger.error(`Wrong contract address! Expected ship address: ${Constants.ShipContractAddress}, received: ${contractAddress}`);
-                }
-            } catch (e) {
-                Logger.error(e);
-            }
-        });
+        //         } else {
+        //             Logger.error(`Wrong contract address! Expected ship address: ${Constants.ShipContractAddress}, received: ${contractAddress}`);
+        //         }
+        //     } catch (e) {
+        //         Logger.error(e);
+        //     }
+        // });
 
-        this.ethersProvider.islandCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
-            try {
-                Logger.log(`Generating new island for user: ${sender}...`);
-                if (contractAddress == Constants.IslandContractAddress) {
+        // this.ethersProvider.islandCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
+        //     try {
+        //         Logger.log(`Generating new island for user: ${sender}...`);
+        //         if (contractAddress == Constants.IslandContractAddress) {
 
-                } else {
-                    Logger.error(`Wrong contract address! Expected island address: ${Constants.IslandContractAddress}, received: ${contractAddress}`);
-                }
-            } catch (e) {
-                Logger.error(e);
-            }
-        });
+        //         } else {
+        //             Logger.error(`Wrong contract address! Expected island address: ${Constants.IslandContractAddress}, received: ${contractAddress}`);
+        //         }
+        //     } catch (e) {
+        //         Logger.error(e);
+        //     }
+        // });
     }
 
     checkEthersAuthSignature(request: CheckEthersAuthSignatureRequest) {

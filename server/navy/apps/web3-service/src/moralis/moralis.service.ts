@@ -17,6 +17,7 @@ import { Island, IslandDocument } from "@app/shared-library/schemas/schema.islan
 import { WorldService, WorldServiceGrpcClientName, WorldServiceName } from "@app/shared-library/gprc/grpc.world.service";
 import { lastValueFrom } from "rxjs";
 import { UserAvatar, UserAvatarDocument } from "@app/shared-library/schemas/schema.user.avatar";
+import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 
 @Injectable()
 export class MoralisService implements OnModuleInit {
@@ -34,6 +35,7 @@ export class MoralisService implements OnModuleInit {
         @InjectModel(Ship.name) private shipModel: Model<ShipDocument>,
         @InjectModel(Island.name) private islandModel: Model<IslandDocument>,
         @InjectModel(UserAvatar.name) private userAvatarModel: Model<UserAvatarDocument>,
+        @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>
     ) {
 
     }
@@ -43,6 +45,17 @@ export class MoralisService implements OnModuleInit {
         await Moralis.start({
             apiKey: this.apiKey
         });
+
+        await this.syncCollections();
+
+        // const response = await Moralis.EvmApi.nft.getWalletNFTs({
+        //     address: '0xE6193b058bBD559E8E0Df3a48202a3cDEC852Ab6',
+        //     chain: this.chain,
+        //     tokenAddresses: [
+        //         Constants.CaptainContractAddress,
+        //     ]
+        // }) as any;
+        // console.log(response.data.result);
     }
 
     public static async UploadFile(path: string, content: string) {
@@ -318,5 +331,56 @@ export class MoralisService implements OnModuleInit {
         }
 
         return playerIslandEntity;
+    }
+
+
+    //
+
+    private async syncCollections() {
+        await this.updateAndSaveCollectionInfo(Constants.CaptainContractAddress);
+
+
+    }
+
+    private async updateAndSaveCollectionInfo(address: string) {
+        Logger.log('Updatig collection ' + address + '...');
+        try {
+            const response = await Moralis.EvmApi.nft.getContractNFTs({
+                address,
+                chain: this.chain,
+            });
+            const nfts = response.toJSON();
+            let newItems = 0;
+            for (const n of nfts) {
+                const nft: any = n;
+                if (!await this.collectionItemModel.findOne({ tokenId: nft.tokenId })) {
+                    const collectionModel = new this.collectionItemModel();
+                    collectionModel.tokenAddress = nft.tokenAddress;
+                    collectionModel.tokenId = String(nft.tokenId);
+                    collectionModel.amount = nft.amount;
+                    collectionModel.tokenHash = nft.tokenHash;
+                    collectionModel.blockNumberMinted = nft.blockNumberMinted;
+                    collectionModel.contractType = nft.contractType;
+                    collectionModel.name = nft.name;
+                    collectionModel.symbol = nft.symbol;
+                    collectionModel.tokenUri = nft.tokenUri;
+                    collectionModel.metadata = new Map();
+                    collectionModel.metadata.set('name', nft.metadata.name);
+                    collectionModel.metadata.set('description', nft.metadata.description);
+                    collectionModel.metadata.set('image', nft.metadata.image);
+                    collectionModel.metadata.set('attributes', nft.metadata.attributes);
+                    collectionModel.minterAddress = String(nft.minterAddress);
+                    collectionModel.chain = String(nft.chain);
+                    await collectionModel.save();
+                    newItems++;
+                }
+            }
+            if (newItems > 0) {
+                Logger.log('Updatig collection ' + address + ' done. Items added: ' + newItems);
+            }
+        } catch (e) {
+            Logger.error('Updatig collection ' + address + ' error.', e);
+        }
+        Logger.log('Updatig collection ' + address + ' finished.');
     }
 }

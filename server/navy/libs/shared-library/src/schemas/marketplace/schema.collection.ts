@@ -15,6 +15,12 @@ export class Collection {
     description: string;
 
     @Prop()
+    address: string;
+
+    @Prop()
+    chainId: string;
+
+    @Prop()
     size: number;
 
     @Prop()
