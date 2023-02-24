@@ -1,6 +1,6 @@
 [
     {
-        "mintingEnabled": false,
+        "mintingEnabled": true,
         "mintingStartTime": "14/03/2023",
         "mintingEndTime": "14/07/2023",
         "mintingDetails": [
@@ -32,23 +32,19 @@
         "rarityDescription": "Rarity derermines what pool of visuals, traits and income it would be selected. Rarity is the first value that would be generated after you try to mint a token, and then exact pools of component will be used.",
         "rarityItems": [
             {
-                "titleText": "Legendary",
-                "titleColor": "#fb872c",
+                "rarity": "Legendary",
                 "description": "Rarest and coolest, best traits possible, great income. You have 5% change to obtain it."
             },
             {
-                "titleText": "Epic",
-                "titleColor": "#c12dfa",
+                "rarity": "Epic",
                 "description": "Very nice visuals and good traits. You have 15% chance to obtain it."
             },
             {
-                "titleText": "Rare",
-                "titleColor": "#66fa2d",
+                "rarity": "Rare",
                 "description": "Better than common, solid bonuses to the controlled ship. You have 25% chance to obtain it."
             },
             {
-                "titleText": "Common",
-                "titleColor": "#cad0c7",
+                "rarity": "Common",
                 "description": "Nothing special, restricted traits tree. 55% chance to obtain."
             }
         ],
@@ -263,6 +259,134 @@
                         "imageUrl": "captain/heads/head_4.png",
                         "chancePercent": 25,
                         "rarity": "Common"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "mintingEnabled": true,
+        "mintingStartTime": "14/03/2023",
+        "mintingEndTime": "14/07/2023",
+        "mintingDetails": [
+            {
+                "chainId": "25",
+                "chainName": "Cronos",
+                "mintPriceEth": 5,
+                "saleContractAddress": "0xe0329c20d37d05806f73912b28f5434bcc56a8b7",
+                "tokenContractAddress": "0xe0329c20d37d05806f73912b28f5434bcc56a8b7"
+            }
+        ],
+        "collectionSize": 500,
+        "collectionItemsLeft": 500,
+        "collectionPreview": [
+            "ship/preview_1.png"
+        ],
+        "descriptionTitle": "Description",
+        "descriptionDescription": "This is our very fisrt collection. In general captains has two use case scenarios:\n1) You can assign it to your current ship and it would became your in game avatar, each captain gives passive and active bonuses to the controlled ship.\n2) You may stake it in order to have a passive income.\nCaptains are also upgradable, every few levels new random trait will be generated.",
+        "profitability": false,
+        "rarity": true,
+        "rarityTitle": "Rarity",
+        "rarityDescription": "Rarity derermines what pool of visuals, traits and income it would be selected. Rarity is the first value that would be generated after you try to mint a token, and then exact pools of component will be used.",
+        "rarityItems": [
+            {
+                "rarity": "Legendary",
+                "description": "Rarest and coolest, best traits possible, great income. You have 5% change to obtain it."
+            },
+            {
+                "rarity": "Epic",
+                "description": "Very nice visuals and good traits. You have 15% chance to obtain it."
+            },
+            {
+                "rarity": "Rare",
+                "description": "Better than common, solid bonuses to the controlled ship. You have 25% chance to obtain it."
+            },
+            {
+                "rarity": "Common",
+                "description": "Nothing special, restricted traits tree. 55% chance to obtain."
+            }
+        ],
+        "nftParts": true,
+        "nftPartsTitle": "Visual parts",
+        "nftPartsDescription": "This is a core difference of each token, very first thing that will attract attention. Visual parts are devided by rarity pools, where Legendary may have animations and most impressive look.",
+        "nftPartsItems": [
+            {
+                "categoryTitle": "Hull",
+                "categoryDetails": [
+                    {
+                        "imageUrl": "ship/hull/hull_1.png",
+                        "chancePercent": 100,
+                        "rarity": "Common"
+                    }
+                ]
+            },
+            {
+                "categoryTitle": "Sail",
+                "categoryDetails": [
+                    {
+                        "imageUrl": "ship/sail/sail_1.png",
+                        "chancePercent": 80,
+                        "rarity": "Common"
+                    },
+                    {
+                        "imageUrl": "ship/sail/sail_2.png",
+                        "chancePercent": 20,
+                        "rarity": "Epic"
+                    }
+                ]
+            },
+            {
+                "categoryTitle": "Anchor",
+                "categoryDetails": [
+                    {
+                        "imageUrl": "ship/anchor/anchor_1.png",
+                        "chancePercent": 60,
+                        "rarity": "Common"
+                    },
+                    {
+                        "imageUrl": "ship/anchor/anchor_2.png",
+                        "chancePercent": 30,
+                        "rarity": "Rare"
+                    },
+                    {
+                        "imageUrl": "ship/anchor/anchor_3.png",
+                        "chancePercent": 10,
+                        "rarity": "Epic"
+                    }
+                ]
+            },
+            {
+                "categoryTitle": "Cannons",
+                "categoryDetails": [
+                    {
+                        "imageUrl": "ship/cannons/cannon_1.png",
+                        "chancePercent": 80,
+                        "rarity": "Rare"
+                    },
+                    {
+                        "imageUrl": "ship/cannons/cannon_1.png",
+                        "chancePercent": 20,
+                        "rarity": "Epic"
+                    }
+                ]
+            },
+            {
+                "categoryTitle": "Windows",
+                "categoryDetails": [
+                    {
+                        "imageUrl": "ship/windows/windows_1.png",
+                        "chancePercent": 60,
+                        "rarity": "Common"
+                    },
+                    {
+                        "imageUrl": "ship/windows/windows_2.png",
+                        "chancePercent": 30,
+                        "rarity": "Rare"
+                    },
+                    {
+                        "imageUrl": "ship/windows/windows_3.png",
+                        "chancePercent": 10,
+                        "rarity": "Epic"
                     }
                 ]
             }

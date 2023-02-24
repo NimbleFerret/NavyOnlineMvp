@@ -11,5 +11,14 @@
             "captain/preview_4.png",
             "captain/preview_5.png"
         ]
+    },
+    {
+        "name": "Ships",
+        "description": "Ships collection",
+        "size": 500,
+        "tokensMinted": 0,
+        "preview": [
+            "ship/preview_1.png"
+        ]
     }
 ]

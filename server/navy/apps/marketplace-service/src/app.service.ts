@@ -15,7 +15,6 @@ const fs = require('fs');
 export class AppService implements OnModuleInit {
 
   private web3Service: Web3Service;
-
   private memoryCache: MemoryCache;
 
   constructor(
@@ -53,48 +52,51 @@ export class AppService implements OnModuleInit {
         project.supportedChains = fixture.supportedChains;
 
         loadFixture('2_collections.json', async (fixtures: any) => {
-          const fixture = fixtures[0];
-          const captainsCollection = new this.collectionModel();
+          const collections = [new this.collectionModel(), new this.collectionModel()];
 
-          captainsCollection.name = fixture.name;
-          captainsCollection.description = fixture.description;
-          captainsCollection.size = fixture.size;
-          captainsCollection.tokensMinted = fixture.tokensMinted;
-          captainsCollection.preview = fixture.preview;
+          for (let i = 0; i < fixtures.length; i++) {
+            collections[i].name = fixtures[i].name;
+            collections[i].description = fixtures[i].description;
+            collections[i].size = fixtures[i].size;
+            collections[i].tokensMinted = fixtures[i].tokensMinted;
+            collections[i].preview = fixtures[i].preview;
+          }
 
           loadFixture('3_mints.json', async (fixtures: any) => {
-            const fixture = fixtures[0];
-            const captainsMint = new this.mintModel();
+            for (let i = 0; i < fixtures.length; i++) {
+              const mint = new this.mintModel();
 
-            captainsMint.mintingEnabled = fixture.mintingEnabled;
-            captainsMint.mintingStartTime = fixture.mintingStartTime;
-            captainsMint.mintingEndTime = fixture.mintingEndTime;
-            captainsMint.mintingDetails = fixture.mintingDetails;
+              mint.mintingEnabled = fixtures[i].mintingEnabled;
+              mint.mintingStartTime = fixtures[i].mintingStartTime;
+              mint.mintingEndTime = fixtures[i].mintingEndTime;
+              mint.mintingDetails = fixtures[i].mintingDetails;
 
-            captainsMint.collectionSize = fixture.collectionSize;
-            captainsMint.collectionTokensMinted = fixture.collectionTokensMinted;
-            captainsMint.collectionPreview = fixture.collectionPreview;
+              mint.collectionSize = fixtures[i].collectionSize;
+              mint.collectionTokensMinted = fixtures[i].collectionTokensMinted;
+              mint.collectionPreview = fixtures[i].collectionPreview;
 
-            captainsMint.descriptionTitle = fixture.descriptionTitle;
-            captainsMint.descriptionDescription = fixture.descriptionDescription;
+              mint.descriptionTitle = fixtures[i].descriptionTitle;
+              mint.descriptionDescription = fixtures[i].descriptionDescription;
 
-            captainsMint.profitability = fixture.profitability;
-            captainsMint.profitabilityTitle = fixture.profitabilityTitle;
-            captainsMint.profitabilityValue = fixture.profitabilityValue;
-            captainsMint.profitabilityDescription = fixture.profitabilityDescription;
+              mint.profitability = fixtures[i].profitability;
+              mint.profitabilityTitle = fixtures[i].profitabilityTitle;
+              mint.profitabilityValue = fixtures[i].profitabilityValue;
+              mint.profitabilityDescription = fixtures[i].profitabilityDescription;
 
-            captainsMint.rarity = fixture.rarity;
-            captainsMint.rarityTitle = fixture.rarityTitle;
-            captainsMint.rarityDescription = fixture.rarityDescription;
-            captainsMint.rarityItems = fixture.rarityItems;
+              mint.rarity = fixtures[i].rarity;
+              mint.rarityTitle = fixtures[i].rarityTitle;
+              mint.rarityDescription = fixtures[i].rarityDescription;
+              mint.rarityItems = fixtures[i].rarityItems;
 
-            captainsMint.nftParts = fixture.nftParts;
-            captainsMint.nftPartsTitle = fixture.nftPartsTitle;
-            captainsMint.nftPartsDescription = fixture.nftPartsDescription;
-            captainsMint.nftPartsItems = fixture.nftPartsItems;
+              mint.nftParts = fixtures[i].nftParts;
+              mint.nftPartsTitle = fixtures[i].nftPartsTitle;
+              mint.nftPartsDescription = fixtures[i].nftPartsDescription;
+              mint.nftPartsItems = fixtures[i].nftPartsItems;
 
-            captainsCollection.mint = await captainsMint.save();
-            project.collections.push(await captainsCollection.save());
+              collections[i].mint = await mint.save();
+              project.collections.push(await collections[i].save());
+            }
+
             await project.save();
           });
         });
