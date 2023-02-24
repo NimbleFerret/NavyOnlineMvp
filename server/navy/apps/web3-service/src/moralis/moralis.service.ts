@@ -18,9 +18,12 @@ import { WorldService, WorldServiceGrpcClientName, WorldServiceName } from "@app
 import { lastValueFrom } from "rxjs";
 import { UserAvatar, UserAvatarDocument } from "@app/shared-library/schemas/schema.user.avatar";
 import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
+import { Cron, CronExpression } from "@nestjs/schedule";
 
 @Injectable()
 export class MoralisService implements OnModuleInit {
+
+    public static UpdateCollections = true;
 
     private readonly logger = new Logger(MoralisService.name);
 
@@ -336,10 +339,12 @@ export class MoralisService implements OnModuleInit {
 
     //
 
-    private async syncCollections() {
-        await this.updateAndSaveCollectionInfo(Constants.CaptainContractAddress);
-
-
+    @Cron(CronExpression.EVERY_MINUTE)
+    async syncCollections() {
+        if (MoralisService.UpdateCollections) {
+            await this.updateAndSaveCollectionInfo(Constants.CaptainContractAddress);
+            MoralisService.UpdateCollections = false;
+        }
     }
 
     private async updateAndSaveCollectionInfo(address: string) {

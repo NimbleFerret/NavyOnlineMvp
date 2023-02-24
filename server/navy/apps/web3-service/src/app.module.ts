@@ -5,6 +5,7 @@ import { BlockchainModule } from './blockchain/blockchain.module';
 import { MoralisModule } from './moralis/moralis.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { NFTModule } from './nft/nft.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { NFTModule } from './nft/nft.module';
         password: '123456'
       },
     }),
-    MongooseModule.forRoot('mongodb://localhost/navy')
+    MongooseModule.forRoot('mongodb://localhost/navy'),
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [],

@@ -34,7 +34,10 @@ export class EthersProvider implements OnModuleInit {
     public shipTemplateContract: Contract;
 
     private readonly ethersProvider = new ethers.providers.JsonRpcProvider('https://evm-t3.cronos.org');
-    private readonly backendWallet = new ethers.Wallet('ce2aa127a1564b00ea1ce3da8b8e57cd54f59f7ff132f0d7d91f0570d0e9d45f', this.ethersProvider);
+    private readonly backendWallet = new ethers.Wallet('4378e658ba1f1e392b07582ad1e533bc55d606aaa22138cb08e83132cd3635e1', this.ethersProvider);
+
+    // 0xd6d6EE855ADDBD0eC5591DdF3D1266EcaecD97B6
+    // 4378e658ba1f1e392b07582ad1e533bc55d606aaa22138cb08e83132cd3635e1
 
     async onModuleInit() {
         this.aksContract = new ethers.Contract(Constants.AksContractAddress, Aks, this.ethersProvider).connect(this.backendWallet);

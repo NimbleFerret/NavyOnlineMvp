@@ -17,6 +17,7 @@ import {
     GetCollectionSaleDetailsRequest,
     GetCollectionSaleDetailsResponse
 } from '@app/shared-library/gprc/grpc.web3.service';
+import { MoralisService } from '../moralis/moralis.service';
 
 // -----------------------------------------
 // These stats are used to generate new NFTs
@@ -100,6 +101,7 @@ export class BlockchainService implements OnModuleInit {
     async onModuleInit() {
         this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
             try {
+                // TODO move this to the BULL job and add logging stuff for the database
                 Logger.log(`Generating new captain for user: ${sender}. contractAddress: ${contractAddress}`);
 
                 if (contractAddress.toLocaleLowerCase() == Constants.CaptainContractAddress) {
@@ -141,6 +143,8 @@ export class BlockchainService implements OnModuleInit {
                     Logger.log('Generated captain metadata: ' + captainMetadata);
                     await this.ethersProvider.captainContract.grantCaptain(sender, captainStatsTuple, captainMetadata);
                     console.log(5);
+
+                    MoralisService.UpdateCollections = true;
                 } else {
                     Logger.error(`Wrong contract address! Expected captain address: ${Constants.CaptainContractAddress}, received: ${contractAddress}`);
                 }
