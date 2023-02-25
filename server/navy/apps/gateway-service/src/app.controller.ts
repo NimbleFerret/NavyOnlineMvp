@@ -7,6 +7,13 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
+  private index = 0;
+
+  @Get('ping')
+  ping() {
+    return 'pong' + (++this.index);
+  }
+
   @Post('auth/signUp')
   async authSignUp(@Body() request: SignUpRequest) {
     return this.appService.authSignUp(request);
