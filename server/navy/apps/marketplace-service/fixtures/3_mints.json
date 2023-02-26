@@ -15,11 +15,11 @@
         "collectionSize": 500,
         "collectionItemsLeft": 500,
         "collectionPreview": [
-            "captain/preview_1.png",
-            "captain/preview_2.png",
-            "captain/preview_3.png",
-            "captain/preview_4.png",
-            "captain/preview_5.png"
+            "asstes/captain/preview_1.png",
+            "asstes/captain/preview_2.png",
+            "asstes/captain/preview_3.png",
+            "asstes/captain/preview_4.png",
+            "asstes/captain/preview_5.png"
         ],
         "descriptionTitle": "Description",
         "descriptionDescription": "This is our very fisrt collection. In general captains has two use case scenarios:\n1) You can assign it to your current ship and it would became your in game avatar, each captain gives passive and active bonuses to the controlled ship.\n2) You may stake it in order to have a passive income.\nCaptains are also upgradable, every few levels new random trait will be generated.",
@@ -56,27 +56,27 @@
                 "categoryTitle": "Accessories",
                 "categoryDetails": [
                     {
-                        "imageUrl": "captain/accessories/acc_1.png",
+                        "imageUrl": "asstes/captain/accessories/acc_1.png",
                         "chancePercent": 20,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/accessories/acc_2.png",
+                        "imageUrl": "asstes/captain/accessories/acc_2.png",
                         "chancePercent": 20,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/accessories/acc_3.png",
+                        "imageUrl": "asstes/captain/accessories/acc_3.png",
                         "chancePercent": 20,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/accessories/acc_4.png",
+                        "imageUrl": "asstes/captain/accessories/acc_4.png",
                         "chancePercent": 20,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/accessories/acc_5.png",
+                        "imageUrl": "asstes/captain/accessories/acc_5.png",
                         "chancePercent": 20,
                         "rarity": "Common"
                     }
@@ -86,62 +86,62 @@
                 "categoryTitle": "Backgrounds",
                 "categoryDetails": [
                     {
-                        "imageUrl": "captain/backgrounds/bg_1.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_1.png",
                         "chancePercent": 20,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/backgrounds/bg_2.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_2.png",
                         "chancePercent": 20,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/backgrounds/bg_3.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_3.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/backgrounds/bg_4.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_4.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/backgrounds/bg_5.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_5.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/backgrounds/bg_6.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_6.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/backgrounds/bg_7.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_7.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/backgrounds/bg_8.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_8.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/backgrounds/bg_9.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_9.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/backgrounds/bg_10.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_10.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/backgrounds/bg_11.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_11.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/backgrounds/bg_12.png",
+                        "imageUrl": "asstes/captain/backgrounds/bg_12.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     }
@@ -151,32 +151,32 @@
                 "categoryTitle": "Clothes",
                 "categoryDetails": [
                     {
-                        "imageUrl": "captain/clothes/clothes_1.png",
+                        "imageUrl": "asstes/captain/clothes/clothes_1.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/clothes/clothes_2.png",
+                        "imageUrl": "asstes/captain/clothes/clothes_2.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/clothes/clothes_3.png",
+                        "imageUrl": "asstes/captain/clothes/clothes_3.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/clothes/clothes_4.png",
+                        "imageUrl": "asstes/captain/clothes/clothes_4.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/clothes/clothes_5.png",
+                        "imageUrl": "asstes/captain/clothes/clothes_5.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "captain/clothes/clothes_6.png",
+                        "imageUrl": "asstes/captain/clothes/clothes_6.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     }
@@ -186,22 +186,22 @@
                 "categoryTitle": "Haircuts",
                 "categoryDetails": [
                     {
-                        "imageUrl": "captain/haircuts/haircut_1.png",
+                        "imageUrl": "asstes/captain/haircuts/haircut_1.png",
                         "chancePercent": 33,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/haircuts/haircut_2.png",
+                        "imageUrl": "asstes/captain/haircuts/haircut_2.png",
                         "chancePercent": 33,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/haircuts/haircut_3.png",
+                        "imageUrl": "asstes/captain/haircuts/haircut_3.png",
                         "chancePercent": 33,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/haircuts/haircut_4.png",
+                        "imageUrl": "asstes/captain/haircuts/haircut_4.png",
                         "chancePercent": 33,
                         "rarity": "Common"
                     }
@@ -211,27 +211,27 @@
                 "categoryTitle": "Hats",
                 "categoryDetails": [
                     {
-                        "imageUrl": "captain/hats/hat_1.png",
+                        "imageUrl": "asstes/captain/hats/hat_1.png",
                         "chancePercent": 33,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/hats/hat_2.png",
+                        "imageUrl": "asstes/captain/hats/hat_2.png",
                         "chancePercent": 33,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/hats/hat_3.png",
+                        "imageUrl": "asstes/captain/hats/hat_3.png",
                         "chancePercent": 33,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/hats/hat_4.png",
+                        "imageUrl": "asstes/captain/hats/hat_4.png",
                         "chancePercent": 33,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/hats/hat_5.png",
+                        "imageUrl": "asstes/captain/hats/hat_5.png",
                         "chancePercent": 33,
                         "rarity": "Common"
                     }
@@ -241,22 +241,22 @@
                 "categoryTitle": "Heads",
                 "categoryDetails": [
                     {
-                        "imageUrl": "captain/heads/head_1.png",
+                        "imageUrl": "asstes/captain/heads/head_1.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/heads/head_2.png",
+                        "imageUrl": "asstes/captain/heads/head_2.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/heads/head_2.png",
+                        "imageUrl": "asstes/captain/heads/head_2.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "captain/heads/head_4.png",
+                        "imageUrl": "asstes/captain/heads/head_4.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     }
@@ -280,7 +280,7 @@
         "collectionSize": 500,
         "collectionItemsLeft": 500,
         "collectionPreview": [
-            "ship/preview_1.png"
+            "asstes/ship/preview_1.png"
         ],
         "descriptionTitle": "Description",
         "descriptionDescription": "This is our very fisrt collection. In general captains has two use case scenarios:\n1) You can assign it to your current ship and it would became your in game avatar, each captain gives passive and active bonuses to the controlled ship.\n2) You may stake it in order to have a passive income.\nCaptains are also upgradable, every few levels new random trait will be generated.",
@@ -314,7 +314,7 @@
                 "categoryTitle": "Hull",
                 "categoryDetails": [
                     {
-                        "imageUrl": "ship/hull/hull_1.png",
+                        "imageUrl": "asstes/ship/hull/hull_1.png",
                         "chancePercent": 100,
                         "rarity": "Common"
                     }
@@ -324,12 +324,12 @@
                 "categoryTitle": "Sail",
                 "categoryDetails": [
                     {
-                        "imageUrl": "ship/sail/sail_1.png",
+                        "imageUrl": "asstes/ship/sail/sail_1.png",
                         "chancePercent": 80,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "ship/sail/sail_2.png",
+                        "imageUrl": "asstes/ship/sail/sail_2.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     }
@@ -339,17 +339,17 @@
                 "categoryTitle": "Anchor",
                 "categoryDetails": [
                     {
-                        "imageUrl": "ship/anchor/anchor_1.png",
+                        "imageUrl": "asstes/ship/anchor/anchor_1.png",
                         "chancePercent": 60,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "ship/anchor/anchor_2.png",
+                        "imageUrl": "asstes/ship/anchor/anchor_2.png",
                         "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "ship/anchor/anchor_3.png",
+                        "imageUrl": "asstes/ship/anchor/anchor_3.png",
                         "chancePercent": 10,
                         "rarity": "Epic"
                     }
@@ -359,12 +359,12 @@
                 "categoryTitle": "Cannons",
                 "categoryDetails": [
                     {
-                        "imageUrl": "ship/cannons/cannon_1.png",
+                        "imageUrl": "asstes/ship/cannons/cannon_1.png",
                         "chancePercent": 80,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "ship/cannons/cannon_1.png",
+                        "imageUrl": "asstes/ship/cannons/cannon_1.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     }
@@ -374,17 +374,17 @@
                 "categoryTitle": "Windows",
                 "categoryDetails": [
                     {
-                        "imageUrl": "ship/windows/windows_1.png",
+                        "imageUrl": "asstes/ship/windows/windows_1.png",
                         "chancePercent": 60,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "ship/windows/windows_2.png",
+                        "imageUrl": "asstes/ship/windows/windows_2.png",
                         "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "ship/windows/windows_3.png",
+                        "imageUrl": "asstes/ship/windows/windows_3.png",
                         "chancePercent": 10,
                         "rarity": "Epic"
                     }

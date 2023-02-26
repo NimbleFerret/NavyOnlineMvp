@@ -6,6 +6,7 @@ import { MoralisModule } from './moralis/moralis.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { NFTModule } from './nft/nft.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { Config } from '@app/shared-library/config';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         password: '123456'
       },
     }),
-    MongooseModule.forRoot('mongodb://localhost/navy'),
+    MongooseModule.forRoot(Config.GetMongoHost()),
     ScheduleModule.forRoot(),
   ],
   controllers: [AppController],

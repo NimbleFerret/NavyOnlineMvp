@@ -1,0 +1,27 @@
+Создать новые docker образы:
+* docker build --tag navy-gateway-service:0.1.0 -f ./docker-gateway-service.dockerfile .
+* docker build --tag navy-marketplace-service:0.1.0 -f ./docker-marketplace-service.dockerfile .
+
+Запустить Mongo:
+* docker run --rm --net navy-online --name navy-mongodb -v ~/mongo/data:/data/db -d -p 27017:27017 mongo
+
+Запустить все сервисы:
+* docker run --rm --net navy-online --name navy-marketplace-service -d -p 3027:3027 navy-marketplace-service:0.1.0
+
+Связать локальный образ с новым удаленным:
+* docker tag navy-marketplace-service:0.1.0 ferret228/navy-marketplace-service:0.1.0
+
+Запушить удаленный образ:
+* docker push ferret228/navy-gateway-service:0.1.0
+* docker push ferret228/navy-marketplace-service:0.1.0
+
+CI/CD V1:
+Скрипт для ручного обновления каждого сервиса на удаленном сервере.
+1) Из корневой папки pull master
+    * cd /srv/NavyOnlineSource
+    * gh repo sync --branch master
+2) Обновление зависимостей бэкенда
+    * cd server/navy
+    * npm i && npm run build
+3) Собираем докер образы и указываем релиз версию нужного приложения
+    * docker build --tag navy-gateway-service:X.Y.Z -f ./docker-gateway-service.dockerfile .

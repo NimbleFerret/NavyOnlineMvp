@@ -13,5 +13,8 @@ RUN npm i
 RUN npm run build
 COPY ./proto/ ./dist/proto
 
-EXPOSE 3002
-CMD npm run start:gateway-service:prod
+COPY ./apps/marketplace-service/fixtures/ ./dist/apps/marketplace-service/fixtures
+COPY ./apps/marketplace-service/assets/ ./dist/apps/marketplace-service/assets
+
+EXPOSE 3027
+CMD npm run start:marketplace-service:prod

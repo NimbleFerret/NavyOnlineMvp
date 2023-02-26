@@ -13,6 +13,7 @@
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start:auth-service:dev": "nest start auth-service --debug --watch",
     "start:web3-service:dev": "nest start web3-service --debug --watch",
+    "start:web3-service:prod": "nest start web3-service",
     "start:world-service:dev": "nest start world-service --debug --watch",
     "start:gateway-service:dev": "nest start gateway-service --debug --watch",
     "start:gateway-service:prod": "nest start gateway-service",
@@ -20,6 +21,7 @@
     "start:gameplay-service:dev": "nest start gameplay-service --debug --watch",
     "start:gameplay-balancer-service:dev": "nest start gameplay-balancer-service --debug --watch",
     "start:marketplace-service:dev": "nest start marketplace-service --debug --watch",
+    "start:marketplace-service:prod": "nest start marketplace-service",
     "start:notification-service:dev": "nest start notification-service --debug --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },

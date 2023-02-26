@@ -11,6 +11,7 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MintModule } from './mint/mint.module';
+import { Config } from '@app/shared-library/config';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { MintModule } from './mint/mint.module';
       { name: Collection.name, schema: CollectionSchema },
       { name: CollectionItem.name, schema: CollectionItemSchema }
     ]),
-    MongooseModule.forRoot('mongodb://localhost/navy'),
+    MongooseModule.forRoot(Config.GetMongoHost()),
     ClientsModule.register([
       {
         name: Web3ServiceGrpcClientName,

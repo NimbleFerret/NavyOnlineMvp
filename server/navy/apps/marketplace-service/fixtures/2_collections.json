@@ -7,11 +7,11 @@
         "size": 500,
         "tokensMinted": 0,
         "preview": [
-            "captain/preview_1.png",
-            "captain/preview_2.png",
-            "captain/preview_3.png",
-            "captain/preview_4.png",
-            "captain/preview_5.png"
+            "asstes/captain/preview_1.png",
+            "asstes/captain/preview_2.png",
+            "asstes/captain/preview_3.png",
+            "asstes/captain/preview_4.png",
+            "asstes/captain/preview_5.png"
         ]
     },
     {
@@ -22,7 +22,7 @@
         "size": 500,
         "tokensMinted": 0,
         "preview": [
-            "ship/preview_1.png"
+            "asstes/ship/preview_1.png"
         ]
     }
 ]

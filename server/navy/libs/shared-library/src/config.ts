@@ -1,14 +1,20 @@
 export class Config {
-    public static readonly WEB3_SERVICE_PORT = 3000;
-    public static readonly WORLD_SERVICE_PORT = 3001;
-    public static readonly GATEWAY_SERVICE_PORT = 3002;
-    public static readonly USER_SERVICE_PORT = 3003;
-    public static readonly GAMEPLAY_BALANCER_SERVICE_PORT = 3004;
-    public static readonly GAMEPLAY_BALANCER_SERVICE_PORT_HTTP = 3005;
-    public static readonly AUTH_SERVICE_PORT = 3006;
-    public static readonly MARKETPLACE_SERVICE_PORT = 3007;
-    public static readonly NOTIFICATION_SERVICE_PORT = 3008;
+    public static readonly WEB3_SERVICE_PORT = 3020;
+    public static readonly WORLD_SERVICE_PORT = 3021;
+    public static readonly GATEWAY_SERVICE_PORT = 3022;
+    public static readonly USER_SERVICE_PORT = 3023;
+    public static readonly GAMEPLAY_BALANCER_SERVICE_PORT = 3024;
+    public static readonly GAMEPLAY_BALANCER_SERVICE_PORT_HTTP = 3025;
+    public static readonly AUTH_SERVICE_PORT = 3026;
+    public static readonly MARKETPLACE_SERVICE_PORT = 3027;
+    public static readonly NOTIFICATION_SERVICE_PORT = 3028;
 
-    public static readonly GAMEPLAY_SERVICE_DEFAULT_PORT = 4000;
+    public static readonly GAMEPLAY_SERVICE_DEFAULT_PORT = 4020;
     public static readonly GAMEPLAY_SERVICE_DEFAULT_REGION = 'EU';
+
+    private static readonly testEnv = false;
+
+    public static GetMongoHost() {
+        return `mongodb://${Config.testEnv ? 'localhost' : 'navy-mongodb'}/navy`;
+    }
 }
