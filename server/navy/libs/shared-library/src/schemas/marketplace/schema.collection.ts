@@ -21,10 +21,10 @@ export class Collection {
     chainId: string;
 
     @Prop()
-    size: number;
+    collectionSize: number;
 
     @Prop()
-    tokensMinted: number;
+    collectionItemsLeft: number;
 
     @Prop()
     preview: string[];

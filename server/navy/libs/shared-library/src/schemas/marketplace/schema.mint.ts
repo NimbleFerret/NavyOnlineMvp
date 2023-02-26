@@ -24,6 +24,7 @@ export interface NftCategoryDetails {
 export interface MintDetails {
     chainId: string;
     chainName: string;
+    coinSymbol: string;
     mintPriceEth: number;
     saleContractAddress: string;
     tokenContractAddress: string;

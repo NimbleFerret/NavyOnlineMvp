@@ -2,10 +2,14 @@
 * docker build --tag navy-gateway-service:0.1.0 -f ./docker-gateway-service.dockerfile .
 * docker build --tag navy-marketplace-service:0.1.0 -f ./docker-marketplace-service.dockerfile .
 
+Создать пользовательскую bridge сеть:
+* docker network create navy-online
+
 Запустить Mongo:
 * docker run --rm --net navy-online --name navy-mongodb -v ~/mongo/data:/data/db -d -p 27017:27017 mongo
 
 Запустить все сервисы:
+* docker run --rm --net navy-online --name navy-gateway-service -d -p 3022:3022 navy-gateway-service:0.1.0
 * docker run --rm --net navy-online --name navy-marketplace-service -d -p 3027:3027 navy-marketplace-service:0.1.0
 
 Связать локальный образ с новым удаленным:

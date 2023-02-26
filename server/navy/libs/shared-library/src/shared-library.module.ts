@@ -5,4 +5,4 @@ import { SharedLibraryService } from './shared-library.service';
   providers: [SharedLibraryService],
   exports: [SharedLibraryService],
 })
-export class SharedLibraryModule {}
+export class SharedLibraryModule { }

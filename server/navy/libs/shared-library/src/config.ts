@@ -12,6 +12,7 @@ export class Config {
     public static readonly GAMEPLAY_SERVICE_DEFAULT_PORT = 4020;
     public static readonly GAMEPLAY_SERVICE_DEFAULT_REGION = 'EU';
 
+    // TODO get from env ?
     private static readonly testEnv = false;
 
     public static GetMongoHost() {

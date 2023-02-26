@@ -4,8 +4,8 @@
         "description": "Captains collection",
         "chainId": "25",
         "address": "0x95D20Eb1257600278aEFf9C7521378DBbdd6B4Fd",
-        "size": 500,
-        "tokensMinted": 0,
+        "collectionSize": 500,
+        "collectionItemsLeft": 500,
         "preview": [
             "asstes/captain/preview_1.png",
             "asstes/captain/preview_2.png",
@@ -19,8 +19,8 @@
         "description": "Ships collection",
         "chainId": "25",
         "address": "0xe0329c20d37d05806f73912b28f5434bcc56a8b7",
-        "size": 500,
-        "tokensMinted": 0,
+        "collectionSize": 500,
+        "collectionItemsLeft": 500,
         "preview": [
             "asstes/ship/preview_1.png"
         ]
