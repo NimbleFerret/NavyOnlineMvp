@@ -11,7 +11,7 @@ export class AppController {
 
   @Get('ping')
   ping() {
-    return 'v3 pong ' + (++this.index);
+    return 'v4 pong ' + (++this.index);
   }
 
   @Post('auth/signUp')
