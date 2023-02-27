@@ -13,7 +13,7 @@ export class Config {
     public static readonly GAMEPLAY_SERVICE_DEFAULT_REGION = 'EU';
 
     // TODO get from env ?
-    private static readonly testEnv = true;
+    private static readonly testEnv = false;
 
     public static GetMongoHost() {
         return `mongodb://${Config.testEnv ? 'localhost' : 'navy-mongodb'}/navy`;
