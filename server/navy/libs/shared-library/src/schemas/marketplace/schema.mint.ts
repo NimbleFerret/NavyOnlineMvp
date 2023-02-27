@@ -53,7 +53,7 @@ export class Mint {
     collectionSize: number;
 
     @Prop()
-    collectionTokensMinted: number;
+    collectionItemsLeft: number;
 
     @Prop()
     collectionPreview: string[];
