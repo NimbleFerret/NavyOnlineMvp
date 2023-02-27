@@ -82,7 +82,6 @@ export class AppService implements OnModuleInit {
 
               mint.collectionSize = fixtures[i].collectionSize;
               mint.collectionItemsLeft = fixtures[i].collectionItemsLeft;
-              mint.collectionItemsLeft = fixtures[i].collectionTokensMinted;
               mint.collectionPreview = fixtures[i].collectionPreview;
 
               mint.descriptionTitle = fixtures[i].descriptionTitle;
