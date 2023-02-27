@@ -9,6 +9,11 @@ import { SaleRedeemDto } from './dto/dto.sale.redeem';
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
+  @Get('cronosUsdPrice')
+  getCronosUsdPrice() {
+    return this.appService.getCronosUsdPrice()
+  }
+
   @Get('projects')
   projects() {
     return this.appService.getProjects()

@@ -10,6 +10,8 @@ import { Model } from 'mongoose';
 import { join } from 'path';
 import { ProjectCollection, ProjectDto } from './dto/dto.projects';
 import { CollectionItem, CollectionItemDocument } from '@app/shared-library/schemas/marketplace/schema.collection.item';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import fetch from 'node-fetch';
 
 const fs = require('fs');
 
@@ -18,6 +20,8 @@ export class AppService implements OnModuleInit {
 
   private web3Service: Web3Service;
   private memoryCache: MemoryCache;
+
+  private cronosTokenUsdPrice = 0;
 
   constructor(
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
@@ -114,7 +118,13 @@ export class AppService implements OnModuleInit {
       max: 100,
       ttl: 60 * 1000 * 15, // 15 mins cache
     });
+
+    await this.updateCronosTokenUsdPrice();
   }
+
+  // ------------------------------------
+  // Api
+  // ------------------------------------
 
   async getProjects() {
     const result: ProjectDto[] = [];
@@ -158,6 +168,25 @@ export class AppService implements OnModuleInit {
 
   async getMint(id: string) {
     return this.mintModel.findOne({ _id: id }).select(['-_id', '-__v']);
+  }
+
+  getCronosUsdPrice() {
+    return {
+      usd: this.cronosTokenUsdPrice
+    };
+  }
+
+  // ------------------------------------
+
+  @Cron(CronExpression.EVERY_10_MINUTES)
+  async updateCronosTokenUsdPrice() {
+    try {
+      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=crypto-com-chain&vs_currencies=usd');
+      const body = await response.json();
+      this.cronosTokenUsdPrice = body['crypto-com-chain'].usd;
+    } catch (e) {
+      Logger.error(e);
+    }
   }
 
   // const value = await this.memoryCache.get('projectMintDetails_' + id);

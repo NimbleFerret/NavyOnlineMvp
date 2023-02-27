@@ -12,6 +12,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MintModule } from './mint/mint.module';
 import { Config } from '@app/shared-library/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { Config } from '@app/shared-library/config';
         name: Web3ServiceGrpcClientName,
         ...Web3ServiceGrpcClientOptions,
       },
-    ])
+    ]),
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
   providers: [AppService],
