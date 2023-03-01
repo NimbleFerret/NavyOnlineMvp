@@ -28,6 +28,7 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.8.11",
     "@grpc/proto-loader": "^0.7.3",
+    "@moralisweb3/common-evm-utils": "^2.14.3",
     "@nestjs/bull": "^0.6.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",

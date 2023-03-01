@@ -2,6 +2,7 @@ import {
   CheckEthersAuthSignatureRequest,
   GetAndSyncUserAssetsRequest,
   GetCollectionSaleDetailsRequest,
+  GetMarketplaceListedNFTsRequest,
   Web3ServiceName
 } from '@app/shared-library/gprc/grpc.web3.service';
 import { Controller } from '@nestjs/common';
@@ -29,6 +30,11 @@ export class AppController {
   @GrpcMethod(Web3ServiceName)
   checkEthersAuthSignature(request: CheckEthersAuthSignatureRequest) {
     return this.blockchainService.checkEthersAuthSignature(request);
+  }
+
+  @GrpcMethod(Web3ServiceName)
+  getMarketplaceListedNFTs(request: GetMarketplaceListedNFTsRequest) {
+    return this.blockchainService.getMarketplaceListedNFTs(request);
   }
 
 }

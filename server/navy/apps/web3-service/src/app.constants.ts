@@ -5,15 +5,19 @@ export class Constants {
     public static readonly AksContractAddress = '';
     public static readonly NvyContractAddress = '';
 
-    public static readonly CaptainContractAddress = '0x95D20Eb1257600278aEFf9C7521378DBbdd6B4Fd'.toLowerCase();
+    public static readonly CaptainContractAddress = '0x219b82877f2E8004960265823d51CA50C8C81455'.toLowerCase();
     public static readonly ShipContractAddress = '';
     public static readonly IslandContractAddress = '';
 
     public static readonly ShipTemplateContractAddress = '';
 
-    public static readonly CaptainCollectionSaleContractAddress = '0xc246eb179aE30080DFd115Af1Bb3C4F0230CBAc1'.toLowerCase();
+    public static readonly CaptainCollectionSaleContractAddress = '0x375dFdAB64BB19008FB64970A29333f58dAC6a3d'.toLowerCase();
     public static readonly ShipCollectionSaleContractAddress = '';
     public static readonly IslandCollectionSaleContractAddress = '';
+
+    public static readonly CaptainMarketplaceContractAddress = '0x6d2ce1f3341c49a791bf8b545f0a64cae81fa8b3'.toLowerCase();
+    public static readonly ShipMarketplaceContractAddress = '';
+    public static readonly IslandMarketplaceContractAddress = '';
 
 
     // -------------------------------------

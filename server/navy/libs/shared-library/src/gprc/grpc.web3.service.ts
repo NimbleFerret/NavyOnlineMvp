@@ -5,7 +5,10 @@ import { Config } from "../config";
 import { CaptainEntity } from "../entities/entity.captain";
 import { IslandEntity } from "../entities/entity.island";
 import { ShipEntity } from "../entities/entity.ship";
+import { ListedNFT } from "../entities/entity.nft";
 
+//-----------------------------
+// GetAndSyncUserAssets
 //-----------------------------
 
 export interface GetAndSyncUserAssetsRequest {
@@ -21,6 +24,8 @@ export interface GetAndSyncUserAssetsResponse {
 }
 
 //-----------------------------
+// GetCollectionSaleDetails
+//-----------------------------
 
 export interface GetCollectionSaleDetailsRequest {
     address: string;
@@ -31,6 +36,8 @@ export interface GetCollectionSaleDetailsResponse {
     tokensLeft: number;
 }
 
+//-----------------------------
+// CheckEthersAuthSignature
 //-----------------------------
 
 export interface CheckEthersAuthSignatureRequest {
@@ -43,11 +50,29 @@ export interface CheckEthersAuthSignatureResponse {
 }
 
 //-----------------------------
+// GetMarketplaceListedNFTs
+//-----------------------------
+
+export enum CollectionType {
+    CAPTAIN = 0,
+    SHIP = 1,
+    ISLAND = 2
+}
+export interface GetMarketplaceListedNFTsRequest {
+    collectionType: CollectionType;
+}
+
+export interface GetMarketplaceListedNFTsResponse {
+    listedNFTs: ListedNFT[];
+}
+
+//-----------------------------
 
 export interface Web3Service {
     GetAndSyncUserAssets(request: GetAndSyncUserAssetsRequest): Observable<GetAndSyncUserAssetsResponse>;
     GetCollectionSaleDetails(request: GetCollectionSaleDetailsRequest): Observable<GetCollectionSaleDetailsResponse>;
     CheckEthersAuthSignature(request: CheckEthersAuthSignatureRequest): Observable<CheckEthersAuthSignatureResponse>;
+    GetMarketplaceListedNFTs(request: GetMarketplaceListedNFTsRequest): Observable<GetMarketplaceListedNFTsResponse>;
 }
 
 export const Web3ServiceName = 'Web3Service';

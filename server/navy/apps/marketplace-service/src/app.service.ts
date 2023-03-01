@@ -11,6 +11,7 @@ import { join } from 'path';
 import { ProjectCollection, ProjectDto } from './dto/dto.projects';
 import { CollectionItem, CollectionItemDocument } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { lastValueFrom } from 'rxjs';
 import fetch from 'node-fetch';
 
 const fs = require('fs');
@@ -162,7 +163,8 @@ export class AppService implements OnModuleInit {
     return this.collectionModel.findOne({ address: address }).select(['-_id', '-__v']);
   }
 
-  async getCollectionItems(address: string) {
+  async getCollectionListed(address: string) {
+    // const collectionSaleDetails = await lastValueFrom(this.web3Service.GetMarketplaceListedNFTs());
     return this.collectionItemModel.find({ tokenAddress: address.toLowerCase() }).select(['-_id', '-__v']);
   }
 

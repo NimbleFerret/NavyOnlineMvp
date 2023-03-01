@@ -1,12 +1,6 @@
 [
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_marketplaceContract",
-                "type": "address"
-            }
-        ],
+        "inputs": [],
         "stateMutability": "nonpayable",
         "type": "constructor"
     },
@@ -58,6 +52,25 @@
             }
         ],
         "name": "ApprovalForAll",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "GrantEntity",
         "type": "event"
     },
     {
@@ -355,31 +368,14 @@
                 "type": "address"
             },
             {
-                "components": [
-                    {
-                        "internalType": "bool",
-                        "name": "staking",
-                        "type": "bool"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "stakingRewardNVY",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "stakingStartedAt",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "stakingDurationSeconds",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct GameLibrary.CaptainStats",
-                "name": "captain",
-                "type": "tuple"
+                "internalType": "uint256",
+                "name": "stakingRewardNVY",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "stakingDurationSeconds",
+                "type": "uint256"
             },
             {
                 "internalType": "string",
@@ -388,7 +384,13 @@
             }
         ],
         "name": "grantCaptain",
-        "outputs": [],
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
     },
@@ -559,19 +561,6 @@
                 "internalType": "uint256",
                 "name": "aks",
                 "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "marketplaceContract",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
             }
         ],
         "stateMutability": "view",

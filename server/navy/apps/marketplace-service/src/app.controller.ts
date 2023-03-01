@@ -24,9 +24,9 @@ export class AppController {
     return this.appService.getCollection(address);
   }
 
-  @Get('collection/items/:address')
-  getCollectionItems(@Param('address') address: string) {
-    return this.appService.getCollectionItems(address);
+  @Get('collection/listed/:address')
+  getCollectionListed(@Param('address') address: string) {
+    return this.appService.getCollectionListed(address);
   }
 
   @Get('mint/:mintId')

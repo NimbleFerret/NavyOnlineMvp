@@ -10,15 +10,20 @@ import { EthersProvider } from './blockchain.ethers.provider';
 import { Constants } from '../app.constants';
 import { NftCaptainGenerator } from '../nft/nft.generator.captain';
 import { Rarity } from '@app/shared-library/shared-library.main';
-import { ethers } from 'ethers';
+import { Contract, ethers } from 'ethers';
 import {
     CheckEthersAuthSignatureRequest,
     CheckEthersAuthSignatureResponse,
+    CollectionType,
     GetCollectionSaleDetailsRequest,
-    GetCollectionSaleDetailsResponse
+    GetCollectionSaleDetailsResponse,
+    GetMarketplaceListedNFTsRequest,
+    GetMarketplaceListedNFTsResponse
 } from '@app/shared-library/gprc/grpc.web3.service';
 import { MoralisService } from '../moralis/moralis.service';
-
+import fetch from 'node-fetch';
+import { ListedNFT } from '@app/shared-library/entities/entity.nft';
+import { Cron, CronExpression } from '@nestjs/schedule';
 // -----------------------------------------
 // These stats are used to generate new NFTs
 // -----------------------------------------
@@ -99,6 +104,9 @@ export class BlockchainService implements OnModuleInit {
         @InjectQueue('blockchain') private readonly blockchainQueue: Queue) { }
 
     async onModuleInit() {
+        await this.syncListedNFTs();
+
+        // TODO get info about contracts...
         this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
             try {
                 // TODO move this to the BULL job and add logging stuff for the database
@@ -106,10 +114,9 @@ export class BlockchainService implements OnModuleInit {
 
                 if (contractAddress.toLocaleLowerCase() == Constants.CaptainContractAddress) {
                     // TODO replace tokens total by tokens left
-                    console.log(1);
                     const tokensLeft = (await this.ethersProvider.captainCollectionSaleContract.tokensLeft()).toNumber();
                     const tokensTotal = (await this.ethersProvider.captainCollectionSaleContract.tokensTotal()).toNumber();
-                    console.log(2);
+
                     // TODO compare all on chain params and deploy a new contract
                     const captainStats = {
                         currentLevel: 1,
@@ -121,28 +128,16 @@ export class BlockchainService implements OnModuleInit {
                         stakingStartedAt: 0,
                         stakingDurationSeconds: 120,
                     } as CaptainStats;
-                    console.log(3);
+
                     const captainMetadata = await this.nftCaptainGenerator.generateCaptain(
                         tokensLeft,
                         tokensTotal,
                         captainStats
                     );
-                    console.log(captainMetadata);
-                    console.log(4);
-                    const captainStatsTuple: [
-                        boolean,
-                        ethers.BigNumber,
-                        ethers.BigNumber,
-                        ethers.BigNumber] = [
-                            false,
-                            ethers.BigNumber.from(5),
-                            ethers.BigNumber.from(0),
-                            ethers.BigNumber.from(120),
-                        ];
 
-                    Logger.log('Generated captain metadata: ' + captainMetadata);
-                    await this.ethersProvider.captainContract.grantCaptain(sender, captainStatsTuple, captainMetadata);
-                    console.log(5);
+                    await this.ethersProvider.captainContract.grantCaptain(sender, ethers.BigNumber.from(5), ethers.BigNumber.from(120), captainMetadata);
+
+                    Logger.log(`Captain granted to: ${sender}`);
 
                     MoralisService.UpdateCollections = true;
                 } else {
@@ -187,6 +182,24 @@ export class BlockchainService implements OnModuleInit {
         } as CheckEthersAuthSignatureResponse;
     }
 
+    async getMarketplaceListedNFTs(request: GetMarketplaceListedNFTsRequest) {
+        if (request.collectionType == CollectionType.CAPTAIN) {
+            return {
+                listedNFTs: this.listedCaptains
+            } as GetMarketplaceListedNFTsResponse;
+        } else {
+            throw new BadRequestException();
+        }
+    }
+
+    // Писать в базу, добавить последние листинги, продажи и тд
+    private listedCaptains: ListedNFT[] = [];
+
+    @Cron(CronExpression.EVERY_MINUTE)
+    async syncListedNFTs() {
+        this.listedCaptains = await this.updateMarketplaceListedNfts(this.ethersProvider.captainMarketplaceContract, this.ethersProvider.captainContract);
+    }
+
     async getCollectionSaleDetails(request: GetCollectionSaleDetailsRequest) {
         const response = {} as GetCollectionSaleDetailsResponse;
         if (request.address == Constants.CaptainCollectionSaleContractAddress) {
@@ -208,6 +221,31 @@ export class BlockchainService implements OnModuleInit {
             throw new BadRequestException();
         }
         return response;
+    }
+
+    private async updateMarketplaceListedNfts(marketplaceContract: Contract, nftContract: Contract) {
+        const listedNfts = await marketplaceContract.getListedNfts();
+
+        const marketplaceNFTs: ListedNFT[] = listedNfts.map(listedNft => {
+            const marketplaceNFT: ListedNFT = {
+                nftContract: listedNft.nftContract,
+                tokenId: listedNft.tokenId.toNumber(),
+                seller: listedNft.seller,
+                owner: listedNft.owner,
+                price: ethers.utils.formatEther(listedNft.price),
+                image: ''
+            };
+            return marketplaceNFT;
+        });
+
+        for (const nft of marketplaceNFTs) {
+            const nftURI = await nftContract.tokenURI(nft.tokenId);
+            const response = await fetch(nftURI);
+            const body = await response.json();
+            nft.image = body.image;
+        }
+
+        return marketplaceNFTs;
     }
 
     private async updateAndSetShipStats() {

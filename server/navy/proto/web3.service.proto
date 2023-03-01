@@ -6,8 +6,11 @@ service Web3Service {
   rpc GetAndSyncUserAssets (GetAndSyncUserAssetsRequest) returns (GetAndSyncUserAssetsResponse);
   rpc GetCollectionSaleDetails(GetCollectionSaleDetailsRequest) returns (GetCollectionSaleDetailsResponse);
   rpc CheckEthersAuthSignature(CheckEthersAuthSignatureRequest) returns (CheckEthersAuthSignatureResponse);
+  rpc GetMarketplaceListedNFTs(GetMarketplaceListedNFTsRequest) returns (GetMarketplaceListedNFTsResponse);
 }
 
+//-----------------------------
+// Entities
 //-----------------------------
 
 message Captain {
@@ -70,6 +73,19 @@ message Island {
   int32 y = 14;
 }
 
+message ListedNFT {
+  string nftContract = 1;
+  int32 tokenId = 2;
+  string seller = 3;
+  string owner = 4;
+  string price = 5;
+  string image = 6;
+}
+
+//-----------------------------
+// GetAndSyncUserAssets
+//-----------------------------
+
 message GetAndSyncUserAssetsRequest {
     string address = 1;
 }
@@ -83,17 +99,20 @@ message GetAndSyncUserAssetsResponse {
 }
 
 //-----------------------------
+// GetCollectionSaleDetails
+//-----------------------------
 
 message GetCollectionSaleDetailsRequest {
   string address = 1;
 }
-
 
 message GetCollectionSaleDetailsResponse {
   int32 tokensTotal = 1;
   int32 tokensLeft = 2;
 }
 
+//-----------------------------
+// CheckEthersAuthSignature
 //-----------------------------
 
 message CheckEthersAuthSignatureRequest {
@@ -104,6 +123,24 @@ message CheckEthersAuthSignatureRequest {
 
 message CheckEthersAuthSignatureResponse {
   bool success = 1;
+}
+
+//-----------------------------
+// GetMarketplaceListedNFTs
+//-----------------------------
+
+enum CollectionType {
+  CAPTAIN = 0;
+  SHIP = 1;
+  ISLAND = 2;
+}
+
+message GetMarketplaceListedNFTsRequest {
+  CollectionType collectionType = 1;
+}
+
+message GetMarketplaceListedNFTsResponse {
+  repeated ListedNFT listedNFTs = 1;
 }
 
 //-----------------------------

@@ -1,5 +1,5 @@
 import Moralis from "moralis";
-import { EvmChain } from '@moralisweb3/evm-utils';
+import { EvmChain } from '@moralisweb3/common-evm-utils';
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
 import { ClientGrpc } from "@nestjs/microservices";
@@ -49,7 +49,14 @@ export class MoralisService implements OnModuleInit {
             apiKey: this.apiKey
         });
 
-        await this.syncCollections();
+        // const response = await Moralis.EvmApi.nft.getContractNFTs({
+        //     address: Constants.CaptainContractAddress,
+        //     chain: this.chain
+        // });
+
+        // console.log(response.toJSON());
+
+        // await this.syncCollections();
 
         // const response = await Moralis.EvmApi.nft.getWalletNFTs({
         //     address: '0xE6193b058bBD559E8E0Df3a48202a3cDEC852Ab6',
@@ -339,13 +346,13 @@ export class MoralisService implements OnModuleInit {
 
     //
 
-    @Cron(CronExpression.EVERY_MINUTE)
-    async syncCollections() {
-        if (MoralisService.UpdateCollections) {
-            await this.updateAndSaveCollectionInfo(Constants.CaptainContractAddress);
-            MoralisService.UpdateCollections = false;
-        }
-    }
+    // @Cron(CronExpression.EVERY_MINUTE)
+    // async syncCollections() {
+    //     if (MoralisService.UpdateCollections) {
+    //         await this.updateAndSaveCollectionInfo(Constants.CaptainContractAddress);
+    //         MoralisService.UpdateCollections = false;
+    //     }
+    // }
 
     private async updateAndSaveCollectionInfo(address: string) {
         Logger.log('Updatig collection ' + address + '...');
@@ -354,7 +361,9 @@ export class MoralisService implements OnModuleInit {
                 address,
                 chain: this.chain,
             });
-            const nfts = response.toJSON();
+            const nfts: any = response.toJSON();
+            console.log(nfts);
+            // TODO check iteration in advance
             let newItems = 0;
             for (const n of nfts) {
                 const nft: any = n;

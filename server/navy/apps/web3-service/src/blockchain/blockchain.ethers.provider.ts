@@ -9,6 +9,7 @@ import * as Ship from '../abi/Ship.json';
 import * as Island from '../abi/Island.json';
 import * as ShipTemplate from '../abi/ShipTemplate.json';
 import * as CollectionSale from '../abi/CollectionSale.json';
+import * as Marketplace from '../abi/Marketplace.json';
 
 @Injectable()
 export class EthersProvider implements OnModuleInit {
@@ -29,6 +30,9 @@ export class EthersProvider implements OnModuleInit {
     public captainCollectionSaleContract: Contract;
     public shipCollectionSaleContract: Contract;
     public islandCollectionSaleContract: Contract;
+
+    // Marketplace contracts
+    public captainMarketplaceContract: Contract;
 
     // Ship stats contracts
     public shipTemplateContract: Contract;
@@ -52,5 +56,7 @@ export class EthersProvider implements OnModuleInit {
         this.captainCollectionSaleContract = new ethers.Contract(Constants.CaptainCollectionSaleContractAddress, CollectionSale, this.ethersProvider);
         this.shipCollectionSaleContract = new ethers.Contract(Constants.ShipCollectionSaleContractAddress, CollectionSale, this.ethersProvider);
         this.islandCollectionSaleContract = new ethers.Contract(Constants.IslandCollectionSaleContractAddress, CollectionSale, this.ethersProvider);
+
+        this.captainMarketplaceContract = new ethers.Contract(Constants.CaptainMarketplaceContractAddress, Marketplace, this.ethersProvider);
     }
 }
