@@ -5,26 +5,18 @@ export class Constants {
     public static readonly AksContractAddress = '';
     public static readonly NvyContractAddress = '';
 
-    public static readonly CaptainContractAddress = '0x219b82877f2E8004960265823d51CA50C8C81455'.toLowerCase();
+    public static readonly CaptainContractAddress = '0x61A03eed4C0220Bb6Ee89b0cda10Dc171f772577'.toLowerCase();
     public static readonly ShipContractAddress = '';
     public static readonly IslandContractAddress = '';
 
     public static readonly ShipTemplateContractAddress = '';
 
-    public static readonly CaptainCollectionSaleContractAddress = '0x375dFdAB64BB19008FB64970A29333f58dAC6a3d'.toLowerCase();
+    public static readonly CaptainCollectionSaleContractAddress = '0x94d6C8d99a4dF25c21DA60099F19bE5e13eb6e97'.toLowerCase();
     public static readonly ShipCollectionSaleContractAddress = '';
     public static readonly IslandCollectionSaleContractAddress = '';
 
-    public static readonly CaptainMarketplaceContractAddress = '0x6d2ce1f3341c49a791bf8b545f0a64cae81fa8b3'.toLowerCase();
+    public static readonly CaptainMarketplaceContractAddress = '0xAc256B90b14465c37F789e16eB5EfE0233Bafe87'.toLowerCase();
     public static readonly ShipMarketplaceContractAddress = '';
     public static readonly IslandMarketplaceContractAddress = '';
 
-
-    // -------------------------------------
-    // Random and chances
-    // -------------------------------------
-
-    public static readonly ShipSmallChance = 70;
-    public static readonly ShipMiddleChance = 30;
-    public static readonly ShipLargeChance = 0;
 }

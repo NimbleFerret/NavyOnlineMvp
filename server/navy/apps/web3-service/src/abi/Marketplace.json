@@ -16,6 +16,12 @@
             {
                 "indexed": false,
                 "internalType": "address",
+                "name": "nftContract",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
                 "name": "seller",
                 "type": "address"
             }
@@ -37,6 +43,12 @@
                 "internalType": "uint256",
                 "name": "tokenId",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "tokenUri",
+                "type": "string"
             },
             {
                 "indexed": false,
@@ -143,7 +155,7 @@
     },
     {
         "inputs": [],
-        "name": "getListedNfts",
+        "name": "getNftsListed",
         "outputs": [
             {
                 "components": [
@@ -156,6 +168,11 @@
                         "internalType": "uint256",
                         "name": "tokenId",
                         "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "tokenUri",
+                        "type": "string"
                     },
                     {
                         "internalType": "address",
@@ -173,9 +190,59 @@
                         "type": "uint256"
                     },
                     {
-                        "internalType": "bool",
-                        "name": "listed",
-                        "type": "bool"
+                        "internalType": "uint256",
+                        "name": "lastUpdated",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct Marketplace.NFT[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getNftsSold",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "nftContract",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "tokenUri",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "seller",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "lastUpdated",
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct Marketplace.NFT[]",

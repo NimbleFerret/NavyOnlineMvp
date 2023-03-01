@@ -6,43 +6,84 @@ import { ethers } from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
 import { CaptainStats, IslandStats, ShipStatsRange, ShipStatsStep } from "../blockchain/blockchain.service";
 import { NftCaptainGenerator } from "./nft.generator.captain";
-import { NftIslandGenerator } from "./nft.generator.island";
-import { NftShipGenerator } from "./nft.generator.ship";
+// import { NftIslandGenerator } from "./nft.generator.island";
+// import { NftShipGenerator } from "./nft.generator.ship";
 import { TransactionType } from "../blockchain/schemas/schema.blockchain.transaction";
 import { BlockchainQueueProcessor, NFTJobData } from "../blockchain/blockchain.queue.processor";
 import { SharedLibraryService } from "@app/shared-library";
-import { Rarity, ShipSize, Terrain } from "@app/shared-library/shared-library.main";
+import { NftType, Rarity, ShipSize, Terrain } from "@app/shared-library/shared-library.main";
 import { ShipEntity } from "@app/shared-library/entities/entity.ship";
 import { IslandPositionResponse, WorldService, WorldServiceGrpcClientName, WorldServiceName } from "@app/shared-library/gprc/grpc.world.service";
 import { Constants } from "../app.constants";
+import { NftGenerator, NftPartDetails, NftSubPartDetails } from "./nft.generator";
+import { Mint, MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
+import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
+import { InjectModel } from "@nestjs/mongoose";
+import { Project, ProjectDocument } from "@app/shared-library/schemas/marketplace/schema.project";
+import { Model } from "mongoose";
 
 @Injectable()
 export class NFTService implements OnModuleInit {
 
     private readonly logger = new Logger(NFTService.name);
 
-    private nftCaptainGenerator = new NftCaptainGenerator();
-    private nftShipGenerator = new NftShipGenerator();
-    private nftIslandGenerator = new NftIslandGenerator();
+    public nftCaptainGenerator: NftCaptainGenerator;
 
     private smallShipStatsRange: ShipStatsRange;
     private middleShipStatsRange: ShipStatsRange;
     private shipStatsStep: ShipStatsStep;
 
-    private worldService: WorldService;
-
     constructor(
         @Inject(WorldServiceGrpcClientName) private readonly worldServiceGrpcClient: ClientGrpc,
-        @InjectQueue('blockchain') private readonly blockchainQueue: Queue) { }
+        @InjectQueue('blockchain') private readonly blockchainQueue: Queue,
+        @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>) { }
 
     async onModuleInit() {
-        this.worldService = this.worldServiceGrpcClient.getService<WorldService>(WorldServiceName);
+        const captainsCollection = await this.collectionModel.findOne({ name: 'Captains' }).populate('mint');
+        if (captainsCollection) {
+            const captainsCollectionNftDetails = captainsCollection.mint.nftPartsItems.map(nftPartsItem => {
+                const nftPartDetails = {
+                    resPlural: nftPartsItem.categoryPlural,
+                    resSingle: nftPartsItem.categorySingle,
+                    subParts: []
+                } as NftPartDetails;
+
+                nftPartDetails.subParts = nftPartsItem.categoryDetails.map(categoryDetails => {
+                    let rarity = Rarity.COMMON;
+                    switch (categoryDetails.rarity) {
+                        case 'Rare':
+                            rarity = Rarity.RARE;
+                            break;
+                        case 'Epic':
+                            rarity = Rarity.EPIC;
+                            break;
+                        case 'Legendary':
+                            rarity = Rarity.LEGENDARY;
+                            break;
+                    }
+                    return {
+                        chance: categoryDetails.chancePercent,
+                        rarity
+                    } as NftSubPartDetails;
+                });
+
+                return nftPartDetails;
+            });
+
+            if (captainsCollectionNftDetails.length > 0) {
+                this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollectionNftDetails);
+            }
+        }
     }
 
     updateShipStats(smallShipStatsRange: ShipStatsRange, middleShipStatsRange: ShipStatsRange, shipStatsStep: ShipStatsStep) {
         this.smallShipStatsRange = smallShipStatsRange;
         this.middleShipStatsRange = middleShipStatsRange;
         this.shipStatsStep = shipStatsStep;
+    }
+
+    public async createSimpleCptain(index: number, maxIndex: number) {
+        return this.nftCaptainGenerator.generateNft(index, maxIndex);
     }
 
     // TODO use this
@@ -220,15 +261,16 @@ export class NFTService implements OnModuleInit {
     }
 
     private generateShipSize(preferredSize?: ShipSize) {
-        if (!preferredSize) {
-            const rnd = SharedLibraryService.GetRandomIntInRange(1, 100);
-            if (rnd > Constants.ShipMiddleChance) {
-                return ShipSize.SMALL;
-            } else {
-                return ShipSize.MIDDLE;
-            }
-        }
-        return preferredSize;
+        // if (!preferredSize) {
+        //     const rnd = SharedLibraryService.GetRandomIntInRange(1, 100);
+        //     if (rnd > Constants.ShipMiddleChance) {
+        //         return ShipSize.SMALL;
+        //     } else {
+        //         return ShipSize.MIDDLE;
+        //     }
+        // }
+        // return preferredSize;
+        return ShipSize.SMALL;
     }
 
     private generateShipGuns(minGuns: number, maxGuns: number, additionalGunChance: number) {

@@ -14,6 +14,12 @@ export enum Rarity {
     LEGENDARY = 4
 }
 
+export enum NftType {
+    CAPTAIN = 1,
+    SHIP = 2,
+    ISLAND = 3
+}
+
 // -----------------------
 // Ships
 // -----------------------

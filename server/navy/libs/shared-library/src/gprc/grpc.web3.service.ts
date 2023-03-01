@@ -5,7 +5,7 @@ import { Config } from "../config";
 import { CaptainEntity } from "../entities/entity.captain";
 import { IslandEntity } from "../entities/entity.island";
 import { ShipEntity } from "../entities/entity.ship";
-import { ListedNFT } from "../entities/entity.nft";
+import { MarketplaceNFT } from "../entities/entity.marketplace.nft";
 
 //-----------------------------
 // GetAndSyncUserAssets
@@ -63,7 +63,7 @@ export interface GetMarketplaceListedNFTsRequest {
 }
 
 export interface GetMarketplaceListedNFTsResponse {
-    listedNFTs: ListedNFT[];
+    listedNFTs: MarketplaceNFT[];
 }
 
 //-----------------------------

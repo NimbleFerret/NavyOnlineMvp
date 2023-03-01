@@ -12,6 +12,8 @@ export interface RarityItem {
 
 export interface NftPartItem {
     categoryTitle: string;
+    categoryPlural: string;
+    categorySingle: string;
     categoryDetails: NftCategoryDetails[];
 }
 

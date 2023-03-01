@@ -3,6 +3,11 @@ import { CaptainEntity } from './entities/entity.captain';
 import { ShipEntity } from './entities/entity.ship';
 import { ShipSize, Rarity, AssetType } from './shared-library.main';
 
+export interface SelectPercentageOptions<T> {
+    value: T;
+    percentage: number;
+}
+
 @Injectable()
 export class SharedLibraryService {
 
@@ -17,6 +22,59 @@ export class SharedLibraryService {
     public static readonly WORLD_SIZE = 15;
     public static readonly BASE_POS_X = 5;
     public static readonly BASE_POS_Y = 5;
+
+    // -------------------------------------
+    // Random and chances
+    // -------------------------------------
+
+    public static readonly RARITY_COMMON_CHANCE = 48;
+    public static readonly RARITY_RARE_CHANCE = 34;
+    public static readonly RARITY_EPIC_CHANCE = 13;
+    public static readonly RARITY_LEGENDARY_CHANCE = 5;
+
+    public static GenerateRarity() {
+        if (SharedLibraryService.Probability(SharedLibraryService.GetRandomIntInRange(1, SharedLibraryService.RARITY_LEGENDARY_CHANCE))) {
+            return Rarity.LEGENDARY;
+        }
+        if (SharedLibraryService.Probability(SharedLibraryService.GetRandomIntInRange(1, SharedLibraryService.RARITY_EPIC_CHANCE))) {
+            return Rarity.EPIC;
+        }
+        if (SharedLibraryService.Probability(SharedLibraryService.GetRandomIntInRange(1, SharedLibraryService.RARITY_RARE_CHANCE))) {
+            return Rarity.RARE;
+        }
+        return Rarity.COMMON;
+    }
+
+    public static SelectItemByPercentage<T>(options: SelectPercentageOptions<T>[]) {
+        options = options.sort((a, b) => a.percentage - b.percentage);
+
+        let random = Math.floor(Math.random() * 100);
+
+        for (const option of options) {
+            if (random <= option.percentage) {
+                return option.value;
+            }
+            random -= option.percentage;
+        }
+
+        return options[options.length - 1].value;
+    }
+
+    public static Probability(chance: number) {
+        if (chance >= 100) {
+            return true;
+        } else if (chance <= 0) {
+            return false;
+        }
+
+        let result = false;
+        const iterations = 100 / chance;
+        const rnd = SharedLibraryService.GetRandomIntInRange(1, iterations);
+        if (rnd == 1) {
+            result = true;
+        }
+        return result;
+    }
 
     public static GetRandomIntInRange(min: number, max: number) {
         min = Math.ceil(min);
