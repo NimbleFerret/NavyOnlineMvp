@@ -13,7 +13,8 @@ echo '5. marketplace-service'
 echo '6. notification-service'
 echo '7. user-service'
 echo '8. web3-service'
-echo '9. world-service'
+echo '9. web3-worker-service'
+echo '10. world-service'
 
 read app
 
@@ -70,6 +71,12 @@ then
     appServicePort=3020
 fi
 if [ $app -eq 9 ]
+then
+    appServiceName="navy-web3-worker-service"
+    appDockerfile="docker-web3-worker-service.dockerfile"
+    appServicePort=3010
+fi
+if [ $app -eq 10 ]
 then
     appServiceName="navy-world-service"
     appDockerfile="docker-world-service.dockerfile"

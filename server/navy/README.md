@@ -8,6 +8,9 @@
 Запустить Mongo:
 * docker run --rm --net navy-online --name navy-mongodb -v ~/mongo/data:/data/db -d -p 27017:27017 mongo
 
+Запустить Redis:
+* docker run --rm --net navy-online --name navy-redis -d -p 49154:49154 redis
+
 Перезапустить все сервисы:
 * docker stop navy-gateway-service && docker remove navy-gateway-service
 
