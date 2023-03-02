@@ -13,8 +13,8 @@
                 "tokenContractAddress": "0xc246eb179aE30080DFd115Af1Bb3C4F0230CBAc1"
             }
         ],
-        "collectionSize": 500,
-        "collectionItemsLeft": 500,
+        "collectionSize": 200,
+        "collectionItemsLeft": 200,
         "collectionPreview": [
             "https://navy.online/marketplace/assets/captain/preview_1.png",
             "https://navy.online/marketplace/assets/captain/preview_2.png",
@@ -306,8 +306,8 @@
                 "tokenContractAddress": "0xe1efC3399717e1076fe3bAD99adbFB6D68699D83"
             }
         ],
-        "collectionSize": 500,
-        "collectionItemsLeft": 500,
+        "collectionSize": 200,
+        "collectionItemsLeft": 200,
         "collectionPreview": [
             "https://navy.online/marketplace/assets/ship/preview_1.png"
         ],

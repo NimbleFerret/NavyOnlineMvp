@@ -6,7 +6,6 @@ import * as Island from '../abi/Island.json';
 import * as ShipTemplate from '../abi/ShipTemplate.json';
 import * as CollectionSale from '../abi/CollectionSale.json';
 import * as Marketplace from '../abi/Marketplace.json';
-
 import { MarketplaceNFT } from "@app/shared-library/entities/entity.marketplace.nft";
 import { EthersProvider } from "@app/shared-library/ethers/ethers.provider";
 import { MarketplaceNftsType, UpdateMarketplaceJob, WorkersMarketplace } from "@app/shared-library/workers/workers.marketplace";
@@ -87,13 +86,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                 return f.tokenId;
             });
 
-            console.log('1');
-            console.log(tokenIds);
-            console.log('2');
-            console.log(marketplaceNFTs);
             const nfts = marketplaceNFTs.filter(f => !tokenIds.includes(f.tokenId));
-            console.log('3');
-            console.log(nfts);
 
             // Get image from metadata uri
             for (const nft of nfts) {
