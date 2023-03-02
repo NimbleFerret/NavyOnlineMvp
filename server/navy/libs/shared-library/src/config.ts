@@ -16,6 +16,14 @@ export class Config {
     // TODO get from env ?
     private static readonly testEnv = true;
 
+    public static GetRedisHost() {
+        return {
+            host: Config.testEnv ? 'localhost' : 'navy-redis',
+            port: 49154,
+            password: ''
+        }
+    }
+
     public static GetMongoHost() {
         return `mongodb://${Config.testEnv ? 'localhost' : 'navy-mongodb'}/navy`;
     }

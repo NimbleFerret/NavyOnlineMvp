@@ -86,7 +86,14 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
             const tokenIds = contractItems.map(f => {
                 return f.tokenId;
             });
+
+            console.log('1');
+            console.log(tokenIds);
+            console.log('2');
+            console.log(marketplaceNFTs);
             const nfts = marketplaceNFTs.filter(f => !tokenIds.includes(f.tokenId));
+            console.log('3');
+            console.log(nfts);
 
             // Get image from metadata uri
             for (const nft of nfts) {
@@ -98,7 +105,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
             // Save result into the database
             for (const nft of nfts) {
                 const model = new this.collectionItemModel();
-                model.id = nft.nftContract + '' + nft.tokenId;
+                model.id = nft.nftContract + '_' + nft.tokenId;
                 model.tokenId = nft.tokenId;
                 model.tokenUri = nft.tokenUri;
                 model.seller = nft.seller;

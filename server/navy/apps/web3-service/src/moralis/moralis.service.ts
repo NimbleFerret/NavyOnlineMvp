@@ -4,8 +4,6 @@ import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
 import { ClientGrpc } from "@nestjs/microservices";
 import { Model } from "mongoose";
-import { ethers } from 'ethers';
-import { Constants } from "../app.constants";
 import { CaptainEntity } from "@app/shared-library/entities/entity.captain";
 import { IslandEntity } from "@app/shared-library/entities/entity.island";
 import { ShipEntity } from "@app/shared-library/entities/entity.ship";
@@ -18,7 +16,6 @@ import { WorldService, WorldServiceGrpcClientName, WorldServiceName } from "@app
 import { lastValueFrom } from "rxjs";
 import { UserAvatar, UserAvatarDocument } from "@app/shared-library/schemas/schema.user.avatar";
 import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
-import { Cron, CronExpression } from "@nestjs/schedule";
 
 @Injectable()
 export class MoralisService implements OnModuleInit {
@@ -68,18 +65,6 @@ export class MoralisService implements OnModuleInit {
         // console.log(response.data.result);
     }
 
-    public static async UploadFile(path: string, content: string) {
-        const abi = [
-            {
-                path,
-                content
-            }
-        ];
-        return await Moralis.EvmApi.ipfs.uploadFolder({
-            abi
-        });
-    }
-
     async getAndSyncUserAssets(ethAddress: string) {
         const result: GetAndSyncUserAssetsResponse = {};
 
@@ -107,19 +92,19 @@ export class MoralisService implements OnModuleInit {
         let nvy = 0;
         let aks = 0;
 
-        const response = await Moralis.EvmApi.token.getWalletTokenBalances({
-            address: userAvatar.userProfile.ethAddress,
-            chain: this.chain,
-        }) as any;
+        // const response = await Moralis.EvmApi.token.getWalletTokenBalances({
+        //     address: userAvatar.userProfile.ethAddress,
+        //     chain: this.chain,
+        // }) as any;
 
-        response.data.forEach(f => {
-            if (f.token_address == Constants.NvyContractAddress) {
-                nvy = Number(ethers.utils.formatEther(f.balance));
-            }
-            if (f.token_address == Constants.AksContractAddress) {
-                aks = Number(ethers.utils.formatEther(f.balance));
-            }
-        });
+        // response.data.forEach(f => {
+        //     if (f.token_address == Constants.NvyContractAddress) {
+        //         nvy = Number(ethers.utils.formatEther(f.balance));
+        //     }
+        //     if (f.token_address == Constants.AksContractAddress) {
+        //         aks = Number(ethers.utils.formatEther(f.balance));
+        //     }
+        // });
 
         return {
             nvy, aks
@@ -131,36 +116,36 @@ export class MoralisService implements OnModuleInit {
         const ships: ShipEntity[] = [];
         const islands: IslandEntity[] = [];
 
-        const response = await Moralis.EvmApi.nft.getWalletNFTs({
-            address: userAvatar.userProfile.ethAddress,
-            chain: this.chain,
-            tokenAddresses: [
-                Constants.CaptainContractAddress,
-                Constants.ShipContractAddress,
-                Constants.IslandContractAddress
-            ]
-        }) as any;
+        // const response = await Moralis.EvmApi.nft.getWalletNFTs({
+        //     address: userAvatar.userProfile.ethAddress,
+        //     chain: this.chain,
+        //     tokenAddresses: [
+        //         Constants.CaptainContractAddress,
+        //         Constants.ShipContractAddress,
+        //         Constants.IslandContractAddress
+        //     ]
+        // }) as any;
 
-        const total = response.data.total
+        // const total = response.data.total
 
-        if (total > 0) {
-            for (const entity of response.data.result) {
-                switch (entity.token_address) {
-                    case Constants.CaptainContractAddress: {
-                        captains.push(await this.getCaptainNFTsByOwnerAddress(entity, userAvatar));
-                        break;
-                    }
-                    case Constants.ShipContractAddress: {
-                        ships.push(await this.getShipNFTsByOwnerAddress(entity, userAvatar));
-                        break;
-                    }
-                    case Constants.IslandContractAddress: {
-                        islands.push(await this.getIslandNFTsByOwnerAddress(entity, userAvatar));
-                        break;
-                    }
-                }
-            }
-        }
+        // if (total > 0) {
+        //     for (const entity of response.data.result) {
+        //         switch (entity.token_address) {
+        //             case Constants.CaptainContractAddress: {
+        //                 captains.push(await this.getCaptainNFTsByOwnerAddress(entity, userAvatar));
+        //                 break;
+        //             }
+        //             case Constants.ShipContractAddress: {
+        //                 ships.push(await this.getShipNFTsByOwnerAddress(entity, userAvatar));
+        //                 break;
+        //             }
+        //             case Constants.IslandContractAddress: {
+        //                 islands.push(await this.getIslandNFTsByOwnerAddress(entity, userAvatar));
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
 
         return {
             captains,

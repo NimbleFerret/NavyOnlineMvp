@@ -63,14 +63,11 @@ export class BlockchainTransaction {
     })
     transactionDetails: Object;
 
-    @Prop({ required: true })
-    transactionId: string;
-
     @Prop({ type: Date, default: Date.now })
     date: Date
 
     @Prop()
-    error: string;
+    errorMessage: string;
 
 }
 
