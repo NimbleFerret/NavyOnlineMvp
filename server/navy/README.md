@@ -1,6 +1,9 @@
 Создать новые docker образы:
-* docker build --tag navy-gateway-service:0.1.1 -f ./docker-gateway-service.dockerfile .
-* docker build --tag navy-marketplace-service:0.1.0 -f ./docker-marketplace-service.dockerfile .
+
+* docker build --tag navy-gateway-service -f ./docker-gateway-service.dockerfile .
+* docker build --tag navy-marketplace-service -f ./docker-marketplace-service.dockerfile .
+* docker build --tag navy-web3-service -f ./docker-web3-service.dockerfile .
+* docker build --tag navy-web3-worker-service -f ./docker-web3-worker-service.dockerfile .
 
 Создать пользовательскую bridge сеть:
 * docker network create navy-online
@@ -9,13 +12,15 @@
 * docker run --rm --net navy-online --name navy-mongodb -v ~/mongo/data:/data/db -d -p 27017:27017 mongo
 
 Запустить Redis:
-* docker run --rm --net navy-online --name navy-redis -d -p 49154:49154 redis
+* docker run --rm --net navy-online --name navy-redis -d -p 6379:6379 redis
 
 Перезапустить все сервисы:
 * docker stop navy-gateway-service && docker remove navy-gateway-service
 
-* docker run --rm --net navy-online --name navy-gateway-service -d -p 3022:3022 navy-gateway-service:0.1.1
-* docker run --rm --net navy-online --name navy-marketplace-service -d -p 3027:3027 navy-marketplace-service:0.1.0
+* docker run --rm --net navy-online --name navy-gateway-service -d -p 3022:3022 navy-gateway-service
+* docker run --rm --net navy-online --name navy-marketplace-service -d -p 3027:3027 navy-marketplace-service
+* docker run --rm --net navy-online --name navy-web3-service -d -p 3020:3020 navy-web3-service
+* docker run --rm --net navy-online --name navy-web3-worker-service -d -p 3010:3010 navy-web3-worker-service
 
 Связать локальный образ с новым удаленным:
 * docker tag navy-marketplace-service:0.1.0 ferret228/navy-marketplace-service:0.1.0
