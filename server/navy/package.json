@@ -12,6 +12,8 @@
     "protoc_nix": "mkdir -p dist/proto & cp -a /proto/. /dist/proto/",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start:auth-service:dev": "nest start auth-service --debug --watch",
+    "start:web3-worker-service:dev": "nest start web3-worker-service --debug --watch",
+    "start:web3-worker-service:prod": "nest start web3-worker-service",
     "start:web3-service:dev": "nest start web3-service --debug --watch",
     "start:web3-service:prod": "nest start web3-service",
     "start:world-service:dev": "nest start world-service --debug --watch",

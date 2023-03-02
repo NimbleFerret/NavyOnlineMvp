@@ -6,9 +6,11 @@ export enum TransactionType {
     MINT_NVY_INGAME = 'MINT_NVY_INGAME',
     MINT_NVY_ISLAND = 'MINT_NVY_ISLAND',
     MINT_AKS = 'MINT_AKS',
-    MINT_FOUNDERS_CAPTAIN = 'MINT_FOUNDERS_CAPTAIN',
-    MINT_FOUNDERS_SHIP = 'MINT_FOUNDERS_SHIP',
-    MINT_FOUNDERS_ISLAND = 'MINT_FOUNDERS_ISLAND'
+    MINT_CAPTAIN = 'MINT_CAPTAIN',
+    MINT_SHIP = 'MINT_SHIP',
+    MINT_ISLAND = 'MINT_ISLAND',
+    NFT_LISTED = 'NFT_LISTED',
+    NFT_SOLD = 'NFT_SOLD'
 }
 
 export enum TransactionStatus {
@@ -34,7 +36,12 @@ export class BlockchainTransaction {
         enum: [
             TransactionType.MINT_NVY_INGAME,
             TransactionType.MINT_NVY_ISLAND,
-            TransactionType.MINT_AKS
+            TransactionType.MINT_AKS,
+            TransactionType.MINT_CAPTAIN,
+            TransactionType.MINT_SHIP,
+            TransactionType.MINT_ISLAND,
+            TransactionType.NFT_LISTED,
+            TransactionType.NFT_SOLD
         ]
     })
     transactionType: TransactionType;
@@ -58,6 +65,9 @@ export class BlockchainTransaction {
 
     @Prop({ required: true })
     transactionId: string;
+
+    @Prop({ type: Date, default: Date.now })
+    date: Date
 
     @Prop()
     error: string;

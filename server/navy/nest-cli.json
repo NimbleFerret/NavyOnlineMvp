@@ -102,6 +102,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/notification-service/tsconfig.app.json"
       }
+    },
+    "web3-worker-service": {
+      "type": "application",
+      "root": "apps/web3-worker-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/web3-worker-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/web3-worker-service/tsconfig.app.json"
+      }
     }
   }
 }

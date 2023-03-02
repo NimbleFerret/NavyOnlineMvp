@@ -18,8 +18,8 @@ import { Collection } from 'mongoose';
     BullModule.forRoot({
       redis: {
         host: 'localhost',
-        port: 49154,
-        password: '123456'
+        port: 49154
+        // password: '123456'
       },
     }),
     MongooseModule.forRoot(Config.GetMongoHost()),

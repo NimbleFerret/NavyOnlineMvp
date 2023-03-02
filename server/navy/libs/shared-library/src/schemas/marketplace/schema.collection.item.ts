@@ -4,47 +4,61 @@ import { Document } from 'mongoose';
 
 export type CollectionItemDocument = CollectionItem & Document;
 
+export enum MarketplaceState {
+    NONDE,
+    LISTED,
+    SOLD
+}
+
 @Schema()
 export class CollectionItem {
 
-    @Prop()
-    tokenAddress: string;
+    @Prop({
+        required: true,
+        index: true
+    })
+    id: string;
 
     @Prop()
-    tokenId: string;
-
-    @Prop()
-    amount: number;
-
-    @Prop()
-    tokenHash: string;
-
-    @Prop()
-    blockNumberMinted: string;
-
-    @Prop()
-    updatedAt: string;
-
-    @Prop()
-    contractType: string;
-
-    @Prop()
-    name: string;
-
-    @Prop()
-    symbol: string;
+    tokenId: number;
 
     @Prop()
     tokenUri: string;
 
     @Prop()
-    metadata: Map<string, Object>;
+    seller: string;
 
     @Prop()
-    minterAddress: string;
+    owner: string;
 
     @Prop()
-    chain: string;
+    price: string;
+
+    @Prop()
+    image: string;
+
+    @Prop()
+    lastUpdated: number;
+
+    @Prop({ default: false })
+    needUpdate: boolean;
+
+    @Prop()
+    nftContract: string;
+
+    @Prop()
+    chainId: string;
+
+    @Prop({
+        type: Number,
+        required: true,
+        enum: [
+            MarketplaceState.NONDE,
+            MarketplaceState.LISTED,
+            MarketplaceState.SOLD,
+        ]
+    })
+    marketplaceState: MarketplaceState;
 
 }
 

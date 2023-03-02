@@ -1,15 +1,25 @@
+import * as Captain from '../abi/Captain.json';
+import * as Aks from '../abi/Aks.json';
+import * as Nvy from '../abi/Nvy.json';
+import * as Ship from '../abi/Ship.json';
+import * as Island from '../abi/Island.json';
+import * as ShipTemplate from '../abi/ShipTemplate.json';
+import * as CollectionSale from '../abi/CollectionSale.json';
+import * as Marketplace from '../abi/Marketplace.json';
+
+
+
 import {
     BadRequestException,
     Injectable,
     Logger,
     OnModuleInit
 } from '@nestjs/common';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
-import { EthersProvider } from './blockchain.ethers.provider';
+import { InjectQueue, OnQueueActive } from '@nestjs/bull';
+import { Job, Queue } from 'bull';
 import { Constants } from '../app.constants';
-import { NftCaptainGenerator } from '../nft/nft.generator.captain';
-import { Rarity } from '@app/shared-library/shared-library.main';
+// import { NftCaptainGenerator } from '../nft/nft.generator.captain';
+import { NftType, Rarity } from '@app/shared-library/shared-library.main';
 import { Contract, ethers } from 'ethers';
 import {
     CheckEthersAuthSignatureRequest,
@@ -22,8 +32,12 @@ import {
 } from '@app/shared-library/gprc/grpc.web3.service';
 import { MoralisService } from '../moralis/moralis.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { BlockchainCollectionCaptain } from './blockchain.collection.captain';
+// import { BlockchainCollectionCaptain } from './blockchain.collection.captain';
 import { NFTService } from '../nft/nft.service';
+import { EthersProvider } from '@app/shared-library/ethers/ethers.provider';
+import { MintJob, WorkersMint } from '@app/shared-library/workers/workers.mint';
+import { MarketplaceNftsType, UpdateMarketplaceJob, WorkersMarketplace } from '@app/shared-library/workers/workers.marketplace';
+
 // -----------------------------------------
 // These stats are used to generate new NFTs
 // -----------------------------------------
@@ -99,22 +113,58 @@ export class BlockchainService implements OnModuleInit {
     // private smallShipStatsRange: ShipStatsRange;
     // private middleShipStatsRange: ShipStatsRange;
 
-    private blockchainCollectionCaptain: BlockchainCollectionCaptain;
+    // private blockchainCollectionCaptain: BlockchainCollectionCaptain;
+
+    private readonly ethersProvider = new EthersProvider();
+
 
     constructor(
-        private readonly nftService: NFTService,
-        private readonly ethersProvider: EthersProvider,
-        @InjectQueue('blockchain') private readonly blockchainQueue: Queue) { }
+        // private readonly nftService: NFTService,
+        // private readonly ethersProvider: EthersProvider,
+        @InjectQueue(WorkersMarketplace.UpdateMarketplaceQueue) private readonly updateMarketplaceQueue: Queue,
+        @InjectQueue(WorkersMint.MintQueue) private readonly mintQueue: Queue) { }
 
     async onModuleInit() {
-        this.blockchainCollectionCaptain = new BlockchainCollectionCaptain(
-            this.nftService.nftCaptainGenerator,
-            this.ethersProvider.captainCollectionSaleContract,
-            this.ethersProvider.captainContract,
-            this.ethersProvider.captainMarketplaceContract
-        );
 
-        this.blockchainCollectionCaptain.updateMarketplaceNfts();
+        await this.ethersProvider.init({
+            Captain,
+            Aks,
+            Nvy,
+            Ship,
+            Island,
+            ShipTemplate,
+            CollectionSale,
+            Marketplace
+        });
+
+        // export interface UpdateMarketplaceJob {
+        //     marketplaceNftsType: MarketplaceNftsType;
+        //     nftType: NftType;
+        // }
+
+        this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
+            this.mintQueue.add({
+                nftType: NftType.CAPTAIN,
+                sender,
+                contractAddress
+            } as MintJob);
+        });
+
+        setTimeout(() => {
+            this.updateMarketplaceQueue.add({
+                marketplaceNftsType: MarketplaceNftsType.LISTED,
+                nftType: NftType.CAPTAIN
+            } as UpdateMarketplaceJob);
+        }, 500);
+
+        // this.blockchainCollectionCaptain = new BlockchainCollectionCaptain(
+        //     this.nftService.nftCaptainGenerator,
+        //     this.ethersProvider.captainCollectionSaleContract,
+        //     this.ethersProvider.captainContract,
+        //     this.ethersProvider.captainMarketplaceContract
+        // );
+
+        // this.blockchainCollectionCaptain.updateMarketplaceNfts();
 
         // await this.syncListedNFTs();
 
@@ -211,6 +261,7 @@ export class BlockchainService implements OnModuleInit {
     @Cron(CronExpression.EVERY_MINUTE)
     async syncListedNFTs() {
         // this.listedCaptains = await this.updateMarketplaceListedNfts(this.ethersProvider.captainMarketplaceContract, this.ethersProvider.captainContract);
+        // this.blockchainCollectionCaptain.updateMarketplaceNfts();
     }
 
     async getCollectionSaleDetails(request: GetCollectionSaleDetailsRequest) {

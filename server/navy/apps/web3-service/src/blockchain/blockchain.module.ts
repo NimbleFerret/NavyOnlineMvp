@@ -1,24 +1,22 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { BlockchainQueueProcessor } from './blockchain.queue.processor';
 import { BlockchainService } from './blockchain.service';
-import { EthersProvider } from './blockchain.ethers.provider';
-import { BlockchainTransaction, BlockchainTransactionSchema } from './schemas/schema.blockchain.transaction';
 import { NFTModule } from '../nft/nft.module';
+import { WorkersMarketplace } from '@app/shared-library/workers/workers.marketplace';
+import { WorkersMint } from '@app/shared-library/workers/workers.mint';
 
 @Module({
     imports: [
         NFTModule,
         BullModule.registerQueue({
-            name: 'blockchain',
+            name: WorkersMarketplace.UpdateMarketplaceQueue
         }),
-        MongooseModule.forFeature([{ name: BlockchainTransaction.name, schema: BlockchainTransactionSchema }]),
+        BullModule.registerQueue({
+            name: WorkersMint.MintQueue
+        }),
     ],
     providers: [
-        EthersProvider,
-        BlockchainService,
-        BlockchainQueueProcessor
+        BlockchainService
     ],
     exports: [BlockchainService]
 })

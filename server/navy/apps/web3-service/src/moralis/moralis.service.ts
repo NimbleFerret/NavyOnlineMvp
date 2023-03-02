@@ -355,46 +355,46 @@ export class MoralisService implements OnModuleInit {
     // }
 
     private async updateAndSaveCollectionInfo(address: string) {
-        Logger.log('Updatig collection ' + address + '...');
-        try {
-            const response = await Moralis.EvmApi.nft.getContractNFTs({
-                address,
-                chain: this.chain,
-            });
-            const nfts: any = response.toJSON();
-            console.log(nfts);
-            // TODO check iteration in advance
-            let newItems = 0;
-            for (const n of nfts) {
-                const nft: any = n;
-                if (!await this.collectionItemModel.findOne({ tokenId: nft.tokenId })) {
-                    const collectionModel = new this.collectionItemModel();
-                    collectionModel.tokenAddress = nft.tokenAddress;
-                    collectionModel.tokenId = String(nft.tokenId);
-                    collectionModel.amount = nft.amount;
-                    collectionModel.tokenHash = nft.tokenHash;
-                    collectionModel.blockNumberMinted = nft.blockNumberMinted;
-                    collectionModel.contractType = nft.contractType;
-                    collectionModel.name = nft.name;
-                    collectionModel.symbol = nft.symbol;
-                    collectionModel.tokenUri = nft.tokenUri;
-                    collectionModel.metadata = new Map();
-                    collectionModel.metadata.set('name', nft.metadata.name);
-                    collectionModel.metadata.set('description', nft.metadata.description);
-                    collectionModel.metadata.set('image', nft.metadata.image);
-                    collectionModel.metadata.set('attributes', nft.metadata.attributes);
-                    collectionModel.minterAddress = String(nft.minterAddress);
-                    collectionModel.chain = String(nft.chain);
-                    await collectionModel.save();
-                    newItems++;
-                }
-            }
-            if (newItems > 0) {
-                Logger.log('Updatig collection ' + address + ' done. Items added: ' + newItems);
-            }
-        } catch (e) {
-            Logger.error('Updatig collection ' + address + ' error.', e);
-        }
-        Logger.log('Updatig collection ' + address + ' finished.');
+        // Logger.log('Updatig collection ' + address + '...');
+        // try {
+        //     const response = await Moralis.EvmApi.nft.getContractNFTs({
+        //         address,
+        //         chain: this.chain,
+        //     });
+        //     const nfts: any = response.toJSON();
+        //     console.log(nfts);
+        //     // TODO check iteration in advance
+        //     let newItems = 0;
+        //     for (const n of nfts) {
+        //         const nft: any = n;
+        //         if (!await this.collectionItemModel.findOne({ tokenId: nft.tokenId })) {
+        //             const collectionModel = new this.collectionItemModel();
+        //             collectionModel.tokenAddress = nft.tokenAddress;
+        //             collectionModel.tokenId = String(nft.tokenId);
+        //             collectionModel.amount = nft.amount;
+        //             collectionModel.tokenHash = nft.tokenHash;
+        //             collectionModel.blockNumberMinted = nft.blockNumberMinted;
+        //             collectionModel.contractType = nft.contractType;
+        //             collectionModel.name = nft.name;
+        //             collectionModel.symbol = nft.symbol;
+        //             collectionModel.tokenUri = nft.tokenUri;
+        //             collectionModel.metadata = new Map();
+        //             collectionModel.metadata.set('name', nft.metadata.name);
+        //             collectionModel.metadata.set('description', nft.metadata.description);
+        //             collectionModel.metadata.set('image', nft.metadata.image);
+        //             collectionModel.metadata.set('attributes', nft.metadata.attributes);
+        //             collectionModel.minterAddress = String(nft.minterAddress);
+        //             collectionModel.chain = String(nft.chain);
+        //             await collectionModel.save();
+        //             newItems++;
+        //         }
+        //     }
+        //     if (newItems > 0) {
+        //         Logger.log('Updatig collection ' + address + ' done. Items added: ' + newItems);
+        //     }
+        // } catch (e) {
+        //     Logger.error('Updatig collection ' + address + ' error.', e);
+        // }
+        // Logger.log('Updatig collection ' + address + ' finished.');
     }
 }
