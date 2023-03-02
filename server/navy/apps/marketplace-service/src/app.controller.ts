@@ -5,6 +5,7 @@ import { SaleCancelDto } from './dto/dto.sale.cancel';
 import { SaleNewDto } from './dto/dto.sale.new';
 import { SaleRedeemDto } from './dto/dto.sale.redeem';
 
+// TODO implement caches
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) { }
@@ -27,6 +28,11 @@ export class AppController {
   @Get('collection/listed/:address')
   getCollectionListed(@Param('address') address: string) {
     return this.appService.getCollectionListed(address);
+  }
+
+  @Get('collection/sold/:address')
+  getCollectionSold(@Param('address') address: string) {
+    return this.appService.getCollectionSold(address);
   }
 
   @Get('mint/:mintId')

@@ -1,8 +1,18 @@
 import { NftType } from "@app/shared-library/shared-library.main";
 import { NftPartDetails, NftSubPartDetails } from "@app/shared-library/workers/workers.marketplace";
-import { CaptainStats } from "apps/web3-service/src/blockchain/blockchain.service";
 import { Contract } from "ethers";
 import { NftGenerator } from "./nft.generator";
+
+export interface CaptainStats {
+    currentLevel: number;
+    maxLevel: number;
+    traits: string;
+    rarity: number;
+    staking: boolean,
+    stakingRewardNVY: number;
+    stakingStartedAt: number;
+    stakingDurationSeconds: number;
+}
 
 export class NftCaptainGenerator extends NftGenerator {
 

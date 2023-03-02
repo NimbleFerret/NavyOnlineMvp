@@ -13,6 +13,7 @@ import { CollectionItem, CollectionItemDocument } from '@app/shared-library/sche
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { lastValueFrom } from 'rxjs';
 import fetch from 'node-fetch';
+import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
 
 const fs = require('fs');
 
@@ -164,8 +165,17 @@ export class AppService implements OnModuleInit {
   }
 
   async getCollectionListed(address: string) {
-    // const collectionSaleDetails = await lastValueFrom(this.web3Service.GetMarketplaceListedNFTs());
-    return this.collectionItemModel.find({ tokenAddress: address.toLowerCase() }).select(['-_id', '-__v']);
+    return this.collectionItemModel.find({
+      nftContract: address.toLowerCase(),
+      marketplaceState: MarketplaceNftsType.LISTED
+    }).select(['-_id', '-__v', '-id', '-needUpdate']).sort([['lastUpdated', -1]]);
+  }
+
+  async getCollectionSold(address: string) {
+    return this.collectionItemModel.find({
+      nftContract: address.toLowerCase(),
+      marketplaceState: MarketplaceNftsType.SOLD
+    }).select(['-_id', '-__v', '-id', '-needUpdate']).sort([['lastUpdated', -1]]);
   }
 
   async getMint(id: string) {

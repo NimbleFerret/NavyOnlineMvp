@@ -53,8 +53,8 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                 break;
         }
 
-        await this.getMarketplaceNfts(marketplaceContract, job.data.marketplaceNftsType);
-        await this.getMarketplaceNfts(this.ethersProvider.captainMarketplaceContract, MarketplaceNftsType.SOLD);
+        await this.getMarketplaceNfts(marketplaceContract, MarketplaceNftsType.LISTED);
+        await this.getMarketplaceNfts(marketplaceContract, MarketplaceNftsType.SOLD);
     }
 
     private async getMarketplaceNfts(marketpalceContract: Contract, marketplaceNftsType: MarketplaceNftsType) {
@@ -63,11 +63,11 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
 
         const marketplaceNFTs: MarketplaceNFT[] = nfts.map(nft => {
             const marketplaceNFT: MarketplaceNFT = {
-                nftContract: nft.nftContract,
+                nftContract: nft.nftContract.toLowerCase(),
                 tokenId: nft.tokenId.toNumber(),
                 tokenUri: nft.tokenUri,
-                seller: nft.seller,
-                owner: nft.owner,
+                seller: nft.seller.toLowerCase(),
+                owner: nft.owner.toLowerCase(),
                 price: ethers.utils.formatEther(nft.price),
                 image: '',
                 lastUpdated: nft.lastUpdated.toNumber()

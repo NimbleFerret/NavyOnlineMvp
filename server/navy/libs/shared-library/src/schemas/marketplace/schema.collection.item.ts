@@ -5,9 +5,9 @@ import { Document } from 'mongoose';
 export type CollectionItemDocument = CollectionItem & Document;
 
 export enum MarketplaceState {
-    NONDE,
     LISTED,
-    SOLD
+    SOLD,
+    NONE,
 }
 
 @Schema()
@@ -53,9 +53,9 @@ export class CollectionItem {
         type: Number,
         required: true,
         enum: [
-            MarketplaceState.NONDE,
             MarketplaceState.LISTED,
             MarketplaceState.SOLD,
+            MarketplaceState.NONE
         ]
     })
     marketplaceState: MarketplaceState;

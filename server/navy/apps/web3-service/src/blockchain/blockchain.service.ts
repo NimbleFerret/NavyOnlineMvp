@@ -75,6 +75,7 @@ export class BlockchainService implements OnModuleInit {
         await this.updateSaleCollections('Captains');
 
         // TODO better to listen for events
+        this.updateMarketplaceQueue.empty();
         this.updateMarketplaceQueue.add({
             marketplaceNftsType: MarketplaceNftsType.LISTED,
             nftType: NftType.CAPTAIN
