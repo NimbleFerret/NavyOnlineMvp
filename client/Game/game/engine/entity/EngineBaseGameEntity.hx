@@ -1,6 +1,5 @@
 package game.engine.entity;
 
-import h2d.col.Point;
 import uuid.Uuid;
 import game.engine.entity.TypesAndClasses;
 import game.engine.entity.EngineShipEntityConfig;

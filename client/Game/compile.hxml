@@ -13,9 +13,9 @@
 # -cp engine
 # -lib uuid
 # -js GameEngine.js
-# -main engine.GameEngine
+# -main game.engine.GameEngine
 
 # -cp engine
 # -lib uuid
 # -js IslandEngine.js
-# -main engine.IslandEngine
+# -main game.engine.IslandEngine

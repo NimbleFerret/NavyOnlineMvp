@@ -1,8 +1,8 @@
 package game.engine;
 
-import h2d.col.Point;
-import game.engine.geometry.Line;
 import game.engine.entity.TypesAndClasses;
+import game.engine.geometry.Line;
+import game.engine.geometry.Point;
 
 class MathUtils {
 	public static function getHullRadByDir(dir:GameEntityDirection) {

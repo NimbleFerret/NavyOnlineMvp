@@ -1,8 +1,8 @@
 package game.engine.entity;
 
-import h2d.col.Point;
 import game.engine.entity.EngineBaseGameEntity;
 import game.engine.entity.TypesAndClasses;
+import game.engine.geometry.Point;
 
 enum DieEffect {
 	Splash;

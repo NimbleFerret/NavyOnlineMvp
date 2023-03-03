@@ -1,6 +1,6 @@
 package game.engine.entity;
 
-import h2d.col.Point;
+import game.engine.geometry.Point;
 
 // -------------------------------
 // General

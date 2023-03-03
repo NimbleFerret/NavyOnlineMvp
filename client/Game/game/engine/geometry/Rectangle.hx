@@ -1,6 +1,6 @@
 package game.engine.geometry;
 
-import h2d.col.Point;
+import game.engine.geometry.Point;
 import game.engine.geometry.Line;
 
 // TODO Make some functions Inline ?
