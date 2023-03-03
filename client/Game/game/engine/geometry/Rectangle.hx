@@ -20,10 +20,7 @@ class Rectangle {
 	}
 
 	public function getCenter() {
-		return {
-			x: x,
-			y: y
-		}
+		return new Point(x, y);
 	}
 
 	private function getLeft() {

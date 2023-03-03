@@ -1,5 +1,6 @@
 package client.gameplay;
 
+import game.engine.entity.TypesAndClasses.PlayerInputType;
 import game.engine.entity.EngineCharacterEntity;
 import utils.Utils;
 import client.entity.ClientShip;
@@ -26,6 +27,7 @@ enum GameState {
 
 abstract class BasicGameplay {
 	public final baseEngine:BaseEngine;
+	public var inputIndex = 0;
 
 	private final debugGraphics:h2d.Graphics;
 	private final GameEntityLayer = 1;
@@ -71,9 +73,9 @@ abstract class BasicGameplay {
 			final playerEntity = getPlayerEntity();
 			if (playerEntity != null) {
 				// scene.camera.x = hxd.Math.lerp(scene.camera.x, playerEntity.x, 0.1);
-				scene.camera.x = hxd.Math.lerp(scene.camera.x, playerEntity.x, 0.1) - (currentDrag.x * 0.5);
+				// scene.camera.x = hxd.Math.lerp(scene.camera.x, playerEntity.x, 0.1) - (currentDrag.x * 0.5);
 				// scene.camera.y = hxd.Math.lerp(scene.camera.y, playerEntity.y, 0.1);
-				scene.camera.y = hxd.Math.lerp(scene.camera.y, playerEntity.y, 0.1) - (currentDrag.y * 0.5);
+				// scene.camera.y = hxd.Math.lerp(scene.camera.y, playerEntity.y, 0.1) - (currentDrag.y * 0.5);
 			}
 		}
 	}
@@ -126,27 +128,35 @@ abstract class BasicGameplay {
 		final up = K.isDown(K.UP);
 		final down = K.isDown(K.DOWN);
 
-		var movementChanged = false;
-		if (left)
-			movementChanged = moveLeft(playerEntityId);
-		if (right)
-			movementChanged = moveRight(playerEntityId);
-		if (up)
-			movementChanged = moveUp(playerEntityId);
-		if (down)
-			movementChanged = moveDown(playerEntityId);
+		if (baseEngine.checkLocalMovementInputAllowance(playerEntityId)) {
+			var playerInputType:PlayerInputType = null;
+			if (left)
+				playerInputType = PlayerInputType.MOVE_LEFT;
+			if (right)
+				playerInputType = PlayerInputType.MOVE_RIGHT;
+			if (up)
+				playerInputType = PlayerInputType.MOVE_UP;
+			if (down)
+				playerInputType = PlayerInputType.MOVE_DOWN;
 
-		if (movementChanged && (up || down || left || right)) {
-			Socket.instance.move({
-				playerId: playerId,
-				up: up,
-				down: down,
-				left: left,
-				right: right
-			});
+			if (playerInputType != null && (up || down || left || right)) {
+				trace('Allow local input');
+
+				baseEngine.addInputCommand({
+					index: ++inputIndex,
+					entityId: playerEntityId,
+					inputType: playerInputType
+				});
+
+				Socket.instance.move({
+					playerId: playerId,
+					up: up,
+					down: down,
+					left: left,
+					right: right
+				});
+			}
 		}
-
-		// trace(K.isPressed(hxd.Key.MOUSE_LEFT));
 
 		customInput(newMousePos, K.isPressed(hxd.Key.MOUSE_LEFT), hxd.Key.isPressed(hxd.Key.MOUSE_RIGHT));
 	}
@@ -205,6 +215,8 @@ abstract class BasicGameplay {
 
 			if (!clientMainEntities.exists(entity.getId())) {
 				createNewMainEntity(entity);
+			} else {
+				trace('addEntity WTF?');
 			}
 		}
 	}
@@ -212,14 +224,14 @@ abstract class BasicGameplay {
 	public function entityMove(message:SocketServerMessageEntityMove) {
 		if (gameState == GameState.Playing && playerEntityId != message.entityId) {
 			if (playerEntityId != message.entityId) {
-				if (message.up)
-					moveUp(message.entityId);
-				if (message.down)
-					moveDown(message.entityId);
-				if (message.left)
-					moveLeft(message.entityId);
-				if (message.right)
-					moveRight(message.entityId);
+				// if (message.up)
+				// 	moveUp(message.entityId);
+				// if (message.down)
+				// 	moveDown(message.entityId);
+				// if (message.left)
+				// 	moveLeft(message.entityId);
+				// if (message.right)
+				// 	moveRight(message.entityId);
 			}
 		}
 	}
@@ -309,22 +321,18 @@ abstract class BasicGameplay {
 		scene.add(entity, GameEntityLayer);
 	}
 
-	private function moveUp(entityId:String) {
-		return baseEngine.entityMoveUp(entityId);
-	}
-
-	private function moveDown(entityId:String) {
-		return baseEngine.entityMoveDown(entityId);
-	}
-
-	private function moveLeft(entityId:String) {
-		return baseEngine.entityMoveLeft(entityId);
-	}
-
-	private function moveRight(entityId:String) {
-		return baseEngine.entityMoveRight(entityId);
-	}
-
+	// private function moveUp(entityId:String) {
+	// 	return baseEngine.entityMoveUp(entityId);
+	// }
+	// private function moveDown(entityId:String) {
+	// 	return baseEngine.entityMoveDown(entityId);
+	// }
+	// private function moveLeft(entityId:String) {
+	// 	return baseEngine.entityMoveLeft(entityId);
+	// }
+	// private function moveRight(entityId:String) {
+	// 	return baseEngine.entityMoveRight(entityId);
+	// }
 	// --------------------------------------
 	// Utils
 	// --------------------------------------

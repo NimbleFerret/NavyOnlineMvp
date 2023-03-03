@@ -52,6 +52,9 @@ class MathUtils {
 	}
 
 	public static function dirToRad(dir:GameEntityDirection) {
+		if (dir == null) {
+			return 0.0;
+		}
 		var degree = 0;
 		switch (dir) {
 			case East:

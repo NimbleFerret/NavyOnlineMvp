@@ -9,9 +9,6 @@ enum CurrentState {
 }
 
 class EngineCharacterEntity extends EngineBaseGameEntity {
-	private var lastMovementInputCheck = 0.0;
-	private var inputMovementCheckDelayMS = 0.1;
-
 	public var wantToMoveLeft = false;
 	public var wantToMoveRight = false;
 	public var wantToMoveUp = false;
@@ -78,17 +75,6 @@ class EngineCharacterEntity extends EngineBaseGameEntity {
 			} else {
 				return false;
 			}
-		}
-	}
-
-	public function checkMovementInput() {
-		final now = haxe.Timer.stamp();
-
-		if (lastMovementInputCheck == 0 || lastMovementInputCheck + inputMovementCheckDelayMS < now) {
-			lastMovementInputCheck = now;
-			return true;
-		} else {
-			return false;
 		}
 	}
 }

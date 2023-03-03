@@ -2,6 +2,7 @@ package game.engine;
 
 import game.engine.GameLoop;
 import game.engine.entity.EngineBaseGameEntity;
+import game.engine.entity.TypesAndClasses;
 import game.engine.entity.manager.BaseEntityManager;
 
 enum EngineMode {
@@ -12,6 +13,11 @@ enum EngineMode {
 enum EngineGameMode {
 	Island;
 	Sea;
+}
+
+typedef PlayerInputCommandEngineWrapped = {
+	var playerInputCommand:PlayerInputCommand;
+	var tick:Int;
 }
 
 @:expose
@@ -30,6 +36,14 @@ abstract class BaseEngine {
 	public final mainEntityManager:BaseEntityManager;
 	public final playerEntityMap = new Map<String, String>();
 
+	// Команды от пользователей, которые будут применены в начале каждого тика
+	private var hotInputCommands = new Array<PlayerInputCommandEngineWrapped>();
+
+	// История команд за последние N тиков
+	public var ticksSinceLastPop = 0;
+	public final coldInputCommandsTreshhold = 10;
+	public final coldInputCommands = new Array<PlayerInputCommandEngineWrapped>();
+
 	public function new(engineMode = EngineMode.Server, engineGameMode:EngineGameMode, mainEntityManager:BaseEntityManager) {
 		this.engineMode = engineMode;
 		this.engineGameMode = engineGameMode;
@@ -38,6 +52,18 @@ abstract class BaseEngine {
 		gameLoop = new GameLoop(function loop(dt:Float, tick:Int) {
 			this.tick = tick;
 
+			// Remove outdated inputs from cache
+			if (ticksSinceLastPop == coldInputCommandsTreshhold) {
+				ticksSinceLastPop = 0;
+				coldInputCommands.shift();
+			}
+			ticksSinceLastPop++;
+
+			// Apply inputs
+			processInputCommands(hotInputCommands);
+			hotInputCommands = [];
+
+			// Update all entities
 			engineLoopUpdate(dt);
 
 			if (tickCallback != null) {
@@ -46,21 +72,15 @@ abstract class BaseEngine {
 		});
 	}
 
+	// -----------------------------------
+	// Abstract functions
+	// -----------------------------------
+
+	public abstract function processInputCommands(playerInputCommands:Array<PlayerInputCommandEngineWrapped>):Void;
+
 	public abstract function engineLoopUpdate(dt:Float):Void;
 
 	public abstract function customDelete():Void;
-
-	public function destroy() {
-		gameLoop.stopLoop();
-
-		mainEntityManager.destroy();
-
-		tickCallback = null;
-		createMainEntityCallback = null;
-		deleteMainEntityCallback = null;
-
-		customDelete();
-	}
 
 	// -----------------------------------
 	// Main entity management
@@ -106,12 +126,45 @@ abstract class BaseEngine {
 	// -----------------------------------
 	// Main entity movement
 	// -----------------------------------
+	// -----------------------------------
+	// Input
+	// -----------------------------------
 
-	public abstract function entityMoveUp(id:String):Bool;
+	public function checkLocalMovementInputAllowance(entityId:String) {
+		final entity = mainEntityManager.getEntityById(entityId);
+		if (entity == null) {
+			return false;
+		} else {
+			return entity.checkLocalMovementInput();
+		}
+	}
 
-	public abstract function entityMoveDown(id:String):Bool;
+	public function addInputCommand(playerInputCommand:PlayerInputCommand) {
+		if (playerInputCommand.inputType != null && playerInputCommand.entityId != null) {
+			hotInputCommands.push({
+				playerInputCommand: playerInputCommand,
+				tick: tick
+			});
+			coldInputCommands.push({
+				playerInputCommand: playerInputCommand,
+				tick: tick
+			});
+		}
+	}
 
-	public abstract function entityMoveLeft(id:String):Bool;
+	// -----------------------------------
+	// General
+	// -----------------------------------
 
-	public abstract function entityMoveRight(id:String):Bool;
+	public function destroy() {
+		gameLoop.stopLoop();
+
+		mainEntityManager.destroy();
+
+		tickCallback = null;
+		createMainEntityCallback = null;
+		deleteMainEntityCallback = null;
+
+		customDelete();
+	}
 }

@@ -23,7 +23,7 @@ enum Scene {
 }
 
 class Main extends hxd.App {
-	private final defaultScene = Scene.SceneShipConfig;
+	private final defaultScene = Scene.SceneDemo1;
 
 	private var sceneHomeMenu:SceneHomeMenu;
 	private var sceneDemo1:SceneDemo1;
@@ -82,14 +82,15 @@ class Main extends hxd.App {
 
 		// TODO better start scene selection
 		// Start default scene
+
 		switch (defaultScene) {
 			case SceneHomeMenu:
 				sceneHomeMenu.start();
 				setScene2D(sceneHomeMenu);
 			case SceneDemo1:
 				sceneDemo1.start();
-				// sevents.addScene(sceneDemo1.getHud());
-				sevents.addScene(sceneDemo1.debugHud);
+				sevents.addScene(sceneDemo1.getHud());
+				// sevents.addScene(sceneDemo1.debugHud);
 				setScene2D(sceneDemo1);
 			case SceneGeomTest:
 				sceneGeomTest.start();

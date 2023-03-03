@@ -1,5 +1,6 @@
 package game.engine.entity;
 
+import h2d.col.Point;
 import uuid.Uuid;
 import game.engine.entity.TypesAndClasses;
 import game.engine.entity.EngineShipEntityConfig;
@@ -19,6 +20,7 @@ class EngineBaseGameEntity {
 	// General
 	// ----------------------
 	private var baseObjectEntity:BaseObjectEntity;
+	private var lastDeltaTime:Float;
 
 	public var entityType:GameEntityType;
 	public var isAlive = true;
@@ -29,6 +31,10 @@ class EngineBaseGameEntity {
 	// ----------------------
 	// Movement
 	// ----------------------
+	private var lastMovementInputCheck = 0.0;
+	private var lastLocalMovementInputCheck = 0.0;
+	private var inputMovementCheckDelayMS = 0.1;
+
 	public var rotation = 0.0;
 	public var dx = 0.0;
 	public var dy = 0.0;
@@ -57,10 +63,11 @@ class EngineBaseGameEntity {
 	}
 
 	public function update(dt:Float) {
+		lastDeltaTime = dt;
 		if (customUpdate != null)
 			customUpdate.onUpdate();
 		if (canMove)
-			move(dt);
+			move();
 		if (customUpdate != null)
 			customUpdate.postUpdate();
 	}
@@ -76,17 +83,59 @@ class EngineBaseGameEntity {
 		return new Rectangle(x + rectOffsetX, y + rectOffsetY, shapeWidth, shapeHeight, MathUtils.dirToRad(direction) + shape.angle);
 	}
 
+	public function getVirtualBodyRectangleInFuture(ticks:Int) {
+		final cachedPositionX = baseObjectEntity.x;
+		final cachedPositionY = baseObjectEntity.y;
+		for (i in 0...ticks) {
+			move();
+		}
+		final resultingRect = getBodyRectangle();
+		baseObjectEntity.x = cachedPositionX;
+		baseObjectEntity.y = cachedPositionY;
+		return resultingRect;
+	}
+
+	public function getForwardLookingLine(lineLength:Int) {
+		final rect = getBodyRectangle();
+		final x = rect.getCenter().x;
+		final y = rect.getCenter().y;
+		return {
+			p1: rect.getCenter(),
+			p2: MathUtils.rotatePointAroundCenter(x + lineLength, y, x, y, rotation)
+		}
+	}
+
 	public function collides(isCollides:Bool) {
 		this.isCollides = isCollides;
 		if (customCollide != null)
 			customCollide.onCollide();
 	}
 
-	function move(dt:Float) {
-		dx = currentSpeed * Math.cos(rotation) * dt;
-		dy = currentSpeed * Math.sin(rotation) * dt;
+	function move() {
+		dx = currentSpeed * Math.cos(rotation) * lastDeltaTime;
+		dy = currentSpeed * Math.sin(rotation) * lastDeltaTime;
 		baseObjectEntity.x += dx;
 		baseObjectEntity.y += dy;
+	}
+
+	public function checkMovementInput() {
+		final now = haxe.Timer.stamp();
+		if (lastMovementInputCheck == 0 || lastMovementInputCheck + inputMovementCheckDelayMS < now) {
+			lastMovementInputCheck = now;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function checkLocalMovementInput() {
+		final now = haxe.Timer.stamp();
+		if (lastLocalMovementInputCheck == 0 || lastLocalMovementInputCheck + inputMovementCheckDelayMS < now) {
+			lastLocalMovementInputCheck = now;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public function accelerateLeft() {

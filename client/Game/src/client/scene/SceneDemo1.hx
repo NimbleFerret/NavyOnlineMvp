@@ -13,8 +13,7 @@ class SceneDemo1 extends Scene {
 	private var islandsManager:IslandsManager;
 
 	// UI parts
-	public final debugHud:DebugHud;
-
+	// public final debugHud:DebugHud;
 	private var allowSomething = false;
 
 	public function new(width:Int, height:Int) {
@@ -22,7 +21,7 @@ class SceneDemo1 extends Scene {
 		// scaleMode = LetterBox(1920, 1080, true, Center, Center);
 		camera.setViewport(1920, 1080, 0, 0);
 		camera.setScale(2, 2);
-		debugHud = new DebugHud();
+		// debugHud = new DebugHud();
 	}
 
 	public function start() {
@@ -33,14 +32,15 @@ class SceneDemo1 extends Scene {
 		// --------------------------------------
 
 		final playerId = 'Player1';
+		final bot1Id = 'Bot1';
 
 		final ship1 = game.addShipByClient({
-			x: 300,
-			y: 300,
+			x: 392,
+			y: 207,
 			minSpeed: 0,
 			maxSpeed: 300,
 			acceleration: 50,
-			direction: GameEntityDirection.East,
+			direction: GameEntityDirection.NorthEast,
 			id: null,
 			ownerId: playerId,
 			serverShipRef: "",
@@ -50,7 +50,32 @@ class SceneDemo1 extends Scene {
 			shipWindows: ShipWindows.NONE,
 			shipCannons: ShipCannons.ONE,
 			cannonsRange: 500,
-			cannonsDamage: 50,
+			cannonsDamage: 1,
+			cannonsAngleSpread: 40,
+			armor: 300,
+			hull: 300,
+			accDelay: 0.500,
+			turnDelay: 0.500,
+			fireDelay: 0.500
+		});
+
+		final ship2 = game.addShipByClient({
+			x: 100,
+			y: 100,
+			minSpeed: 0,
+			maxSpeed: 300,
+			acceleration: 50,
+			direction: GameEntityDirection.East,
+			id: null,
+			ownerId: bot1Id,
+			serverShipRef: "",
+			free: true,
+			role: Role.Bot,
+			shipHullSize: ShipHullSize.SMALL,
+			shipWindows: ShipWindows.NONE,
+			shipCannons: ShipCannons.ONE,
+			cannonsRange: 500,
+			cannonsDamage: 1,
 			cannonsAngleSpread: 40,
 			armor: 100,
 			hull: 100,
@@ -65,7 +90,7 @@ class SceneDemo1 extends Scene {
 		// final ship4 = game.addShipByClient(Role.Bot, 300, -100, null, null);
 		// final ship5 = game.addShipByClient(Role.Bot, 300, -600, null, null);
 
-		game.startGameSingleplayer(playerId, [ship1]);
+		game.startGameSingleplayer(playerId, [ship1, ship2]);
 		// game.startGameByClient(playerId, [ship1, ship2, ship3, ship4, ship5]);
 
 		// camera.scale(2, 2);
@@ -74,7 +99,7 @@ class SceneDemo1 extends Scene {
 	public override function render(e:Engine) {
 		game.waterScene.render(e);
 		super.render(e);
-		debugHud.render(e);
+		game.hud.render(e);
 		game.debugDraw();
 	}
 

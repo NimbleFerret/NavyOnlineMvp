@@ -10,7 +10,7 @@ interface Loop {
 
 @:expose
 class GameLoop {
-	public final targetFps = 15;
+	public final targetFps = 10;
 
 	private final gameLoop:Loop;
 

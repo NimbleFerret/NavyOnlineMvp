@@ -37,7 +37,6 @@ class BattleGameplay extends BasicGameplay {
 	public final waterScene:WaterScene;
 
 	private var inputType = InputType.Game;
-
 	private var leaveCallback:Void->Void;
 
 	public function new(scene:h2d.Scene, engineMode:EngineMode, leaveCallback:Void->Void, diedCallback:Void->Void) {
@@ -152,7 +151,7 @@ class BattleGameplay extends BasicGameplay {
 	}
 
 	// --------------------------------------
-	// Multiplayer
+	// Multiplayer events
 	// --------------------------------------
 
 	public function updateDailyTasks() {
@@ -193,6 +192,15 @@ class BattleGameplay extends BasicGameplay {
 	// --------------------------------------
 	// Impl
 	// --------------------------------------
+
+	public override function debugDraw() {
+		if (GameConfig.DebugDraw) {
+			super.debugDraw();
+			for (entity in clientShells) {
+				entity.debugDraw(debugGraphics);
+			}
+		}
+	}
 
 	public function customUpdate(dt:Float, fps:Float) {
 		hud.update(dt);

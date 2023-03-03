@@ -146,3 +146,28 @@ typedef CannonFiringRangeDetails = {
 	var right:Point;
 	var left:Point;
 }
+
+// -------------------------------
+// Multiplayer
+// -------------------------------
+
+enum PlayerInputType {
+	MOVE_UP;
+	MOVE_DOWN;
+	MOVE_LEFT;
+	MOVE_RIGHT;
+	SHOOT;
+}
+
+typedef ShootInputDetails = {
+	var side:Side;
+	var aimAngleRads:Float;
+}
+
+typedef PlayerInputCommand = {
+	var index:Int;
+	var inputType:PlayerInputType;
+	var entityId:String;
+	var ?playerId:String;
+	var ?shootInputDetails:ShootInputDetails;
+}

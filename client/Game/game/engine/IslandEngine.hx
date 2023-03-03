@@ -1,9 +1,11 @@
 package game.engine;
 
+import game.engine.BaseEngine.PlayerInputCommandEngineWrapped;
 import game.engine.BaseEngine.EngineGameMode;
 import game.engine.BaseEngine.EngineMode;
 import game.engine.geometry.Line;
 import game.engine.entity.EngineCharacterEntity;
+import game.engine.entity.TypesAndClasses;
 import game.engine.entity.manager.CharacterManager;
 
 @:expose
@@ -58,6 +60,22 @@ class IslandEngine extends BaseEngine {
 		addLineCollider(109, 281, 96, 206);
 	}
 
+	// ------------------------------------
+	// Implementation
+	// ------------------------------------
+
+	public function processInputCommands(playerInputCommands:Array<PlayerInputCommandEngineWrapped>) {
+		// public function processInputCommand(playerInputCommand:PlayerInputCommand) {
+		// var success = true;
+		// switch (playerInputCommand.inputType) {
+		// 	case MOVE_UP:
+		// 	case MOVE_DOWN:
+		// 	case MOVE_LEFT:
+		// 	case MOVE_RIGHT:
+		// 	case _:
+		// }
+	}
+
 	public function engineLoopUpdate(dt:Float) {
 		for (character in mainEntityManager.entities) {
 			character.collides(false);
@@ -110,6 +128,8 @@ class IslandEngine extends BaseEngine {
 	}
 
 	public function customDelete() {}
+
+	// ------------------------------------
 
 	public function addLineCollider(x1:Int, y1:Int, x2:Int, y2:Int) {
 		lineColliders.push(new Line(x1, y1, x2, y2));

@@ -1,6 +1,5 @@
 package game.engine.entity;
 
-import hxd.Math;
 import h2d.col.Point;
 import game.engine.entity.EngineBaseGameEntity;
 import game.engine.entity.TypesAndClasses;

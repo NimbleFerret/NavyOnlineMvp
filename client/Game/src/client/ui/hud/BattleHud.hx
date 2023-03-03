@@ -209,8 +209,6 @@ class BattleHud extends BasicHud {
 	}
 
 	public function show(show:Bool) {
-		// visible = show;
-
 		if (show) {
 			if (Player.instance.ethAddress.length >= 42) {
 				dailyTasksFui.alpha = 1;

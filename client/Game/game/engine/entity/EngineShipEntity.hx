@@ -27,14 +27,12 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// -----------------------
 	// Health and damage stuff
 	// -----------------------
-	public var currentHull = 1000;
-	public var currentArmor = 1000;
+	public var currentHull = 0;
+	public var currentArmor = 0;
 
 	// -----------------------
 	// Input
 	// -----------------------
-	private var timeSinceLastShipsPosUpdate = 0.0;
-	private var lastMovementInputCheck = 0.0;
 	private var lastRotationInputCheck = 0.0;
 	private var lastLeftShootInputCheck = 0.0;
 	private var lastRightShootInputCheck = 0.0;
@@ -48,6 +46,8 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		super(getShipTypeBySize(shipObjectEntity.shipHullSize), shipObjectEntity);
 
 		this.shipObjectEntity = shipObjectEntity;
+		currentHull = this.shipObjectEntity.hull;
+		currentArmor = this.shipObjectEntity.armor;
 
 		switch (this.shipObjectEntity.direction) {
 			case North:
@@ -73,17 +73,6 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// Movement
 	// -----------------------
 
-	private function checkMovementInput() {
-		final now = haxe.Timer.stamp();
-
-		if (lastMovementInputCheck == 0 || lastMovementInputCheck + shipObjectEntity.accDelay < now) {
-			lastMovementInputCheck = now;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	private function checkRotationInput() {
 		final now = haxe.Timer.stamp();
 
@@ -97,15 +86,13 @@ class EngineShipEntity extends EngineBaseGameEntity {
 
 	public function accelerate() {
 		if (checkMovementInput()) {
+			trace('Accelerate');
 			currentSpeed += shipObjectEntity.acceleration;
 			if (currentSpeed > shipObjectEntity.maxSpeed)
 				currentSpeed = shipObjectEntity.maxSpeed;
 			if (speedChangeCallback != null) {
 				speedChangeCallback(currentSpeed);
 			}
-			return true;
-		} else {
-			return false;
 		}
 	}
 
@@ -117,9 +104,6 @@ class EngineShipEntity extends EngineBaseGameEntity {
 			if (speedChangeCallback != null) {
 				speedChangeCallback(currentSpeed);
 			}
-			return true;
-		} else {
-			return false;
 		}
 	}
 
@@ -147,9 +131,6 @@ class EngineShipEntity extends EngineBaseGameEntity {
 			if (directionChangeCallbackLeft != null) {
 				directionChangeCallbackLeft(shipObjectEntity.direction);
 			}
-			return true;
-		} else {
-			return false;
 		}
 	}
 
@@ -177,9 +158,6 @@ class EngineShipEntity extends EngineBaseGameEntity {
 			if (directionChangeCallbackRight != null) {
 				directionChangeCallbackRight(shipObjectEntity.direction);
 			}
-			return true;
-		} else {
-			return false;
 		}
 	}
 

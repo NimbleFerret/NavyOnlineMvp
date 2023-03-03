@@ -1,12 +1,15 @@
 package game.engine;
 
+import game.engine.BaseEngine.PlayerInputCommandEngineWrapped;
 import game.engine.BaseEngine.EngineGameMode;
 import game.engine.BaseEngine.EngineMode;
+import game.engine.entity.EngineBaseGameEntity;
 import game.engine.entity.TypesAndClasses;
 import game.engine.entity.EngineShipEntity;
 import game.engine.entity.EngineShellEntity;
 import game.engine.entity.manager.ShipManager;
 import game.engine.entity.manager.ShellManager;
+import game.engine.geometry.Line;
 
 typedef ShipHitByShellCallbackParams = {ship:EngineShipEntity, damage:Int}
 
@@ -25,6 +28,30 @@ class GameEngine extends BaseEngine {
 
 	public function new(engineMode = EngineMode.Server) {
 		super(engineMode, EngineGameMode.Sea, new ShipManager());
+	}
+
+	// ------------------------------------
+	// Implementation
+	// ------------------------------------
+
+	public function processInputCommands(inputs:Array<PlayerInputCommandEngineWrapped>) {
+		for (input in inputs) {
+			final ship = cast(mainEntityManager.getEntityById(input.playerInputCommand.entityId), EngineShipEntity);
+			if (ship == null && ship.getOwnerId() == input.playerInputCommand.playerId) {
+				continue;
+			}
+			switch (input.playerInputCommand.inputType) {
+				case MOVE_UP:
+					ship.accelerate();
+				case MOVE_DOWN:
+					ship.decelerate();
+				case MOVE_LEFT:
+					ship.rotateLeft();
+				case MOVE_RIGHT:
+					ship.rotateRight();
+				case SHOOT:
+			}
+		}
 	}
 
 	public function engineLoopUpdate(dt:Float) {
@@ -68,7 +95,7 @@ class GameEngine extends BaseEngine {
 			shell.update(dt);
 			for (ship in mainEntityManager.entities) {
 				if (shell.getOwnerId() != ship.getId()) {
-					if (shell.getBodyRectangle().intersectsWithRect(ship.getBodyRectangle()) && ship.isAlive) {
+					if (checkShellAndShipCollision(shell, ship) && ship.isAlive) {
 						ship.collides(true);
 						shell.collides(true);
 						final engineShipEntity = cast(ship, EngineShipEntity);
@@ -107,47 +134,52 @@ class GameEngine extends BaseEngine {
 		}
 	}
 
+	private function checkShellAndShipCollision(shell:EngineBaseGameEntity, ship:EngineBaseGameEntity) {
+		final shellLine = shell.getForwardLookingLine(15);
+		if (ship.getBodyRectangle().intersectsWithPoint(shellLine.p1))
+			return true;
+		return ship.getBodyRectangle().intersectsWithLine(new Line(shellLine.p1.x, shellLine.p1.y, shellLine.p2.x, shellLine.p2.y));
+	}
+
 	public function customDelete() {
 		createShellCallback = null;
 		deleteShellCallback = null;
 		shipHitByShellCallback = null;
 	}
 
-	public function entityMoveUp(id:String) {
-		final ship = cast(mainEntityManager.getEntityById(id), EngineShipEntity);
-		if (ship != null) {
-			return ship.accelerate();
-		} else {
-			return false;
-		}
-	}
-
-	public function entityMoveDown(id:String) {
-		final ship = cast(mainEntityManager.getEntityById(id), EngineShipEntity);
-		if (ship != null) {
-			return ship.decelerate();
-		} else {
-			return false;
-		}
-	}
-
-	public function entityMoveLeft(id:String) {
-		final ship = cast(mainEntityManager.getEntityById(id), EngineShipEntity);
-		if (ship != null) {
-			return ship.rotateLeft();
-		} else {
-			return false;
-		}
-	}
-
-	public function entityMoveRight(id:String) {
-		final ship = cast(mainEntityManager.getEntityById(id), EngineShipEntity);
-		if (ship != null) {
-			return ship.rotateRight();
-		} else {
-			return false;
-		}
-	}
+	// ------------------------------------
+	// public function entityMoveUp(id:String) {
+	// 	final ship = cast(mainEntityManager.getEntityById(id), EngineShipEntity);
+	// 	if (ship != null) {
+	// 		return ship.accelerate();
+	// 	} else {
+	// 		return false;
+	// 	}
+	// }
+	// public function entityMoveDown(id:String) {
+	// 	final ship = cast(mainEntityManager.getEntityById(id), EngineShipEntity);
+	// 	if (ship != null) {
+	// 		return ship.decelerate();
+	// 	} else {
+	// 		return false;
+	// 	}
+	// }
+	// public function entityMoveLeft(id:String) {
+	// 	final ship = cast(mainEntityManager.getEntityById(id), EngineShipEntity);
+	// 	if (ship != null) {
+	// 		return ship.rotateLeft();
+	// 	} else {
+	// 		return false;
+	// 	}
+	// }
+	// public function entityMoveRight(id:String) {
+	// 	final ship = cast(mainEntityManager.getEntityById(id), EngineShipEntity);
+	// 	if (ship != null) {
+	// 		return ship.rotateRight();
+	// 	} else {
+	// 		return false;
+	// 	}
+	// }
 
 	public function shipShootBySide(side:Side, shipId:String, serverSide:Bool = true, aimAngleRads:Float, ?shellRnd:Array<ShellRnd>) {
 		final ship = cast(mainEntityManager.getEntityById(shipId), EngineShipEntity);
