@@ -70,11 +70,11 @@ class BattleGameplay extends BasicGameplay {
 					}
 				}
 				if (gameEngine.engineMode == EngineMode.Server && !engineShellEntities[0].serverSide) {
-					Socket.instance.shoot({
-						playerId: playerId,
-						left: engineShellEntities[0].getSide() == Side.LEFT ? true : false,
-						shotParams: shotParams
-					});
+					// Socket.instance.shoot({
+					// 	playerId: playerId,
+					// 	left: engineShellEntities[0].getSide() == Side.LEFT ? true : false,
+					// 	shotParams: shotParams
+					// });
 				}
 				if (ownerEntity.getId() == playerEntityId) {
 					// TODO update UI
@@ -162,15 +162,14 @@ class BattleGameplay extends BasicGameplay {
 		hud.dailyTaskComplete(message);
 	}
 
-	public function shipShoot(message:SocketServerMessageShipShoot) {
-		if (gameState == GameState.Playing && playerId != message.playerId) {
-			final side = message.left ? Side.LEFT : Side.RIGHT;
-			final gameEngine = cast(baseEngine, GameEngine);
-			final shipId = gameEngine.getMainEntityIdByOwnerId(message.playerId);
-			gameEngine.shipShootBySide(side, shipId, true, 0, message.shotParams);
-		}
-	}
-
+	// public function shipShoot(message:SocketServerMessageShipShoot) {
+	// 	if (gameState == GameState.Playing && playerId != message.playerId) {
+	// 		final side = message.left ? Side.LEFT : Side.RIGHT;
+	// 		final gameEngine = cast(baseEngine, GameEngine);
+	// 		final shipId = gameEngine.getMainEntityIdByOwnerId(message.playerId);
+	// 		gameEngine.shipShootBySide(side, shipId, true, 0, message.shotParams);
+	// 	}
+	// }
 	// --------------------------------------
 	// Singleplayer
 	// --------------------------------------
@@ -180,13 +179,6 @@ class BattleGameplay extends BasicGameplay {
 		hud.show(true);
 		// retryDialogComp.alpha = 0;
 		// startGameDialogComp.alpha = 0;
-	}
-
-	public function addShipByClient(shipObjectEntity:ShipObjectEntity) {
-		final gameEngine = cast(baseEngine, GameEngine);
-		final shipEntity = new EngineShipEntity(shipObjectEntity);
-		gameEngine.createMainEntity(shipEntity);
-		return shipEntity;
 	}
 
 	// --------------------------------------

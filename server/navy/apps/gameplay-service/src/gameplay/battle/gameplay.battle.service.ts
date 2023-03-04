@@ -5,7 +5,7 @@ import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AppEvents } from "../../app.events";
-import { SocketClientMessageShoot, SocketClientMessageRespawn } from "../../ws/ws.protocol";
+import { SocketClientMessageRespawn } from "../../ws/ws.protocol";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayBaseService } from "../gameplay.base.service";
 import { GameplayBattleInstance } from "./gameplay.battle.instance";
@@ -23,16 +23,16 @@ export class GameplayBattleService extends GameplayBaseService {
 
     // Socket events
 
-    @OnEvent(AppEvents.PlayerShoot)
-    async handlePlayerShoot(data: SocketClientMessageShoot) {
-        const instanceId = this.playerInstanceMap.get(data.playerId);
-        if (instanceId) {
-            const gameInstance = this.instances.get(instanceId) as GameplayBattleInstance;
-            gameInstance.handlePlayerShoot(data);
-        } else {
-            // TODO add logs
-        }
-    }
+    // @OnEvent(AppEvents.PlayerShoot)
+    // async handlePlayerShoot(data: SocketClientMessageShoot) {
+    //     const instanceId = this.playerInstanceMap.get(data.playerId);
+    //     if (instanceId) {
+    //         const gameInstance = this.instances.get(instanceId) as GameplayBattleInstance;
+    //         gameInstance.handlePlayerShoot(data);
+    //     } else {
+    //         // TODO add logs
+    //     }
+    // }
 
     @OnEvent(AppEvents.PlayerRespawn)
     async handlePlayerRespawn(data: SocketClientMessageRespawn) {

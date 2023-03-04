@@ -85,16 +85,16 @@ class IslandEngine extends BaseEngine {
 			final char = cast(character, EngineCharacterEntity);
 
 			if (char.wantToMoveLeft) {
-				char.moveLeft();
+				// char.moveLeft();
 			}
 			if (char.wantToMoveRight) {
-				char.moveRight();
+				// char.moveRight();
 			}
 			if (char.wantToMoveUp) {
-				char.moveUp();
+				// char.moveUp();
 			}
 			if (char.wantToMoveDown) {
-				char.moveDown();
+				// char.moveDown();
 			}
 
 			var revertMovement = false;
@@ -108,16 +108,16 @@ class IslandEngine extends BaseEngine {
 
 			if (revertMovement) {
 				if (char.wantToMoveLeft) {
-					char.moveLeft(true);
+					// char.moveLeft(true);
 				}
 				if (char.wantToMoveRight) {
-					char.moveRight(true);
+					// char.moveRight(true);
 				}
 				if (char.wantToMoveUp) {
-					char.moveUp(true);
+					// char.moveUp(true);
 				}
 				if (char.wantToMoveDown) {
-					char.moveDown(true);
+					// char.moveDown(true);
 				}
 			}
 
@@ -142,42 +142,42 @@ class IslandEngine extends BaseEngine {
 	}
 
 	public function entityMoveUp(id:String) {
-		final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
-		if (character != null && character.moveUp()) {
-			character.wantToMoveUp = true;
-			return true;
-		} else {
-			return false;
-		}
+		// final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
+		// if (character != null && character.moveUp()) {
+		// 	character.wantToMoveUp = true;
+		// 	return true;
+		// } else {
+		// 	return false;
+		// }
 	}
 
 	public function entityMoveDown(id:String) {
-		final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
-		if (character != null && character.moveDown()) {
-			character.wantToMoveDown = true;
-			return true;
-		} else {
-			return false;
-		}
+		// final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
+		// if (character != null && character.moveDown()) {
+		// 	character.wantToMoveDown = true;
+		// 	return true;
+		// } else {
+		// 	return false;
+		// }
 	}
 
 	public function entityMoveLeft(id:String) {
-		final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
-		if (character != null && character.moveLeft()) {
-			character.wantToMoveLeft = true;
-			return true;
-		} else {
-			return false;
-		}
+		// final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
+		// if (character != null && character.moveLeft()) {
+		// 	character.wantToMoveLeft = true;
+		// 	return true;
+		// } else {
+		// 	return false;
+		// }
 	}
 
 	public function entityMoveRight(id:String) {
-		final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
-		if (character != null && character.moveRight()) {
-			character.wantToMoveRight = true;
-			return true;
-		} else {
-			return false;
-		}
+		// final character = cast(mainEntityManager.getEntityById(id), EngineCharacterEntity);
+		// if (character != null && character.moveRight()) {
+		// 	character.wantToMoveRight = true;
+		// 	return true;
+		// } else {
+		// 	return false;
+		// }
 	}
 }

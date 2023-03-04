@@ -35,12 +35,15 @@ class Socket {
 		clientSocket.on(SocketProtocol.SocketServerEventUpdateWorldState, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventUpdateWorldState, data);
 		});
-		clientSocket.on(SocketProtocol.SocketServerEventEntityMove, function(data) {
-			EventManager.instance.notify(SocketProtocol.SocketServerEventEntityMove, data);
+		clientSocket.on(SocketProtocol.SocketServerEventEntityInput, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventEntityInput, data);
 		});
-		clientSocket.on(SocketProtocol.SocketServerEventShipShoot, function(data) {
-			EventManager.instance.notify(SocketProtocol.SocketServerEventShipShoot, data);
-		});
+		// clientSocket.on(SocketProtocol.SocketServerEventEntityMove, function(data) {
+		// 	EventManager.instance.notify(SocketProtocol.SocketServerEventEntityMove, data);
+		// });
+		// clientSocket.on(SocketProtocol.SocketServerEventShipShoot, function(data) {
+		// 	EventManager.instance.notify(SocketProtocol.SocketServerEventShipShoot, data);
+		// });
 		clientSocket.on(SocketProtocol.SocketServerEventSync, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventSync, data);
 		});
@@ -57,11 +60,11 @@ class Socket {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventDailyTaskReward, data);
 		});
 
-		// final timer = new Timer(1000);
-		// timer.run = function callback() {
-		// 	lastPingTime = Date.now().getTime();
-		// 	clientSocket.emit(SocketProtocol.SocketClientEventPing, {});
-		// }
+		final timer = new Timer(1000);
+		timer.run = function callback() {
+			lastPingTime = Date.now().getTime();
+			clientSocket.emit(SocketProtocol.SocketClientEventPing, {});
+		}
 	}
 
 	public function joinGame(message:SocketProtocol.SocketClientMessageJoinGame) {
@@ -78,13 +81,12 @@ class Socket {
 		clientSocket.emit(SocketProtocol.SocketClientEventInput, message);
 	}
 
-	public function move(message:SocketProtocol.SocketClientMessageMove) {
-		clientSocket.emit(SocketProtocol.SocketClientEventMove, message);
-	}
-
-	public function shoot(message:SocketProtocol.SocketClientMessageShoot) {
-		clientSocket.emit(SocketProtocol.SocketClientEventShoot, message);
-	}
+	// public function move(message:SocketProtocol.SocketClientMessageMove) {
+	// 	clientSocket.emit(SocketProtocol.SocketClientEventMove, message);
+	// }
+	// public function shoot(message:SocketProtocol.SocketClientMessageShoot) {
+	// 	clientSocket.emit(SocketProtocol.SocketClientEventShoot, message);
+	// }
 
 	public function sync(message:SocketProtocol.SocketClientMessageSync) {
 		clientSocket.emit(SocketProtocol.SocketClientEventSync, message);

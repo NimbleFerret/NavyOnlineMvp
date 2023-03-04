@@ -13,10 +13,10 @@ import {
     SocketServerMessageGameInit,
     WsProtocol,
     SocketServerMessageRemoveEntity,
-    SocketClientMessageMove,
-    SocketServerMessageEntityMove,
     SocketClientMessageSync,
-    SocketServerMessageSync
+    SocketServerMessageSync,
+    SocketClientMessageInput,
+    SocketServerMessageEntityInput
 } from '../ws/ws.protocol';
 import { BaseGameObject } from '@app/shared-library/entities/entity.base';
 import { Constants } from '../app.constants';
@@ -51,16 +51,20 @@ export abstract class BaseGameplayInstance {
     }
 
     // -------------------------------------
-    // General
+    // Abstract
     // -------------------------------------
 
     public abstract initiateEngineEntity(playerId: string, entityid: string): any;
 
+    // -------------------------------------
+    // General
+    // -------------------------------------
+
     async addPlayer(playerId: string, entityid: string) {
         const engineEntity = this.initiateEngineEntity(playerId, entityid);
         if (engineEntity) {
-            this.playerEntityMap.set(engineEntity.ownerId, engineEntity.id);
-            this.entityPlayerMap.set(engineEntity.id, engineEntity.ownerId);
+            this.playerEntityMap.set(playerId, entityid);
+            this.entityPlayerMap.set(entityid, playerId);
             return engineEntity;
         } else {
             return undefined;
@@ -129,8 +133,6 @@ export abstract class BaseGameplayInstance {
             entities: this.collectEntities()
         } as SocketServerMessageGameInit;
 
-        console.log('handlePlayerJoinedEvent');
-
         this.notifyPlayer(data.playerId, socketServerMessageGameInit, WsProtocol.SocketServerEventGameInit);
     }
 
@@ -149,29 +151,47 @@ export abstract class BaseGameplayInstance {
         }
     }
 
-    async handlePlayerMove(data: SocketClientMessageMove) {
-        const character = this.playerEntityMap.get(data.playerId);
-        if (character) {
-            if (data.up)
-                this.gameEngine.entityMoveUp(character);
-            if (data.down)
-                this.gameEngine.entityMoveDown(character);
-            if (data.left)
-                this.gameEngine.entityMoveLeft(character);
-            if (data.right)
-                this.gameEngine.entityMoveRight(character);
+    async handlePlayerInput(data: SocketClientMessageInput) {
+        const playerEntityId = this.playerEntityMap.get(data.playerId);
+        if (playerEntityId) {
+            this.gameEngine.addInputCommand({
+                index: data.index,
+                inputType: data.playerInputType,
+                entityId: playerEntityId,
+                playerId: data.playerId
+            });
 
-            const socketServerMessageEntityMove = {
-                entityId: character,
-                up: data.up,
-                down: data.down,
-                left: data.left,
-                right: data.right
-            } as SocketServerMessageEntityMove;
-
-            this.notifyAllPlayers(socketServerMessageEntityMove, WsProtocol.SocketServerEventEntityMove);
+            const socketServerMessageEntityInput = {
+                entityId: playerEntityId,
+                playerInputType: data.playerInputType
+            } as SocketServerMessageEntityInput;
+            this.notifyAllPlayers(socketServerMessageEntityInput, WsProtocol.SocketServerEventEntityInput);
         }
     }
+
+    // async handlePlayerMove(data: SocketClientMessageMove) {
+    //     const character = this.playerEntityMap.get(data.playerId);
+    //     if (character) {
+    //         if (data.up)
+    //             this.gameEngine.entityMoveUp(character);
+    //         if (data.down)
+    //             this.gameEngine.entityMoveDown(character);
+    //         if (data.left)
+    //             this.gameEngine.entityMoveLeft(character);
+    //         if (data.right)
+    //             this.gameEngine.entityMoveRight(character);
+
+    //         const socketServerMessageEntityMove = {
+    //             entityId: character,
+    //             up: data.up,
+    //             down: data.down,
+    //             left: data.left,
+    //             right: data.right
+    //         } as SocketServerMessageEntityMove;
+
+    //         this.notifyAllPlayers(socketServerMessageEntityMove, WsProtocol.SocketServerEventEntityMove);
+    //     }
+    // }
 
     async handlePlayerSync(data: SocketClientMessageSync) {
         const ship = this.playerEntityMap.get(data.playerId);

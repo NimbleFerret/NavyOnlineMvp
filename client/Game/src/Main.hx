@@ -57,7 +57,7 @@ class Main extends hxd.App {
 		sceneGeomTest = new SceneGeomTest(engine.width, engine.height);
 
 		// Init scene ship config
-		sceneShipConfig = new SceneShipConfig();
+		// sceneShipConfig = new SceneShipConfig();
 
 		// Init scene island
 		sceneIsland = new SceneIsland(engine.width, engine.height, function leaveCallback() {
@@ -99,9 +99,9 @@ class Main extends hxd.App {
 				sceneOnlineDemo1.start("9fd5b610-93a3-45cf-9d38-311775a33ec5");
 				setScene2D(sceneOnlineDemo1);
 			case SceneShipConfig:
-				sceneShipConfig.start();
-				sevents.addScene(sceneShipConfig.hud);
-				setScene2D(sceneShipConfig);
+			// sceneShipConfig.start();
+			// sevents.addScene(sceneShipConfig.hud);
+			// setScene2D(sceneShipConfig);
 			case SceneIsland:
 				final response = new JoinSectorResponse(true, null, 0, 'instance', 1, 'islandId', '0x87400A03678dd03c8BF536404B5B14C609a23b79', 'Green', true);
 				sceneIsland.start(response);
@@ -166,7 +166,7 @@ class Main extends hxd.App {
 			case SceneGeomTest:
 				sceneGeomTest.update(dt, engine.fps);
 			case SceneShipConfig:
-				sceneShipConfig.update();
+			// sceneShipConfig.update();
 			case SceneIsland:
 				sceneIsland.update(dt, engine.fps);
 			case SceneDemo1:

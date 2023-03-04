@@ -15,11 +15,10 @@ import {
 } from "../app.events";
 import { Logger, OnModuleInit } from "@nestjs/common";
 import {
+    SocketClientMessageInput,
     SocketClientMessageJoinGame,
     SocketClientMessageLeaveGame,
-    SocketClientMessageMove,
     SocketClientMessageRespawn,
-    SocketClientMessageShoot,
     SocketClientMessageSync,
     SocketServerMessageGameInit,
     WsProtocol
@@ -106,22 +105,22 @@ export class WsGateway implements OnModuleInit {
     }
 
     @SubscribeMessage(WsProtocol.SocketClientEventInput)
-    async input(@MessageBody() data: SocketClientMessageMove) {
+    async input(@MessageBody() data: SocketClientMessageInput) {
         Logger.log(`Got input request. ${JSON.stringify(data)}`);
-        // this.eventEmitter.emit(AppEvents.PlayerMove, data);
+        this.eventEmitter.emit(AppEvents.PlayerInput, data);
     }
 
-    @SubscribeMessage(WsProtocol.SocketClientEventMove)
-    async move(@MessageBody() data: SocketClientMessageMove) {
-        Logger.log(`Got move request. ${JSON.stringify(data)}`);
-        this.eventEmitter.emit(AppEvents.PlayerMove, data);
-    }
+    // @SubscribeMessage(WsProtocol.SocketClientEventMove)
+    // async move(@MessageBody() data: SocketClientMessageMove) {
+    //     Logger.log(`Got move request. ${JSON.stringify(data)}`);
+    //     this.eventEmitter.emit(AppEvents.PlayerMove, data);
+    // }
 
-    @SubscribeMessage(WsProtocol.SocketClientEventShoot)
-    async shoot(@MessageBody() data: SocketClientMessageShoot) {
-        Logger.log(`Got shoot request. ${JSON.stringify(data)}`);
-        this.eventEmitter.emit(AppEvents.PlayerShoot, data);
-    }
+    // @SubscribeMessage(WsProtocol.SocketClientEventShoot)
+    // async shoot(@MessageBody() data: SocketClientMessageShoot) {
+    //     Logger.log(`Got shoot request. ${JSON.stringify(data)}`);
+    //     this.eventEmitter.emit(AppEvents.PlayerShoot, data);
+    // }
 
     @SubscribeMessage(WsProtocol.SocketClientEventSync)
     async sync(@MessageBody() data: SocketClientMessageSync) {

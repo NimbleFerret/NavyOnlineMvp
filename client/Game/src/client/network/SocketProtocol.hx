@@ -46,19 +46,23 @@ typedef SocketServerMessageRemoveEntity = {
 	entityId:String
 }
 
-typedef SocketServerMessageEntityMove = {
-	entityId:String,
-	up:Bool,
-	down:Bool,
-	left:Bool,
-	right:Bool
+typedef SocketServerMessageEntityInput = {
+	playerId:String,
+	playerInputType:PlayerInputType,
 }
 
-typedef SocketServerMessageShipShoot = {
-	playerId:String,
-	left:Bool,
-	shotParams:Array<ShotParams>
-}
+// typedef SocketServerMessageEntityMove = {
+// 	entityId:String,
+// 	up:Bool,
+// 	down:Bool,
+// 	left:Bool,
+// 	right:Bool
+// }
+// typedef SocketServerMessageShipShoot = {
+// 	playerId:String,
+// 	left:Bool,
+// 	shotParams:Array<ShotParams>
+// }
 
 typedef SocketServerMessageSync = {
 	entities:Array<Dynamic>
@@ -82,23 +86,28 @@ typedef SocketClientMessageLeaveGame = {
 typedef SocketClientMessageInput = {
 	playerId:String,
 	playerInputType:PlayerInputType,
+	index:Int,
 }
 
+// PlayerInputCommand
+// var index:Int;
+// var inputType:PlayerInputType;
+// var entityId:String;
+// var ?playerId:String;
+// var ?shootInputDetails:ShootInputDetails;
 //
-typedef SocketClientMessageMove = {
-	playerId:String,
-	up:Bool,
-	down:Bool,
-	left:Bool,
-	right:Bool
-}
-
-typedef SocketClientMessageShoot = {
-	playerId:String,
-	left:Bool,
-	shotParams:Array<ShotParams>
-}
-
+// typedef SocketClientMessageMove = {
+// 	playerId:String,
+// 	up:Bool,
+// 	down:Bool,
+// 	left:Bool,
+// 	right:Bool
+// }
+// typedef SocketClientMessageShoot = {
+// 	playerId:String,
+// 	left:Bool,
+// 	shotParams:Array<ShotParams>
+// }
 //
 
 typedef ShotParams = {
@@ -122,8 +131,9 @@ class SocketProtocol {
 	public static final SocketServerEventAddEntity = 'SocketServerEventAddEntity';
 	public static final SocketServerEventRemoveEntity = 'SocketServerEventRemoveEntity';
 	public static final SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
-	public static final SocketServerEventEntityMove = 'SocketServerEventEntityMove';
-	public static final SocketServerEventShipShoot = 'SocketServerEventShipShoot';
+	public static final SocketServerEventEntityInput = 'SocketServerEventEntityInput';
+	// public static final SocketServerEventEntityMove = 'SocketServerEventEntityMove';
+	// public static final SocketServerEventShipShoot = 'SocketServerEventShipShoot';
 	public static final SocketServerEventSync = 'SocketServerEventSync';
 
 	public static final SocketServerEventDailyTaskUpdate = 'SocketServerEventDailyTaskUpdate';
@@ -135,9 +145,9 @@ class SocketProtocol {
 	public static final SocketClientEventLeaveGame = 'SocketClientEventLeaveGame';
 
 	public static final SocketClientEventInput = 'SocketClientEventInput';
-	public static final SocketClientEventMove = 'SocketClientEventMove';
-	public static final SocketClientEventShoot = 'SocketClientEventShoot';
 
+	// public static final SocketClientEventMove = 'SocketClientEventMove';
+	// public static final SocketClientEventShoot = 'SocketClientEventShoot';
 	public static final SocketClientEventSync = 'SocketClientEventSync';
 	public static final SocketClientEventRespawn = 'SocketClientEventRespawn';
 }

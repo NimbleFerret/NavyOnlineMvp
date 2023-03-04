@@ -45,19 +45,24 @@ export interface SocketServerMessageRemoveEntity {
     entityId: string;
 }
 
-export interface SocketServerMessageEntityMove {
+export interface SocketServerMessageEntityInput {
     entityId: string;
-    up: boolean;
-    down: boolean;
-    left: boolean;
-    right: boolean;
+    playerInputType: PlayerInputType;
 }
 
-export interface SocketServerMessageShipShoot {
-    playerId: string;
-    left: boolean;
-    shotParams: ShotParams[];
-}
+// export interface SocketServerMessageEntityMove {
+//     entityId: string;
+//     up: boolean;
+//     down: boolean;
+//     left: boolean;
+//     right: boolean;
+// }
+
+// export interface SocketServerMessageShipShoot {
+//     playerId: string;
+//     left: boolean;
+//     shotParams: ShotParams[];
+// }
 
 export interface SocketServerMessageSync {
     tick: number;
@@ -79,27 +84,33 @@ export interface SocketClientMessageLeaveGame {
     instanceId: string;
 }
 
+export enum PlayerInputType {
+    MOVE_UP = 1,
+    MOVE_DOWN = 2,
+    MOVE_LEFT = 3,
+    MOVE_RIGHT = 4,
+    SHOOT = 5
+}
+
 export interface SocketClientMessageInput {
     playerId: string;
-    up: boolean;
-    down: boolean;
-    left: boolean;
-    right: boolean;
+    playerInputType: PlayerInputType;
+    index: number;
 }
 
-export interface SocketClientMessageMove {
-    playerId: string;
-    up: boolean;
-    down: boolean;
-    left: boolean;
-    right: boolean;
-}
+// export interface SocketClientMessageMove {
+//     playerId: string;
+//     up: boolean;
+//     down: boolean;
+//     left: boolean;
+//     right: boolean;
+// }
 
-export interface SocketClientMessageShoot {
-    playerId: string;
-    left: boolean;
-    shotParams: ShotParams[];
-}
+// export interface SocketClientMessageShoot {
+//     playerId: string;
+//     left: boolean;
+//     shotParams: ShotParams[];
+// }
 
 export interface ShotParams {
     speed: number;
@@ -123,8 +134,9 @@ export class WsProtocol {
     public static readonly SocketServerEventAddEntity = 'SocketServerEventAddEntity';
     public static readonly SocketServerEventRemoveEntity = 'SocketServerEventRemoveEntity';
     public static readonly SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
-    public static readonly SocketServerEventEntityMove = 'SocketServerEventEntityMove';
-    public static readonly SocketServerEventShipShoot = 'SocketServerEventShipShoot';
+    public static readonly SocketServerEventEntityInput = 'SocketServerEventEntityInput';
+    // public static readonly SocketServerEventEntityMove = 'SocketServerEventEntityMove';
+    // public static readonly SocketServerEventShipShoot = 'SocketServerEventShipShoot';
     public static readonly SocketServerEventSync = 'SocketServerEventSync';
 
     public static readonly SocketServerEventDailyTaskUpdate = 'SocketServerEventDailyTaskUpdate';
@@ -136,8 +148,8 @@ export class WsProtocol {
     public static readonly SocketClientEventLeaveGame = 'SocketClientEventLeaveGame';
 
     public static readonly SocketClientEventInput = 'SocketClientEventInput';
-    public static readonly SocketClientEventMove = 'SocketClientEventMove';
-    public static readonly SocketClientEventShoot = 'SocketClientEventShoot';
+    // public static readonly SocketClientEventMove = 'SocketClientEventMove';
+    // public static readonly SocketClientEventShoot = 'SocketClientEventShoot';
 
     public static readonly SocketClientEventSync = 'SocketClientEventSync';
     public static readonly SocketClientEventRespawn = 'SocketClientEventRespawn';

@@ -6,7 +6,9 @@ import { GameplayIslandService } from './island/gameplay.island.service';
 
 @Module({
     imports: [MongooseModule.forFeature([{ name: Ship.name, schema: ShipSchema }])],
-    providers: [GameplayBattleService, GameplayIslandService],
-    exports: [GameplayBattleService, GameplayIslandService]
+    providers: [GameplayBattleService],
+    // providers: [GameplayBattleService, GameplayIslandService],
+    exports: [GameplayBattleService]
+    // exports: [GameplayBattleService, GameplayIslandService]
 })
 export class GameplayModule { }

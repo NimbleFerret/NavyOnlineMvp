@@ -41,6 +41,18 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 		this.rotation += MathUtils.degreeToRads(this.shellObjectEntity.shellRnd.dir == 1 ? shellRndRotation : -shellRndRotation);
 	}
 
+	// ------------------------------------------------
+	// Abstract
+	// ------------------------------------------------
+
+	public function canMove(playerInputType:PlayerInputType) {
+		return true;
+	}
+
+	// ------------------------------------------------
+	// General
+	// ------------------------------------------------
+
 	public function onUpdate() {
 		preUpdatePos.x = getX();
 		preUpdatePos.y = getY();

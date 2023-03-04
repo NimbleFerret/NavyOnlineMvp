@@ -133,17 +133,17 @@ abstract class BaseEngine {
 	// Input
 	// -----------------------------------
 
-	public function checkLocalMovementInputAllowance(entityId:String) {
+	public function checkLocalMovementInputAllowance(entityId:String, playerInputType:PlayerInputType) {
 		final entity = mainEntityManager.getEntityById(entityId);
 		if (entity == null) {
 			return false;
 		} else {
-			return entity.checkLocalMovementInput();
+			return entity.checkLocalMovementInput() && entity.canMove(playerInputType);
 		}
 	}
 
 	public function addInputCommand(playerInputCommand:PlayerInputCommand) {
-		if (playerInputCommand.inputType != null && playerInputCommand.entityId != null) {
+		if (playerInputCommand.inputType != null && playerInputCommand.playerId != null) {
 			hotInputCommands.push({
 				playerInputCommand: playerInputCommand,
 				tick: tick

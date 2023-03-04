@@ -16,8 +16,9 @@ export enum AppEvents {
     PlayerJoinedInstance = 'PlayerJoinedInstance',
     PlayerLeave = 'PlayerLeave',
     PlayerDisconnected = 'PlayerDisconnected',
-    PlayerMove = 'PlayerMove',
-    PlayerShoot = 'PlayerShoot',
+    PlayerInput = 'PlayerInput',
+    // PlayerMove = 'PlayerMove',
+    // PlayerShoot = 'PlayerShoot',
     PlayerSync = 'PlayerSync',
     PlayerRespawn = 'PlayerRespawn',
 

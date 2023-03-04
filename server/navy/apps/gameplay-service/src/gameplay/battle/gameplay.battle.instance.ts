@@ -1,25 +1,19 @@
 import { Logger } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { AppEvents, PlayerKilledShip } from "../../app.events";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayType } from "../gameplay.base.service";
 import { Model } from "mongoose";
 import { game } from "../../js/GameEngine.js"
 import { ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import {
-    SocketServerMessageRemoveEntity,
     WsProtocol,
-    SocketServerMessageShipShoot,
+    // SocketServerMessageShipShoot,
     SocketServerMessageAddEntity,
-    SocketClientMessageShoot,
+    // SocketClientMessageShoot,
     SocketClientMessageRespawn
 } from "../../ws/ws.protocol";
-import { SharedLibraryService } from "@app/shared-library";
-// import { GameObjectShipEntity, ShipEntity } from "@app/shared-library/entities/entity.ship";
-import { AssetType, Rarity, ShipSize } from "@app/shared-library/shared-library.main";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 import { ShipEntity, ShipObjectEntity } from "@app/shared-library/entities/entity.ship";
-
 
 
 // ---------------------------------------
@@ -84,12 +78,12 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
                         rotation: shell.shellRnd.rotation
                     }
                 });
-                const socketServerMessageShipShoot = {
-                    playerId: ship.ownerId,
-                    left: shells[0].side == 'Left' ? true : false,
-                    shotParams
-                } as SocketServerMessageShipShoot;
-                this.notifyAllPlayers(socketServerMessageShipShoot, WsProtocol.SocketServerEventShipShoot);
+                // const socketServerMessageShipShoot = {
+                //     playerId: ship.ownerId,
+                //     left: shells[0].side == 'Left' ? true : false,
+                //     shotParams
+                // } as SocketServerMessageShipShoot;
+                // this.notifyAllPlayers(socketServerMessageShipShoot, WsProtocol.SocketServerEventShipShoot);
             }
         };
 
@@ -133,18 +127,18 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
     // Player input
     // --------------------------
 
-    async handlePlayerShoot(data: SocketClientMessageShoot) {
-        const ship = this.playerEntityMap.get(data.playerId);
-        if (ship) {
-            this.gameEngine.shipShootBySide(data.left ? 'Left' : 'Right', ship, data.shotParams);
-            const socketServerMessageShipShoot = {
-                playerId: data.playerId,
-                left: data.left,
-                shotParams: data.shotParams
-            } as SocketServerMessageShipShoot;
-            this.notifyAllPlayers(socketServerMessageShipShoot, WsProtocol.SocketServerEventShipShoot);
-        }
-    }
+    // async handlePlayerShoot(data: SocketClientMessageShoot) {
+    // const ship = this.playerEntityMap.get(data.playerId);
+    // if (ship) {
+    //     this.gameEngine.shipShootBySide(data.left ? 'Left' : 'Right', ship, data.shotParams);
+    //     const socketServerMessageShipShoot = {
+    //         playerId: data.playerId,
+    //         left: data.left,
+    //         shotParams: data.shotParams
+    //     } as SocketServerMessageShipShoot;
+    //     this.notifyAllPlayers(socketServerMessageShipShoot, WsProtocol.SocketServerEventShipShoot);
+    // }
+    // }
 
     async handlePlayerRespawn(data: SocketClientMessageRespawn) {
         if (!this.playerEntityMap.has(data.playerId)) {
@@ -162,7 +156,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
     // Implementations
     // --------------------------
 
-    public async initiateEngineEntity(playerId: string, entityid: string) {
+    public initiateEngineEntity(playerId: string, entityid: string) {
         const ship = ShipEntity.GetFreeShipStats(playerId, entityid);
         // if (entityid == 'free' || entityid == 'testShip') {
         //     ship = SharedLibraryService.GetFreeShip();

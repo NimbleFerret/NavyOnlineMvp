@@ -32,7 +32,7 @@ class SceneIsland extends Scene implements EventListener {
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventGameInit, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventAddEntity, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
-				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityMove, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityInput, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventSync, this);
 				leaveCallback();
@@ -45,7 +45,7 @@ class SceneIsland extends Scene implements EventListener {
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddEntity, this);
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
-			EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityMove, this);
+			EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityInput, this);
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
 		} else {
@@ -80,8 +80,8 @@ class SceneIsland extends Scene implements EventListener {
 				game.removeEntity(message);
 			case SocketProtocol.SocketServerEventUpdateWorldState:
 				game.updateWorldState(message);
-			case SocketProtocol.SocketServerEventEntityMove:
-				game.entityMove(message);
+			// case SocketProtocol.SocketServerEventEntityInput:
+			// game.entityMove(message);
 			case SocketProtocol.SocketServerEventSync:
 				game.sync(message);
 			default:

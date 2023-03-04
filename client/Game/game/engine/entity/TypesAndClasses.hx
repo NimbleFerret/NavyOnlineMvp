@@ -229,12 +229,12 @@ typedef CannonFiringRangeDetails = {
 // Multiplayer
 // -------------------------------
 
-enum PlayerInputType {
-	MOVE_UP;
-	MOVE_DOWN;
-	MOVE_LEFT;
-	MOVE_RIGHT;
-	SHOOT;
+enum abstract PlayerInputType(Int) {
+	var MOVE_UP = 1;
+	var MOVE_DOWN = 2;
+	var MOVE_LEFT = 3;
+	var MOVE_RIGHT = 4;
+	var SHOOT = 5;
 }
 
 typedef ShootInputDetails = {
@@ -245,7 +245,7 @@ typedef ShootInputDetails = {
 typedef PlayerInputCommand = {
 	var index:Int;
 	var inputType:PlayerInputType;
-	var entityId:String;
+	// var ?entityId:String;
 	var ?playerId:String;
 	var ?shootInputDetails:ShootInputDetails;
 }

@@ -153,43 +153,43 @@ class ClientCharacter extends ClientBaseGameEntity {
 	public function debugDraw(graphics:h2d.Graphics) {}
 
 	public function moveUp() {
-		if (getCharacterEngineEntity().moveUp()) {
-			idleAnim.alpha = 0;
-			upAnim.alpha = 1;
-			downAnim.alpha = 0;
-			leftAnim.alpha = 0;
-			rightAnim.alpha = 0;
-		}
+		// if (getCharacterEngineEntity().moveUp()) {
+		// 	idleAnim.alpha = 0;
+		// 	upAnim.alpha = 1;
+		// 	downAnim.alpha = 0;
+		// 	leftAnim.alpha = 0;
+		// 	rightAnim.alpha = 0;
+		// }
 	}
 
 	public function moveDown() {
-		if (getCharacterEngineEntity().moveDown()) {
-			idleAnim.alpha = 0;
-			upAnim.alpha = 0;
-			downAnim.alpha = 1;
-			leftAnim.alpha = 0;
-			rightAnim.alpha = 0;
-		}
+		// if (getCharacterEngineEntity().moveDown()) {
+		// 	idleAnim.alpha = 0;
+		// 	upAnim.alpha = 0;
+		// 	downAnim.alpha = 1;
+		// 	leftAnim.alpha = 0;
+		// 	rightAnim.alpha = 0;
+		// }
 	}
 
 	public function moveLeft() {
-		if (getCharacterEngineEntity().moveLeft()) {
-			idleAnim.alpha = 0;
-			upAnim.alpha = 0;
-			downAnim.alpha = 0;
-			leftAnim.alpha = 1;
-			rightAnim.alpha = 0;
-		}
+		// if (getCharacterEngineEntity().moveLeft()) {
+		// 	idleAnim.alpha = 0;
+		// 	upAnim.alpha = 0;
+		// 	downAnim.alpha = 0;
+		// 	leftAnim.alpha = 1;
+		// 	rightAnim.alpha = 0;
+		// }
 	}
 
 	public function moveRight() {
-		if (getCharacterEngineEntity().moveRight()) {
-			idleAnim.alpha = 0;
-			upAnim.alpha = 0;
-			downAnim.alpha = 0;
-			leftAnim.alpha = 0;
-			rightAnim.alpha = 1;
-		}
+		// if (getCharacterEngineEntity().moveRight()) {
+		// 	idleAnim.alpha = 0;
+		// 	upAnim.alpha = 0;
+		// 	downAnim.alpha = 0;
+		// 	leftAnim.alpha = 0;
+		// 	rightAnim.alpha = 1;
+		// }
 	}
 
 	private function getCharacterEngineEntity() {

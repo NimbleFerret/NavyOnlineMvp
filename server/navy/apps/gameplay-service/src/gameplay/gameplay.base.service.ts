@@ -8,8 +8,9 @@ import {
     PlayerDisconnectedEvent
 } from "../app.events";
 import {
+    SocketClientMessageInput,
     SocketClientMessageJoinGame,
-    SocketClientMessageMove,
+    // SocketClientMessageMove,
     SocketClientMessageSync
 } from "../ws/ws.protocol";
 import { BaseGameplayInstance } from "./gameplay.base.instance";
@@ -31,7 +32,7 @@ export abstract class GameplayBaseService {
     readonly maxPlayersPerInstance = 10;
     readonly instances = new Map<string, BaseGameplayInstance>();
     readonly sectorInstance = new Map<string, string>();
-    readonly playerInstanceMap = new Map<string, string>();
+    playerInstanceMap = new Map<string, string>();
 
     constructor() {
     }
@@ -152,14 +153,25 @@ export abstract class GameplayBaseService {
         }
     }
 
-    @OnEvent(AppEvents.PlayerMove)
-    async handlePlayerMove(data: SocketClientMessageMove) {
+    // @OnEvent(AppEvents.PlayerMove)
+    // async handlePlayerMove(data: SocketClientMessageMove) {
+    //     const instanceId = this.playerInstanceMap.get(data.playerId.toLowerCase());
+    //     if (instanceId) {
+    //         const instance = this.instances.get(instanceId);
+    //         instance.handlePlayerMove(data);
+    //     } else {
+    //         Logger.error(`Unable to handlePlayerMove, instanceId:${instanceId}, playerId:${data.playerId.toLowerCase()}`);
+    //     }
+    // }
+
+    @OnEvent(AppEvents.PlayerInput)
+    async handlePlayerInput(data: SocketClientMessageInput) {
         const instanceId = this.playerInstanceMap.get(data.playerId.toLowerCase());
         if (instanceId) {
             const instance = this.instances.get(instanceId);
-            instance.handlePlayerMove(data);
+            await instance.handlePlayerInput(data);
         } else {
-            // TODO add logs
+            // Logger.error(`Unable to handlePlayerMove, instanceId:${instanceId}, playerId:${data.playerId.toLowerCase()}`);
         }
     }
 
@@ -170,7 +182,7 @@ export abstract class GameplayBaseService {
             const gameInstance = this.instances.get(instanceId);
             gameInstance.handlePlayerSync(data);
         } else {
-            // TODO add logs
+            // Logger.error(`Unable to handlePlayerSync, instanceId:${instanceId}, playerId:${data.playerId.toLowerCase()}`);
         }
     }
 

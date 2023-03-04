@@ -128,29 +128,30 @@ abstract class BasicGameplay {
 		final up = K.isDown(K.UP);
 		final down = K.isDown(K.DOWN);
 
-		if (baseEngine.checkLocalMovementInputAllowance(playerEntityId)) {
-			var playerInputType:PlayerInputType = null;
-			if (left)
-				playerInputType = PlayerInputType.MOVE_LEFT;
-			if (right)
-				playerInputType = PlayerInputType.MOVE_RIGHT;
-			if (up)
-				playerInputType = PlayerInputType.MOVE_UP;
-			if (down)
-				playerInputType = PlayerInputType.MOVE_DOWN;
+		var playerInputType:PlayerInputType = null;
+		if (left)
+			playerInputType = PlayerInputType.MOVE_LEFT;
+		if (right)
+			playerInputType = PlayerInputType.MOVE_RIGHT;
+		if (up)
+			playerInputType = PlayerInputType.MOVE_UP;
+		if (down)
+			playerInputType = PlayerInputType.MOVE_DOWN;
 
-			if (playerInputType != null && (up || down || left || right)) {
-				baseEngine.addInputCommand({
-					index: ++inputIndex,
-					entityId: playerEntityId,
-					inputType: playerInputType
-				});
+		final xxx = baseEngine.checkLocalMovementInputAllowance(playerEntityId, playerInputType);
 
-				Socket.instance.input({
-					playerId: playerId,
-					playerInputType: playerInputType
-				});
-			}
+		if (playerInputType != null && (up || down || left || right) && xxx) {
+			baseEngine.addInputCommand({
+				index: ++inputIndex,
+				playerId: playerId,
+				inputType: playerInputType
+			});
+
+			Socket.instance.input({
+				index: inputIndex,
+				playerId: playerId,
+				playerInputType: playerInputType
+			});
 		}
 
 		customInput(newMousePos, K.isPressed(hxd.Key.MOUSE_LEFT), hxd.Key.isPressed(hxd.Key.MOUSE_RIGHT));
@@ -215,20 +216,30 @@ abstract class BasicGameplay {
 		}
 	}
 
-	public function entityMove(message:SocketServerMessageEntityMove) {
-		if (gameState == GameState.Playing && playerEntityId != message.entityId) {
-			if (playerEntityId != message.entityId) {
-				// if (message.up)
-				// 	moveUp(message.entityId);
-				// if (message.down)
-				// 	moveDown(message.entityId);
-				// if (message.left)
-				// 	moveLeft(message.entityId);
-				// if (message.right)
-				// 	moveRight(message.entityId);
-			}
+	public function entityInput(message:SocketServerMessageEntityInput) {
+		if (gameState == GameState.Playing && playerId != message.playerId) {
+			baseEngine.addInputCommand({
+				index: 0,
+				playerId: message.playerId,
+				inputType: message.playerInputType
+			});
 		}
 	}
+
+	// public function entityMove(message:SocketServerMessageEntityMove) {
+	// 	if (gameState == GameState.Playing && playerEntityId != message.entityId) {
+	// 		if (playerEntityId != message.entityId) {
+	// 			// if (message.up)
+	// 			// 	moveUp(message.entityId);
+	// 			// if (message.down)
+	// 			// 	moveDown(message.entityId);
+	// 			// if (message.left)
+	// 			// 	moveLeft(message.entityId);
+	// 			// if (message.right)
+	// 			// 	moveRight(message.entityId);
+	// 		}
+	// 	}
+	// }
 
 	public function removeEntity(message:SocketServerMessageRemoveEntity) {
 		if (gameState == GameState.Playing) {
@@ -291,7 +302,6 @@ abstract class BasicGameplay {
 		} else if (baseEngine.engineGameMode == EngineGameMode.Island) {
 			final islandEngine = cast(baseEngine, IslandEngine);
 			final islandEntity = cast(entity, EngineCharacterEntity);
-
 			islandEngine.createMainEntity(islandEntity, true);
 
 			var characterName = Utils.MaskEthAddress(entity.getOwnerId());

@@ -34,8 +34,9 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventAddEntity, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
-				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityMove, this);
-				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventShipShoot, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityInput, this);
+				// EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityMove, this);
+				// EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventShipShoot, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventSync, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskUpdate, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskReward, this);
@@ -58,8 +59,9 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddEntity, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
-		EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityMove, this);
-		EventManager.instance.subscribe(SocketProtocol.SocketServerEventShipShoot, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityInput, this);
+		// EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityMove, this);
+		// EventManager.instance.subscribe(SocketProtocol.SocketServerEventShipShoot, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventDailyTaskUpdate, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventDailyTaskReward, this);
@@ -101,10 +103,12 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				game.removeEntity(message);
 			case SocketProtocol.SocketServerEventUpdateWorldState:
 				game.updateWorldState(message);
-			case SocketProtocol.SocketServerEventEntityMove:
-				game.entityMove(message);
-			case SocketProtocol.SocketServerEventShipShoot:
-				game.shipShoot(message);
+			case SocketProtocol.SocketServerEventEntityInput:
+				game.entityInput(message);
+			// case SocketProtocol.SocketServerEventEntityMove:
+			// 	game.entityMove(message);
+			// case SocketProtocol.SocketServerEventShipShoot:
+			// 	game.shipShoot(message);
 			case SocketProtocol.SocketServerEventSync:
 				game.sync(message);
 			case SocketProtocol.SocketServerEventDailyTaskUpdate:

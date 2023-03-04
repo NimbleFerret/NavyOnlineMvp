@@ -33,7 +33,7 @@ export class AppService implements OnModuleInit {
     @Inject(UserServiceGrpcClientName) private readonly userServiceGrpcClient: ClientGrpc,
     @Inject(GameplayBalancerServiceGrpcClientName) private readonly gameplayBalancerServiceGrpcClient: ClientGrpc,
     private readonly gameplayBattleService: GameplayBattleService,
-    private readonly gameplayIslandService: GameplayIslandService,
+    // private readonly gameplayIslandService: GameplayIslandService,
   ) {
     // const ip = require('ip');
     // console.log(ip.address());
@@ -56,7 +56,8 @@ export class AppService implements OnModuleInit {
         address: this.address,
         region: AppService.SERVICE_REGION,
         battleInstances: this.gameplayBattleService.getInstancesInfo(),
-        islandInstances: this.gameplayIslandService.getInstancesInfo(),
+        islandInstances: undefined
+        // islandInstances: this.gameplayIslandService.getInstancesInfo(),
       }).subscribe();
     }
   }
@@ -64,7 +65,7 @@ export class AppService implements OnModuleInit {
   @Cron(CronExpression.EVERY_10_SECONDS)
   destroyEmptyInstances() {
     this.gameplayBattleService.destroyEmptyInstancesIfNeeded();
-    this.gameplayIslandService.destroyEmptyInstancesIfNeeded();
+    // this.gameplayIslandService.destroyEmptyInstancesIfNeeded();
   }
 
   async createOrJoinGame(dto: CreateOrJoinGameRequestDto) {
@@ -92,7 +93,7 @@ export class AppService implements OnModuleInit {
       case SectorContent.SECTOR_CONTENT_BASE:
       case SectorContent.SECTOR_CONTENT_ISLAND:
         console.log('Book a new island instance');
-        joinResult = this.gameplayIslandService.joinWorldOrCreate(sectorInfo.sector.x, sectorInfo.sector.y, sectorInfo.sector.sectorContent);
+        // joinResult = this.gameplayIslandService.joinWorldOrCreate(sectorInfo.sector.x, sectorInfo.sector.y, sectorInfo.sector.sectorContent);
         break;
     }
 

@@ -22,59 +22,64 @@ class EngineCharacterEntity extends EngineBaseGameEntity {
 		shape.rectOffsetY = 60;
 	}
 
-	public function moveUp(revert = false) {
-		if (revert) {
-			accelerateUp();
-			return true;
-		} else {
-			if (checkMovementInput()) {
-				accelerateDown();
-				return true;
-			} else {
-				return false;
-			}
-		}
+	// ------------------------------------------------
+	// Abstract
+	// ------------------------------------------------
+
+	public function canMove(playerInputType:PlayerInputType) {
+		return true;
 	}
 
-	public function moveDown(revert = false) {
-		if (revert) {
-			accelerateDown();
-			return true;
-		} else {
-			if (checkMovementInput()) {
-				accelerateUp();
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-
-	public function moveLeft(revert = false) {
-		if (revert) {
-			accelerateLeft();
-			return true;
-		} else {
-			if (checkMovementInput()) {
-				accelerateRight();
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-
-	public function moveRight(revert = false) {
-		if (revert) {
-			accelerateRight();
-			return true;
-		} else {
-			if (checkMovementInput()) {
-				accelerateLeft();
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
+	// public function moveUp(revert = false) {
+	// 	if (revert) {
+	// 		accelerateUp();
+	// 		return true;
+	// 	} else {
+	// 		if (checkMovementInput()) {
+	// 			accelerateDown();
+	// 			return true;
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	}
+	// }
+	// public function moveDown(revert = false) {
+	// 	if (revert) {
+	// 		accelerateDown();
+	// 		return true;
+	// 	} else {
+	// 		if (checkMovementInput()) {
+	// 			accelerateUp();
+	// 			return true;
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	}
+	// }
+	// public function moveLeft(revert = false) {
+	// 	if (revert) {
+	// 		accelerateLeft();
+	// 		return true;
+	// 	} else {
+	// 		if (checkMovementInput()) {
+	// 			accelerateRight();
+	// 			return true;
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	}
+	// }
+	// public function moveRight(revert = false) {
+	// 	if (revert) {
+	// 		accelerateRight();
+	// 		return true;
+	// 	} else {
+	// 		if (checkMovementInput()) {
+	// 			accelerateLeft();
+	// 			return true;
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	}
+	// }
 }

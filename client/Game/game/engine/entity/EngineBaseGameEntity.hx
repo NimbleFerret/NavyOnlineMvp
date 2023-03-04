@@ -14,7 +14,7 @@ interface GameEntityCustomCollide {
 	public function onCollide():Void;
 }
 
-class EngineBaseGameEntity {
+abstract class EngineBaseGameEntity {
 	// ----------------------
 	// General
 	// ----------------------
@@ -38,7 +38,6 @@ class EngineBaseGameEntity {
 	public var dx = 0.0;
 	public var dy = 0.0;
 	public var currentSpeed = 0.0;
-	public var canMove = true;
 
 	// ----------------------
 	// Geom shape
@@ -61,12 +60,19 @@ class EngineBaseGameEntity {
 		}
 	}
 
+	// ------------------------------------------------
+	// Abstract
+	// ------------------------------------------------
+
+	public abstract function canMove(playerInputType:PlayerInputType):Bool;
+
+	// ------------------------------------------------
+
 	public function update(dt:Float) {
 		lastDeltaTime = dt;
 		if (customUpdate != null)
 			customUpdate.onUpdate();
-		if (canMove)
-			move();
+		move();
 		if (customUpdate != null)
 			customUpdate.postUpdate();
 	}
@@ -137,22 +143,18 @@ class EngineBaseGameEntity {
 		}
 	}
 
-	public function accelerateLeft() {
-		baseObjectEntity.x += baseObjectEntity.acceleration;
-	}
-
-	public function accelerateRight() {
-		baseObjectEntity.x -= baseObjectEntity.acceleration;
-	}
-
-	public function accelerateUp() {
-		baseObjectEntity.y += baseObjectEntity.acceleration;
-	}
-
-	public function accelerateDown() {
-		baseObjectEntity.y -= baseObjectEntity.acceleration;
-	}
-
+	// public function accelerateLeft() {
+	// 	baseObjectEntity.x += baseObjectEntity.acceleration;
+	// }
+	// public function accelerateRight() {
+	// 	baseObjectEntity.x -= baseObjectEntity.acceleration;
+	// }
+	// public function accelerateUp() {
+	// 	baseObjectEntity.y += baseObjectEntity.acceleration;
+	// }
+	// public function accelerateDown() {
+	// 	baseObjectEntity.y -= baseObjectEntity.acceleration;
+	// }
 	// Getters
 
 	public function getX() {

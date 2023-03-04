@@ -66,6 +66,26 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		}
 	}
 
+	// ------------------------------------------------
+	// Abstract
+	// ------------------------------------------------
+
+	public function canMove(playerInputType:PlayerInputType) {
+		var result = true;
+		switch (playerInputType) {
+			case MOVE_UP:
+				if (currentSpeed + shipObjectEntity.acceleration > shipObjectEntity.maxSpeed) {
+					result = false;
+				}
+			case MOVE_DOWN:
+				if (currentSpeed - shipObjectEntity.acceleration < shipObjectEntity.minSpeed) {
+					result = false;
+				}
+			case _:
+		}
+		return result;
+	}
+
 	// -----------------------
 	// Movement
 	// -----------------------
@@ -83,7 +103,6 @@ class EngineShipEntity extends EngineBaseGameEntity {
 
 	public function accelerate() {
 		if (checkMovementInput()) {
-			trace('Accelerate');
 			currentSpeed += shipObjectEntity.acceleration;
 			if (currentSpeed > shipObjectEntity.maxSpeed)
 				currentSpeed = shipObjectEntity.maxSpeed;
