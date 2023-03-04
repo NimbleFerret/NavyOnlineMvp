@@ -21,12 +21,14 @@ class Socket {
 			latency = Date.now().getTime() - lastPingTime;
 			// trace('Latency:' + latency);
 		});
+
 		clientSocket.on(SocketProtocol.SocketServerEventGameInit, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventGameInit, data);
 		});
 		clientSocket.on(SocketProtocol.SocketServerEventAddEntity, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventAddEntity, data);
 		});
+
 		clientSocket.on(SocketProtocol.SocketServerEventRemoveEntity, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventRemoveEntity, data);
 		});
@@ -55,11 +57,11 @@ class Socket {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventDailyTaskReward, data);
 		});
 
-		final timer = new Timer(1000);
-		timer.run = function callback() {
-			lastPingTime = Date.now().getTime();
-			clientSocket.emit(SocketProtocol.SocketClientEventPing, {});
-		}
+		// final timer = new Timer(1000);
+		// timer.run = function callback() {
+		// 	lastPingTime = Date.now().getTime();
+		// 	clientSocket.emit(SocketProtocol.SocketClientEventPing, {});
+		// }
 	}
 
 	public function joinGame(message:SocketProtocol.SocketClientMessageJoinGame) {

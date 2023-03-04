@@ -6,7 +6,9 @@ import uuid.Uuid;
 class Player {
 	public static final instance:Player = new Player();
 
+	// Carefully drop playerData
 	public var playerData:PlayerData;
+
 	public var ethAddress:String;
 	public var currentShipId:String;
 	public var isCurrentShipIsFree = true;

@@ -129,6 +129,8 @@ export abstract class BaseGameplayInstance {
             entities: this.collectEntities()
         } as SocketServerMessageGameInit;
 
+        console.log('handlePlayerJoinedEvent');
+
         this.notifyPlayer(data.playerId, socketServerMessageGameInit, WsProtocol.SocketServerEventGameInit);
     }
 
@@ -186,11 +188,11 @@ export abstract class BaseGameplayInstance {
     // -------------------------------------
 
     private collectEntities() {
-        const characters: BaseGameObject[] = [];
+        const entities: BaseGameObject[] = [];
         for (const [key, value] of this.gameEngine.mainEntityManager.entities) {
-            characters.push(this.converJsEntityToTypeScript(value));
+            entities.push(this.converJsEntityToTypeScript(value));
         }
-        return characters;
+        return entities;
     }
 
     public abstract converJsEntityToTypeScript(jsEntity: any): BaseGameObject;

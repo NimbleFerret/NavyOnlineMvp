@@ -30,22 +30,22 @@ export class GameplayIslandInstance extends BaseGameplayInstance {
         };
 
         this.gameEngine.deleteEntityCallback = (entity: object) => {
-            const jsEntity = this.converJsEntityToTypeScript(entity);
+            // const jsEntity = this.converJsEntityToTypeScript(entity);
 
-            if (this.playerEntityMap.has(jsEntity.owner)) {
-                this.playerEntityMap.delete(jsEntity.owner);
-            }
+            // if (this.playerEntityMap.has(jsEntity.owner)) {
+            //     this.playerEntityMap.delete(jsEntity.owner);
+            // }
 
-            const socketServerMessageRemoveEntity = {
-                entityId: jsEntity.id
-            } as SocketServerMessageRemoveEntity;
+            // const socketServerMessageRemoveEntity = {
+            //     entityId: jsEntity.id
+            // } as SocketServerMessageRemoveEntity;
 
-            const notifyEachPlayerEventMsg = {
-                socketEvent: WsProtocol.SocketServerEventRemoveEntity,
-                message: socketServerMessageRemoveEntity
-            } as NotifyEachPlayerEventMsg;
+            // const notifyEachPlayerEventMsg = {
+            //     socketEvent: WsProtocol.SocketServerEventRemoveEntity,
+            //     message: socketServerMessageRemoveEntity
+            // } as NotifyEachPlayerEventMsg;
 
-            this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
+            // this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
         };
     }
 
@@ -58,13 +58,14 @@ export class GameplayIslandInstance extends BaseGameplayInstance {
     }
 
     public converJsEntityToTypeScript(jsEntity: any) {
-        const result = {
-            y: jsEntity.y,
-            x: jsEntity.x,
-            id: jsEntity.id,
-            owner: jsEntity.ownerId
-        } as BaseGameObject;
-        return result;
+        return {} as BaseGameObject;
+        // const result = {
+        //     y: jsEntity.y,
+        //     x: jsEntity.x,
+        //     id: jsEntity.id,
+        //     owner: jsEntity.ownerId
+        // } as BaseGameObject;
+        // return result;
     }
 
 }

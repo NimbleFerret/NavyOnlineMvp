@@ -199,7 +199,6 @@ abstract class BasicGameplay {
 			}
 			gameState = GameState.Playing;
 
-			trace("startGame");
 			customStartGame();
 		}
 	}

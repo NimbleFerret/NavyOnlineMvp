@@ -6,10 +6,6 @@ import game.engine.geometry.Point;
 import game.engine.MathUtils;
 
 class EngineShipEntity extends EngineBaseGameEntity {
-	public var role:Role;
-	public var free:Bool;
-	public var serverShipRef:String;
-
 	// -----------------------
 	// Callbacks
 	// -----------------------

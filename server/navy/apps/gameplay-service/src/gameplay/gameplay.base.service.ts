@@ -114,19 +114,21 @@ export abstract class GameplayBaseService {
 
     @OnEvent(AppEvents.PlayerJoinedInstance)
     async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
-        if (!this.playerInstanceMap.has(data.playerId.toLowerCase())) {
-            const instance = this.instances.get(data.instanceId);
-            if (instance) {
-                await instance.handlePlayerJoinedEvent(data);
-                this.playerInstanceMap.set(data.playerId.toLowerCase(), data.instanceId);
-                Logger.log(`Player: ${data.playerId} was added to the existing instance: ${data.instanceId}`);
+        if (this.instances.size > 0) {
+            if (!this.playerInstanceMap.has(data.playerId.toLowerCase())) {
+                const instance = this.instances.get(data.instanceId);
+                if (instance) {
+                    await instance.handlePlayerJoinedEvent(data);
+                    this.playerInstanceMap.set(data.playerId.toLowerCase(), data.instanceId);
+                    Logger.log(`Player: ${data.playerId} was added to the existing instance: ${data.instanceId}`);
+                } else {
+                    // Commented becasuse both island and battle gameplay has the same logic  
+                    Logger.error(`Unable to add player into any game instance. Players: ${this.playerInstanceMap.size}, Instances: ${this.instances.size}`);
+                }
             } else {
                 // Commented becasuse both island and battle gameplay has the same logic  
-                Logger.error(`Unable to add player into any game instance. Players: ${this.playerInstanceMap.size}, Instances: ${this.instances.size}`);
+                Logger.error('Player cant join more than once');
             }
-        } else {
-            // Commented becasuse both island and battle gameplay has the same logic  
-            Logger.error('Player cant join more than once');
         }
     }
 

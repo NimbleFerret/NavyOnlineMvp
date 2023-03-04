@@ -68,7 +68,7 @@ class GameEngine extends BaseEngine {
 					engineShipEntity.allowShoot = true;
 				}
 
-				if (engineShipEntity.role == Role.BOT && engineShipEntity.allowShoot) {
+				if (engineShipEntity.shipObjectEntity.role == Role.BOT && engineShipEntity.allowShoot) {
 					engineShipEntity.allowShoot = false;
 					shipShootBySide(Side.RIGHT, engineShipEntity.getId(), 0);
 				}

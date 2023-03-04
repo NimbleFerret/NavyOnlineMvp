@@ -328,13 +328,6 @@ class BattleGameplay extends BasicGameplay {
 	}
 
 	private function serverMessageToObjectEntity(message:Dynamic):ShipObjectEntity {
-		var shipRole = Role.PLAYER;
-		if (message.role == 'Bot') {
-			shipRole = Role.BOT;
-		} else if (message.role == 'Boss') {
-			shipRole = Role.BOSS;
-		}
-
 		return new ShipObjectEntity({
 			x: message.x,
 			y: message.y,
@@ -342,11 +335,11 @@ class BattleGameplay extends BasicGameplay {
 			maxSpeed: message.maxSpeed,
 			acceleration: message.acceleration,
 			direction: message.direction,
-			id: null,
+			id: message.id,
 			ownerId: playerId,
 			serverShipRef: "",
-			free: true,
-			role: shipRole,
+			free: message.free,
+			role: message.role,
 			shipHullSize: message.shipHullSize,
 			shipWindows: message.shipWindows,
 			shipCannons: message.shipCannons,

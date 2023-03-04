@@ -118,24 +118,24 @@ class ClientShip extends ClientBaseGameEntity {
 		addChild(shipTemplate);
 
 		final nickname = new h2d.Text(hxd.res.DefaultFont.get(), this);
-		if (engineShipEntity.role == Role.PLAYER) {
+		if (engineShipEntity.shipObjectEntity.role == Role.PLAYER) {
 			if (ownerId == client.Player.instance.ethAddress || ownerId == 'Player1') {
 				nickname.text = 'You';
 			} else {
 				nickname.text = Utils.MaskEthAddress(ownerId);
 			}
 			nickname.textColor = 0xFBF0DD;
-		} else if (engineShipEntity.role == Role.BOT) {
+		} else if (engineShipEntity.shipObjectEntity.role == Role.BOT) {
 			nickname.text = 'Pirate';
 			nickname.textColor = 0xFD7D7D;
-		} else if (engineShipEntity.role == Role.BOSS) {
+		} else if (engineShipEntity.shipObjectEntity.role == Role.BOSS) {
 			nickname.text = 'BOSS Pirate';
 			nickname.textColor = 0xFF0000;
 		}
 		if (shipHullSize == ShipHullSize.SMALL) {
 			nickname.setPosition(-50, -180);
 		} else {
-			if (engineShipEntity.role == Role.PLAYER) {
+			if (engineShipEntity.shipObjectEntity.role == Role.PLAYER) {
 				nickname.setPosition(-150, -220);
 			} else {
 				nickname.setPosition(-150, -220);
