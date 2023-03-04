@@ -121,14 +121,14 @@ class BattleHud extends BasicHud {
 	private var startGameDialogComp:StartGameDialogComp;
 
 	// Compass
-	private final compassEast:h2d.Tile;
-	private final compassNorthEast:h2d.Tile;
-	private final compassNorth:h2d.Tile;
-	private final compassNorthWest:h2d.Tile;
-	private final compassWest:h2d.Tile;
-	private final compassSouthWest:h2d.Tile;
-	private final compassSouth:h2d.Tile;
-	private final compassSouthEast:h2d.Tile;
+	private final compassEAST:h2d.Tile;
+	private final compassNORTH_EAST:h2d.Tile;
+	private final compassNORTH:h2d.Tile;
+	private final compassNORTH_WEST:h2d.Tile;
+	private final compassWEST:h2d.Tile;
+	private final compassSOUTH_WEST:h2d.Tile;
+	private final compassSOUTH:h2d.Tile;
+	private final compassSOUTH_EAST:h2d.Tile;
 	private final compassBmp:h2d.Bitmap;
 
 	private final leaveButton:h2d.Object;
@@ -165,16 +165,16 @@ class BattleHud extends BasicHud {
 		dailyTasksFui.x = Main.ScreenWidth - 130;
 
 		// Compass
-		compassEast = hxd.Res.compass.compass_e.toTile();
-		compassNorthEast = hxd.Res.compass.compass_ne.toTile();
-		compassNorth = hxd.Res.compass.compass_n.toTile();
-		compassNorthWest = hxd.Res.compass.compass_nw.toTile();
-		compassWest = hxd.Res.compass.compass_w.toTile();
-		compassSouthWest = hxd.Res.compass.compass_sw.toTile();
-		compassSouth = hxd.Res.compass.compass_s.toTile();
-		compassSouthEast = hxd.Res.compass.compass_se.toTile();
+		compassEAST = hxd.Res.compass.compass_e.toTile();
+		compassNORTH_EAST = hxd.Res.compass.compass_ne.toTile();
+		compassNORTH = hxd.Res.compass.compass_n.toTile();
+		compassNORTH_WEST = hxd.Res.compass.compass_nw.toTile();
+		compassWEST = hxd.Res.compass.compass_w.toTile();
+		compassSOUTH_WEST = hxd.Res.compass.compass_sw.toTile();
+		compassSOUTH = hxd.Res.compass.compass_s.toTile();
+		compassSOUTH_EAST = hxd.Res.compass.compass_se.toTile();
 
-		compassBmp = new h2d.Bitmap(compassEast);
+		compassBmp = new h2d.Bitmap(compassEAST);
 		compassBmp.setScale(0.25);
 		compassBmp.setPosition(Main.ScreenWidth / 2, Main.ScreenHeight - compassBmp.getBounds().height - 32);
 		compassBmp.alpha = 1;
@@ -253,22 +253,22 @@ class BattleHud extends BasicHud {
 		movementText.text = "Speed: " + shipStats.currentSpeed + " / " + shipStats.maxSpeed;
 
 		switch (shipStats.dir) {
-			case East:
-				compassBmp.tile = compassEast;
-			case NorthEast:
-				compassBmp.tile = compassNorthEast;
-			case North:
-				compassBmp.tile = compassNorth;
-			case NorthWest:
-				compassBmp.tile = compassNorthWest;
-			case West:
-				compassBmp.tile = compassWest;
-			case SouthWest:
-				compassBmp.tile = compassSouthWest;
-			case South:
-				compassBmp.tile = compassSouth;
-			case SouthEast:
-				compassBmp.tile = compassSouthEast;
+			case EAST:
+				compassBmp.tile = compassEAST;
+			case NORTH_EAST:
+				compassBmp.tile = compassNORTH_EAST;
+			case NORTH:
+				compassBmp.tile = compassNORTH;
+			case NORTH_WEST:
+				compassBmp.tile = compassNORTH_WEST;
+			case WEST:
+				compassBmp.tile = compassWEST;
+			case SOUTH_WEST:
+				compassBmp.tile = compassSOUTH_WEST;
+			case SOUTH:
+				compassBmp.tile = compassSOUTH;
+			case SOUTH_EAST:
+				compassBmp.tile = compassSOUTH_EAST;
 		}
 
 		// positionText.text = "Sector: " + BattleGameplay.CurrentSectorX + " / " + BattleGameplay.CurrentSectorY + ", Pos: " + Std.int(shipStats.x) + " / "

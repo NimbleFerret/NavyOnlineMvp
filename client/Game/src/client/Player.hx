@@ -1,6 +1,7 @@
 package client;
 
 import client.network.RestProtocol;
+import uuid.Uuid;
 
 class Player {
 	public static final instance:Player = new Player();
@@ -10,5 +11,8 @@ class Player {
 	public var currentShipId:String;
 	public var isCurrentShipIsFree = true;
 
-	private function new() {}
+	private function new() {
+		ethAddress = Uuid.short().toLowerCase();
+		currentShipId = "testShip";
+	}
 }

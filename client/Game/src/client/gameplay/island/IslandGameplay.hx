@@ -216,11 +216,11 @@ class IslandGameplay extends BasicGameplay {
 	}
 
 	private function serverMessageToObjectEntity(message:Dynamic):BaseObjectEntity {
-		return {
+		return new BaseObjectEntity({
 			x: message.x,
 			y: message.y,
 			id: message.id,
 			ownerId: message.ownerId
-		}
+		});
 	}
 }

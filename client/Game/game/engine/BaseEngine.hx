@@ -82,9 +82,12 @@ abstract class BaseEngine {
 
 	public abstract function customDelete():Void;
 
+	public abstract function buildEngineEntity(struct:Dynamic):EngineBaseGameEntity;
+
 	// -----------------------------------
 	// Main entity management
 	// -----------------------------------
+	// public function createMainEntity(shipObjectEntity:ShipObjectEntity) {}
 
 	public function createMainEntity(entity:EngineBaseGameEntity, fireCallback = false) {
 		mainEntityManager.add(entity);

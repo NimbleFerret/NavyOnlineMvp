@@ -79,8 +79,8 @@ class ShipTemplate extends h2d.Object {
 		final cannonsInitialPosLeft = shipSize == SMALL ? EngineShipEntityConfig.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntityConfig.LeftCannonsOffsetByDirMid.get(direction);
 
 		for (i in 0...cannonsTotal) {
-			rightSideCannons.push(new ShipCannon(this, shipSize, direction, Right, cannonsInitialPosRight.positions[i]));
-			leftSideCannons.push(new ShipCannon(this, shipSize, direction, Left, cannonsInitialPosLeft.positions[i]));
+			rightSideCannons.push(new ShipCannon(this, shipSize, direction, RIGHT, cannonsInitialPosRight.positions[i]));
+			leftSideCannons.push(new ShipCannon(this, shipSize, direction, LEFT, cannonsInitialPosLeft.positions[i]));
 		}
 
 		for (i in new ReverseIterator(cannonsTotal - 1, 0)) {
@@ -109,34 +109,34 @@ class ShipTemplate extends h2d.Object {
 	// --------------------------------------
 
 	public function updateCannonSightPos(side:Side, index:Int, point:Point) {
-		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		final cannons = side == LEFT ? leftSideCannons : rightSideCannons;
 		cannons[index].lastSightEndPointPos = point;
 	}
 
 	public function getCannonSightPos(side:Side, index:Int) {
-		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		final cannons = side == LEFT ? leftSideCannons : rightSideCannons;
 		return cannons[index].lastSightEndPointPos;
 	}
 
 	public function updateCannonFiringAreaAngle(side:Side, index:Int, angle:Float) {
-		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		final cannons = side == LEFT ? leftSideCannons : rightSideCannons;
 		cannons[index].lastSignAngle = angle;
 	}
 
 	public function getCannonFiringAreaAngle(side:Side, index:Int) {
-		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		final cannons = side == LEFT ? leftSideCannons : rightSideCannons;
 		return cannons[index].lastSignAngle;
 	}
 
 	public function updateCannonPositionOffset(side:Side, index:Int, x:Float, y:Float) {
-		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		final cannons = side == LEFT ? leftSideCannons : rightSideCannons;
 		cannons[index].positionOffset.x = x;
 		cannons[index].positionOffset.y = y;
 		cannons[index].updatePosition();
 	}
 
 	public function getCannonPositionOffset(side:Side, index:Int) {
-		final cannons = side == Left ? leftSideCannons : rightSideCannons;
+		final cannons = side == LEFT ? leftSideCannons : rightSideCannons;
 		return cannons[index].positionOffset;
 	}
 
@@ -144,49 +144,49 @@ class ShipTemplate extends h2d.Object {
 
 	public function changeDirRight() {
 		switch (direction) {
-			case East:
-				direction = SouthEast;
+			case EAST:
+				direction = SOUTH_EAST;
 				changeCannonsDrawingOrder();
-			case SouthEast:
-				direction = South;
-			case South:
-				direction = SouthWest;
-			case SouthWest:
-				direction = West;
-			case West:
-				direction = NorthWest;
-			case NorthWest:
-				direction = North;
-			case North:
-				direction = NorthEast;
+			case SOUTH_EAST:
+				direction = SOUTH;
+			case SOUTH:
+				direction = SOUTH_WEST;
+			case SOUTH_WEST:
+				direction = WEST;
+			case WEST:
+				direction = NORTH_WEST;
+			case NORTH_WEST:
+				direction = NORTH;
+			case NORTH:
+				direction = NORTH_EAST;
 				changeCannonsDrawingOrder();
-			case NorthEast:
-				direction = East;
+			case NORTH_EAST:
+				direction = EAST;
 		}
 		hanldeDirectionChange();
 	}
 
 	public function changeDirLeft() {
 		switch (direction) {
-			case East:
-				direction = NorthEast;
-			case NorthEast:
-				direction = North;
-			case North:
-				direction = NorthWest;
-			case NorthWest:
-				direction = West;
-			case West:
-				direction = SouthWest;
+			case EAST:
+				direction = NORTH_EAST;
+			case NORTH_EAST:
+				direction = NORTH;
+			case NORTH:
+				direction = NORTH_WEST;
+			case NORTH_WEST:
+				direction = WEST;
+			case WEST:
+				direction = SOUTH_WEST;
 				changeCannonsDrawingOrder();
 				shipDecorations.changeDrawingOrder();
 				decorationsChanged = true;
-			case SouthWest:
-				direction = South;
-			case South:
-				direction = SouthEast;
-			case SouthEast:
-				direction = East;
+			case SOUTH_WEST:
+				direction = SOUTH;
+			case SOUTH:
+				direction = SOUTH_EAST;
+			case SOUTH_EAST:
+				direction = EAST;
 				changeCannonsDrawingOrder();
 				shipDecorations.changeDrawingOrder();
 				decorationsChanged = true;

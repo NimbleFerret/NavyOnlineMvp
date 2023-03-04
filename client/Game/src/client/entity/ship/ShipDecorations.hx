@@ -6,25 +6,25 @@ import game.engine.entity.TypesAndClasses;
 
 class ShipDecorations extends ShipVisualComponent {
 	public static final CaptainPosMid:Map<GameEntityDirection, PosOffset> = [
-		GameEntityDirection.East => new PosOffset(-121, -44),
-		GameEntityDirection.NorthEast => new PosOffset(-79, -4),
-		GameEntityDirection.North => new PosOffset(-20, 54),
-		GameEntityDirection.NorthWest => new PosOffset(38, 0),
-		GameEntityDirection.West => new PosOffset(79, -44),
-		GameEntityDirection.SouthWest => new PosOffset(33, -64),
-		GameEntityDirection.South => new PosOffset(-21, -103),
-		GameEntityDirection.SouthEast => new PosOffset(-81, -66)
+		GameEntityDirection.EAST => new PosOffset(-121, -44),
+		GameEntityDirection.NORTH_EAST => new PosOffset(-79, -4),
+		GameEntityDirection.NORTH => new PosOffset(-20, 54),
+		GameEntityDirection.NORTH_WEST => new PosOffset(38, 0),
+		GameEntityDirection.WEST => new PosOffset(79, -44),
+		GameEntityDirection.SOUTH_WEST => new PosOffset(33, -64),
+		GameEntityDirection.SOUTH => new PosOffset(-21, -103),
+		GameEntityDirection.SOUTH_EAST => new PosOffset(-81, -66)
 	];
 
 	public static final CaptainPosSmall:Map<GameEntityDirection, PosOffset> = [
-		GameEntityDirection.East => new PosOffset(55, -33),
-		GameEntityDirection.NorthEast => new PosOffset(50, -55),
-		GameEntityDirection.North => new PosOffset(0, -66),
-		GameEntityDirection.NorthWest => new PosOffset(-44, -56),
-		GameEntityDirection.West => new PosOffset(-50, -35),
-		GameEntityDirection.SouthWest => new PosOffset(-28, -14),
-		GameEntityDirection.South => new PosOffset(0, 20),
-		GameEntityDirection.SouthEast => new PosOffset(25, -11)
+		GameEntityDirection.EAST => new PosOffset(55, -33),
+		GameEntityDirection.NORTH_EAST => new PosOffset(50, -55),
+		GameEntityDirection.NORTH => new PosOffset(0, -66),
+		GameEntityDirection.NORTH_WEST => new PosOffset(-44, -56),
+		GameEntityDirection.WEST => new PosOffset(-50, -35),
+		GameEntityDirection.SOUTH_WEST => new PosOffset(-28, -14),
+		GameEntityDirection.SOUTH => new PosOffset(0, 20),
+		GameEntityDirection.SOUTH_EAST => new PosOffset(25, -11)
 	];
 
 	// Config
@@ -32,21 +32,21 @@ class ShipDecorations extends ShipVisualComponent {
 
 	// Visuals
 	private final eastWheelTile:h2d.Tile;
-	private final northWheelTile:h2d.Tile;
-	private final northEastWheelTile:h2d.Tile;
-	private final northWestWheelTile:h2d.Tile;
+	private final NORTHWheelTile:h2d.Tile;
+	private final NORTH_EASTWheelTile:h2d.Tile;
+	private final NORTH_WESTWheelTile:h2d.Tile;
 	private final southWheelTile:h2d.Tile;
-	private final southEastWheelTile:h2d.Tile;
-	private final southWestWheelTile:h2d.Tile;
+	private final SOUTH_EASTWheelTile:h2d.Tile;
+	private final SOUTH_WESTWheelTile:h2d.Tile;
 	private final westWheelTile:h2d.Tile;
 
 	private final eastCaptainTile:h2d.Tile;
-	private final northCaptainTile:h2d.Tile;
-	private final northEastCaptainTile:h2d.Tile;
-	private final northWestCaptainTile:h2d.Tile;
+	private final NORTHCaptainTile:h2d.Tile;
+	private final NORTH_EASTCaptainTile:h2d.Tile;
+	private final NORTH_WESTCaptainTile:h2d.Tile;
 	private final southCaptainTile:h2d.Tile;
-	private final southEastCaptainTile:h2d.Tile;
-	private final southWestCaptainTile:h2d.Tile;
+	private final SOUTH_EASTCaptainTile:h2d.Tile;
+	private final SOUTH_WESTCaptainTile:h2d.Tile;
 	private final westCaptainTile:h2d.Tile;
 
 	private final bmp_wheel:h2d.Bitmap;
@@ -63,49 +63,49 @@ class ShipDecorations extends ShipVisualComponent {
 
 		this.size = size;
 
-		eastWheelTile = getWheelByDirectionAndSize(East, size).center();
-		northWheelTile = getWheelByDirectionAndSize(North, size).center();
-		northEastWheelTile = getWheelByDirectionAndSize(NorthEast, size).center();
-		northWestWheelTile = getWheelByDirectionAndSize(NorthWest, size).center();
-		southWheelTile = getWheelByDirectionAndSize(South, size).center();
-		southEastWheelTile = getWheelByDirectionAndSize(SouthEast, size).center();
-		southWestWheelTile = getWheelByDirectionAndSize(SouthWest, size).center();
-		westWheelTile = getWheelByDirectionAndSize(West, size).center();
+		eastWheelTile = getWheelByDirectionAndSize(EAST, size).center();
+		NORTHWheelTile = getWheelByDirectionAndSize(NORTH, size).center();
+		NORTH_EASTWheelTile = getWheelByDirectionAndSize(NORTH_EAST, size).center();
+		NORTH_WESTWheelTile = getWheelByDirectionAndSize(NORTH_WEST, size).center();
+		southWheelTile = getWheelByDirectionAndSize(SOUTH, size).center();
+		SOUTH_EASTWheelTile = getWheelByDirectionAndSize(SOUTH_EAST, size).center();
+		SOUTH_WESTWheelTile = getWheelByDirectionAndSize(SOUTH_WEST, size).center();
+		westWheelTile = getWheelByDirectionAndSize(WEST, size).center();
 
 		eastCaptainTile = hxd.Res.captain.captain_e.toTile().center();
-		northCaptainTile = hxd.Res.captain.captain_n.toTile().center();
-		northEastCaptainTile = hxd.Res.captain.captain_ne.toTile().center();
-		northWestCaptainTile = hxd.Res.captain.captain_nw.toTile().center();
+		NORTHCaptainTile = hxd.Res.captain.captain_n.toTile().center();
+		NORTH_EASTCaptainTile = hxd.Res.captain.captain_ne.toTile().center();
+		NORTH_WESTCaptainTile = hxd.Res.captain.captain_nw.toTile().center();
 		southCaptainTile = hxd.Res.captain.captain_s.toTile().center();
-		southEastCaptainTile = hxd.Res.captain.captain_se.toTile().center();
-		southWestCaptainTile = hxd.Res.captain.captain_sw.toTile().center();
+		SOUTH_EASTCaptainTile = hxd.Res.captain.captain_se.toTile().center();
+		SOUTH_WESTCaptainTile = hxd.Res.captain.captain_sw.toTile().center();
 		westCaptainTile = hxd.Res.captain.captain_w.toTile().center();
 
 		switch (direction) {
-			case East:
+			case EAST:
 				bmp_wheel = new h2d.Bitmap(eastWheelTile);
 				bmp_captain = new h2d.Bitmap(eastCaptainTile);
-			case NorthEast:
-				bmp_wheel = new h2d.Bitmap(northEastWheelTile);
-				bmp_captain = new h2d.Bitmap(northEastCaptainTile);
-			case North:
-				bmp_wheel = new h2d.Bitmap(northWheelTile);
-				bmp_captain = new h2d.Bitmap(northCaptainTile);
-			case NorthWest:
-				bmp_wheel = new h2d.Bitmap(northWestWheelTile);
-				bmp_captain = new h2d.Bitmap(northWestCaptainTile);
-			case West:
+			case NORTH_EAST:
+				bmp_wheel = new h2d.Bitmap(NORTH_EASTWheelTile);
+				bmp_captain = new h2d.Bitmap(NORTH_EASTCaptainTile);
+			case NORTH:
+				bmp_wheel = new h2d.Bitmap(NORTHWheelTile);
+				bmp_captain = new h2d.Bitmap(NORTHCaptainTile);
+			case NORTH_WEST:
+				bmp_wheel = new h2d.Bitmap(NORTH_WESTWheelTile);
+				bmp_captain = new h2d.Bitmap(NORTH_WESTCaptainTile);
+			case WEST:
 				bmp_wheel = new h2d.Bitmap(westWheelTile);
 				bmp_captain = new h2d.Bitmap(westCaptainTile);
-			case SouthWest:
-				bmp_wheel = new h2d.Bitmap(southWestWheelTile);
-				bmp_captain = new h2d.Bitmap(southWestCaptainTile);
-			case South:
+			case SOUTH_WEST:
+				bmp_wheel = new h2d.Bitmap(SOUTH_WESTWheelTile);
+				bmp_captain = new h2d.Bitmap(SOUTH_WESTCaptainTile);
+			case SOUTH:
 				bmp_wheel = new h2d.Bitmap(southWheelTile);
 				bmp_captain = new h2d.Bitmap(southCaptainTile);
-			case SouthEast:
-				bmp_wheel = new h2d.Bitmap(southEastWheelTile);
-				bmp_captain = new h2d.Bitmap(southEastCaptainTile);
+			case SOUTH_EAST:
+				bmp_wheel = new h2d.Bitmap(SOUTH_EASTWheelTile);
+				bmp_captain = new h2d.Bitmap(SOUTH_EASTCaptainTile);
 		}
 
 		final captainPos = size == MEDIUM ? CaptainPosMid.get(direction) : CaptainPosSmall.get(direction);
@@ -118,30 +118,30 @@ class ShipDecorations extends ShipVisualComponent {
 
 	function changeTilesDirection() {
 		switch (direction) {
-			case East:
+			case EAST:
 				bmp_wheel.tile = eastWheelTile;
 				bmp_captain.tile = eastCaptainTile;
-			case NorthEast:
-				bmp_wheel.tile = northEastWheelTile;
-				bmp_captain.tile = northEastCaptainTile;
-			case North:
-				bmp_wheel.tile = northWheelTile;
-				bmp_captain.tile = northCaptainTile;
-			case NorthWest:
-				bmp_wheel.tile = northWestWheelTile;
-				bmp_captain.tile = northWestCaptainTile;
-			case West:
+			case NORTH_EAST:
+				bmp_wheel.tile = NORTH_EASTWheelTile;
+				bmp_captain.tile = NORTH_EASTCaptainTile;
+			case NORTH:
+				bmp_wheel.tile = NORTHWheelTile;
+				bmp_captain.tile = NORTHCaptainTile;
+			case NORTH_WEST:
+				bmp_wheel.tile = NORTH_WESTWheelTile;
+				bmp_captain.tile = NORTH_WESTCaptainTile;
+			case WEST:
 				bmp_wheel.tile = westWheelTile;
 				bmp_captain.tile = westCaptainTile;
-			case SouthWest:
-				bmp_wheel.tile = southWestWheelTile;
-				bmp_captain.tile = southWestCaptainTile;
-			case South:
+			case SOUTH_WEST:
+				bmp_wheel.tile = SOUTH_WESTWheelTile;
+				bmp_captain.tile = SOUTH_WESTCaptainTile;
+			case SOUTH:
 				bmp_wheel.tile = southWheelTile;
 				bmp_captain.tile = southCaptainTile;
-			case SouthEast:
-				bmp_wheel.tile = southEastWheelTile;
-				bmp_captain.tile = southEastCaptainTile;
+			case SOUTH_EAST:
+				bmp_wheel.tile = SOUTH_EASTWheelTile;
+				bmp_captain.tile = SOUTH_EASTCaptainTile;
 		}
 
 		final captainPos = size == MEDIUM ? CaptainPosMid.get(direction) : CaptainPosSmall.get(direction);
@@ -173,21 +173,21 @@ class ShipDecorations extends ShipVisualComponent {
 
 	private function getWheelByDirectionAndSize(dir:GameEntityDirection, size:ShipHullSize) {
 		switch (dir) {
-			case East:
+			case EAST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Wheel.Wheel3.toTile() : hxd.Res.small_ship.Wheel.wheel_e.toTile();
-			case NorthEast:
+			case NORTH_EAST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Wheel.Wheel4.toTile() : hxd.Res.small_ship.Wheel.wheel_ne.toTile();
-			case North:
+			case NORTH:
 				return size == MEDIUM ? hxd.Res.mid_ship.Wheel.Wheel5.toTile() : hxd.Res.small_ship.Wheel.wheel_n.toTile();
-			case NorthWest:
+			case NORTH_WEST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Wheel.Wheel6.toTile() : hxd.Res.small_ship.Wheel.wheel_nw.toTile();
-			case West:
+			case WEST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Wheel.Wheel7.toTile() : hxd.Res.small_ship.Wheel.wheel_w.toTile();
-			case SouthWest:
+			case SOUTH_WEST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Wheel.Wheel8.toTile() : hxd.Res.small_ship.Wheel.wheel_sw.toTile();
-			case South:
+			case SOUTH:
 				return size == MEDIUM ? hxd.Res.mid_ship.Wheel.Wheel1.toTile() : hxd.Res.small_ship.Wheel.wheel_s.toTile();
-			case SouthEast:
+			case SOUTH_EAST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Wheel.Wheel2.toTile() : hxd.Res.small_ship.Wheel.wheel_se.toTile();
 		}
 	}

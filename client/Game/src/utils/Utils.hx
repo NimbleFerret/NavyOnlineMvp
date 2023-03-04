@@ -1,15 +1,21 @@
 package utils;
 
-import h2d.col.Point;
-import client.GameConfig;
 import game.engine.geometry.Rectangle;
 
 class Utils {
+	public static function EngineToClientPoint(p:game.engine.geometry.Point) {
+		return new h2d.col.Point(p.x, p.y);
+	}
+
+	public static function ClientToEnginePoint(p:h2d.col.Point) {
+		return new game.engine.geometry.Point(p.x, p.y);
+	}
+
 	public static function MaskEthAddress(text:String) {
 		return text.substring(0, 4) + '...' + text.substring(text.length - 4, text.length);
 	}
 
-	public static function DrawLine(graphics:h2d.Graphics, from:Point, to:Point, color:Int) {
+	public static function DrawLine(graphics:h2d.Graphics, from:h2d.col.Point, to:h2d.col.Point, color:Int) {
 		graphics.lineStyle(1, color);
 
 		graphics.moveTo(from.x, from.y);

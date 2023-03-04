@@ -21,18 +21,18 @@ class SceneShipConfig extends Scene {
 		camera.setViewport(1920, 1080, 0, 0);
 		camera.setScale(3.5, 3.5);
 
-		ship = new ClientShip(new EngineShipEntity({
+		ship = new ClientShip(new EngineShipEntity(new ShipObjectEntity({
 			x: -100,
 			y: -100,
 			minSpeed: 0,
 			maxSpeed: 300,
 			acceleration: 50,
-			direction: GameEntityDirection.East,
+			direction: GameEntityDirection.EAST,
 			id: null,
 			ownerId: "123",
 			serverShipRef: "",
 			free: true,
-			role: Role.Player,
+			role: Role.PLAYER,
 			shipHullSize: ShipHullSize.SMALL,
 			shipWindows: ShipWindows.NONE,
 			shipCannons: ShipCannons.TWO,
@@ -44,7 +44,7 @@ class SceneShipConfig extends Scene {
 			accDelay: 0.500,
 			turnDelay: 0.500,
 			fireDelay: 0.500
-		}));
+		})));
 
 		addChild(ship);
 		this.debugGraphics = new h2d.Graphics(this);
@@ -70,16 +70,16 @@ class SceneShipConfig extends Scene {
 		final s = ship.shipTemplate;
 
 		for (i in 0...s.cannonsTotal) {
-			hud.addSlider("Left cannon " + (i + 1) + " X offset ", function() return s.getCannonPositionOffset(Left, i).x,
-				function(v) s.updateCannonPositionOffset(Left, i, v, 0), -200, 200, 2);
-			hud.addSlider("Left cannon " + (i + 1) + " Y offset ", function() return s.getCannonPositionOffset(Left, i).y,
-				function(v) s.updateCannonPositionOffset(Left, i, 0, v), -200, 200, 2);
+			hud.addSlider("Left cannon " + (i + 1) + " X offset ", function() return s.getCannonPositionOffset(LEFT, i).x,
+				function(v) s.updateCannonPositionOffset(LEFT, i, v, 0), -200, 200, 2);
+			hud.addSlider("Left cannon " + (i + 1) + " Y offset ", function() return s.getCannonPositionOffset(LEFT, i).y,
+				function(v) s.updateCannonPositionOffset(LEFT, i, 0, v), -200, 200, 2);
 		}
 		for (i in 0...s.cannonsTotal) {
-			hud.addSlider("Right cannon " + (i + 1) + " X offset ", function() return s.getCannonPositionOffset(Right, i).x,
-				function(v) s.updateCannonPositionOffset(Right, i, v, 0), -200, 200, 2);
-			hud.addSlider("Right cannon " + (i + 1) + " Y offset ", function() return s.getCannonPositionOffset(Right, i).y,
-				function(v) s.updateCannonPositionOffset(Right, i, 0, v), -200, 200, 2);
+			hud.addSlider("Right cannon " + (i + 1) + " X offset ", function() return s.getCannonPositionOffset(RIGHT, i).x,
+				function(v) s.updateCannonPositionOffset(RIGHT, i, v, 0), -200, 200, 2);
+			hud.addSlider("Right cannon " + (i + 1) + " Y offset ", function() return s.getCannonPositionOffset(RIGHT, i).y,
+				function(v) s.updateCannonPositionOffset(RIGHT, i, 0, v), -200, 200, 2);
 		}
 
 		// -------------------------------

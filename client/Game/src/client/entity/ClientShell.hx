@@ -1,9 +1,7 @@
 package client.entity;
 
-import h2d.col.Point;
-import game.engine.MathUtils;
-import utils.Utils;
 import game.engine.entity.EngineShellEntity;
+import utils.Utils;
 
 class ClientShell extends ClientBaseGameEntity {
 	public function new(engineShellEntity:EngineShellEntity, ownerShip:ClientShip) {
@@ -39,6 +37,8 @@ class ClientShell extends ClientBaseGameEntity {
 		Utils.DrawRect(graphics, shipEntity.getBodyRectangle(), GameConfig.GreenColor);
 
 		final forwardLine = shipEntity.getForwardLookingLine(50);
-		Utils.DrawLine(graphics, forwardLine.p1, forwardLine.p2, GameConfig.RedColor);
+		final p1 = Utils.EngineToClientPoint(forwardLine.p1);
+		final p2 = Utils.EngineToClientPoint(forwardLine.p2);
+		Utils.DrawLine(graphics, p1, p2, GameConfig.RedColor);
 	}
 }

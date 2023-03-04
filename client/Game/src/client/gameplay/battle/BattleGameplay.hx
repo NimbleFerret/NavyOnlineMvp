@@ -72,7 +72,7 @@ class BattleGameplay extends BasicGameplay {
 				if (gameEngine.engineMode == EngineMode.Server && !engineShellEntities[0].serverSide) {
 					Socket.instance.shoot({
 						playerId: playerId,
-						left: engineShellEntities[0].getSide() == Side.Left ? true : false,
+						left: engineShellEntities[0].getSide() == Side.LEFT ? true : false,
 						shotParams: shotParams
 					});
 				}
@@ -164,7 +164,7 @@ class BattleGameplay extends BasicGameplay {
 
 	public function shipShoot(message:SocketServerMessageShipShoot) {
 		if (gameState == GameState.Playing && playerId != message.playerId) {
-			final side = message.left ? Side.Left : Side.Right;
+			final side = message.left ? Side.LEFT : Side.RIGHT;
 			final gameEngine = cast(baseEngine, GameEngine);
 			final shipId = gameEngine.getMainEntityIdByOwnerId(message.playerId);
 			gameEngine.shipShootBySide(side, shipId, true, 0, message.shotParams);
@@ -249,7 +249,7 @@ class BattleGameplay extends BasicGameplay {
 			if (playerShip != null) {
 				final mouseToShipRelation = getMouseToShipRelation();
 				if (mouseToShipRelation.toTheLeft || mouseToShipRelation.toTheRight) {
-					playerShip.updateCannonsSight(debugGraphics, mouseToShipRelation.toTheLeft ? Left : Right, mouseToShipRelation.projectedMouseCoords);
+					playerShip.updateCannonsSight(debugGraphics, mouseToShipRelation.toTheLeft ? LEFT : RIGHT, mouseToShipRelation.projectedMouseCoords);
 				}
 				waterScene.updatePlayerMovement(playerShip.isMoving, playerShip.isMovingForward, playerShip.localDirection, playerShip.currentSpeed);
 			} else {
@@ -272,7 +272,7 @@ class BattleGameplay extends BasicGameplay {
 			final mouseToShipRelation = getMouseToShipRelation();
 			final gameEngine = cast(baseEngine, GameEngine);
 			final playerShip = cast(getPlayerEntity(), ClientShip);
-			final side = mouseToShipRelation.toTheLeft ? Left : Right;
+			final side = mouseToShipRelation.toTheLeft ? LEFT : RIGHT;
 			final cannonsFiringRange = playerShip.getCannonsFiringAreaBySide(side);
 			for (index in 0...cannonsFiringRange.length) {
 				gameEngine.shipShootBySide(side, playerEntityId, false, playerShip.getCannonFiringAreaAngle(side, index));
@@ -328,28 +328,28 @@ class BattleGameplay extends BasicGameplay {
 	}
 
 	private function serverMessageToObjectEntity(message:Dynamic):ShipObjectEntity {
-		var shipRole = Role.Player;
+		var shipRole = Role.PLAYER;
 		if (message.role == 'Bot') {
-			shipRole = Role.Bot;
+			shipRole = Role.BOT;
 		} else if (message.role == 'Boss') {
-			shipRole = Role.Boss;
+			shipRole = Role.BOSS;
 		}
 
-		return {
+		return new ShipObjectEntity({
 			x: message.x,
 			y: message.y,
 			minSpeed: message.minSpeed,
 			maxSpeed: message.maxSpeed,
 			acceleration: message.acceleration,
-			direction: GameEntityDirection.createByIndex(message.direction),
+			direction: message.direction,
 			id: null,
 			ownerId: playerId,
 			serverShipRef: "",
 			free: true,
 			role: shipRole,
-			shipHullSize: ShipHullSize.createByIndex(message.shipHullSize),
-			shipWindows: ShipWindows.createByIndex(message.shipWindows),
-			shipCannons: ShipCannons.createByIndex(message.shipCannons),
+			shipHullSize: message.shipHullSize,
+			shipWindows: message.shipWindows,
+			shipCannons: message.shipCannons,
 			cannonsRange: message.cannonsRange,
 			cannonsDamage: message.cannonsDamage,
 			cannonsAngleSpread: message.cannonsAngleSpread,
@@ -358,7 +358,7 @@ class BattleGameplay extends BasicGameplay {
 			accDelay: message.accDelay,
 			turnDelay: message.turnDelay,
 			fireDelay: message.fireDelay
-		}
+		});
 	}
 
 	private function clearObjects() {

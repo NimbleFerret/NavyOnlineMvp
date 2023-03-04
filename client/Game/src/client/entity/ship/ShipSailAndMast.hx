@@ -7,12 +7,12 @@ import game.engine.entity.TypesAndClasses;
 class ShipSailAndMast extends ShipVisualComponent {
 	private final bmp_sail:h2d.Bitmap;
 	private final eastSailTile:h2d.Tile;
-	private final northSailTile:h2d.Tile;
-	private final northEastSailTile:h2d.Tile;
-	private final northWestSailTile:h2d.Tile;
+	private final NORTHSailTile:h2d.Tile;
+	private final NORTH_EASTSailTile:h2d.Tile;
+	private final NORTH_WESTSailTile:h2d.Tile;
 	private final southSailTile:h2d.Tile;
-	private final southEastSailTile:h2d.Tile;
-	private final southWestSailTile:h2d.Tile;
+	private final SOUTH_EASTSailTile:h2d.Tile;
+	private final SOUTH_WESTSailTile:h2d.Tile;
 	private final westSailTile:h2d.Tile;
 
 	private final layers:h2d.Layers;
@@ -25,32 +25,32 @@ class ShipSailAndMast extends ShipVisualComponent {
 
 		layers = new Layers(this);
 
-		eastSailTile = getSailByDirectionAndSize(East, size).center();
-		northSailTile = getSailByDirectionAndSize(North, size).center();
-		northEastSailTile = getSailByDirectionAndSize(NorthEast, size).center();
-		northWestSailTile = getSailByDirectionAndSize(NorthWest, size).center();
-		southSailTile = getSailByDirectionAndSize(South, size).center();
-		southEastSailTile = getSailByDirectionAndSize(SouthEast, size).center();
-		southWestSailTile = getSailByDirectionAndSize(SouthWest, size).center();
-		westSailTile = getSailByDirectionAndSize(West, size).center();
+		eastSailTile = getSailByDirectionAndSize(EAST, size).center();
+		NORTHSailTile = getSailByDirectionAndSize(NORTH, size).center();
+		NORTH_EASTSailTile = getSailByDirectionAndSize(NORTH_EAST, size).center();
+		NORTH_WESTSailTile = getSailByDirectionAndSize(NORTH_WEST, size).center();
+		southSailTile = getSailByDirectionAndSize(SOUTH, size).center();
+		SOUTH_EASTSailTile = getSailByDirectionAndSize(SOUTH_EAST, size).center();
+		SOUTH_WESTSailTile = getSailByDirectionAndSize(SOUTH_WEST, size).center();
+		westSailTile = getSailByDirectionAndSize(WEST, size).center();
 
 		switch (direction) {
-			case East:
+			case EAST:
 				bmp_sail = new h2d.Bitmap(eastSailTile);
-			case NorthEast:
-				bmp_sail = new h2d.Bitmap(northEastSailTile);
-			case North:
-				bmp_sail = new h2d.Bitmap(northSailTile);
-			case NorthWest:
-				bmp_sail = new h2d.Bitmap(northWestSailTile);
-			case West:
+			case NORTH_EAST:
+				bmp_sail = new h2d.Bitmap(NORTH_EASTSailTile);
+			case NORTH:
+				bmp_sail = new h2d.Bitmap(NORTHSailTile);
+			case NORTH_WEST:
+				bmp_sail = new h2d.Bitmap(NORTH_WESTSailTile);
+			case WEST:
 				bmp_sail = new h2d.Bitmap(westSailTile);
-			case SouthWest:
-				bmp_sail = new h2d.Bitmap(southWestSailTile);
-			case South:
+			case SOUTH_WEST:
+				bmp_sail = new h2d.Bitmap(SOUTH_WESTSailTile);
+			case SOUTH:
 				bmp_sail = new h2d.Bitmap(southSailTile);
-			case SouthEast:
-				bmp_sail = new h2d.Bitmap(southEastSailTile);
+			case SOUTH_EAST:
+				bmp_sail = new h2d.Bitmap(SOUTH_EASTSailTile);
 		}
 
 		final mastTile = getMastByDirectionAndSize(size).center();
@@ -70,34 +70,34 @@ class ShipSailAndMast extends ShipVisualComponent {
 
 	public function changeTilesDirection() {
 		switch (this.direction) {
-			case East:
+			case EAST:
 				bmp_sail.tile = eastSailTile;
-			case NorthEast:
-				if (prevDirection == East && sailAndMastDrawingOrder == 2) {
+			case NORTH_EAST:
+				if (prevDirection == EAST && sailAndMastDrawingOrder == 2) {
 					swapSailAndMastDrawOrder();
 				}
-				bmp_sail.tile = northEastSailTile;
-			case North:
-				bmp_sail.tile = northSailTile;
-			case NorthWest:
-				if (prevDirection == West && sailAndMastDrawingOrder == 2) {
+				bmp_sail.tile = NORTH_EASTSailTile;
+			case NORTH:
+				bmp_sail.tile = NORTHSailTile;
+			case NORTH_WEST:
+				if (prevDirection == WEST && sailAndMastDrawingOrder == 2) {
 					swapSailAndMastDrawOrder();
 				}
-				bmp_sail.tile = northWestSailTile;
-			case West:
+				bmp_sail.tile = NORTH_WESTSailTile;
+			case WEST:
 				bmp_sail.tile = westSailTile;
-			case SouthWest:
-				if (prevDirection == West && sailAndMastDrawingOrder == 1) {
+			case SOUTH_WEST:
+				if (prevDirection == WEST && sailAndMastDrawingOrder == 1) {
 					swapSailAndMastDrawOrder();
 				}
-				bmp_sail.tile = southWestSailTile;
-			case South:
+				bmp_sail.tile = SOUTH_WESTSailTile;
+			case SOUTH:
 				bmp_sail.tile = southSailTile;
-			case SouthEast:
-				if (prevDirection == East && sailAndMastDrawingOrder == 1) {
+			case SOUTH_EAST:
+				if (prevDirection == EAST && sailAndMastDrawingOrder == 1) {
 					swapSailAndMastDrawOrder();
 				}
-				bmp_sail.tile = southEastSailTile;
+				bmp_sail.tile = SOUTH_EASTSailTile;
 		}
 	}
 
@@ -139,21 +139,21 @@ class ShipSailAndMast extends ShipVisualComponent {
 
 	private function getSailByDirectionAndSize(dir:GameEntityDirection, size:ShipHullSize) {
 		switch (dir) {
-			case East:
+			case EAST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Sail.Sail3.toTile() : hxd.Res.small_ship.Sail.sail_e.toTile();
-			case NorthEast:
+			case NORTH_EAST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Sail.Sail4.toTile() : hxd.Res.small_ship.Sail.sail_ne.toTile();
-			case North:
+			case NORTH:
 				return size == MEDIUM ? hxd.Res.mid_ship.Sail.Sail5.toTile() : hxd.Res.small_ship.Sail.sail_n.toTile();
-			case NorthWest:
+			case NORTH_WEST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Sail.Sail6.toTile() : hxd.Res.small_ship.Sail.sail_nw.toTile();
-			case West:
+			case WEST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Sail.Sail7.toTile() : hxd.Res.small_ship.Sail.sail_w.toTile();
-			case SouthWest:
+			case SOUTH_WEST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Sail.Sail8.toTile() : hxd.Res.small_ship.Sail.sail_sw.toTile();
-			case South:
+			case SOUTH:
 				return size == MEDIUM ? hxd.Res.mid_ship.Sail.Sail1.toTile() : hxd.Res.small_ship.Sail.sail_s.toTile();
-			case SouthEast:
+			case SOUTH_EAST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Sail.Sail2.toTile() : hxd.Res.small_ship.Sail.sail_se.toTile();
 		}
 	}

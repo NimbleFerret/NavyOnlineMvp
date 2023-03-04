@@ -51,7 +51,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 			playerId: Player.instance.ethAddress,
 			instanceId: instanceId,
 			sectorType: 1,
-			shipId: Player.instance.currentShipId
+			entityId: Player.instance.currentShipId
 		});
 
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);

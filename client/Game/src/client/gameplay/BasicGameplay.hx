@@ -140,20 +140,15 @@ abstract class BasicGameplay {
 				playerInputType = PlayerInputType.MOVE_DOWN;
 
 			if (playerInputType != null && (up || down || left || right)) {
-				trace('Allow local input');
-
 				baseEngine.addInputCommand({
 					index: ++inputIndex,
 					entityId: playerEntityId,
 					inputType: playerInputType
 				});
 
-				Socket.instance.move({
+				Socket.instance.input({
 					playerId: playerId,
-					up: up,
-					down: down,
-					left: left,
-					right: right
+					playerInputType: playerInputType
 				});
 			}
 		}

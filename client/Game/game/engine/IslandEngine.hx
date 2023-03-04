@@ -1,5 +1,6 @@
 package game.engine;
 
+import game.engine.entity.EngineShipEntity;
 import game.engine.BaseEngine.PlayerInputCommandEngineWrapped;
 import game.engine.BaseEngine.EngineGameMode;
 import game.engine.BaseEngine.EngineMode;
@@ -128,6 +129,11 @@ class IslandEngine extends BaseEngine {
 	}
 
 	public function customDelete() {}
+
+	// TODO FIX
+	public function buildEngineEntity(struct:Dynamic) {
+		return new EngineShipEntity(cast(struct, ShipObjectEntity));
+	}
 
 	// ------------------------------------
 

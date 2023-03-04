@@ -51,21 +51,21 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		currentArmor = this.shipObjectEntity.armor;
 
 		switch (this.shipObjectEntity.direction) {
-			case North:
+			case NORTH:
 				rotation = MathUtils.degreeToRads(-90);
-			case NorthEast:
+			case NORTH_EAST:
 				rotation = MathUtils.degreeToRads(-45);
-			case NorthWest:
+			case NORTH_WEST:
 				rotation -= MathUtils.degreeToRads(135);
-			case South:
+			case SOUTH:
 				rotation -= MathUtils.degreeToRads(-90);
-			case SouthEast:
+			case SOUTH_EAST:
 				rotation -= MathUtils.degreeToRads(-45);
-			case SouthWest:
+			case SOUTH_WEST:
 				rotation -= MathUtils.degreeToRads(-135);
-			case West:
+			case WEST:
 				rotation -= MathUtils.degreeToRads(180);
-			case East:
+			case EAST:
 				rotation = MathUtils.degreeToRads(0);
 		}
 	}
@@ -112,22 +112,22 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		if (checkRotationInput()) {
 			rotation -= MathUtils.degreeToRads(45);
 			switch (shipObjectEntity.direction) {
-				case East:
-					shipObjectEntity.direction = NorthEast;
-				case NorthEast:
-					shipObjectEntity.direction = North;
-				case North:
-					shipObjectEntity.direction = NorthWest;
-				case NorthWest:
-					shipObjectEntity.direction = West;
-				case West:
-					shipObjectEntity.direction = SouthWest;
-				case SouthWest:
-					shipObjectEntity.direction = South;
-				case South:
-					shipObjectEntity.direction = SouthEast;
-				case SouthEast:
-					shipObjectEntity.direction = East;
+				case EAST:
+					shipObjectEntity.direction = NORTH_EAST;
+				case NORTH_EAST:
+					shipObjectEntity.direction = NORTH;
+				case NORTH:
+					shipObjectEntity.direction = NORTH_WEST;
+				case NORTH_WEST:
+					shipObjectEntity.direction = WEST;
+				case WEST:
+					shipObjectEntity.direction = SOUTH_WEST;
+				case SOUTH_WEST:
+					shipObjectEntity.direction = SOUTH;
+				case SOUTH:
+					shipObjectEntity.direction = SOUTH_EAST;
+				case SOUTH_EAST:
+					shipObjectEntity.direction = EAST;
 			}
 			if (directionChangeCallbackLeft != null) {
 				directionChangeCallbackLeft(shipObjectEntity.direction);
@@ -139,22 +139,22 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		if (checkRotationInput()) {
 			rotation += MathUtils.degreeToRads(45);
 			switch (shipObjectEntity.direction) {
-				case East:
-					shipObjectEntity.direction = SouthEast;
-				case SouthEast:
-					shipObjectEntity.direction = South;
-				case South:
-					shipObjectEntity.direction = SouthWest;
-				case SouthWest:
-					shipObjectEntity.direction = West;
-				case West:
-					shipObjectEntity.direction = NorthWest;
-				case NorthWest:
-					shipObjectEntity.direction = North;
-				case North:
-					shipObjectEntity.direction = NorthEast;
-				case NorthEast:
-					shipObjectEntity.direction = East;
+				case EAST:
+					shipObjectEntity.direction = SOUTH_EAST;
+				case SOUTH_EAST:
+					shipObjectEntity.direction = SOUTH;
+				case SOUTH:
+					shipObjectEntity.direction = SOUTH_WEST;
+				case SOUTH_WEST:
+					shipObjectEntity.direction = WEST;
+				case WEST:
+					shipObjectEntity.direction = NORTH_WEST;
+				case NORTH_WEST:
+					shipObjectEntity.direction = NORTH;
+				case NORTH:
+					shipObjectEntity.direction = NORTH_EAST;
+				case NORTH_EAST:
+					shipObjectEntity.direction = EAST;
 			}
 			if (directionChangeCallbackRight != null) {
 				directionChangeCallbackRight(shipObjectEntity.direction);
@@ -168,7 +168,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 
 	public function shootAllowanceBySide(side:Side) {
 		final now = haxe.Timer.stamp();
-		if (side == Right) {
+		if (side == RIGHT) {
 			return lastRightShootInputCheck == 0 || lastRightShootInputCheck + shipObjectEntity.fireDelay < now;
 		} else {
 			return lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + shipObjectEntity.fireDelay < now;
@@ -177,7 +177,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 
 	public function tryShoot(side:Side) {
 		final now = haxe.Timer.stamp();
-		if (side == Right) {
+		if (side == RIGHT) {
 			if (lastRightShootInputCheck == 0 || lastRightShootInputCheck + shipObjectEntity.fireDelay < now) {
 				lastRightShootInputCheck = now;
 				if (shootRightCallback != null) {
@@ -266,7 +266,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 
 			final x = cannonPosition.x, y = cannonPosition.y;
 			final spreadDegree = MathUtils.degreeToRads(shipObjectEntity.cannonsAngleSpread / 2);
-			final lineHorizontalLength = x + (side == Right ? shipObjectEntity.cannonsRange : -shipObjectEntity.cannonsRange);
+			final lineHorizontalLength = x + (side == RIGHT ? shipObjectEntity.cannonsRange : -shipObjectEntity.cannonsRange);
 
 			final centralLineEndPoint = MathUtils.rotatePointAroundCenter(lineHorizontalLength, y, x, y, MathUtils.getGunRadByDir(shipObjectEntity.direction));
 			final leftLineEndPoint = MathUtils.rotatePointAroundCenter(centralLineEndPoint.x, centralLineEndPoint.y, x, y, spreadDegree);
@@ -292,78 +292,78 @@ class EngineShipEntity extends EngineBaseGameEntity {
 
 		final direction = shipObjectEntity.direction;
 
-		if (side == Side.Left) {
-			if (direction == East) {
+		if (side == Side.LEFT) {
+			if (direction == EAST) {
 				additionalOffsetX = 0;
 				additionalOffsetY = 20;
 			}
-			if (direction == NorthEast) {
+			if (direction == NORTH_EAST) {
 				additionalOffsetX = 14;
 				additionalOffsetY = 8;
 			}
-			if (direction == North) {
+			if (direction == NORTH) {
 				additionalOffsetX = 20;
 				additionalOffsetY = 0;
 			}
-			if (direction == NorthWest) {
+			if (direction == NORTH_WEST) {
 				additionalOffsetX = 14;
 				additionalOffsetY = -8;
 			}
-			if (direction == West) {
+			if (direction == WEST) {
 				additionalOffsetX = 0;
 				additionalOffsetY = -20;
 			}
-			if (direction == SouthWest) {
+			if (direction == SOUTH_WEST) {
 				additionalOffsetX = -14;
 				additionalOffsetY = -8;
 			}
-			if (direction == SouthEast) {
+			if (direction == SOUTH_EAST) {
 				additionalOffsetX = -14;
 				additionalOffsetY = 8;
 			}
-			if (direction == South) {
+			if (direction == SOUTH) {
 				additionalOffsetX = -20;
 				additionalOffsetY = 0;
 			}
 		} else {
-			if (direction == East) {
+			if (direction == EAST) {
 				additionalOffsetX = 0;
 				additionalOffsetY = -20;
 			}
-			if (direction == NorthEast) {
+			if (direction == NORTH_EAST) {
 				additionalOffsetX = -14;
 				additionalOffsetY = -8;
 			}
-			if (direction == North) {
+			if (direction == NORTH) {
 				additionalOffsetX = -20;
 				additionalOffsetY = 0;
 			}
-			if (direction == NorthWest) {
+			if (direction == NORTH_WEST) {
 				additionalOffsetX = -14;
 				additionalOffsetY = 8;
 			}
-			if (direction == West) {
+			if (direction == WEST) {
 				additionalOffsetX = 0;
 				additionalOffsetY = 20;
 			}
-			if (direction == SouthWest) {
+			if (direction == SOUTH_WEST) {
 				additionalOffsetX = 14;
 				additionalOffsetY = 8;
 			}
-			if (direction == SouthEast) {
+			if (direction == SOUTH_EAST) {
 				additionalOffsetX = 14;
 				additionalOffsetY = -8;
 			}
-			if (direction == South) {
+			if (direction == SOUTH) {
 				additionalOffsetX = 20;
 				additionalOffsetY = 0;
 			}
 		}
 
 		if (shipObjectEntity.shipHullSize == ShipHullSize.MEDIUM) {
-			offset = side == Side.Left ? EngineShipEntityConfig.LeftCannonsOffsetByDirMid.get(direction) : EngineShipEntityConfig.RightCannonsOffsetByDirMid.get(direction);
+			offset = side == Side.LEFT ? EngineShipEntityConfig.LeftCannonsOffsetByDirMid.get(direction) : EngineShipEntityConfig.RightCannonsOffsetByDirMid.get(direction);
 		} else {
-			offset = side == Side.Left ? EngineShipEntityConfig.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntityConfig.RightCannonsOffsetByDirSm.get(direction);
+			offset = side == Side.LEFT ? EngineShipEntityConfig.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntityConfig.RightCannonsOffsetByDirSm.get(direction);
 		}
 
 		final offsetX = offset.positions[index].x - additionalOffsetX;
@@ -375,11 +375,11 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	private static function getShipTypeBySize(size:ShipHullSize) {
 		switch (size) {
 			case SMALL:
-				return GameEntityType.SmallShip;
+				return GameEntityType.SMALL_SHIP;
 			case MEDIUM:
-				return GameEntityType.MediumShip;
+				return GameEntityType.MEDIUM_SHIP;
 			case LARGE:
-				return GameEntityType.LargeShip;
+				return GameEntityType.LARGE_SHIP;
 		}
 	}
 

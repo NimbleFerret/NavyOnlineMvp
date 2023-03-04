@@ -8,21 +8,21 @@ class MathUtils {
 	public static function getHullRadByDir(dir:GameEntityDirection) {
 		var degree = 0;
 		switch (dir) {
-			case North:
+			case NORTH:
 				degree = 0;
-			case NorthWest:
+			case NORTH_WEST:
 				degree = -65;
-			case West:
+			case WEST:
 				degree = -90;
-			case SouthWest:
+			case SOUTH_WEST:
 				degree = -115;
-			case South:
+			case SOUTH:
 				degree = -180;
-			case SouthEast:
+			case SOUTH_EAST:
 				degree = -245;
-			case East:
+			case EAST:
 				degree = -270;
-			case NorthEast:
+			case NORTH_EAST:
 				degree = -335;
 		}
 		return degreeToRads(degree);
@@ -31,21 +31,21 @@ class MathUtils {
 	public static function getGunRadByDir(dir:GameEntityDirection) {
 		var degree = 0;
 		switch (dir) {
-			case North:
+			case NORTH:
 				degree = 0;
-			case NorthWest:
+			case NORTH_WEST:
 				degree = -45;
-			case West:
+			case WEST:
 				degree = -90;
-			case SouthWest:
+			case SOUTH_WEST:
 				degree = -135;
-			case South:
+			case SOUTH:
 				degree = -180;
-			case SouthEast:
+			case SOUTH_EAST:
 				degree = -225;
-			case East:
+			case EAST:
 				degree = -270;
-			case NorthEast:
+			case NORTH_EAST:
 				degree = -315;
 		}
 		return degreeToRads(degree);
@@ -57,21 +57,21 @@ class MathUtils {
 		}
 		var degree = 0;
 		switch (dir) {
-			case East:
+			case EAST:
 				degree = 0;
-			case NorthEast:
+			case NORTH_EAST:
 				degree = -25;
-			case North:
+			case NORTH:
 				degree = -90;
-			case NorthWest:
+			case NORTH_WEST:
 				degree = -155;
-			case West:
+			case WEST:
 				degree = 0;
-			case SouthWest:
+			case SOUTH_WEST:
 				degree = -25;
-			case South:
+			case SOUTH:
 				degree = -90;
-			case SouthEast:
+			case SOUTH_EAST:
 				degree = 25;
 		}
 		return degreeToRads(degree);

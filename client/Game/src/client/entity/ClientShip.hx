@@ -8,25 +8,25 @@ import game.engine.entity.EngineShipEntity;
 import game.engine.entity.TypesAndClasses;
 
 final RippleOffsetByDirSmall:Map<GameEntityDirection, PosOffset> = [
-	GameEntityDirection.East => new PosOffset(-20, 0, 90),
-	GameEntityDirection.North => new PosOffset(0, 59, 3.5),
-	GameEntityDirection.NorthEast => new PosOffset(-31, 35, 60),
-	GameEntityDirection.NorthWest => new PosOffset(30, 35, -56),
-	GameEntityDirection.South => new PosOffset(5, -15, 181),
-	GameEntityDirection.SouthEast => new PosOffset(-45, -20, 117),
-	GameEntityDirection.SouthWest => new PosOffset(40, -10, 246),
-	GameEntityDirection.West => new PosOffset(40, 0, 270),
+	GameEntityDirection.EAST => new PosOffset(-20, 0, 90),
+	GameEntityDirection.NORTH => new PosOffset(0, 59, 3.5),
+	GameEntityDirection.NORTH_EAST => new PosOffset(-31, 35, 60),
+	GameEntityDirection.NORTH_WEST => new PosOffset(30, 35, -56),
+	GameEntityDirection.SOUTH => new PosOffset(5, -15, 181),
+	GameEntityDirection.SOUTH_EAST => new PosOffset(-45, -20, 117),
+	GameEntityDirection.SOUTH_WEST => new PosOffset(40, -10, 246),
+	GameEntityDirection.WEST => new PosOffset(40, 0, 270),
 ];
 
 final RippleOffsetByDirMiddle:Map<GameEntityDirection, PosOffset> = [
-	GameEntityDirection.East => new PosOffset(-65, 20, 90),
-	GameEntityDirection.North => new PosOffset(-20, 75, 3.5),
-	GameEntityDirection.NorthEast => new PosOffset(-41, 45, 60),
-	GameEntityDirection.NorthWest => new PosOffset(0, 55, -56),
-	GameEntityDirection.South => new PosOffset(-20, -45, 181),
-	GameEntityDirection.SouthEast => new PosOffset(-65, 0, 117),
-	GameEntityDirection.SouthWest => new PosOffset(40, -10, 246),
-	GameEntityDirection.West => new PosOffset(40, 20, 270),
+	GameEntityDirection.EAST => new PosOffset(-65, 20, 90),
+	GameEntityDirection.NORTH => new PosOffset(-20, 75, 3.5),
+	GameEntityDirection.NORTH_EAST => new PosOffset(-41, 45, 60),
+	GameEntityDirection.NORTH_WEST => new PosOffset(0, 55, -56),
+	GameEntityDirection.SOUTH => new PosOffset(-20, -45, 181),
+	GameEntityDirection.SOUTH_EAST => new PosOffset(-65, 0, 117),
+	GameEntityDirection.SOUTH_WEST => new PosOffset(40, -10, 246),
+	GameEntityDirection.WEST => new PosOffset(40, 20, 270),
 ];
 
 class ClientShip extends ClientBaseGameEntity {
@@ -118,24 +118,24 @@ class ClientShip extends ClientBaseGameEntity {
 		addChild(shipTemplate);
 
 		final nickname = new h2d.Text(hxd.res.DefaultFont.get(), this);
-		if (engineShipEntity.role == Role.Player) {
+		if (engineShipEntity.role == Role.PLAYER) {
 			if (ownerId == client.Player.instance.ethAddress || ownerId == 'Player1') {
 				nickname.text = 'You';
 			} else {
 				nickname.text = Utils.MaskEthAddress(ownerId);
 			}
 			nickname.textColor = 0xFBF0DD;
-		} else if (engineShipEntity.role == Role.Bot) {
+		} else if (engineShipEntity.role == Role.BOT) {
 			nickname.text = 'Pirate';
 			nickname.textColor = 0xFD7D7D;
-		} else if (engineShipEntity.role == Role.Boss) {
+		} else if (engineShipEntity.role == Role.BOSS) {
 			nickname.text = 'BOSS Pirate';
 			nickname.textColor = 0xFF0000;
 		}
 		if (shipHullSize == ShipHullSize.SMALL) {
 			nickname.setPosition(-50, -180);
 		} else {
-			if (engineShipEntity.role == Role.Player) {
+			if (engineShipEntity.role == Role.PLAYER) {
 				nickname.setPosition(-150, -220);
 			} else {
 				nickname.setPosition(-150, -220);
@@ -167,13 +167,19 @@ class ClientShip extends ClientBaseGameEntity {
 		Utils.DrawRect(graphics, shipEntity.getBodyRectangle(), GameConfig.GreenColor);
 
 		if (GameConfig.DebugCannonFiringArea) {
-			for (firingRange in shipEntity.getCannonsFiringAreaBySide(Left)) {
-				Utils.DrawLine(graphics, firingRange.origin, firingRange.left, GameConfig.YellowColor);
-				Utils.DrawLine(graphics, firingRange.origin, firingRange.right, GameConfig.YellowColor);
+			for (firingRange in shipEntity.getCannonsFiringAreaBySide(LEFT)) {
+				final origin = Utils.EngineToClientPoint(firingRange.origin);
+				final left = Utils.EngineToClientPoint(firingRange.origin);
+				final right = Utils.EngineToClientPoint(firingRange.origin);
+				Utils.DrawLine(graphics, origin, left, GameConfig.YellowColor);
+				Utils.DrawLine(graphics, origin, right, GameConfig.YellowColor);
 			}
-			for (firingRange in shipEntity.getCannonsFiringAreaBySide(Right)) {
-				Utils.DrawLine(graphics, firingRange.origin, firingRange.left, GameConfig.YellowColor);
-				Utils.DrawLine(graphics, firingRange.origin, firingRange.right, GameConfig.YellowColor);
+			for (firingRange in shipEntity.getCannonsFiringAreaBySide(RIGHT)) {
+				final origin = Utils.EngineToClientPoint(firingRange.origin);
+				final left = Utils.EngineToClientPoint(firingRange.origin);
+				final right = Utils.EngineToClientPoint(firingRange.origin);
+				Utils.DrawLine(graphics, origin, left, GameConfig.YellowColor);
+				Utils.DrawLine(graphics, origin, right, GameConfig.YellowColor);
 			}
 		}
 	}
@@ -186,7 +192,7 @@ class ClientShip extends ClientBaseGameEntity {
 			final left = cannonFiringArea.left;
 			final right = cannonFiringArea.right;
 
-			final adjustedMousePos = mousePos;
+			final adjustedMousePos = Utils.ClientToEnginePoint(mousePos);
 
 			if (index > 0) {
 				adjustedMousePos.x += 28;
@@ -197,12 +203,12 @@ class ClientShip extends ClientBaseGameEntity {
 			final cannonAndRightArea = MathUtils.angleBetweenPoints(origin, right);
 
 			if (GameConfig.DrawCannonsSight) {
-				Utils.DrawLine(graphics, origin, shipTemplate.getCannonSightPos(mouseSide, index), GameConfig.YellowColor);
+				Utils.DrawLine(graphics, Utils.EngineToClientPoint(origin), shipTemplate.getCannonSightPos(mouseSide, index), GameConfig.YellowColor);
 			}
 
 			if (cannonAndMouse < cannonAndLeftArea && cannonAndMouse > cannonAndRightArea) {
 				final lineLength = origin.x + shipEntity.getCannonsRange();
-				final lineEndPoint = MathUtils.rotatePointAroundCenter(lineLength, origin.y, origin.x, origin.y, cannonAndMouse);
+				final lineEndPoint = Utils.EngineToClientPoint(MathUtils.rotatePointAroundCenter(lineLength, origin.y, origin.x, origin.y, cannonAndMouse));
 				shipTemplate.updateCannonSightPos(mouseSide, index, lineEndPoint);
 				shipTemplate.updateCannonFiringAreaAngle(mouseSide, index, cannonAndMouse);
 			}
@@ -235,8 +241,8 @@ class ClientShip extends ClientBaseGameEntity {
 			currentSpeed: shipEntity.currentSpeed,
 			maxSpeed: shipEntity.getMaxSpeed(),
 			dir: shipEntity.getDirection(),
-			allowShootLeft: shipEntity.shootAllowanceBySide(Left),
-			allowShootRight: shipEntity.shootAllowanceBySide(Right),
+			allowShootLeft: shipEntity.shootAllowanceBySide(LEFT),
+			allowShootRight: shipEntity.shootAllowanceBySide(RIGHT),
 			x: shipEntity.getX(),
 			y: shipEntity.getY()
 		}

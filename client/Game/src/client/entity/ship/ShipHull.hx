@@ -6,43 +6,43 @@ class ShipHull extends ShipVisualComponent {
 	private final bmp_hull:h2d.Bitmap;
 
 	private final eastShipTile:h2d.Tile;
-	private final northShipTile:h2d.Tile;
-	private final northEastShipTile:h2d.Tile;
-	private final northWestShipTile:h2d.Tile;
+	private final NORTHShipTile:h2d.Tile;
+	private final NORTH_EASTShipTile:h2d.Tile;
+	private final NORTH_WESTShipTile:h2d.Tile;
 	private final southShipTile:h2d.Tile;
-	private final southEastShipTile:h2d.Tile;
-	private final southWestShipTile:h2d.Tile;
+	private final SOUTH_EASTShipTile:h2d.Tile;
+	private final SOUTH_WESTShipTile:h2d.Tile;
 	private final westShipTile:h2d.Tile;
 
 	public function new(direction:GameEntityDirection, size:ShipHullSize) {
 		super(direction, side);
 
-		eastShipTile = getHullByDirectionAndSize(GameEntityDirection.East, size).center();
-		northShipTile = getHullByDirectionAndSize(GameEntityDirection.North, size).center();
-		northEastShipTile = getHullByDirectionAndSize(GameEntityDirection.NorthEast, size).center();
-		northWestShipTile = getHullByDirectionAndSize(GameEntityDirection.NorthWest, size).center();
-		southShipTile = getHullByDirectionAndSize(GameEntityDirection.South, size).center();
-		southEastShipTile = getHullByDirectionAndSize(GameEntityDirection.SouthEast, size).center();
-		southWestShipTile = getHullByDirectionAndSize(GameEntityDirection.SouthWest, size).center();
-		westShipTile = getHullByDirectionAndSize(GameEntityDirection.West, size).center();
+		eastShipTile = getHullByDirectionAndSize(GameEntityDirection.EAST, size).center();
+		NORTHShipTile = getHullByDirectionAndSize(GameEntityDirection.NORTH, size).center();
+		NORTH_EASTShipTile = getHullByDirectionAndSize(GameEntityDirection.NORTH_EAST, size).center();
+		NORTH_WESTShipTile = getHullByDirectionAndSize(GameEntityDirection.NORTH_WEST, size).center();
+		southShipTile = getHullByDirectionAndSize(GameEntityDirection.SOUTH, size).center();
+		SOUTH_EASTShipTile = getHullByDirectionAndSize(GameEntityDirection.SOUTH_EAST, size).center();
+		SOUTH_WESTShipTile = getHullByDirectionAndSize(GameEntityDirection.SOUTH_WEST, size).center();
+		westShipTile = getHullByDirectionAndSize(GameEntityDirection.WEST, size).center();
 
 		switch (direction) {
-			case East:
+			case EAST:
 				bmp_hull = new h2d.Bitmap(eastShipTile);
-			case NorthEast:
-				bmp_hull = new h2d.Bitmap(northEastShipTile);
-			case North:
-				bmp_hull = new h2d.Bitmap(northShipTile);
-			case NorthWest:
-				bmp_hull = new h2d.Bitmap(northWestShipTile);
-			case West:
+			case NORTH_EAST:
+				bmp_hull = new h2d.Bitmap(NORTH_EASTShipTile);
+			case NORTH:
+				bmp_hull = new h2d.Bitmap(NORTHShipTile);
+			case NORTH_WEST:
+				bmp_hull = new h2d.Bitmap(NORTH_WESTShipTile);
+			case WEST:
 				bmp_hull = new h2d.Bitmap(westShipTile);
-			case SouthWest:
-				bmp_hull = new h2d.Bitmap(southWestShipTile);
-			case South:
+			case SOUTH_WEST:
+				bmp_hull = new h2d.Bitmap(SOUTH_WESTShipTile);
+			case SOUTH:
 				bmp_hull = new h2d.Bitmap(southShipTile);
-			case SouthEast:
-				bmp_hull = new h2d.Bitmap(southEastShipTile);
+			case SOUTH_EAST:
+				bmp_hull = new h2d.Bitmap(SOUTH_EASTShipTile);
 		}
 
 		addChild(bmp_hull);
@@ -50,22 +50,22 @@ class ShipHull extends ShipVisualComponent {
 
 	function changeTilesDirection() {
 		switch (this.direction) {
-			case East:
+			case EAST:
 				bmp_hull.tile = eastShipTile;
-			case NorthEast:
-				bmp_hull.tile = northEastShipTile;
-			case North:
-				bmp_hull.tile = northShipTile;
-			case NorthWest:
-				bmp_hull.tile = northWestShipTile;
-			case West:
+			case NORTH_EAST:
+				bmp_hull.tile = NORTH_EASTShipTile;
+			case NORTH:
+				bmp_hull.tile = NORTHShipTile;
+			case NORTH_WEST:
+				bmp_hull.tile = NORTH_WESTShipTile;
+			case WEST:
 				bmp_hull.tile = westShipTile;
-			case SouthWest:
-				bmp_hull.tile = southWestShipTile;
-			case South:
+			case SOUTH_WEST:
+				bmp_hull.tile = SOUTH_WESTShipTile;
+			case SOUTH:
 				bmp_hull.tile = southShipTile;
-			case SouthEast:
-				bmp_hull.tile = southEastShipTile;
+			case SOUTH_EAST:
+				bmp_hull.tile = SOUTH_EASTShipTile;
 		}
 	}
 
@@ -73,21 +73,21 @@ class ShipHull extends ShipVisualComponent {
 
 	private function getHullByDirectionAndSize(dir:GameEntityDirection, size:ShipHullSize) {
 		switch (dir) {
-			case East:
+			case EAST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship3.toTile() : hxd.Res.small_ship.Ship.ship_e.toTile();
-			case NorthEast:
+			case NORTH_EAST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship4.toTile() : hxd.Res.small_ship.Ship.ship_ne.toTile();
-			case North:
+			case NORTH:
 				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship5.toTile() : hxd.Res.small_ship.Ship.ship_n.toTile();
-			case NorthWest:
+			case NORTH_WEST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship6.toTile() : hxd.Res.small_ship.Ship.ship_nw.toTile();
-			case West:
+			case WEST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship7.toTile() : hxd.Res.small_ship.Ship.ship_w.toTile();
-			case SouthWest:
+			case SOUTH_WEST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship8.toTile() : hxd.Res.small_ship.Ship.ship_sw.toTile();
-			case South:
+			case SOUTH:
 				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship1.toTile() : hxd.Res.small_ship.Ship.ship_s.toTile();
-			case SouthEast:
+			case SOUTH_EAST:
 				return size == MEDIUM ? hxd.Res.mid_ship.Ship.Ship2.toTile() : hxd.Res.small_ship.Ship.ship_se.toTile();
 		}
 	}

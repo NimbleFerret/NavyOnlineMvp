@@ -72,56 +72,56 @@ class CannonRecoilTween {
 		end_y = tweeningObject.y;
 
 		switch (direction) {
-			case East:
-				if (side == Right) {
+			case EAST:
+				if (side == RIGHT) {
 					end_y -= 5;
 				} else {
 					end_y += 5;
 				}
-			case NorthEast:
-				if (side == Right) {
+			case NORTH_EAST:
+				if (side == RIGHT) {
 					end_x -= 2.5;
 					end_y -= 2.5;
 				} else {
 					end_x += 2.5;
 					end_y += 2.5;
 				}
-			case North:
-				if (side == Right) {
+			case NORTH:
+				if (side == RIGHT) {
 					end_x -= 5;
 				} else {
 					end_x += 5;
 				}
-			case NorthWest:
-				if (side == Right) {
+			case NORTH_WEST:
+				if (side == RIGHT) {
 					end_x -= 2.5;
 					end_y += 2.5;
 				} else {
 					end_x += 2.5;
 					end_y -= 2.5;
 				}
-			case West:
-				if (side == Right) {
+			case WEST:
+				if (side == RIGHT) {
 					end_y += 5;
 				} else {
 					end_y -= 5;
 				}
-			case SouthWest:
-				if (side == Right) {
+			case SOUTH_WEST:
+				if (side == RIGHT) {
 					end_x += 2.5;
 					end_y += 2.5;
 				} else {
 					end_x -= 2.5;
 					end_y -= 2.5;
 				}
-			case South:
-				if (side == Right) {
+			case SOUTH:
+				if (side == RIGHT) {
 					end_x += 5;
 				} else {
 					end_x -= 5;
 				}
-			case SouthEast:
-				if (side == Right) {
+			case SOUTH_EAST:
+				if (side == RIGHT) {
 					end_x += 5;
 				} else {
 					end_x -= 2.5;
@@ -166,105 +166,105 @@ class ShipCannon extends ShipVisualComponent {
 		this.shipHullSize = shipHullSize;
 
 		if (!tilesInitialized) {
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(East).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(East).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(East).c_t = hxd.Res.mid_ship.ok_gun.gun_right_e.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(NorthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(NorthEast).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(NorthEast).c_t = hxd.Res.mid_ship.ok_gun.gun_right_ne.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(North).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(North).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(North).c_t = hxd.Res.mid_ship.ok_gun.gun_right_n.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(NorthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(NorthWest).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(NorthWest).c_t = hxd.Res.mid_ship.ok_gun.gun_right_nw.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(West).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(West).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(West).c_t = hxd.Res.mid_ship.ok_gun.gun_right_w.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(SouthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(SouthWest).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(SouthWest).c_t = hxd.Res.mid_ship.ok_gun.gun_right_sw.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(South).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(South).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(South).c_t = hxd.Res.mid_ship.ok_gun.gun_right_s.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(SouthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(SouthEast).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirMid.get(SouthEast).c_t = hxd.Res.mid_ship.ok_gun.gun_right_se.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(EAST).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_e.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(NORTH_EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(NORTH_EAST).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(NORTH_EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_ne.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(NORTH).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(NORTH).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(NORTH).c_t = hxd.Res.mid_ship.ok_gun.gun_right_n.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(NORTH_WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(NORTH_WEST).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(NORTH_WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_nw.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(WEST).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_w.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(SOUTH_WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(SOUTH_WEST).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(SOUTH_WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_sw.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(SOUTH).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(SOUTH).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(SOUTH).c_t = hxd.Res.mid_ship.ok_gun.gun_right_s.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(SOUTH_EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(SOUTH_EAST).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirMid.get(SOUTH_EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_se.toTile();
 
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(East).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(East).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(East).c_t = hxd.Res.mid_ship.ok_gun.gun_left_e.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NorthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NorthEast).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NorthEast).c_t = hxd.Res.mid_ship.ok_gun.gun_left_ne.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(North).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(North).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(North).c_t = hxd.Res.mid_ship.ok_gun.gun_left_n.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NorthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NorthWest).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NorthWest).c_t = hxd.Res.mid_ship.ok_gun.gun_left_nw.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(West).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(West).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(West).c_t = hxd.Res.mid_ship.ok_gun.gun_left_w.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SouthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SouthWest).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SouthWest).c_t = hxd.Res.mid_ship.ok_gun.gun_left_sw.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(South).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(South).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(South).c_t = hxd.Res.mid_ship.ok_gun.gun_left_s.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SouthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SouthEast).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SouthEast).c_t = hxd.Res.mid_ship.ok_gun.gun_left_se.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(EAST).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_e.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NORTH_EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NORTH_EAST).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NORTH_EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_ne.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NORTH).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NORTH).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NORTH).c_t = hxd.Res.mid_ship.ok_gun.gun_left_n.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NORTH_WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NORTH_WEST).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(NORTH_WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_nw.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(WEST).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_w.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SOUTH_WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SOUTH_WEST).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SOUTH_WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_sw.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SOUTH).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SOUTH).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SOUTH).c_t = hxd.Res.mid_ship.ok_gun.gun_left_s.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SOUTH_EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SOUTH_EAST).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirMid.get(SOUTH_EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_se.toTile();
 
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(East).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(East).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(East).c_t = hxd.Res.mid_ship.ok_gun.gun_right_e.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(NorthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(NorthEast).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(NorthEast).c_t = hxd.Res.mid_ship.ok_gun.gun_right_ne.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(North).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(North).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(North).c_t = hxd.Res.mid_ship.ok_gun.gun_right_n.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(NorthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(NorthWest).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(NorthWest).c_t = hxd.Res.mid_ship.ok_gun.gun_right_nw.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(West).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(West).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(West).c_t = hxd.Res.mid_ship.ok_gun.gun_right_w.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(SouthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(SouthWest).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(SouthWest).c_t = hxd.Res.mid_ship.ok_gun.gun_right_sw.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(South).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(South).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(South).c_t = hxd.Res.mid_ship.ok_gun.gun_right_s.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(SouthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(SouthEast).w_b_t = null;
-			ShipCannonsConfig.RightCannonParamsByDirSm.get(SouthEast).c_t = hxd.Res.mid_ship.ok_gun.gun_right_se.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(EAST).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_e.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(NORTH_EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(NORTH_EAST).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(NORTH_EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_ne.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(NORTH).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(NORTH).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(NORTH).c_t = hxd.Res.mid_ship.ok_gun.gun_right_n.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(NORTH_WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(NORTH_WEST).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(NORTH_WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_nw.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(WEST).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_w.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(SOUTH_WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(SOUTH_WEST).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(SOUTH_WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_sw.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(SOUTH).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(SOUTH).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(SOUTH).c_t = hxd.Res.mid_ship.ok_gun.gun_right_s.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(SOUTH_EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(SOUTH_EAST).w_b_t = null;
+			ShipCannonsConfig.RightCannonParamsByDirSm.get(SOUTH_EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_right_se.toTile();
 
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(East).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w_small.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(East).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(East).c_t = hxd.Res.mid_ship.ok_gun.gun_left_e.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NorthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NorthEast).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NorthEast).c_t = hxd.Res.mid_ship.ok_gun.gun_left_ne.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(North).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(North).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(North).c_t = hxd.Res.mid_ship.ok_gun.gun_left_n.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NorthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NorthWest).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NorthWest).c_t = hxd.Res.mid_ship.ok_gun.gun_left_nw.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(West).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(West).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(West).c_t = hxd.Res.mid_ship.ok_gun.gun_left_w.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SouthWest).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SouthWest).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SouthWest).c_t = hxd.Res.mid_ship.ok_gun.gun_left_sw.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(South).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(South).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(South).c_t = hxd.Res.mid_ship.ok_gun.gun_left_s.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SouthEast).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SouthEast).w_b_t = null;
-			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SouthEast).c_t = hxd.Res.mid_ship.ok_gun.gun_left_se.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_w_small.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(EAST).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_e.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NORTH_EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NORTH_EAST).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NORTH_EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_ne.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NORTH).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_s.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NORTH).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NORTH).c_t = hxd.Res.mid_ship.ok_gun.gun_left_n.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NORTH_WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NORTH_WEST).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(NORTH_WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_nw.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_e.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(WEST).w_b_t = hxd.Res.mid_ship.wood_bottom.wood_bottom_e.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_w.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SOUTH_WEST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_ne.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SOUTH_WEST).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SOUTH_WEST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_sw.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SOUTH).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_n.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SOUTH).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SOUTH).c_t = hxd.Res.mid_ship.ok_gun.gun_left_s.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SOUTH_EAST).w_t_t = hxd.Res.mid_ship.wood_top.wood_top_nw.toTile();
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SOUTH_EAST).w_b_t = null;
+			ShipCannonsConfig.LeftCannonParamsByDirSm.get(SOUTH_EAST).c_t = hxd.Res.mid_ship.ok_gun.gun_left_se.toTile();
 
 			for (key in ShipCannonsConfig.RightCannonParamsByDirSm.keys()) {
 				final rightCannonParam = ShipCannonsConfig.RightCannonParamsByDirSm.get(key);
@@ -374,9 +374,9 @@ class ShipCannon extends ShipVisualComponent {
 
 	private function getCannonParams() {
 		if (shipHullSize == ShipHullSize.SMALL) {
-			return side == Right ? ShipCannonsConfig.RightCannonParamsByDirSm.get(direction) : ShipCannonsConfig.LeftCannonParamsByDirSm.get(direction);
+			return side == RIGHT ? ShipCannonsConfig.RightCannonParamsByDirSm.get(direction) : ShipCannonsConfig.LeftCannonParamsByDirSm.get(direction);
 		} else {
-			return side == Right ? ShipCannonsConfig.RightCannonParamsByDirMid.get(direction) : ShipCannonsConfig.LeftCannonParamsByDirMid.get(direction);
+			return side == RIGHT ? ShipCannonsConfig.RightCannonParamsByDirMid.get(direction) : ShipCannonsConfig.LeftCannonParamsByDirMid.get(direction);
 		}
 	}
 }

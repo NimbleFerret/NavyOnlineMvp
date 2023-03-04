@@ -16,33 +16,32 @@ class WaterScene extends h2d.Scene {
 		waterBg.update(dt);
 	}
 
-	public function updatePlayerMovement(isMoving:Bool = false, isMovingForward:Bool = false, direction:GameEntityDirection = GameEntityDirection.East,
-			speed:Float = 0.0) {
+	public function updatePlayerMovement(isMoving:Bool = false, isMovingForward:Bool = false, direction:GameEntityDirection = EAST, speed:Float = 0.0) {
 		speed /= 2;
 		if (isMoving) {
 			switch (direction) {
-				case East:
+				case EAST:
 					waterBg.playerDX = 0.01 * speed;
 					waterBg.playerDY = 0;
-				case NorthEast:
+				case NORTH_EAST:
 					waterBg.playerDX = (0.01 * speed) / 2;
 					waterBg.playerDY = -(0.01 * speed) / 2;
-				case North:
+				case NORTH:
 					waterBg.playerDX = 0;
 					waterBg.playerDY = -0.01 * speed;
-				case NorthWest:
+				case NORTH_WEST:
 					waterBg.playerDX = -(0.01 * speed) / 2;
 					waterBg.playerDY = -(0.01 * speed) / 2;
-				case West:
+				case WEST:
 					waterBg.playerDX = -0.01 * speed;
 					waterBg.playerDY = 0;
-				case SouthWest:
+				case SOUTH_WEST:
 					waterBg.playerDX = -(0.01 * speed) / 2;
 					waterBg.playerDY = (0.01 * speed) / 2;
-				case South:
+				case SOUTH:
 					waterBg.playerDX = 0;
 					waterBg.playerDY = 0.01 * speed;
-				case SouthEast:
+				case SOUTH_EAST:
 					waterBg.playerDX = (0.01 * speed) / 2;
 					waterBg.playerDY = (0.01 * speed) / 2;
 			}

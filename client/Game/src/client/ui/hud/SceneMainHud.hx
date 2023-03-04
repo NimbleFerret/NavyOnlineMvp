@@ -1,6 +1,5 @@
 package client.ui.hud;
 
-import utils.Utils;
 import client.network.RestProtocol.IslandEntity;
 import client.network.RestProtocol.ShipEntity;
 import client.network.RestProtocol.CaptainEntity;
@@ -9,6 +8,7 @@ import client.network.RestProtocol.FounderCollections;
 import client.ui.hud.BasicHud;
 import client.web3.Moralis;
 import h2d.Object;
+import utils.Utils;
 import uuid.Uuid;
 
 class SceneMainHud extends BasicHud {

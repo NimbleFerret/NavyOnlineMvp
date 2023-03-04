@@ -17,7 +17,7 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 	public var dieEffect = DieEffect.Splash;
 
 	public function new(shellObjectEntity:ShellObjectEntity) {
-		super(GameEntityType.Shell, shellObjectEntity);
+		super(GameEntityType.SHELL, shellObjectEntity);
 
 		this.shellObjectEntity = shellObjectEntity;
 		this.rotation = shellObjectEntity.rotation;

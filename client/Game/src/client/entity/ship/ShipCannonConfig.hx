@@ -6,7 +6,7 @@ import game.engine.entity.TypesAndClasses;
 class ShipCannonsConfig {
 	// Mid
 	public static final RightCannonParamsByDirMid:Map<GameEntityDirection, CannonParams> = [
-		GameEntityDirection.East => {
+		GameEntityDirection.EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -17,7 +17,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.NorthEast => {
+		GameEntityDirection.NORTH_EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -28,7 +28,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.North => {
+		GameEntityDirection.NORTH => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -39,7 +39,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.NorthWest => {
+		GameEntityDirection.NORTH_WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -50,7 +50,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.West => {
+		GameEntityDirection.WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -61,7 +61,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.SouthWest => {
+		GameEntityDirection.SOUTH_WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -72,7 +72,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.South => {
+		GameEntityDirection.SOUTH => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -83,7 +83,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.SouthEast => {
+		GameEntityDirection.SOUTH_EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -97,7 +97,7 @@ class ShipCannonsConfig {
 	];
 
 	public static final LeftCannonParamsByDirMid:Map<GameEntityDirection, CannonParams> = [
-		GameEntityDirection.East => {
+		GameEntityDirection.EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -108,7 +108,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.NorthEast => {
+		GameEntityDirection.NORTH_EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -119,7 +119,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.North => {
+		GameEntityDirection.NORTH => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -130,7 +130,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.NorthWest => {
+		GameEntityDirection.NORTH_WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -141,7 +141,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.West => {
+		GameEntityDirection.WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -152,7 +152,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.SouthWest => {
+		GameEntityDirection.SOUTH_WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -163,7 +163,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.South => {
+		GameEntityDirection.SOUTH => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -174,7 +174,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.SouthEast => {
+		GameEntityDirection.SOUTH_EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -189,7 +189,7 @@ class ShipCannonsConfig {
 
 	// Sm
 	public static final RightCannonParamsByDirSm:Map<GameEntityDirection, CannonParams> = [
-		GameEntityDirection.East => {
+		GameEntityDirection.EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -200,7 +200,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.NorthEast => {
+		GameEntityDirection.NORTH_EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -211,7 +211,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.North => {
+		GameEntityDirection.NORTH => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -222,7 +222,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.NorthWest => {
+		GameEntityDirection.NORTH_WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -233,7 +233,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.West => {
+		GameEntityDirection.WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -244,7 +244,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.SouthWest => {
+		GameEntityDirection.SOUTH_WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -255,7 +255,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.South => {
+		GameEntityDirection.SOUTH => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -266,7 +266,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.SouthEast => {
+		GameEntityDirection.SOUTH_EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -280,7 +280,7 @@ class ShipCannonsConfig {
 	];
 
 	public static final LeftCannonParamsByDirSm:Map<GameEntityDirection, CannonParams> = [
-		GameEntityDirection.East => {
+		GameEntityDirection.EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -291,7 +291,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.NorthEast => {
+		GameEntityDirection.NORTH_EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -302,7 +302,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.North => {
+		GameEntityDirection.NORTH => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -313,7 +313,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.NorthWest => {
+		GameEntityDirection.NORTH_WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -324,7 +324,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.West => {
+		GameEntityDirection.WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -335,7 +335,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.SouthWest => {
+		GameEntityDirection.SOUTH_WEST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -346,7 +346,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.South => {
+		GameEntityDirection.SOUTH => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,
@@ -357,7 +357,7 @@ class ShipCannonsConfig {
 			w_b_t: null,
 			c_t: null
 		},
-		GameEntityDirection.SouthEast => {
+		GameEntityDirection.SOUTH_EAST => {
 			w_t_x: 0,
 			w_t_y: 0,
 			w_b_x: 0,

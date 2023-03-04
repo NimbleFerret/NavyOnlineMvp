@@ -15,7 +15,7 @@ class EngineCharacterEntity extends EngineBaseGameEntity {
 	public var wantToMoveDown = false;
 
 	public function new(baseObjectEntity:BaseObjectEntity) {
-		super(GameEntityType.Character, baseObjectEntity);
+		super(GameEntityType.CHARACTER, baseObjectEntity);
 
 		// This is needed because char files are not cropped
 		shape.rectOffsetX = 60;

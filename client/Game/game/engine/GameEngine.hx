@@ -68,9 +68,9 @@ class GameEngine extends BaseEngine {
 					engineShipEntity.allowShoot = true;
 				}
 
-				if (engineShipEntity.role == Role.Bot && engineShipEntity.allowShoot) {
+				if (engineShipEntity.role == Role.BOT && engineShipEntity.allowShoot) {
 					engineShipEntity.allowShoot = false;
-					shipShootBySide(Side.Right, engineShipEntity.getId(), 0);
+					shipShootBySide(Side.RIGHT, engineShipEntity.getId(), 0);
 				}
 				for (ship2 in mainEntityManager.entities) {
 					if (ship.getId() != ship2.getId()) {
@@ -134,6 +134,18 @@ class GameEngine extends BaseEngine {
 		}
 	}
 
+	public function customDelete() {
+		createShellCallback = null;
+		deleteShellCallback = null;
+		shipHitByShellCallback = null;
+	}
+
+	public function buildEngineEntity(struct:Dynamic) {
+		return new EngineShipEntity(new ShipObjectEntity(struct));
+	}
+
+	// ------------------------------------
+
 	private function checkShellAndShipCollision(shell:EngineBaseGameEntity, ship:EngineBaseGameEntity) {
 		final shellLine = shell.getForwardLookingLine(15);
 		if (ship.getBodyRectangle().intersectsWithPoint(shellLine.p1))
@@ -141,13 +153,6 @@ class GameEngine extends BaseEngine {
 		return ship.getBodyRectangle().intersectsWithLine(new Line(shellLine.p1.x, shellLine.p1.y, shellLine.p2.x, shellLine.p2.y));
 	}
 
-	public function customDelete() {
-		createShellCallback = null;
-		deleteShellCallback = null;
-		shipHitByShellCallback = null;
-	}
-
-	// ------------------------------------
 	// public function entityMoveUp(id:String) {
 	// 	final ship = cast(mainEntityManager.getEntityById(id), EngineShipEntity);
 	// 	if (ship != null) {
@@ -184,7 +189,7 @@ class GameEngine extends BaseEngine {
 	public function shipShootBySide(side:Side, shipId:String, serverSide:Bool = true, aimAngleRads:Float, ?shellRnd:Array<ShellRnd>) {
 		final ship = cast(mainEntityManager.getEntityById(shipId), EngineShipEntity);
 		if (ship != null && ship.tryShoot(side)) {
-			final shipSideRadRotation = aimAngleRads == 0 ? ship.rotation + MathUtils.degreeToRads(side == Left ? 90 : -90) : aimAngleRads;
+			final shipSideRadRotation = aimAngleRads == 0 ? ship.rotation + MathUtils.degreeToRads(side == LEFT ? 90 : -90) : aimAngleRads;
 			final shells = new Array<EngineShellEntity>();
 
 			var cannonsTotal = 0;
@@ -231,8 +236,8 @@ class GameEngine extends BaseEngine {
 	// Shell game object
 	// --------------------------------------
 
-	public function addShell(entity:ShellObjectEntity):EngineShellEntity {
-		final newShell = new EngineShellEntity(entity);
+	public function addShell(entity:ShellObjectEntityStruct):EngineShellEntity {
+		final newShell = new EngineShellEntity(new ShellObjectEntity(entity));
 		shellManager.add(newShell);
 		return newShell;
 	}

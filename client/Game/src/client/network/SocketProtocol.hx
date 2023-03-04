@@ -1,5 +1,7 @@
 package client.network;
 
+import game.engine.entity.TypesAndClasses;
+
 // -------------------------------------
 // WebSocket server messages
 // -------------------------------------
@@ -70,13 +72,19 @@ typedef SocketClientMessageJoinGame = {
 	playerId:String,
 	instanceId:String,
 	sectorType:Int,
-	?shipId:String
+	?entityId:String
 }
 
 typedef SocketClientMessageLeaveGame = {
 	playerId:String
 }
 
+typedef SocketClientMessageInput = {
+	playerId:String,
+	playerInputType:PlayerInputType,
+}
+
+//
 typedef SocketClientMessageMove = {
 	playerId:String,
 	up:Bool,
@@ -90,6 +98,8 @@ typedef SocketClientMessageShoot = {
 	left:Bool,
 	shotParams:Array<ShotParams>
 }
+
+//
 
 typedef ShotParams = {
 	speed:Int,
@@ -123,8 +133,11 @@ class SocketProtocol {
 	public static final SocketClientEventPing = 'SocketClientEventPing';
 	public static final SocketClientEventJoinGame = 'SocketClientEventJoinGame';
 	public static final SocketClientEventLeaveGame = 'SocketClientEventLeaveGame';
+
+	public static final SocketClientEventInput = 'SocketClientEventInput';
 	public static final SocketClientEventMove = 'SocketClientEventMove';
 	public static final SocketClientEventShoot = 'SocketClientEventShoot';
+
 	public static final SocketClientEventSync = 'SocketClientEventSync';
 	public static final SocketClientEventRespawn = 'SocketClientEventRespawn';
 }

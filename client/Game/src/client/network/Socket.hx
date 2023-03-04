@@ -14,7 +14,7 @@ class Socket {
 	private var lastPingTime = 0.0;
 
 	private function new() {
-		clientSocket = new Client("http://localhost:3000");
+		clientSocket = new Client("http://localhost:4020", {});
 		// clientSocket = new Client("https://navy.online");
 
 		clientSocket.on(SocketProtocol.SocketServerEventPong, function(data) {
@@ -68,6 +68,12 @@ class Socket {
 
 	public function leaveGame(message:SocketProtocol.SocketClientMessageLeaveGame) {
 		clientSocket.emit(SocketProtocol.SocketClientEventLeaveGame, message);
+	}
+
+	//
+
+	public function input(message:SocketProtocol.SocketClientMessageInput) {
+		clientSocket.emit(SocketProtocol.SocketClientEventInput, message);
 	}
 
 	public function move(message:SocketProtocol.SocketClientMessageMove) {
