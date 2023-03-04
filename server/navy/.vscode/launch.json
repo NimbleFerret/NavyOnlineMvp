@@ -9,7 +9,20 @@
             "request": "launch",
             "runtimeArgs": [
                 "run-script",
-                "start:gateway-service"
+                "start:gateway-service:dev"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Launch Gameplay-Service",
+            "request": "launch",
+            "runtimeArgs": [
+                "run-script",
+                "start:gameplay-service:dev"
             ],
             "runtimeExecutable": "npm",
             "skipFiles": [
