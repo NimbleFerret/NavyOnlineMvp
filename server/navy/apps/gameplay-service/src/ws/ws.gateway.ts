@@ -84,6 +84,7 @@ export class WsGateway implements OnModuleInit {
         client.emit(WsProtocol.SocketServerEventPong, {});
     }
 
+    // TODO проверить владеет ли данный игрок указанным кораблем и авторизован ли
     @SubscribeMessage(WsProtocol.SocketClientEventJoinGame)
     async joinGame(client: Socket, data: SocketClientMessageJoinGame) {
         Logger.log(`Got joinGame request. ${JSON.stringify(data)}`);
@@ -98,6 +99,12 @@ export class WsGateway implements OnModuleInit {
             playerId: data.playerId
         } as PlayerDisconnectedEvent;
         this.eventEmitter.emit(AppEvents.PlayerDisconnected, event);
+    }
+
+    @SubscribeMessage(WsProtocol.SocketClientEventInput)
+    async input(@MessageBody() data: SocketClientMessageMove) {
+        Logger.log(`Got input request. ${JSON.stringify(data)}`);
+        // this.eventEmitter.emit(AppEvents.PlayerMove, data);
     }
 
     @SubscribeMessage(WsProtocol.SocketClientEventMove)

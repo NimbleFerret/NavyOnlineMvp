@@ -17,8 +17,8 @@ export class GameplayBattleService extends GameplayBaseService {
         super();
     }
 
-    public initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent): BaseGameplayInstance {
-        return new GameplayBattleInstance(this.shipModel, x, y, this.emitter, sectorContent);
+    public initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent, testInstance: Boolean): BaseGameplayInstance {
+        return new GameplayBattleInstance(this.shipModel, x, y, this.emitter, sectorContent, testInstance);
     }
 
     // Socket events

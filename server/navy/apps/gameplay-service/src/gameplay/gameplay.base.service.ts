@@ -16,7 +16,9 @@ import { BaseGameplayInstance } from "./gameplay.base.instance";
 
 export enum GameplayType {
     Battle,
-    Island
+    BattleTest,
+    Island,
+    IslandTest
 }
 
 export interface JoinWorldOrCreateResult {
@@ -31,6 +33,19 @@ export abstract class GameplayBaseService {
     readonly sectorInstance = new Map<string, string>();
     readonly playerInstanceMap = new Map<string, string>();
 
+    constructor() {
+
+    }
+
+    createTestInstances() {
+        const x = 0, y = 0;
+        const instance = this.initiateGameplayInstance(x, y, SectorContent.SECTOR_CONTENT_EMPTY, true);
+        if (instance) {
+            this.instances.set(instance.instanceId, instance);
+            this.sectorInstance.set(x + '+' + y, instance.instanceId);
+        }
+    }
+
     // -------------------------------------
     // World managed api
     // -------------------------------------
@@ -40,8 +55,6 @@ export abstract class GameplayBaseService {
             result: false
         };
         const islandInstanceId = this.sectorInstance.get(x + '+' + y);
-
-        // TODO players capacity per instance check
 
         if (islandInstanceId) {
             const islandInstance = this.instances.get(islandInstanceId);
@@ -53,7 +66,7 @@ export abstract class GameplayBaseService {
                 result.reason = 'Sector is full';
             }
         } else {
-            const instance = this.initiateGameplayInstance(x, y, sectorContent);
+            const instance = this.initiateGameplayInstance(x, y, sectorContent, false);
             if (instance) {
                 this.instances.set(instance.instanceId, instance);
                 this.sectorInstance.set(x + '+' + y, instance.instanceId);
@@ -65,7 +78,7 @@ export abstract class GameplayBaseService {
         return result;
     }
 
-    public abstract initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent): BaseGameplayInstance;
+    public abstract initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent, testInstance: Boolean): BaseGameplayInstance;
 
     // -------------------------------------
     // Admin api

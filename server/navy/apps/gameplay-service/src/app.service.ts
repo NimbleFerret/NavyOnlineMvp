@@ -10,6 +10,7 @@ import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { lastValueFrom } from 'rxjs';
+import { Constants } from './app.constants';
 import { CreateOrJoinGameRequestDto } from './app.dto';
 import { GameplayBattleService } from './gameplay/battle/gameplay.battle.service';
 import { JoinWorldOrCreateResult } from './gameplay/gameplay.base.service';
@@ -42,16 +43,22 @@ export class AppService implements OnModuleInit {
     this.worldService = this.worldServiceGrpcClient.getService<WorldService>(WorldServiceName);
     this.userService = this.userServiceGrpcClient.getService<UserService>(UserServiceName);
     this.gameplayBalancerService = this.gameplayBalancerServiceGrpcClient.getService<GameplayBalancerService>(GameplayBalancerServiceName);
+
+    if (Constants.HAS_TEST_INSTANCES) {
+      this.gameplayBattleService.createTestInstances();
+    }
   }
 
   @Cron(CronExpression.EVERY_SECOND)
   balancerPing() {
-    this.gameplayBalancerService.GameplayServicePing({
-      address: this.address,
-      region: AppService.SERVICE_REGION,
-      battleInstances: this.gameplayBattleService.getInstancesInfo(),
-      islandInstances: this.gameplayIslandService.getInstancesInfo(),
-    }).subscribe();
+    if (Constants.PING_BALANCER) {
+      this.gameplayBalancerService.GameplayServicePing({
+        address: this.address,
+        region: AppService.SERVICE_REGION,
+        battleInstances: this.gameplayBattleService.getInstancesInfo(),
+        islandInstances: this.gameplayIslandService.getInstancesInfo(),
+      }).subscribe();
+    }
   }
 
   @Cron(CronExpression.EVERY_10_SECONDS)
@@ -63,6 +70,7 @@ export class AppService implements OnModuleInit {
   async createOrJoinGame(dto: CreateOrJoinGameRequestDto) {
     Logger.log('CreateOrJoinGame request. User address:' + dto.user);
 
+    // TODO mock this
     const userPos = await lastValueFrom(this.userService.GetUserPos({
       user: dto.user
     }));

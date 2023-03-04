@@ -19,12 +19,13 @@ import {
     SocketServerMessageSync
 } from '../ws/ws.protocol';
 import { BaseGameObject } from '@app/shared-library/entities/entity.base';
+import { Constants } from '../app.constants';
 
 export abstract class BaseGameplayInstance {
 
     public readonly destroyEmptyInstanceTimeoutMS = 10000;
     public readonly worldStateUpdateIntervalMS = 2000;
-    public readonly instanceId = uuidv4();
+    public readonly instanceId: string;
 
     readonly creationTime = new Date().getTime();
     readonly playerEntityMap = new Map<string, string>();
@@ -37,6 +38,16 @@ export abstract class BaseGameplayInstance {
         public gameEngine: any,
         public x: number,
         public y: number) {
+        switch (gameplayType) {
+            case GameplayType.BattleTest:
+                this.instanceId = Constants.BATTLE_TEST_INSTANCE_ID;
+                break;
+            case GameplayType.IslandTest:
+                this.instanceId = Constants.ISLAND_TEST_INSTANCE_ID;
+                break;
+            default:
+                this.instanceId = uuidv4();
+        }
     }
 
     // -------------------------------------

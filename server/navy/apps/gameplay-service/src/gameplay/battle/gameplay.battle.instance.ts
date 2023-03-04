@@ -4,7 +4,7 @@ import { AppEvents, PlayerKilledShip } from "../../app.events";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayType } from "../gameplay.base.service";
 import { Model } from "mongoose";
-import { engine } from "../../js/IslandEngine.js"
+import { game } from "../../js/BattleEngine.js"
 import { ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import {
     SocketServerMessageRemoveEntity,
@@ -26,9 +26,10 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         x: number,
         y: number,
         eventEmitter: EventEmitter2,
-        sectorContent: SectorContent
+        sectorContent: SectorContent,
+        testInstance: Boolean
     ) {
-        super(eventEmitter, GameplayType.Battle, new engine.GameEngine(), x, y);
+        super(eventEmitter, testInstance ? GameplayType.BattleTest : GameplayType.Battle, new game.engine.GameEngine(), x, y);
 
         this.gameEngine.deleteMainEntityCallback = async (ship: object) => {
             const jsShip = this.converJsEntityToTypeScript(ship);
@@ -115,6 +116,8 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
                 break;
             }
         }
+
+        Logger.log(`GameplayBattleInstance created. x:${x}, y:${y}, content:${sectorContent} test:${testInstance}`);
     }
 
     public getTotalShipsCount() {
@@ -160,7 +163,6 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             ship = SharedLibraryService.GetFreeShip();
         } else {
             ship = await this.shipModel.findOne({ tokenId: entityid });
-
         }
 
         let windows = 'NONE';

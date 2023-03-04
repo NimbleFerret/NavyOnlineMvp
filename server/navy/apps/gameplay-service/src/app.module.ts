@@ -1,3 +1,4 @@
+import { Config } from '@app/shared-library/config';
 import {
   GameplayBalancerServiceGrpcClientName,
   GameplayBalancerServiceGrpcClientOptions
@@ -37,7 +38,7 @@ import { GameplayModule } from './gameplay/gameplay.module';
         ...GameplayBalancerServiceGrpcClientOptions,
       },
     ]),
-    MongooseModule.forRoot('mongodb://localhost/navy'),
+    MongooseModule.forRoot(Config.GetMongoHost()),
     GameplayModule
   ],
   controllers: [AppController],

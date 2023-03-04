@@ -7,7 +7,7 @@ import {
     SocketServerMessageRemoveEntity,
     WsProtocol,
 } from "../../ws/ws.protocol";
-import { engine } from "../../js/IslandEngine.js"
+import { game } from "../../js/IslandEngine.js"
 import { BaseGameObject } from "@app/shared-library/entities/entity.base";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 
@@ -17,9 +17,10 @@ export class GameplayIslandInstance extends BaseGameplayInstance {
         eventEmitter: EventEmitter2,
         x: number,
         y: number,
-        public sectorContent: SectorContent
+        public sectorContent: SectorContent,
+        testInstance: Boolean
     ) {
-        super(eventEmitter, GameplayType.Island, new engine.IslandEngine(), x, y);
+        super(eventEmitter, testInstance ? GameplayType.IslandTest : GameplayType.Island, new game.engine.IslandEngine(), x, y);
 
         this.gameEngine.createMainEntityCallback = (entity: object) => {
             const socketServerMessageAddEntity = {

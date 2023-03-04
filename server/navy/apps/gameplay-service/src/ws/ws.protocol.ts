@@ -79,6 +79,14 @@ export interface SocketClientMessageLeaveGame {
     instanceId: string;
 }
 
+export interface SocketClientMessageInput {
+    playerId: string;
+    up: boolean;
+    down: boolean;
+    left: boolean;
+    right: boolean;
+}
+
 export interface SocketClientMessageMove {
     playerId: string;
     up: boolean;
@@ -126,8 +134,11 @@ export class WsProtocol {
     public static readonly SocketClientEventPing = 'SocketClientEventPing';
     public static readonly SocketClientEventJoinGame = 'SocketClientEventJoinGame';
     public static readonly SocketClientEventLeaveGame = 'SocketClientEventLeaveGame';
+
+    public static readonly SocketClientEventInput = 'SocketClientEventInput';
     public static readonly SocketClientEventMove = 'SocketClientEventMove';
     public static readonly SocketClientEventShoot = 'SocketClientEventShoot';
+
     public static readonly SocketClientEventSync = 'SocketClientEventSync';
     public static readonly SocketClientEventRespawn = 'SocketClientEventRespawn';
 }
