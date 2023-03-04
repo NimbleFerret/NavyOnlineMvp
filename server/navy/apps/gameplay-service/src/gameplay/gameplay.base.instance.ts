@@ -92,6 +92,9 @@ export abstract class BaseGameplayInstance {
     }
 
     public destroyByTimeIfNeeded() {
+        if (this.gameplayType == GameplayType.BattleTest || this.gameplayType == GameplayType.IslandTest) {
+            return false;
+        }
         const now = new Date().getTime();
         if (this.creationTime + this.destroyEmptyInstanceTimeoutMS < now && this.getPlayersCount() == 0) {
             this.destroy();

@@ -26,8 +26,12 @@ import {
 } from "./ws.protocol";
 
 @WebSocketGateway({
+    // transports: ['websocket'],
+    // namespace: '/api/v1/ws',
+    // path: '/api/v1/ws/socket.io',
     cors: {
         origin: '*',
+        methods: ['GET', 'POST']
     },
 })
 export class WsGateway implements OnModuleInit {

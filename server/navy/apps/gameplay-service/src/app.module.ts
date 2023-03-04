@@ -19,6 +19,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GameplayModule } from './gameplay/gameplay.module';
+import { WsModule } from './ws/ws.module';
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { GameplayModule } from './gameplay/gameplay.module';
       },
     ]),
     MongooseModule.forRoot(Config.GetMongoHost()),
-    GameplayModule
+    GameplayModule,
+    WsModule
   ],
   controllers: [AppController],
   providers: [AppService],
