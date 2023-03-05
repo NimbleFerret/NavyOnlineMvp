@@ -15,6 +15,6 @@ class Player {
 
 	private function new() {
 		ethAddress = Uuid.short().toLowerCase();
-		currentShipId = "testShip";
+		currentShipId = "testShip_" + ethAddress;
 	}
 }

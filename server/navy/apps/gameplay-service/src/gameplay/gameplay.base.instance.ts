@@ -85,38 +85,44 @@ export abstract class BaseGameplayInstance {
         this.eventEmitter.emit(AppEvents.NotifyPlayer, notifyPlayerEventMsg);
     }
 
-    protected notifyAllPlayers(message: object, event: string) {
+    protected notifyAllPlayers(message: object, event: string, exceptPlayer?: string) {
         const notifyEachPlayerEventMsg = {
             instanceId: this.instanceId,
             socketEvent: event,
-            message
+            message,
+            exceptPlayer
         } as NotifyEachPlayerEventMsg;
 
         this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
     }
 
     public destroyByTimeIfNeeded() {
-        if (this.gameplayType == GameplayType.BattleTest || this.gameplayType == GameplayType.IslandTest) {
-            return false;
-        }
         const now = new Date().getTime();
         if (this.creationTime + this.destroyEmptyInstanceTimeoutMS < now && this.getPlayersCount() == 0) {
-            this.destroy();
-            return true;
+            return this.destroy();
         }
         return false;
     }
 
     public destroy() {
+        if (this.ifTestInstance()) {
+            return false;
+        }
         try {
             clearInterval(this.notifyGameWorldStateTimer);
             this.playerEntityMap.clear();
             this.entityPlayerMap.clear();
             this.gameEngine.destroy();
             Logger.log('Destroy instance. Type: ' + GameplayType[this.gameplayType] + ', id: ' + this.instanceId);
+            return true;
         } catch (e) {
             Logger.error(e);
         }
+        return false;
+    }
+
+    private ifTestInstance() {
+        return this.gameplayType == GameplayType.BattleTest || this.gameplayType == GameplayType.IslandTest;
     }
 
     // -------------------------------------
@@ -162,10 +168,10 @@ export abstract class BaseGameplayInstance {
             });
 
             const socketServerMessageEntityInput = {
-                entityId: playerEntityId,
+                playerId: data.playerId,
                 playerInputType: data.playerInputType
             } as SocketServerMessageEntityInput;
-            this.notifyAllPlayers(socketServerMessageEntityInput, WsProtocol.SocketServerEventEntityInput);
+            this.notifyAllPlayers(socketServerMessageEntityInput, WsProtocol.SocketServerEventEntityInput, data.playerId);
         }
     }
 

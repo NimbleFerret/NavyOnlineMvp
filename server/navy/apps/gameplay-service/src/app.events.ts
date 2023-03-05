@@ -63,4 +63,5 @@ export interface NotifyEachPlayerEventMsg {
     instanceId: string;
     socketEvent: string;
     message: object;
+    exceptPlayer?: string;
 }

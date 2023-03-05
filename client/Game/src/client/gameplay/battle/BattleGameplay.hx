@@ -253,7 +253,6 @@ class BattleGameplay extends BasicGameplay {
 	}
 
 	public function customStartGame() {
-		trace('customStartGame');
 		hud.show(true);
 	}
 
@@ -328,7 +327,7 @@ class BattleGameplay extends BasicGameplay {
 			acceleration: message.acceleration,
 			direction: message.direction,
 			id: message.id,
-			ownerId: playerId,
+			ownerId: message.ownerId,
 			serverShipRef: "",
 			free: message.free,
 			role: message.role,

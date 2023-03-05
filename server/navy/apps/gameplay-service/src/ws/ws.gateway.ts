@@ -106,7 +106,7 @@ export class WsGateway implements OnModuleInit {
 
     @SubscribeMessage(WsProtocol.SocketClientEventInput)
     async input(@MessageBody() data: SocketClientMessageInput) {
-        Logger.log(`Got input request. ${JSON.stringify(data)}`);
+        // Logger.log(`Got input request. ${JSON.stringify(data)}`);
         this.eventEmitter.emit(AppEvents.PlayerInput, data);
     }
 
@@ -163,8 +163,11 @@ export class WsGateway implements OnModuleInit {
 
     @OnEvent(AppEvents.NotifyEachPlayer)
     async handleNotifyEachPlayerEvent(event: NotifyEachPlayerEventMsg) {
-        const sockets = WsGateway.InstanceSockets.get(event.instanceId);
+        let sockets = WsGateway.InstanceSockets.get(event.instanceId);
         if (sockets) {
+            if (event.exceptPlayer) {
+                sockets = sockets.filter(socket => socket != WsGateway.ClientSockets.get(event.exceptPlayer));
+            }
             sockets.forEach(socket => {
                 socket.emit(event.socketEvent, event.message);
             });

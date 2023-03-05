@@ -141,9 +141,8 @@ export abstract class GameplayBaseService {
             this.playerInstanceMap.delete(playerId);
             const instance = this.instances.get(instanceId);
             instance.handlePlayerDisconnected(data);
-            if (instance.getPlayersCount() == 0) {
+            if (instance.getPlayersCount() == 0 && instance.destroy()) {
                 Logger.log(`No more players in instance: ${instanceId}, destroying...`);
-                instance.destroy();
                 this.instances.delete(instanceId);
                 this.sectorInstance.delete(instance.x + '+' + instance.y);
                 Logger.log(`Instance: ${instanceId} destroyed !`);
@@ -152,17 +151,6 @@ export abstract class GameplayBaseService {
             Logger.error('Unable to delete instance while player disconnected. Player id: ' + playerId);
         }
     }
-
-    // @OnEvent(AppEvents.PlayerMove)
-    // async handlePlayerMove(data: SocketClientMessageMove) {
-    //     const instanceId = this.playerInstanceMap.get(data.playerId.toLowerCase());
-    //     if (instanceId) {
-    //         const instance = this.instances.get(instanceId);
-    //         instance.handlePlayerMove(data);
-    //     } else {
-    //         Logger.error(`Unable to handlePlayerMove, instanceId:${instanceId}, playerId:${data.playerId.toLowerCase()}`);
-    //     }
-    // }
 
     @OnEvent(AppEvents.PlayerInput)
     async handlePlayerInput(data: SocketClientMessageInput) {

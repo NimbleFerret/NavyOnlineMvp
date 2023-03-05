@@ -46,23 +46,9 @@ export interface SocketServerMessageRemoveEntity {
 }
 
 export interface SocketServerMessageEntityInput {
-    entityId: string;
+    playerId: string;
     playerInputType: PlayerInputType;
 }
-
-// export interface SocketServerMessageEntityMove {
-//     entityId: string;
-//     up: boolean;
-//     down: boolean;
-//     left: boolean;
-//     right: boolean;
-// }
-
-// export interface SocketServerMessageShipShoot {
-//     playerId: string;
-//     left: boolean;
-//     shotParams: ShotParams[];
-// }
 
 export interface SocketServerMessageSync {
     tick: number;
@@ -97,20 +83,6 @@ export interface SocketClientMessageInput {
     playerInputType: PlayerInputType;
     index: number;
 }
-
-// export interface SocketClientMessageMove {
-//     playerId: string;
-//     up: boolean;
-//     down: boolean;
-//     left: boolean;
-//     right: boolean;
-// }
-
-// export interface SocketClientMessageShoot {
-//     playerId: string;
-//     left: boolean;
-//     shotParams: ShotParams[];
-// }
 
 export interface ShotParams {
     speed: number;

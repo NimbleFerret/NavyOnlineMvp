@@ -88,7 +88,6 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         };
 
         this.gameEngine.createMainEntityCallback = (ship: object) => {
-            console.log("createMainEntityCallback");
             const socketServerMessageAddEntity = {
                 entity: this.converJsEntityToTypeScript(ship)
             } as SocketServerMessageAddEntity;
@@ -157,31 +156,9 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
     // --------------------------
 
     public initiateEngineEntity(playerId: string, entityid: string) {
-        const ship = ShipEntity.GetFreeShipStats(playerId, entityid);
-        // if (entityid == 'free' || entityid == 'testShip') {
-        //     ship = SharedLibraryService.GetFreeShip();
-        // } else {
-        //     ship = await this.shipModel.findOne({ tokenId: entityid });
-        // }
-
-        // let windows = 'NONE';
-        // if (ship.windows == 0) {
-        //     windows = 'ONE';
-        // } else if (ship.windows == 1) {
-        //     windows = 'TWO';
-        // }
-
-        // let cannons = 'ONE';
-        // if (ship.cannons == 2) {
-        //     cannons = 'TWO';
-        // } else if (ship.cannons == 3) {
-        //     cannons = 'THREE';
-        // } else if (ship.cannons == 4) {
-        //     cannons = 'FOUR';
-        // }
-
+        const ship = ShipEntity.GetFreeShipStats(entityid, playerId);
         const engineEntity = this.gameEngine.buildEngineEntity(ship);
-        this.gameEngine.createMainEntity(engineEntity);
+        this.gameEngine.createMainEntity(engineEntity, true);
         return engineEntity;
     }
 

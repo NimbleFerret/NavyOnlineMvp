@@ -91,6 +91,8 @@ abstract class BaseEngine {
 
 	public function createMainEntity(entity:EngineBaseGameEntity, fireCallback = false) {
 		mainEntityManager.add(entity);
+		trace('createMainEntity');
+		trace(entity.getOwnerId(), entity.getId());
 		playerEntityMap.set(entity.getOwnerId(), entity.getId());
 		if (fireCallback) {
 			if (createMainEntityCallback != null) {
