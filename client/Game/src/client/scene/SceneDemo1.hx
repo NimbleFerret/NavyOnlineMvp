@@ -32,7 +32,7 @@ class SceneDemo1 extends Scene {
 		// Mocked client data
 		// --------------------------------------
 
-		final playerId = Player.instance.ethAddress;
+		final playerId = Player.instance.playerId;
 		final bot1Id = 'Bot1';
 
 		final ship1 = new EngineShipEntity(new ShipObjectEntity({

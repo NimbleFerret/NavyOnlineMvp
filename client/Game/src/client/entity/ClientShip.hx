@@ -119,7 +119,7 @@ class ClientShip extends ClientBaseGameEntity {
 
 		final nickname = new h2d.Text(hxd.res.DefaultFont.get(), this);
 		if (engineShipEntity.shipObjectEntity.role == Role.PLAYER) {
-			if (ownerId == client.Player.instance.ethAddress || ownerId == 'Player1') {
+			if (ownerId == client.Player.instance.playerId || ownerId == 'Player1') {
 				nickname.text = 'You';
 			} else {
 				nickname.text = Utils.MaskEthAddress(ownerId);

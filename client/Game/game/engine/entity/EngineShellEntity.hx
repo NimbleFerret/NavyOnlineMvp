@@ -24,21 +24,7 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 
 		customUpdate = this;
 		customCollide = this;
-
-		if (this.shellObjectEntity.shellRnd == null) {
-			this.shellObjectEntity.shellRnd = {
-				speed: Std.random(GameEngineConfig.ShellRandomSpeedFactor),
-				dir: Std.random(2),
-				rotation: Std.random(GameEngineConfig.ShellRandomAngleSpreadDegree)
-			};
-		}
-
 		currentSpeed = GameEngineConfig.ShellDefaultSpeed;
-		currentSpeed += this.shellObjectEntity.shellRnd.speed;
-
-		final shellRndRotation = this.shellObjectEntity.shellRnd.rotation;
-
-		this.rotation += MathUtils.degreeToRads(this.shellObjectEntity.shellRnd.dir == 1 ? shellRndRotation : -shellRndRotation);
 	}
 
 	// ------------------------------------------------
@@ -87,7 +73,7 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 		return shellObjectEntity.damage;
 	}
 
-	public function getShellRnd() {
-		return shellObjectEntity.shellRnd;
+	public function getRotation() {
+		return shellObjectEntity.rotation;
 	}
 }

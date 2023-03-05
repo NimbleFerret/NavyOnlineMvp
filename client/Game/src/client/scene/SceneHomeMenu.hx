@@ -221,7 +221,7 @@ class SceneHomeMenu extends Scene {
 
 			hud.updateShipUi(newShipInfo);
 
-			client.Player.instance.currentShipId = newShipInfo.type == 1 ? 'free' : newShipInfo.id;
+			client.Player.instance.playerEntityId = newShipInfo.type == 1 ? 'free' : newShipInfo.id;
 			client.Player.instance.isCurrentShipIsFree = newShipInfo.type == 1;
 		}
 	}

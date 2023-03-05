@@ -195,7 +195,6 @@ typedef ShellObjectEntityStruct = {
 	pos:Int,
 	damage:Int,
 	range:Int,
-	?shellRnd:ShellRnd
 }
 
 class ShellObjectEntity extends BaseObjectEntity {
@@ -204,7 +203,6 @@ class ShellObjectEntity extends BaseObjectEntity {
 	public var pos:Int;
 	public var damage:Int;
 	public var range:Int;
-	public var shellRnd:ShellRnd;
 
 	public function new(struct:ShellObjectEntityStruct) {
 		super(struct);
@@ -214,7 +212,7 @@ class ShellObjectEntity extends BaseObjectEntity {
 		this.pos = struct.pos;
 		this.damage = struct.damage;
 		this.range = struct.range;
-		this.shellRnd = struct.shellRnd;
+		// this.shellRnd = struct.shellRnd;
 	}
 }
 
@@ -243,9 +241,8 @@ typedef ShootInputDetails = {
 }
 
 typedef PlayerInputCommand = {
-	var index:Int;
+	var ?index:Int;
 	var inputType:PlayerInputType;
-	// var ?entityId:String;
 	var ?playerId:String;
-	var ?shootInputDetails:ShootInputDetails;
+	var ?shootDetails:ShootInputDetails;
 }

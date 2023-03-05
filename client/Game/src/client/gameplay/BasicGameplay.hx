@@ -27,7 +27,6 @@ enum GameState {
 
 abstract class BasicGameplay {
 	public final baseEngine:BaseEngine;
-	public var inputIndex = 0;
 
 	private final debugGraphics:h2d.Graphics;
 	private final GameEntityLayer = 1;
@@ -35,6 +34,7 @@ abstract class BasicGameplay {
 
 	public var gameState = GameState.Init;
 
+	// TODO replace by static ?
 	public var playerId:String;
 	public var playerEntityId:String;
 
@@ -142,13 +142,13 @@ abstract class BasicGameplay {
 
 		if (playerInputType != null && (up || down || left || right) && movementAllowance) {
 			baseEngine.addInputCommand({
-				index: ++inputIndex,
+				index: Player.instance.incrementAndGetInputIndex(),
 				playerId: playerId,
 				inputType: playerInputType
 			});
 
 			Socket.instance.input({
-				index: inputIndex,
+				index: Player.instance.getInputIndex(),
 				playerId: playerId,
 				playerInputType: playerInputType
 			});

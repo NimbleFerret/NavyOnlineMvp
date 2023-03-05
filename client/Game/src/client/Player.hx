@@ -10,11 +10,22 @@ class Player {
 	public var playerData:PlayerData;
 
 	public var ethAddress:String;
-	public var currentShipId:String;
+	public var playerId:String;
+	public var playerEntityId:String;
 	public var isCurrentShipIsFree = true;
 
+	private var inputIndex = 0;
+
 	private function new() {
-		ethAddress = Uuid.short().toLowerCase();
-		currentShipId = "testShip_" + ethAddress;
+		playerId = Uuid.short().toLowerCase();
+		playerEntityId = "testShip_" + playerId;
+	}
+
+	public function incrementAndGetInputIndex() {
+		return ++inputIndex;
+	}
+
+	public function getInputIndex() {
+		return inputIndex;
 	}
 }

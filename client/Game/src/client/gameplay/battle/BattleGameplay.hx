@@ -52,33 +52,29 @@ class BattleGameplay extends BasicGameplay {
 		final gameEngine = cast(baseEngine, GameEngine);
 
 		gameEngine.createMainEntityCallback = function callback(engineShipEntity:EngineBaseGameEntity) {}
-		gameEngine.createShellCallback = function callback(engineShellEntities:Array<EngineShellEntity>) {
+
+		gameEngine.createShellCallback = function callback(callback:CreateShellCallbackParams) {
 			if (gameState == GameState.Playing) {
+				final engineShellEntities = callback.shells;
 				final ownerEntity = clientMainEntities.get(engineShellEntities[0].getOwnerId());
-				final shotParams = new Array<ShotParams>();
 				if (ownerEntity != null) {
 					final ownerShip = cast(ownerEntity, ClientShip);
 					for (engineShell in engineShellEntities) {
 						final clientShell = new ClientShell(engineShell, ownerShip);
 						clientShells.set(engineShell.getId(), clientShell);
 						addGameEntityToScene(clientShell);
-
-						shotParams.push({
-							speed: engineShell.getShellRnd().speed,
-							dir: engineShell.getShellRnd().dir,
-							rotation: engineShell.getShellRnd().rotation
+					}
+					if (engineShellEntities[0].getOwnerId() == playerId) {
+						Socket.instance.input({
+							index: Player.instance.getInputIndex(),
+							playerId: playerId,
+							playerInputType: PlayerInputType.SHOOT,
+							shotParams: {
+								side: callback.side,
+								aimAngleRads: callback.aimAngleRads
+							}
 						});
 					}
-				}
-				if (gameEngine.engineMode == EngineMode.Server && !engineShellEntities[0].serverSide) {
-					// Socket.instance.shoot({
-					// 	playerId: playerId,
-					// 	left: engineShellEntities[0].getSide() == Side.LEFT ? true : false,
-					// 	shotParams: shotParams
-					// });
-				}
-				if (ownerEntity.getId() == playerEntityId) {
-					// TODO update UI
 				}
 			}
 		};
@@ -257,7 +253,6 @@ class BattleGameplay extends BasicGameplay {
 		hud.show(true);
 	}
 
-	// This is called twice ?
 	public function customInput(mousePos:Point, mouseLeft:Bool, mouseRight:Bool) {
 		final leftClick = K.isPressed(K.MOUSE_LEFT);
 		if (leftClick) {
@@ -267,7 +262,7 @@ class BattleGameplay extends BasicGameplay {
 			final side = mouseToShipRelation.toTheLeft ? LEFT : RIGHT;
 			final cannonsFiringRange = playerShip.getCannonsFiringAreaBySide(side);
 			for (index in 0...cannonsFiringRange.length) {
-				gameEngine.shipShootBySide(side, playerEntityId, false, playerShip.getCannonFiringAreaAngle(side, index));
+				gameEngine.shipShootBySide(side, playerEntityId, playerShip.getCannonFiringAreaAngle(side, index));
 			}
 		}
 	}

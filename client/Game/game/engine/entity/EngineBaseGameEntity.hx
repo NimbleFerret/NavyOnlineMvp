@@ -24,7 +24,6 @@ abstract class EngineBaseGameEntity {
 	public var entityType:GameEntityType;
 	public var isAlive = true;
 	public var isCollides = true;
-	public var serverSide = true;
 	public var killerId:String;
 
 	// ----------------------

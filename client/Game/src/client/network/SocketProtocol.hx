@@ -87,33 +87,12 @@ typedef SocketClientMessageInput = {
 	playerId:String,
 	playerInputType:PlayerInputType,
 	index:Int,
+	?shotParams:ShotParams
 }
 
-// PlayerInputCommand
-// var index:Int;
-// var inputType:PlayerInputType;
-// var entityId:String;
-// var ?playerId:String;
-// var ?shootInputDetails:ShootInputDetails;
-//
-// typedef SocketClientMessageMove = {
-// 	playerId:String,
-// 	up:Bool,
-// 	down:Bool,
-// 	left:Bool,
-// 	right:Bool
-// }
-// typedef SocketClientMessageShoot = {
-// 	playerId:String,
-// 	left:Bool,
-// 	shotParams:Array<ShotParams>
-// }
-//
-
 typedef ShotParams = {
-	speed:Int,
-	dir:Int,
-	rotation:Int
+	side:Side,
+	aimAngleRads:Float,
 }
 
 typedef SocketClientMessageSync = {

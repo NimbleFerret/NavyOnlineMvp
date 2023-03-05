@@ -74,18 +74,9 @@ class Socket {
 		clientSocket.emit(SocketProtocol.SocketClientEventLeaveGame, message);
 	}
 
-	//
-
 	public function input(message:SocketProtocol.SocketClientMessageInput) {
 		clientSocket.emit(SocketProtocol.SocketClientEventInput, message);
 	}
-
-	// public function move(message:SocketProtocol.SocketClientMessageMove) {
-	// 	clientSocket.emit(SocketProtocol.SocketClientEventMove, message);
-	// }
-	// public function shoot(message:SocketProtocol.SocketClientMessageShoot) {
-	// 	clientSocket.emit(SocketProtocol.SocketClientEventShoot, message);
-	// }
 
 	public function sync(message:SocketProtocol.SocketClientMessageSync) {
 		clientSocket.emit(SocketProtocol.SocketClientEventSync, message);

@@ -129,7 +129,7 @@ class SceneWorldMap extends Scene {
 			Timer.delay(function resetMoveDelay() {
 				allowPlayerMove = true;
 			}, 1000);
-			Rest.instance.worldMove(Player.instance.ethAddress, x, y, function callback(result:Bool) {
+			Rest.instance.worldMove(Player.instance.playerId, x, y, function callback(result:Bool) {
 				if (result) {
 					final pos = sectorPosToWorldCoords(x, y);
 					playerBmp.setPosition(pos.x - 10, pos.y - 10);
@@ -201,7 +201,7 @@ class SceneWorldMap extends Scene {
 
 	private function enterSector(x:Int, y:Int) {
 		if (gameWorldInitialized) {
-			Rest.instance.worldEnter(Player.instance.ethAddress, x, y, function callback(response:JoinSectorResponse) {
+			Rest.instance.worldEnter(Player.instance.playerId, x, y, function callback(response:JoinSectorResponse) {
 				if (response.result) {
 					if (enterSectorCallback != null) {
 						enterSectorCallback(new EnterSectorCallback(response));
