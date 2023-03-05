@@ -54,45 +54,46 @@ class GameEngine extends BaseEngine {
 				case SHOOT:
 					final shootDetails = input.playerInputCommand.shootDetails;
 					final side = shootDetails.side;
-					final aimAngleRads = shootDetails.aimAngleRads;
-					final ship = cast(getMainEntityByOwnerId(input.playerInputCommand.playerId), EngineShipEntity);
-					final shipSideRadRotation = aimAngleRads == 0 ? ship.rotation + MathUtils.degreeToRads(side == LEFT ? 90 : -90) : aimAngleRads;
-					final shells = new Array<EngineShellEntity>();
+					if (ship != null && ship.tryShoot(side)) {
+						final aimAngleRads = shootDetails.aimAngleRads;
+						final shipSideRadRotation = aimAngleRads == 0 ? ship.rotation + MathUtils.degreeToRads(side == LEFT ? 90 : -90) : aimAngleRads;
+						final shells = new Array<EngineShellEntity>();
 
-					var cannonsTotal = 0;
-					switch (ship.getShipCannons()) {
-						case ONE:
-							cannonsTotal = 1;
-						case TWO:
-							cannonsTotal = 2;
-						case THREE:
-							cannonsTotal = 3;
-						case FOUR:
-							cannonsTotal = 4;
-						case _:
-					}
+						var cannonsTotal = 0;
+						switch (ship.getShipCannons()) {
+							case ONE:
+								cannonsTotal = 1;
+							case TWO:
+								cannonsTotal = 2;
+							case THREE:
+								cannonsTotal = 3;
+							case FOUR:
+								cannonsTotal = 4;
+							case _:
+						}
 
-					for (i in 0...cannonsTotal) {
-						final cannonPosition = ship.getCannonPositionBySideAndIndex(side, i);
-						final shell = addShell({
-							x: cannonPosition.x,
-							y: cannonPosition.y,
-							ownerId: ship.getId(),
-							rotation: shipSideRadRotation,
-							side: side,
-							pos: i,
-							damage: ship.getCannonsDamage(),
-							range: ship.getCannonsRange()
-						});
-						shells.push(shell);
-					}
+						for (i in 0...cannonsTotal) {
+							final cannonPosition = ship.getCannonPositionBySideAndIndex(side, i);
+							final shell = addShell({
+								x: cannonPosition.x,
+								y: cannonPosition.y,
+								ownerId: ship.getId(),
+								rotation: shipSideRadRotation,
+								side: side,
+								pos: i,
+								damage: ship.getCannonsDamage(),
+								range: ship.getCannonsRange()
+							});
+							shells.push(shell);
+						}
 
-					if (createShellCallback != null) {
-						createShellCallback({
-							shells: shells,
-							side: side,
-							aimAngleRads: aimAngleRads
-						});
+						if (createShellCallback != null) {
+							createShellCallback({
+								shells: shells,
+								side: side,
+								aimAngleRads: aimAngleRads
+							});
+						}
 					}
 			}
 		}
@@ -112,10 +113,11 @@ class GameEngine extends BaseEngine {
 					engineShipEntity.allowShoot = true;
 				}
 
-				if (engineShipEntity.shipObjectEntity.role == Role.BOT && engineShipEntity.allowShoot) {
-					engineShipEntity.allowShoot = false;
-					shipShootBySide(Side.RIGHT, engineShipEntity.getId(), 0);
-				}
+				// if (engineShipEntity.shipObjectEntity.role == Role.BOT && engineShipEntity.allowShoot) {
+				// 	engineShipEntity.allowShoot = false;
+				// 	shipShootBySide(Side.RIGHT, engineShipEntity.getId(), 0);
+				// }
+
 				for (ship2 in mainEntityManager.entities) {
 					if (ship.getId() != ship2.getId()) {
 						if (ship.getBodyRectangle().intersectsWithRect(ship2.getBodyRectangle())) {
@@ -195,21 +197,6 @@ class GameEngine extends BaseEngine {
 		if (ship.getBodyRectangle().intersectsWithPoint(shellLine.p1))
 			return true;
 		return ship.getBodyRectangle().intersectsWithLine(new Line(shellLine.p1.x, shellLine.p1.y, shellLine.p2.x, shellLine.p2.y));
-	}
-
-	public function shipShootBySide(side:Side, shipId:String, aimAngleRads:Float, ?inputIndex:Int) {
-		final ship = cast(mainEntityManager.getEntityById(shipId), EngineShipEntity);
-		if (ship != null && ship.tryShoot(side)) {
-			addInputCommand({
-				index: inputIndex,
-				inputType: PlayerInputType.SHOOT,
-				playerId: ship.getOwnerId(),
-				shootDetails: {
-					side: side,
-					aimAngleRads: aimAngleRads
-				}
-			});
-		}
 	}
 
 	// -------------------------------------

@@ -87,12 +87,7 @@ typedef SocketClientMessageInput = {
 	playerId:String,
 	playerInputType:PlayerInputType,
 	index:Int,
-	?shotParams:ShotParams
-}
-
-typedef ShotParams = {
-	side:Side,
-	aimAngleRads:Float,
+	?shootDetails:ShootInputDetails
 }
 
 typedef SocketClientMessageSync = {

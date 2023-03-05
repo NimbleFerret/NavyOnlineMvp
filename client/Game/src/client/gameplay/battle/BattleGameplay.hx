@@ -64,17 +64,6 @@ class BattleGameplay extends BasicGameplay {
 						clientShells.set(engineShell.getId(), clientShell);
 						addGameEntityToScene(clientShell);
 					}
-					if (engineShellEntities[0].getOwnerId() == playerId) {
-						Socket.instance.input({
-							index: Player.instance.getInputIndex(),
-							playerId: playerId,
-							playerInputType: PlayerInputType.SHOOT,
-							shotParams: {
-								side: callback.side,
-								aimAngleRads: callback.aimAngleRads
-							}
-						});
-					}
 				}
 			}
 		};
@@ -263,7 +252,24 @@ class BattleGameplay extends BasicGameplay {
 			final cannonsFiringRange = playerShip.getCannonsFiringAreaBySide(side);
 			final inputIndex = Player.instance.incrementAndGetInputIndex();
 			for (index in 0...cannonsFiringRange.length) {
-				gameEngine.shipShootBySide(side, playerEntityId, playerShip.getCannonFiringAreaAngle(side, index), inputIndex);
+				final shootDetails = {
+					side: side,
+					aimAngleRads: playerShip.getCannonFiringAreaAngle(side, index)
+				};
+
+				baseEngine.addInputCommand({
+					index: Player.instance.incrementAndGetInputIndex(),
+					playerId: playerId,
+					inputType: PlayerInputType.SHOOT,
+					shootDetails: shootDetails
+				});
+
+				Socket.instance.input({
+					index: Player.instance.getInputIndex(),
+					playerId: playerId,
+					playerInputType: PlayerInputType.SHOOT,
+					shootDetails: shootDetails
+				});
 			}
 		}
 	}
