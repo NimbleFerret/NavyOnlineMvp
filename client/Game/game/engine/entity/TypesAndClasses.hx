@@ -95,8 +95,6 @@ class BaseObjectEntity {
 		this.direction = struct.direction;
 		this.id = struct.id;
 		this.ownerId = struct.ownerId;
-		trace('BaseObjectEntity');
-		trace(struct);
 	}
 }
 

@@ -66,11 +66,11 @@ class MathUtils {
 			case NORTH_WEST:
 				degree = -155;
 			case WEST:
-				degree = 0;
+				degree = 180;
 			case SOUTH_WEST:
-				degree = -25;
+				degree = 155;
 			case SOUTH:
-				degree = -90;
+				degree = 90;
 			case SOUTH_EAST:
 				degree = 25;
 		}
@@ -81,13 +81,21 @@ class MathUtils {
 		return Math.atan2(point2.y - point1.y, point2.x - point1.x);
 	}
 
-	// TODO replace by hxd.Math
 	public static function degreeToRads(degrees:Float) {
 		return (Math.PI / 180) * degrees;
 	}
 
 	public static function radsToDegree(rads:Float) {
 		return rads * (180 / Math.PI);
+	}
+
+	public static function normalizeAngle(rads:Float) {
+		rads = rads % (2 * Math.PI);
+		if (rads >= 0) {
+			return rads;
+		} else {
+			return rads + 2 * Math.PI;
+		}
 	}
 
 	public static function rotatePointAroundCenter(x:Float, y:Float, cx:Float, cy:Float, r:Float) {

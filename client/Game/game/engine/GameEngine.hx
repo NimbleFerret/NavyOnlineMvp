@@ -36,13 +36,9 @@ class GameEngine extends BaseEngine {
 
 	public function processInputCommands(inputs:Array<PlayerInputCommandEngineWrapped>) {
 		for (input in inputs) {
-			trace(input);
 			final entityId = playerEntityMap.get(input.playerInputCommand.playerId);
 			final ship = cast(mainEntityManager.getEntityById(entityId), EngineShipEntity);
 			if (ship == null || ship.getOwnerId() != input.playerInputCommand.playerId) {
-				trace('continue');
-				trace(playerEntityMap);
-				trace('playerId:' + input.playerInputCommand.playerId + ', entityId:' + entityId);
 				continue;
 			}
 			switch (input.playerInputCommand.inputType) {

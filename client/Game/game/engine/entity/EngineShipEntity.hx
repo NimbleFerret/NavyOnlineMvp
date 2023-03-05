@@ -37,8 +37,6 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	// Bot stuff
 	public var allowShoot = false;
 
-	// TODO implement params
-
 	public function new(shipObjectEntity:ShipObjectEntity) {
 		super(getShipTypeBySize(shipObjectEntity.shipHullSize), shipObjectEntity);
 

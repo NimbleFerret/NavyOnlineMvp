@@ -167,17 +167,17 @@ class ClientShip extends ClientBaseGameEntity {
 		Utils.DrawRect(graphics, shipEntity.getBodyRectangle(), GameConfig.GreenColor);
 
 		if (GameConfig.DebugCannonFiringArea) {
-			for (firingRange in shipEntity.getCannonsFiringAreaBySide(LEFT)) {
-				final origin = Utils.EngineToClientPoint(firingRange.origin);
-				final left = Utils.EngineToClientPoint(firingRange.origin);
-				final right = Utils.EngineToClientPoint(firingRange.origin);
-				Utils.DrawLine(graphics, origin, left, GameConfig.YellowColor);
-				Utils.DrawLine(graphics, origin, right, GameConfig.YellowColor);
-			}
+			// for (firingRange in shipEntity.getCannonsFiringAreaBySide(LEFT)) {
+			// 	final origin = Utils.EngineToClientPoint(firingRange.origin);
+			// 	final left = Utils.EngineToClientPoint(firingRange.left);
+			// 	final right = Utils.EngineToClientPoint(firingRange.right);
+			// 	Utils.DrawLine(graphics, origin, left, GameConfig.YellowColor);
+			// 	Utils.DrawLine(graphics, origin, right, GameConfig.YellowColor);
+			// }
 			for (firingRange in shipEntity.getCannonsFiringAreaBySide(RIGHT)) {
 				final origin = Utils.EngineToClientPoint(firingRange.origin);
-				final left = Utils.EngineToClientPoint(firingRange.origin);
-				final right = Utils.EngineToClientPoint(firingRange.origin);
+				final left = Utils.EngineToClientPoint(firingRange.left);
+				final right = Utils.EngineToClientPoint(firingRange.right);
 				Utils.DrawLine(graphics, origin, left, GameConfig.YellowColor);
 				Utils.DrawLine(graphics, origin, right, GameConfig.YellowColor);
 			}
@@ -206,7 +206,30 @@ class ClientShip extends ClientBaseGameEntity {
 				Utils.DrawLine(graphics, Utils.EngineToClientPoint(origin), shipTemplate.getCannonSightPos(mouseSide, index), GameConfig.YellowColor);
 			}
 
-			if (cannonAndMouse < cannonAndLeftArea && cannonAndMouse > cannonAndRightArea) {
+			var allowSight = false;
+			if (mouseSide == LEFT) {
+				switch (shipEntity.getDirection()) {
+					case NORTH, NORTH_WEST, WEST, NORTH_EAST, EAST, SOUTH_EAST:
+						final normalizedMouse = MathUtils.normalizeAngle(cannonAndMouse);
+						final normalizedcannonAndLeft = MathUtils.normalizeAngle(cannonAndLeftArea);
+						final normalizedcannonAndRight = MathUtils.normalizeAngle(cannonAndRightArea);
+						allowSight = normalizedMouse < normalizedcannonAndLeft && normalizedMouse > normalizedcannonAndRight;
+					case _:
+						allowSight = cannonAndMouse < cannonAndLeftArea && cannonAndMouse > cannonAndRightArea;
+				}
+			} else {
+				switch (shipEntity.getDirection()) {
+					case SOUTH_WEST, WEST, NORTH_WEST, NORTH, NORTH_EAST, EAST, SOUTH_EAST:
+						allowSight = cannonAndMouse < cannonAndLeftArea && cannonAndMouse > cannonAndRightArea;
+					case _:
+						final normalizedMouse = MathUtils.normalizeAngle(cannonAndMouse);
+						final normalizedcannonAndLeft = MathUtils.normalizeAngle(cannonAndLeftArea);
+						final normalizedcannonAndRight = MathUtils.normalizeAngle(cannonAndRightArea);
+						allowSight = normalizedMouse < normalizedcannonAndLeft && normalizedMouse > normalizedcannonAndRight;
+				}
+			}
+
+			if (allowSight) {
 				final lineLength = origin.x + shipEntity.getCannonsRange();
 				final lineEndPoint = Utils.EngineToClientPoint(MathUtils.rotatePointAroundCenter(lineLength, origin.y, origin.x, origin.y, cannonAndMouse));
 				shipTemplate.updateCannonSightPos(mouseSide, index, lineEndPoint);

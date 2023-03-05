@@ -138,9 +138,9 @@ abstract class BasicGameplay {
 		if (down)
 			playerInputType = PlayerInputType.MOVE_DOWN;
 
-		final xxx = baseEngine.checkLocalMovementInputAllowance(playerEntityId, playerInputType);
+		final movementAllowance = baseEngine.checkLocalMovementInputAllowance(playerEntityId, playerInputType);
 
-		if (playerInputType != null && (up || down || left || right) && xxx) {
+		if (playerInputType != null && (up || down || left || right) && movementAllowance) {
 			baseEngine.addInputCommand({
 				index: ++inputIndex,
 				playerId: playerId,

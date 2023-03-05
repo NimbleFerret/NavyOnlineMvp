@@ -36,12 +36,12 @@ class SceneDemo1 extends Scene {
 		final bot1Id = 'Bot1';
 
 		final ship1 = new EngineShipEntity(new ShipObjectEntity({
-			x: 392,
+			x: 100,
 			y: 207,
 			minSpeed: 0,
 			maxSpeed: 300,
 			acceleration: 50,
-			direction: GameEntityDirection.NORTH_EAST,
+			direction: GameEntityDirection.EAST,
 			id: null,
 			ownerId: playerId,
 			serverShipRef: "",
