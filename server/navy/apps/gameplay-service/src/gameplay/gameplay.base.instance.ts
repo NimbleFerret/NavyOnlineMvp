@@ -16,7 +16,8 @@ import {
     SocketClientMessageSync,
     SocketServerMessageSync,
     SocketClientMessageInput,
-    SocketServerMessageEntityInput
+    SocketServerMessageEntityInput,
+    PlayerInputType
 } from '../ws/ws.protocol';
 import { BaseGameObject } from '@app/shared-library/entities/entity.base';
 import { Constants } from '../app.constants';
@@ -163,41 +164,20 @@ export abstract class BaseGameplayInstance {
             this.gameEngine.addInputCommand({
                 index: data.index,
                 inputType: data.playerInputType,
-                entityId: playerEntityId,
-                playerId: data.playerId
+                playerId: data.playerId,
+                shootDetails: data.shootDetails
             });
 
-            const socketServerMessageEntityInput = {
-                playerId: data.playerId,
-                playerInputType: data.playerInputType
-            } as SocketServerMessageEntityInput;
-            this.notifyAllPlayers(socketServerMessageEntityInput, WsProtocol.SocketServerEventEntityInput, data.playerId);
+            // Only basic movement notification inside basic instance logic
+            if (data.playerInputType != PlayerInputType.SHOOT) {
+                const socketServerMessageEntityInput = {
+                    playerId: data.playerId,
+                    playerInputType: data.playerInputType
+                } as SocketServerMessageEntityInput;
+                this.notifyAllPlayers(socketServerMessageEntityInput, WsProtocol.SocketServerEventEntityInput, data.playerId);
+            }
         }
     }
-
-    // async handlePlayerMove(data: SocketClientMessageMove) {
-    //     const character = this.playerEntityMap.get(data.playerId);
-    //     if (character) {
-    //         if (data.up)
-    //             this.gameEngine.entityMoveUp(character);
-    //         if (data.down)
-    //             this.gameEngine.entityMoveDown(character);
-    //         if (data.left)
-    //             this.gameEngine.entityMoveLeft(character);
-    //         if (data.right)
-    //             this.gameEngine.entityMoveRight(character);
-
-    //         const socketServerMessageEntityMove = {
-    //             entityId: character,
-    //             up: data.up,
-    //             down: data.down,
-    //             left: data.left,
-    //             right: data.right
-    //         } as SocketServerMessageEntityMove;
-
-    //         this.notifyAllPlayers(socketServerMessageEntityMove, WsProtocol.SocketServerEventEntityMove);
-    //     }
-    // }
 
     async handlePlayerSync(data: SocketClientMessageSync) {
         const ship = this.playerEntityMap.get(data.playerId);

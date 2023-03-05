@@ -20,8 +20,10 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 
 		this.leaveCallback = leaveCallback;
 		this.diedCallback = diedCallback;
-		scaleMode = LetterBox(1920, 1080, true, Center, Center);
-		camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
+		// scaleMode = LetterBox(1920, 1080, true, Center, Center);
+		// camera.setViewport(1920 / 2, 1080 / 2, 0, 0);
+		camera.setViewport(1920, 1080, 0, 0);
+		camera.setScale(2, 2);
 	}
 
 	public function start(instanceId:String) {
@@ -35,8 +37,6 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityInput, this);
-				// EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityMove, this);
-				// EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventShipShoot, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventSync, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskUpdate, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskReward, this);
@@ -60,8 +60,6 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityInput, this);
-		// EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityMove, this);
-		// EventManager.instance.subscribe(SocketProtocol.SocketServerEventShipShoot, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventDailyTaskUpdate, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventDailyTaskReward, this);
@@ -96,7 +94,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 	public function notify(event:String, message:Dynamic) {
 		switch (event) {
 			case SocketProtocol.SocketServerEventGameInit:
-				game.startGameMultiplayer(Player.instance.ethAddress.toLowerCase(), message);
+				game.startGameMultiplayer(Player.instance.playerId.toLowerCase(), message);
 			case SocketProtocol.SocketServerEventAddEntity:
 				game.addEntity(message);
 			case SocketProtocol.SocketServerEventRemoveEntity:
@@ -105,10 +103,6 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				game.updateWorldState(message);
 			case SocketProtocol.SocketServerEventEntityInput:
 				game.entityInput(message);
-			// case SocketProtocol.SocketServerEventEntityMove:
-			// 	game.entityMove(message);
-			// case SocketProtocol.SocketServerEventShipShoot:
-			// 	game.shipShoot(message);
 			case SocketProtocol.SocketServerEventSync:
 				game.sync(message);
 			case SocketProtocol.SocketServerEventDailyTaskUpdate:

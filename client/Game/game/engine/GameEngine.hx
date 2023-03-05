@@ -12,7 +12,7 @@ import game.engine.entity.manager.ShellManager;
 import game.engine.geometry.Line;
 
 typedef ShipHitByShellCallbackParams = {ship:EngineShipEntity, damage:Int}
-typedef CreateShellCallbackParams = {shells:Array<EngineShellEntity>, side:Side, aimAngleRads:Float}
+typedef CreateShellCallbackParams = {shells:Array<EngineShellEntity>, shooterId:String, side:Side, aimAngleRads:Float}
 
 @:expose
 class GameEngine extends BaseEngine {
@@ -37,9 +37,10 @@ class GameEngine extends BaseEngine {
 
 	public function processInputCommands(inputs:Array<PlayerInputCommandEngineWrapped>) {
 		for (input in inputs) {
-			final entityId = playerEntityMap.get(input.playerInputCommand.playerId);
+			final inputInitiator = input.playerInputCommand.playerId;
+			final entityId = playerEntityMap.get(inputInitiator);
 			final ship = cast(mainEntityManager.getEntityById(entityId), EngineShipEntity);
-			if (ship == null || ship.getOwnerId() != input.playerInputCommand.playerId) {
+			if (ship == null || ship.getOwnerId() != inputInitiator) {
 				continue;
 			}
 			switch (input.playerInputCommand.inputType) {
@@ -77,7 +78,7 @@ class GameEngine extends BaseEngine {
 							final shell = addShell({
 								x: cannonPosition.x,
 								y: cannonPosition.y,
-								ownerId: ship.getId(),
+								ownerId: inputInitiator,
 								rotation: shipSideRadRotation,
 								side: side,
 								pos: i,
@@ -91,7 +92,8 @@ class GameEngine extends BaseEngine {
 							createShellCallback({
 								shells: shells,
 								side: side,
-								aimAngleRads: aimAngleRads
+								aimAngleRads: aimAngleRads,
+								shooterId: inputInitiator
 							});
 						}
 					}

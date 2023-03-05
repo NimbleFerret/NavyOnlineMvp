@@ -7,10 +7,10 @@ import { game } from "../../js/GameEngine.js"
 import { ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import {
     WsProtocol,
-    // SocketServerMessageShipShoot,
+    SocketServerMessageEntityInput,
     SocketServerMessageAddEntity,
-    // SocketClientMessageShoot,
-    SocketClientMessageRespawn
+    SocketClientMessageRespawn,
+    PlayerInputType
 } from "../../ws/ws.protocol";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 import { ShipEntity, ShipObjectEntity } from "@app/shared-library/entities/entity.ship";
@@ -68,23 +68,16 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             // this.notifyAllPlayers(socketServerMessageRemoveEntity, WsProtocol.SocketServerEventRemoveEntity);
         };
 
-        this.gameEngine.createShellCallback = (shells: any) => {
-            const ship = this.gameEngine.getMainEntityById(shells[0].ownerId);
-            if (ship && ship.role != 'Player') {
-                const shotParams = shells.map(shell => {
-                    return {
-                        speed: shell.shellRnd.speed,
-                        dir: shell.shellRnd.dir,
-                        rotation: shell.shellRnd.rotation
-                    }
-                });
-                // const socketServerMessageShipShoot = {
-                //     playerId: ship.ownerId,
-                //     left: shells[0].side == 'Left' ? true : false,
-                //     shotParams
-                // } as SocketServerMessageShipShoot;
-                // this.notifyAllPlayers(socketServerMessageShipShoot, WsProtocol.SocketServerEventShipShoot);
-            }
+        this.gameEngine.createShellCallback = (createShellCallback: any) => {
+            const socketServerMessageShipInput = {
+                playerId: createShellCallback.shooterId,
+                playerInputType: PlayerInputType.SHOOT,
+                shootDetails: {
+                    side: createShellCallback.side,
+                    aimAngleRads: createShellCallback.aimAngleRads
+                }
+            } as SocketServerMessageEntityInput;
+            this.notifyAllPlayers(socketServerMessageShipInput, WsProtocol.SocketServerEventEntityInput, createShellCallback.shooterId);
         };
 
         this.gameEngine.createMainEntityCallback = (ship: object) => {

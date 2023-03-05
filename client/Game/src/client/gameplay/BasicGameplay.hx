@@ -221,25 +221,11 @@ abstract class BasicGameplay {
 			baseEngine.addInputCommand({
 				index: 0,
 				playerId: message.playerId,
-				inputType: message.playerInputType
+				inputType: message.playerInputType,
+				shootDetails: message.shootDetails
 			});
 		}
 	}
-
-	// public function entityMove(message:SocketServerMessageEntityMove) {
-	// 	if (gameState == GameState.Playing && playerEntityId != message.entityId) {
-	// 		if (playerEntityId != message.entityId) {
-	// 			// if (message.up)
-	// 			// 	moveUp(message.entityId);
-	// 			// if (message.down)
-	// 			// 	moveDown(message.entityId);
-	// 			// if (message.left)
-	// 			// 	moveLeft(message.entityId);
-	// 			// if (message.right)
-	// 			// 	moveRight(message.entityId);
-	// 		}
-	// 	}
-	// }
 
 	public function removeEntity(message:SocketServerMessageRemoveEntity) {
 		if (gameState == GameState.Playing) {

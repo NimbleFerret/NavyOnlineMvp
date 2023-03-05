@@ -25,9 +25,6 @@ import {
 } from "./ws.protocol";
 
 @WebSocketGateway({
-    // transports: ['websocket'],
-    // namespace: '/api/v1/ws',
-    // path: '/api/v1/ws/socket.io',
     cors: {
         origin: '*',
         methods: ['GET', 'POST']
@@ -109,18 +106,6 @@ export class WsGateway implements OnModuleInit {
         // Logger.log(`Got input request. ${JSON.stringify(data)}`);
         this.eventEmitter.emit(AppEvents.PlayerInput, data);
     }
-
-    // @SubscribeMessage(WsProtocol.SocketClientEventMove)
-    // async move(@MessageBody() data: SocketClientMessageMove) {
-    //     Logger.log(`Got move request. ${JSON.stringify(data)}`);
-    //     this.eventEmitter.emit(AppEvents.PlayerMove, data);
-    // }
-
-    // @SubscribeMessage(WsProtocol.SocketClientEventShoot)
-    // async shoot(@MessageBody() data: SocketClientMessageShoot) {
-    //     Logger.log(`Got shoot request. ${JSON.stringify(data)}`);
-    //     this.eventEmitter.emit(AppEvents.PlayerShoot, data);
-    // }
 
     @SubscribeMessage(WsProtocol.SocketClientEventSync)
     async sync(@MessageBody() data: SocketClientMessageSync) {

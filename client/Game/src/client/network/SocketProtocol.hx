@@ -49,20 +49,8 @@ typedef SocketServerMessageRemoveEntity = {
 typedef SocketServerMessageEntityInput = {
 	playerId:String,
 	playerInputType:PlayerInputType,
+	?shootDetails:ShootInputDetails
 }
-
-// typedef SocketServerMessageEntityMove = {
-// 	entityId:String,
-// 	up:Bool,
-// 	down:Bool,
-// 	left:Bool,
-// 	right:Bool
-// }
-// typedef SocketServerMessageShipShoot = {
-// 	playerId:String,
-// 	left:Bool,
-// 	shotParams:Array<ShotParams>
-// }
 
 typedef SocketServerMessageSync = {
 	entities:Array<Dynamic>
@@ -106,8 +94,6 @@ class SocketProtocol {
 	public static final SocketServerEventRemoveEntity = 'SocketServerEventRemoveEntity';
 	public static final SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
 	public static final SocketServerEventEntityInput = 'SocketServerEventEntityInput';
-	// public static final SocketServerEventEntityMove = 'SocketServerEventEntityMove';
-	// public static final SocketServerEventShipShoot = 'SocketServerEventShipShoot';
 	public static final SocketServerEventSync = 'SocketServerEventSync';
 
 	public static final SocketServerEventDailyTaskUpdate = 'SocketServerEventDailyTaskUpdate';

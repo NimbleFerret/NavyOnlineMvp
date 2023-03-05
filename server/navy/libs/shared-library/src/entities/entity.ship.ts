@@ -62,8 +62,8 @@ export class ShipEntity {
 
     public static GetFreeShipStats(id: string, ownerId: string) {
         const ship: ShipObjectEntity = {
-            x: 300,
-            y: 300,
+            x: 100,
+            y: 207,
             minSpeed: 0,
             maxSpeed: 300,
             acceleration: 50,

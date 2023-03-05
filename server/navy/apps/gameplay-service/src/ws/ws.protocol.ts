@@ -48,6 +48,7 @@ export interface SocketServerMessageRemoveEntity {
 export interface SocketServerMessageEntityInput {
     playerId: string;
     playerInputType: PlayerInputType;
+    shootDetails?: ShootInputDetails;
 }
 
 export interface SocketServerMessageSync {
@@ -78,16 +79,21 @@ export enum PlayerInputType {
     SHOOT = 5
 }
 
+export enum Side {
+    LEFT = 1,
+    RIGHT = 2
+}
+
 export interface SocketClientMessageInput {
     playerId: string;
     playerInputType: PlayerInputType;
     index: number;
+    shootDetails?: ShootInputDetails;
 }
 
-export interface ShotParams {
-    speed: number;
-    dir: number;
-    rotation: number;
+export interface ShootInputDetails {
+    side: Side,
+    aimAngleRads: number
 }
 
 export interface SocketClientMessageSync {
@@ -107,8 +113,6 @@ export class WsProtocol {
     public static readonly SocketServerEventRemoveEntity = 'SocketServerEventRemoveEntity';
     public static readonly SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
     public static readonly SocketServerEventEntityInput = 'SocketServerEventEntityInput';
-    // public static readonly SocketServerEventEntityMove = 'SocketServerEventEntityMove';
-    // public static readonly SocketServerEventShipShoot = 'SocketServerEventShipShoot';
     public static readonly SocketServerEventSync = 'SocketServerEventSync';
 
     public static readonly SocketServerEventDailyTaskUpdate = 'SocketServerEventDailyTaskUpdate';
@@ -118,11 +122,7 @@ export class WsProtocol {
     public static readonly SocketClientEventPing = 'SocketClientEventPing';
     public static readonly SocketClientEventJoinGame = 'SocketClientEventJoinGame';
     public static readonly SocketClientEventLeaveGame = 'SocketClientEventLeaveGame';
-
     public static readonly SocketClientEventInput = 'SocketClientEventInput';
-    // public static readonly SocketClientEventMove = 'SocketClientEventMove';
-    // public static readonly SocketClientEventShoot = 'SocketClientEventShoot';
-
     public static readonly SocketClientEventSync = 'SocketClientEventSync';
     public static readonly SocketClientEventRespawn = 'SocketClientEventRespawn';
 }

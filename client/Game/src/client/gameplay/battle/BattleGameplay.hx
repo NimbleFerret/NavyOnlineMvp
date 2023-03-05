@@ -55,14 +55,16 @@ class BattleGameplay extends BasicGameplay {
 
 		gameEngine.createShellCallback = function callback(callback:CreateShellCallbackParams) {
 			if (gameState == GameState.Playing) {
-				final engineShellEntities = callback.shells;
-				final ownerEntity = clientMainEntities.get(engineShellEntities[0].getOwnerId());
-				if (ownerEntity != null) {
-					final ownerShip = cast(ownerEntity, ClientShip);
-					for (engineShell in engineShellEntities) {
-						final clientShell = new ClientShell(engineShell, ownerShip);
-						clientShells.set(engineShell.getId(), clientShell);
-						addGameEntityToScene(clientShell);
+				if (baseEngine.playerEntityMap.exists(callback.shooterId)) {
+					final engineShellEntities = callback.shells;
+					final ownerEntity = clientMainEntities.get(baseEngine.playerEntityMap.get(callback.shooterId));
+					if (ownerEntity != null) {
+						final ownerShip = cast(ownerEntity, ClientShip);
+						for (engineShell in engineShellEntities) {
+							final clientShell = new ClientShell(engineShell, ownerShip);
+							clientShells.set(engineShell.getId(), clientShell);
+							addGameEntityToScene(clientShell);
+						}
 					}
 				}
 			}
