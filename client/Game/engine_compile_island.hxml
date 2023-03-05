@@ -1,0 +1,4 @@
+-cp engine
+-lib uuid
+-js IslandEngine.js
+-main game.engine.IslandEngine

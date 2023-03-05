@@ -1,6 +1,5 @@
 package game.engine;
 
-import client.Player;
 import game.engine.BaseEngine.PlayerInputCommandEngineWrapped;
 import game.engine.BaseEngine.EngineGameMode;
 import game.engine.BaseEngine.EngineMode;
@@ -198,11 +197,11 @@ class GameEngine extends BaseEngine {
 		return ship.getBodyRectangle().intersectsWithLine(new Line(shellLine.p1.x, shellLine.p1.y, shellLine.p2.x, shellLine.p2.y));
 	}
 
-	public function shipShootBySide(side:Side, shipId:String, aimAngleRads:Float) {
+	public function shipShootBySide(side:Side, shipId:String, aimAngleRads:Float, ?inputIndex:Int) {
 		final ship = cast(mainEntityManager.getEntityById(shipId), EngineShipEntity);
 		if (ship != null && ship.tryShoot(side)) {
 			addInputCommand({
-				index: ship.getOwnerId() == Player.instance.playerId ? Player.instance.incrementAndGetInputIndex() : null,
+				index: inputIndex,
 				inputType: PlayerInputType.SHOOT,
 				playerId: ship.getOwnerId(),
 				shootDetails: {

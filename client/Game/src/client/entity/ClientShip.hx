@@ -167,13 +167,13 @@ class ClientShip extends ClientBaseGameEntity {
 		Utils.DrawRect(graphics, shipEntity.getBodyRectangle(), GameConfig.GreenColor);
 
 		if (GameConfig.DebugCannonFiringArea) {
-			// for (firingRange in shipEntity.getCannonsFiringAreaBySide(LEFT)) {
-			// 	final origin = Utils.EngineToClientPoint(firingRange.origin);
-			// 	final left = Utils.EngineToClientPoint(firingRange.left);
-			// 	final right = Utils.EngineToClientPoint(firingRange.right);
-			// 	Utils.DrawLine(graphics, origin, left, GameConfig.YellowColor);
-			// 	Utils.DrawLine(graphics, origin, right, GameConfig.YellowColor);
-			// }
+			for (firingRange in shipEntity.getCannonsFiringAreaBySide(LEFT)) {
+				final origin = Utils.EngineToClientPoint(firingRange.origin);
+				final left = Utils.EngineToClientPoint(firingRange.left);
+				final right = Utils.EngineToClientPoint(firingRange.right);
+				Utils.DrawLine(graphics, origin, left, GameConfig.YellowColor);
+				Utils.DrawLine(graphics, origin, right, GameConfig.YellowColor);
+			}
 			for (firingRange in shipEntity.getCannonsFiringAreaBySide(RIGHT)) {
 				final origin = Utils.EngineToClientPoint(firingRange.origin);
 				final left = Utils.EngineToClientPoint(firingRange.left);
