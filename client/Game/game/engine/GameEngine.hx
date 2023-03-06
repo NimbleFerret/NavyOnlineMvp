@@ -1,5 +1,6 @@
 package game.engine;
 
+import js.lib.Date;
 import game.engine.BaseEngine.PlayerInputCommandEngineWrapped;
 import game.engine.BaseEngine.EngineGameMode;
 import game.engine.BaseEngine.EngineMode;
@@ -22,14 +23,17 @@ class GameEngine extends BaseEngine {
 	public var deleteShellCallback:EngineShellEntity->Void;
 	public var shipHitByShellCallback:ShipHitByShellCallbackParams->Void;
 
-	public static function main() {}
+	public var enableShooting = true;
+	public var enableCollisions = true;
 
-	var allowShoot = false;
-	var framesPassed = 0;
-	var botsAllowShoot = false;
-	var timePassed = 0.0;
-	var lastBotShootTime = 0.0;
-	final botShootDelaySeconds = 3;
+	private var allowShoot = false;
+	private var framesPassed = 0;
+	private var botsAllowShoot = false;
+	private var timePassed = 0.0;
+	private var lastBotShootTime = 0.0;
+	private final botShootDelaySeconds = 3;
+
+	public static function main() {}
 
 	public function new(engineMode = EngineMode.Server) {
 		super(engineMode, EngineGameMode.Sea, new ShipManager());
@@ -57,48 +61,50 @@ class GameEngine extends BaseEngine {
 				case MOVE_RIGHT:
 					ship.rotateRight();
 				case SHOOT:
-					final shootDetails = input.playerInputCommand.shootDetails;
-					final side = shootDetails.side;
-					if (ship != null && ship.tryShoot(side)) {
-						final aimAngleRads = shootDetails.aimAngleRads;
-						final shipSideRadRotation = aimAngleRads == 0 ? ship.rotation + MathUtils.degreeToRads(side == LEFT ? 90 : -90) : aimAngleRads;
-						final shells = new Array<EngineShellEntity>();
+					if (enableShooting) {
+						final shootDetails = input.playerInputCommand.shootDetails;
+						final side = shootDetails.side;
+						if (ship != null && ship.tryShoot(side)) {
+							final aimAngleRads = shootDetails.aimAngleRads;
+							final shipSideRadRotation = aimAngleRads == 0 ? ship.rotation + MathUtils.degreeToRads(side == LEFT ? 90 : -90) : aimAngleRads;
+							final shells = new Array<EngineShellEntity>();
 
-						var cannonsTotal = 0;
-						switch (ship.getShipCannons()) {
-							case ONE:
-								cannonsTotal = 1;
-							case TWO:
-								cannonsTotal = 2;
-							case THREE:
-								cannonsTotal = 3;
-							case FOUR:
-								cannonsTotal = 4;
-							case _:
-						}
+							var cannonsTotal = 0;
+							switch (ship.getShipCannons()) {
+								case ONE:
+									cannonsTotal = 1;
+								case TWO:
+									cannonsTotal = 2;
+								case THREE:
+									cannonsTotal = 3;
+								case FOUR:
+									cannonsTotal = 4;
+								case _:
+							}
 
-						for (i in 0...cannonsTotal) {
-							final cannonPosition = ship.getCannonPositionBySideAndIndex(side, i);
-							final shell = addShell({
-								x: cannonPosition.x,
-								y: cannonPosition.y,
-								ownerId: inputInitiator,
-								rotation: shipSideRadRotation,
-								side: side,
-								pos: i,
-								damage: ship.getCannonsDamage(),
-								range: ship.getCannonsRange()
-							});
-							shells.push(shell);
-						}
+							for (i in 0...cannonsTotal) {
+								final cannonPosition = ship.getCannonPositionBySideAndIndex(side, i);
+								final shell = addShell({
+									x: cannonPosition.x,
+									y: cannonPosition.y,
+									ownerId: inputInitiator,
+									rotation: shipSideRadRotation,
+									side: side,
+									pos: i,
+									damage: ship.getCannonsDamage(),
+									range: ship.getCannonsRange()
+								});
+								shells.push(shell);
+							}
 
-						if (createShellCallback != null) {
-							createShellCallback({
-								shells: shells,
-								side: side,
-								aimAngleRads: aimAngleRads,
-								shooterId: inputInitiator
-							});
+							if (createShellCallback != null) {
+								createShellCallback({
+									shells: shells,
+									side: side,
+									aimAngleRads: aimAngleRads,
+									shooterId: inputInitiator
+								});
+							}
 						}
 					}
 			}
@@ -106,6 +112,8 @@ class GameEngine extends BaseEngine {
 	}
 
 	public function engineLoopUpdate(dt:Float) {
+		final beginTime = Date.now();
+
 		framesPassed++;
 		timePassed += dt;
 
@@ -134,11 +142,13 @@ class GameEngine extends BaseEngine {
 					});
 				}
 
-				for (ship2 in mainEntityManager.entities) {
-					if (ship.getId() != ship2.getId()) {
-						if (ship.getBodyRectangle().intersectsWithRect(ship2.getBodyRectangle())) {
-							ship.collides(true);
-							ship2.collides(true);
+				if (enableCollisions) {
+					for (ship2 in mainEntityManager.entities) {
+						if (ship.getId() != ship2.getId()) {
+							if (ship.getBodyRectangle().intersectsWithRect(ship2.getBodyRectangle())) {
+								ship.collides(true);
+								ship2.collides(true);
+							}
 						}
 					}
 				}
@@ -150,10 +160,10 @@ class GameEngine extends BaseEngine {
 
 		for (shell in shellManager.entities) {
 			shell.update(dt);
-			if (shell.isAlive) {
+			if (shell.isAlive && enableCollisions) {
 				for (ship in mainEntityManager.entities) {
-					if (shell.getOwnerId() != ship.getOwnerId()) {
-						if (checkShellAndShipCollision(shell, ship) && ship.isAlive) {
+					if (shell.getOwnerId() != ship.getOwnerId() && ship.isAlive) {
+						if (checkShellAndShipCollision(shell, ship)) {
 							ship.collides(true);
 							shell.collides(true);
 							final engineShipEntity = cast(ship, EngineShipEntity);
@@ -193,6 +203,8 @@ class GameEngine extends BaseEngine {
 		}
 
 		botsAllowShoot = false;
+
+		trace('Loop time: ' + (Date.now() - beginTime) + ', shells: ' + shellManager.entities.size);
 	}
 
 	public function customDelete() {

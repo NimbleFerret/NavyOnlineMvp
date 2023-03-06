@@ -26,6 +26,7 @@ abstract class BaseEngine {
 
 	public var tick:Int;
 
+	public final okLoopTime:Int;
 	public final engineMode:EngineMode;
 	public final engineGameMode:EngineGameMode;
 
@@ -70,6 +71,8 @@ abstract class BaseEngine {
 				tickCallback();
 			}
 		});
+
+		okLoopTime = Std.int(1000 / gameLoop.targetFps);
 	}
 
 	// -----------------------------------

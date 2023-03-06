@@ -23,8 +23,8 @@ enum Scene {
 }
 
 class Main extends hxd.App {
-	// private final defaultScene = Scene.SceneDemo1;
-	private final defaultScene = Scene.SceneOnlineDemo1;
+	private final defaultScene = Scene.SceneDemo1;
+	// private final defaultScene = Scene.SceneOnlineDemo1;
 	private var sceneHomeMenu:SceneHomeMenu;
 	private var sceneDemo1:SceneDemo1;
 	private var sceneGeomTest:SceneGeomTest;

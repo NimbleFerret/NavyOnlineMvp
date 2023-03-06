@@ -12,7 +12,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { lastValueFrom } from 'rxjs';
 import { Constants } from './app.constants';
-import { AddBotRequestDto, CreateOrJoinGameRequestDto } from './app.dto';
+import { AddBotRequestDto, CreateOrJoinGameRequestDto, EnableFeatureRequestDto } from './app.dto';
 import { GameplayBattleService } from './gameplay/battle/gameplay.battle.service';
 import { JoinWorldOrCreateResult } from './gameplay/gameplay.base.service';
 import { GameplayIslandService } from './gameplay/island/gameplay.island.service';
@@ -82,6 +82,14 @@ export class AppService implements OnModuleInit {
     return {
       battleInstances: this.gameplayBattleService.getInstancesInfo()
     }
+  }
+
+  async enableShooting(dto: EnableFeatureRequestDto) {
+    this.gameplayBattleService.enableShooting(dto);
+  }
+
+  async enableCollisions(dto: EnableFeatureRequestDto) {
+    this.gameplayBattleService.enableCollisions(dto);
   }
 
   async addBot(dto: AddBotRequestDto) {

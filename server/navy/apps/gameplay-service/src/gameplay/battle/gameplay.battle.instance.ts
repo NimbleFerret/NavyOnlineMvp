@@ -115,6 +115,18 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         Logger.log(`GameplayBattleInstance created. x:${x}, y:${y}, content:${sectorContent} test:${testInstance}`);
     }
 
+    // --------------------------
+    // Admin 
+    // --------------------------
+
+    public enableShooting(enable: boolean) {
+        this.gameEngine.enableShooting = enable;
+    }
+
+    public enableCollisions(enable: boolean) {
+        this.gameEngine.enableCollisions = enable;
+    }
+
     public getTotalShipsCount() {
         return this.gameEngine.mainEntityManager.entities.size;
     }

@@ -4,7 +4,7 @@ import { Injectable } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { AddBotRequestDto } from "../../app.dto";
+import { AddBotRequestDto, EnableFeatureRequestDto } from "../../app.dto";
 import { AppEvents } from "../../app.events";
 import { SocketClientMessageRespawn } from "../../ws/ws.protocol";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
@@ -25,6 +25,20 @@ export class GameplayBattleService extends GameplayBaseService {
     // -------------------------------
     // API
     // -------------------------------
+
+    async enableShooting(dto: EnableFeatureRequestDto) {
+        this.instances.forEach((v, k) => {
+            const instance = v as GameplayBattleInstance;
+            instance.enableShooting(dto.enable);
+        });
+    }
+
+    async enableCollisions(dto: EnableFeatureRequestDto) {
+        this.instances.forEach((v, k) => {
+            const instance = v as GameplayBattleInstance;
+            instance.enableCollisions(dto.enable);
+        });
+    }
 
     async addBot(dto: AddBotRequestDto) {
         this.instances.forEach((v, k) => {

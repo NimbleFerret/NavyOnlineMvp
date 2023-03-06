@@ -77,7 +77,7 @@ export class ShipEntity {
             shipWindows: ShipWindows.NONE,
             shipCannons: ShipCannons.ONE,
             cannonsRange: 500,
-            cannonsDamage: 1,
+            cannonsDamage: 0,
             cannonsAngleSpread: 40,
             armor: 300,
             hull: 300,
