@@ -53,7 +53,9 @@ export abstract class GameplayBaseService {
     async killInstance(instanceId: string) {
         const instance = this.instances.get(instanceId);
         if (instance) {
-            instance.destroy();
+            if (instance.destroy(true)) {
+                this.instances.delete(instanceId);
+            }
         }
     }
 
