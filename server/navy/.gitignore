@@ -37,4 +37,8 @@ lerna-debug.log*
 # ENV
 .env
 
+# Compiled engine files
 /apps/gameplay-service/src/js/
+
+# Local grafana files
+/monitoring/data/
