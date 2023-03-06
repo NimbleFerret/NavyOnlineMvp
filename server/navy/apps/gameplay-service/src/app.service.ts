@@ -12,7 +12,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { lastValueFrom } from 'rxjs';
 import { Constants } from './app.constants';
-import { AddBotRequestDto, CreateOrJoinGameRequestDto, EnableFeatureRequestDto } from './app.dto';
+import { AddBotRequestDto, AddInstanceRequestDto, CreateOrJoinGameRequestDto, EnableFeatureRequestDto } from './app.dto';
 import { GameplayBattleService } from './gameplay/battle/gameplay.battle.service';
 import { JoinWorldOrCreateResult } from './gameplay/gameplay.base.service';
 import { GameplayIslandService } from './gameplay/island/gameplay.island.service';
@@ -51,7 +51,7 @@ export class AppService implements OnModuleInit {
     this.gameplayBalancerService = this.gameplayBalancerServiceGrpcClient.getService<GameplayBalancerService>(GameplayBalancerServiceName);
 
     if (Constants.HAS_TEST_INSTANCES) {
-      this.gameplayBattleService.createTestInstances(1);
+      this.gameplayBattleService.createTestInstance(true);
     }
   }
 
@@ -92,6 +92,13 @@ export class AppService implements OnModuleInit {
 
   async enableCollisions(dto: EnableFeatureRequestDto) {
     this.gameplayBattleService.enableCollisions(dto);
+  }
+
+  async addInstance(dto: AddInstanceRequestDto) {
+    const instanceId = this.gameplayBattleService.createTestInstance(false);
+    for (let i = 0; i < dto.bots; i++) {
+      await this.addBot({ instanceId });
+    }
   }
 
   async addBot(dto: AddBotRequestDto) {

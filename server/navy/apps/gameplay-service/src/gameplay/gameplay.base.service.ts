@@ -34,18 +34,19 @@ export abstract class GameplayBaseService {
     readonly sectorInstance = new Map<string, string>();
     playerInstanceMap = new Map<string, string>();
 
+    private testInstanceX = 0;
+
     constructor() {
     }
 
-    createTestInstances(instances: number) {
-        for (let i = 0; i < instances; i++) {
-            const x = i, y = 0;
-            const instance = this.initiateGameplayInstance(x, y, SectorContent.SECTOR_CONTENT_EMPTY, true);
-            if (instance) {
-                this.instances.set(instance.instanceId, instance);
-                this.sectorInstance.set(x + '+' + y, instance.instanceId);
-            }
+    createTestInstance(addBots: boolean) {
+        const x = this.testInstanceX++, y = 0;
+        const instance = this.initiateGameplayInstance(x, y, SectorContent.SECTOR_CONTENT_EMPTY, true, addBots);
+        if (instance) {
+            this.instances.set(instance.instanceId, instance);
+            this.sectorInstance.set(x + '+' + y, instance.instanceId);
         }
+        return instance.instanceId;
     }
 
     // -------------------------------------
@@ -68,7 +69,7 @@ export abstract class GameplayBaseService {
                 result.reason = 'Sector is full';
             }
         } else {
-            const instance = this.initiateGameplayInstance(x, y, sectorContent, false);
+            const instance = this.initiateGameplayInstance(x, y, sectorContent, false, false);
             if (instance) {
                 this.instances.set(instance.instanceId, instance);
                 this.sectorInstance.set(x + '+' + y, instance.instanceId);
@@ -80,7 +81,7 @@ export abstract class GameplayBaseService {
         return result;
     }
 
-    public abstract initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent, testInstance: Boolean): BaseGameplayInstance;
+    public abstract initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent, testInstance: boolean, defaultBots: boolean): BaseGameplayInstance;
 
     // -------------------------------------
     // Admin api

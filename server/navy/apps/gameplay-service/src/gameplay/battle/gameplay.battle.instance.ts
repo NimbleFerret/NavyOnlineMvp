@@ -25,7 +25,8 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         y: number,
         eventEmitter: EventEmitter2,
         sectorContent: SectorContent,
-        public testInstance: Boolean
+        public testInstance: boolean,
+        defaultBots: boolean
     ) {
         super(eventEmitter, testInstance ? GameplayType.BattleTest : GameplayType.Battle, new game.engine.GameEngine(), x, y);
 
@@ -108,7 +109,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             }
         }
 
-        if (testInstance) {
+        if (testInstance && defaultBots) {
             this.intiateBotShips();
         }
 

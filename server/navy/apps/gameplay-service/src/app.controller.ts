@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { AddBotRequestDto, CreateOrJoinGameRequestDto, EnableFeatureRequestDto } from './app.dto';
+import { AddBotRequestDto, AddInstanceRequestDto, CreateOrJoinGameRequestDto, EnableFeatureRequestDto } from './app.dto';
 import { AppService } from './app.service';
 
 @Controller()
@@ -19,6 +19,11 @@ export class AppController {
   @Post('enableCollisions')
   async enableCollisions(@Body() dto: EnableFeatureRequestDto) {
     return this.appService.enableCollisions(dto);
+  }
+
+  @Post('addInstance')
+  async addInstance(@Body() dto: AddInstanceRequestDto) {
+    return this.appService.addInstance(dto);
   }
 
   @Post('addBot')

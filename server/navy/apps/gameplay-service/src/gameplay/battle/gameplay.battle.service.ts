@@ -4,7 +4,7 @@ import { Injectable } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { AddBotRequestDto, EnableFeatureRequestDto } from "../../app.dto";
+import { AddBotRequestDto, AddInstanceRequestDto, EnableFeatureRequestDto } from "../../app.dto";
 import { AppEvents } from "../../app.events";
 import { SocketClientMessageRespawn } from "../../ws/ws.protocol";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
@@ -18,8 +18,8 @@ export class GameplayBattleService extends GameplayBaseService {
         super();
     }
 
-    public initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent, testInstance: Boolean): BaseGameplayInstance {
-        return new GameplayBattleInstance(this.shipModel, x, y, this.emitter, sectorContent, testInstance);
+    public initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent, testInstance: boolean, defaultBots: boolean): BaseGameplayInstance {
+        return new GameplayBattleInstance(this.shipModel, x, y, this.emitter, sectorContent, testInstance, defaultBots);
     }
 
     // -------------------------------
@@ -43,7 +43,7 @@ export class GameplayBattleService extends GameplayBaseService {
     async addBot(dto: AddBotRequestDto) {
         this.instances.forEach((v, k) => {
             const instance = v as GameplayBattleInstance;
-            if (instance.testInstance) {
+            if (instance.testInstance && (dto.instanceId && instance.instanceId == dto.instanceId || !dto.instanceId)) {
                 instance.addBot(dto.x, dto.y);
             }
         });

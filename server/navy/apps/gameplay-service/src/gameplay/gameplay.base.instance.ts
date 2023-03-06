@@ -41,7 +41,11 @@ export abstract class BaseGameplayInstance {
         public y: number) {
         switch (gameplayType) {
             case GameplayType.BattleTest:
-                this.instanceId = Constants.BATTLE_TEST_INSTANCE_ID;
+                if (x == 0 && y == 0) {
+                    this.instanceId = Constants.BATTLE_TEST_INSTANCE_ID;
+                } else {
+                    this.instanceId = uuidv4();
+                }
                 break;
             case GameplayType.IslandTest:
                 this.instanceId = Constants.ISLAND_TEST_INSTANCE_ID;

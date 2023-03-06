@@ -5,6 +5,11 @@ export interface CreateOrJoinGameRequestDto {
 export interface AddBotRequestDto {
     x?: number;
     y?: number;
+    instanceId?: string;
+}
+
+export interface AddInstanceRequestDto {
+    bots: number;
 }
 
 export interface EnableFeatureRequestDto {
