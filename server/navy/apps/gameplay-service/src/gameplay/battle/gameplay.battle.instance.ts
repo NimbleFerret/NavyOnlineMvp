@@ -25,7 +25,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         y: number,
         eventEmitter: EventEmitter2,
         sectorContent: SectorContent,
-        testInstance: Boolean
+        public testInstance: Boolean
     ) {
         super(eventEmitter, testInstance ? GameplayType.BattleTest : GameplayType.Battle, new game.engine.GameEngine(), x, y);
 
@@ -77,7 +77,6 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
                     aimAngleRads: createShellCallback.aimAngleRads
                 }
             } as SocketServerMessageEntityInput;
-            console.log(createShellCallback);
             this.notifyAllPlayers(socketServerMessageShipInput, WsProtocol.SocketServerEventEntityInput, createShellCallback.shooterId);
         };
 
@@ -178,17 +177,42 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
     // Bots
     // --------------------------
 
+    private botIndex = 0;
+    private botAutoPosX = 0;
+    private botAutoPosY = -200;
+
+    public addBot(x?: number, y?: number) {
+        if (!x || !y) {
+            x = this.botAutoPosX;
+            x = this.botAutoPosY;
+            this.botAutoPosX += 250;
+        }
+        this.botIndex++;
+        const ship = ShipEntity.GetFreeShipStats('bot_ship_' + this.botIndex, 'bot_' + this.botIndex);
+        ship.role = Role.BOT;
+        ship.x = x;
+        ship.y = y;
+        const engineEntity = this.gameEngine.buildEngineEntity(ship);
+        this.gameEngine.createMainEntity(engineEntity, true);
+    }
+
     private intiateBotShips() {
         let positionX = 0, positionY = 0;
-        for (let i = 0; i < 1; i++) {
-            const ship = ShipEntity.GetFreeShipStats('bot_ship_' + i, 'bot_' + i);
-            ship.role = Role.BOT;
-            ship.x = positionX;
-            ship.y = positionY;
-            const engineEntity = this.gameEngine.buildEngineEntity(ship);
-            this.gameEngine.createMainEntity(engineEntity, true);
+        for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < 2; j++) {
+                const ship = ShipEntity.GetFreeShipStats('bot_ship_' + this.botIndex, 'bot_' + this.botIndex);
+                ship.role = Role.BOT;
+                ship.x = positionX;
+                ship.y = positionY;
+                const engineEntity = this.gameEngine.buildEngineEntity(ship);
+                this.gameEngine.createMainEntity(engineEntity, true);
 
-            positionX += 200;
+                positionX += 200;
+                this.botIndex++;
+            }
+            positionX = 0;
+            positionY += 300;
+            this.botIndex++;
         }
     }
 

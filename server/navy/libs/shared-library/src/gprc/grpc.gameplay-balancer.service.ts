@@ -26,7 +26,7 @@ export const GameplayBalancerServiceGrpcClientOptions: ClientOptions = {
 export interface InstanceDetails {
     id: string;
     players: number;
-    bots: number;
+    totalEntities: number;
     x: number;
     y: number;
 }

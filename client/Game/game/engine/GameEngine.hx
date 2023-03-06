@@ -124,7 +124,6 @@ class GameEngine extends BaseEngine {
 				final engineShipEntity = cast(ship, EngineShipEntity);
 
 				if (engineShipEntity.shipObjectEntity.role == Role.BOT && botsAllowShoot) {
-					botsAllowShoot = false;
 					addInputCommand({
 						playerId: engineShipEntity.getOwnerId(),
 						inputType: PlayerInputType.SHOOT,
@@ -145,6 +144,8 @@ class GameEngine extends BaseEngine {
 				}
 			}
 		}
+
+		botsAllowShoot = false;
 
 		final shipsToDelete:Array<String> = [];
 		final shellsToDelete:Array<String> = [];

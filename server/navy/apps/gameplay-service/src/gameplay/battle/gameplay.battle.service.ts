@@ -4,6 +4,7 @@ import { Injectable } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { AddBotRequestDto } from "../../app.dto";
 import { AppEvents } from "../../app.events";
 import { SocketClientMessageRespawn } from "../../ws/ws.protocol";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
@@ -21,7 +22,22 @@ export class GameplayBattleService extends GameplayBaseService {
         return new GameplayBattleInstance(this.shipModel, x, y, this.emitter, sectorContent, testInstance);
     }
 
+    // -------------------------------
+    // API
+    // -------------------------------
+
+    async addBot(dto: AddBotRequestDto) {
+        this.instances.forEach((v, k) => {
+            const instance = v as GameplayBattleInstance;
+            if (instance.testInstance) {
+                instance.addBot(dto.x, dto.y);
+            }
+        });
+    }
+
+    // -------------------------------
     // Socket events
+    // -------------------------------
 
     @OnEvent(AppEvents.PlayerRespawn)
     async handlePlayerRespawn(data: SocketClientMessageRespawn) {

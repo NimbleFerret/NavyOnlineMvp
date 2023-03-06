@@ -46,7 +46,6 @@ abstract class BasicGameplay {
 
 	public final scene:h2d.Scene;
 
-	// debugGraphics = new h2d.Graphics(s2d);
 	private var isDragging = false;
 	private var dragMousePosStart:Point;
 	private var currentDrag = new Point(0, 0);
@@ -81,12 +80,15 @@ abstract class BasicGameplay {
 	}
 
 	public function debugDraw() {
-		debugGraphics.clear();
 		if (GameConfig.DebugDraw) {
 			for (entity in clientMainEntities) {
 				entity.debugDraw(debugGraphics);
 			}
 		}
+	}
+
+	public function clearGraphics() {
+		debugGraphics.clear();
 	}
 
 	private function getPlayerEntity() {

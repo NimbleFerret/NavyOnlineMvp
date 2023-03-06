@@ -76,6 +76,10 @@ export abstract class BaseGameplayInstance {
         return this.playerEntityMap.size;
     }
 
+    public getEntitiesCount() {
+        return this.gameEngine.mainEntityManager.entities.size;
+    }
+
     protected notifyPlayer(playerId: string, message: object, event: string) {
         const notifyPlayerEventMsg = {
             playerId,

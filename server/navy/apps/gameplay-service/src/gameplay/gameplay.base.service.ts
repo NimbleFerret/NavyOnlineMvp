@@ -97,13 +97,13 @@ export abstract class GameplayBaseService {
 
     getInstancesInfo() {
         const result: InstanceDetails[] = [];
-        this.instances.forEach((inatance) => {
+        this.instances.forEach((instance) => {
             result.push({
-                id: inatance.instanceId,
-                players: inatance.getPlayersCount(),
-                bots: 0,
-                x: inatance.x,
-                y: inatance.y
+                id: instance.instanceId,
+                players: instance.getPlayersCount(),
+                totalEntities: instance.getEntitiesCount(),
+                x: instance.x,
+                y: instance.y
             } as InstanceDetails);
         });
         return result;
