@@ -60,30 +60,30 @@ class SceneDemo1 extends Scene {
 			fireDelay: 0.500
 		}));
 
-		// final ship2 = game.addShipByClient(new ShipObjectEntity({
-		// 	x: 100,
-		// 	y: 100,
-		// 	minSpeed: 0,
-		// 	maxSpeed: 300,
-		// 	acceleration: 50,
-		// 	direction: GameEntityDirection.EAST,
-		// 	id: null,
-		// 	ownerId: bot1Id,
-		// 	serverShipRef: "",
-		// 	free: true,
-		// 	role: Role.BOT,
-		// 	shipHullSize: ShipHullSize.SMALL,
-		// 	shipWindows: ShipWindows.NONE,
-		// 	shipCannons: ShipCannons.ONE,
-		// 	cannonsRange: 500,
-		// 	cannonsDamage: 1,
-		// 	cannonsAngleSpread: 40,
-		// 	armor: 100,
-		// 	hull: 100,
-		// 	accDelay: 0.500,
-		// 	turnDelay: 0.500,
-		// 	fireDelay: 0.500
-		// }));
+		final ship2 = new EngineShipEntity(new ShipObjectEntity({
+			x: 100,
+			y: 0,
+			minSpeed: 0,
+			maxSpeed: 300,
+			acceleration: 50,
+			direction: GameEntityDirection.EAST,
+			id: null,
+			ownerId: bot1Id,
+			serverShipRef: "",
+			free: true,
+			role: Role.BOT,
+			shipHullSize: ShipHullSize.SMALL,
+			shipWindows: ShipWindows.NONE,
+			shipCannons: ShipCannons.ONE,
+			cannonsRange: 500,
+			cannonsDamage: 1,
+			cannonsAngleSpread: 40,
+			armor: 100,
+			hull: 100,
+			accDelay: 0.500,
+			turnDelay: 0.500,
+			fireDelay: 0.500
+		}));
 
 		// final ship2 = game.addShipByClient(Role.Boss, -200, -200, ShipHullSize.MEDIUM, ShipWindows.NONE, ShipGuns.THREE, 300, 400, 500, 500, 300, 50, 0.500,
 		// 0.500, 0.500, null, null);
@@ -91,7 +91,7 @@ class SceneDemo1 extends Scene {
 		// final ship4 = game.addShipByClient(Role.Bot, 300, -100, null, null);
 		// final ship5 = game.addShipByClient(Role.Bot, 300, -600, null, null);
 
-		game.startGameSingleplayer(playerId, [ship1]);
+		game.startGameSingleplayer(playerId, [ship1, ship2]);
 		// game.startGameByClient(playerId, [ship1, ship2, ship3, ship4, ship5]);
 
 		// camera.scale(2, 2);

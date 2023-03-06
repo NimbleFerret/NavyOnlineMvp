@@ -26,6 +26,10 @@ class GameEngine extends BaseEngine {
 
 	var allowShoot = false;
 	var framesPassed = 0;
+	var botsAllowShoot = false;
+	var timePassed = 0.0;
+	var lastBotShootTime = 0.0;
+	final botShootDelaySeconds = 1;
 
 	public function new(engineMode = EngineMode.Server) {
 		super(engineMode, EngineGameMode.Sea, new ShipManager());
@@ -103,6 +107,14 @@ class GameEngine extends BaseEngine {
 
 	public function engineLoopUpdate(dt:Float) {
 		framesPassed++;
+		timePassed += dt;
+
+		if (lastBotShootTime == 0) {
+			lastBotShootTime = timePassed;
+		} else if (timePassed - lastBotShootTime >= botShootDelaySeconds) {
+			lastBotShootTime = timePassed;
+			botsAllowShoot = true;
+		}
 
 		for (ship in mainEntityManager.entities) {
 			if (ship.isAlive) {
@@ -111,14 +123,17 @@ class GameEngine extends BaseEngine {
 
 				final engineShipEntity = cast(ship, EngineShipEntity);
 
-				if (framesPassed == 50) {
-					engineShipEntity.allowShoot = true;
+				if (engineShipEntity.shipObjectEntity.role == Role.BOT && botsAllowShoot) {
+					botsAllowShoot = false;
+					addInputCommand({
+						playerId: engineShipEntity.getOwnerId(),
+						inputType: PlayerInputType.SHOOT,
+						shootDetails: {
+							side: RIGHT,
+							aimAngleRads: MathUtils.getGunRadByDir(engineShipEntity.getDirection())
+						}
+					});
 				}
-
-				// if (engineShipEntity.shipObjectEntity.role == Role.BOT && engineShipEntity.allowShoot) {
-				// 	engineShipEntity.allowShoot = false;
-				// 	shipShootBySide(Side.RIGHT, engineShipEntity.getId(), 0);
-				// }
 
 				for (ship2 in mainEntityManager.entities) {
 					if (ship.getId() != ship2.getId()) {
@@ -129,11 +144,6 @@ class GameEngine extends BaseEngine {
 					}
 				}
 			}
-
-			// Shit code
-			if (framesPassed > 50) {
-				framesPassed = 0;
-			}
 		}
 
 		final shipsToDelete:Array<String> = [];
@@ -142,7 +152,7 @@ class GameEngine extends BaseEngine {
 		for (shell in shellManager.entities) {
 			shell.update(dt);
 			for (ship in mainEntityManager.entities) {
-				if (shell.getOwnerId() != ship.getId()) {
+				if (shell.getOwnerId() != ship.getOwnerId()) {
 					if (checkShellAndShipCollision(shell, ship) && ship.isAlive) {
 						ship.collides(true);
 						shell.collides(true);

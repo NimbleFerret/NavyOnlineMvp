@@ -13,7 +13,7 @@ import {
     PlayerInputType
 } from "../../ws/ws.protocol";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
-import { ShipEntity, ShipObjectEntity } from "@app/shared-library/entities/entity.ship";
+import { Role, ShipEntity, ShipObjectEntity } from "@app/shared-library/entities/entity.ship";
 
 
 // ---------------------------------------
@@ -77,6 +77,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
                     aimAngleRads: createShellCallback.aimAngleRads
                 }
             } as SocketServerMessageEntityInput;
+            console.log(createShellCallback);
             this.notifyAllPlayers(socketServerMessageShipInput, WsProtocol.SocketServerEventEntityInput, createShellCallback.shooterId);
         };
 
@@ -108,6 +109,10 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             }
         }
 
+        if (testInstance) {
+            this.intiateBotShips();
+        }
+
         Logger.log(`GameplayBattleInstance created. x:${x}, y:${y}, content:${sectorContent} test:${testInstance}`);
     }
 
@@ -118,19 +123,6 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
     // --------------------------
     // Player input
     // --------------------------
-
-    // async handlePlayerShoot(data: SocketClientMessageShoot) {
-    // const ship = this.playerEntityMap.get(data.playerId);
-    // if (ship) {
-    //     this.gameEngine.shipShootBySide(data.left ? 'Left' : 'Right', ship, data.shotParams);
-    //     const socketServerMessageShipShoot = {
-    //         playerId: data.playerId,
-    //         left: data.left,
-    //         shotParams: data.shotParams
-    //     } as SocketServerMessageShipShoot;
-    //     this.notifyAllPlayers(socketServerMessageShipShoot, WsProtocol.SocketServerEventShipShoot);
-    // }
-    // }
 
     async handlePlayerRespawn(data: SocketClientMessageRespawn) {
         if (!this.playerEntityMap.has(data.playerId)) {
@@ -180,6 +172,24 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             turnDelay: jsEntity.shipObjectEntity.turnDelay,
             fireDelay: jsEntity.shipObjectEntity.fireDelay
         } as ShipObjectEntity;
+    }
+
+    // --------------------------
+    // Bots
+    // --------------------------
+
+    private intiateBotShips() {
+        let positionX = 0, positionY = 0;
+        for (let i = 0; i < 1; i++) {
+            const ship = ShipEntity.GetFreeShipStats('bot_ship_' + i, 'bot_' + i);
+            ship.role = Role.BOT;
+            ship.x = positionX;
+            ship.y = positionY;
+            const engineEntity = this.gameEngine.buildEngineEntity(ship);
+            this.gameEngine.createMainEntity(engineEntity, true);
+
+            positionX += 200;
+        }
     }
 
 }

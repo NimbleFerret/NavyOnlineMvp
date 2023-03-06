@@ -252,7 +252,6 @@ class BattleGameplay extends BasicGameplay {
 			final playerShip = cast(getPlayerEntity(), ClientShip);
 			final side = mouseToShipRelation.toTheLeft ? LEFT : RIGHT;
 			final cannonsFiringRange = playerShip.getCannonsFiringAreaBySide(side);
-			final inputIndex = Player.instance.incrementAndGetInputIndex();
 			for (index in 0...cannonsFiringRange.length) {
 				final shootDetails = {
 					side: side,

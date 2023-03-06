@@ -1,10 +1,9 @@
 package client.entity.ship;
 
-import h2d.col.Point;
-import h2d.Graphics;
-import utils.ReverseIterator;
 import haxe.Int32;
 import h2d.Layers;
+import h2d.col.Point;
+import utils.ReverseIterator;
 import game.engine.entity.TypesAndClasses;
 import game.engine.entity.EngineShipEntityConfig;
 

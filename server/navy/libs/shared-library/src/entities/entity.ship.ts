@@ -67,7 +67,7 @@ export class ShipEntity {
             minSpeed: 0,
             maxSpeed: 300,
             acceleration: 50,
-            direction: GameEntityDirection.NORTH_EAST,
+            direction: GameEntityDirection.EAST,
             id,
             ownerId,
             serverShipRef: "",
