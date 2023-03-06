@@ -196,7 +196,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
     public addBot(x?: number, y?: number) {
         if (!x || !y) {
             x = this.botAutoPosX;
-            x = this.botAutoPosY;
+            y = this.botAutoPosY;
             this.botAutoPosX += 250;
         }
         this.botIndex++;

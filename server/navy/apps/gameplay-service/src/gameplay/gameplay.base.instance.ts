@@ -80,6 +80,10 @@ export abstract class BaseGameplayInstance {
         return this.gameEngine.mainEntityManager.entities.size;
     }
 
+    public getRecentEngineLoopTime() {
+        return this.gameEngine.recentEngineLoopTime;
+    }
+
     protected notifyPlayer(playerId: string, message: object, event: string) {
         const notifyPlayerEventMsg = {
             playerId,

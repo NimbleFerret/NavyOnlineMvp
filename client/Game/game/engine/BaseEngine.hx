@@ -20,12 +20,18 @@ typedef PlayerInputCommandEngineWrapped = {
 	var tick:Int;
 }
 
+typedef CreateMainEntityTask = {
+	var fireCallback:Bool;
+	var entity:EngineBaseGameEntity;
+}
+
 @:expose
 abstract class BaseEngine {
 	final gameLoop:GameLoop;
 
 	public var tick:Int;
 
+	public var recentEngineLoopTime:Float;
 	public final okLoopTime:Int;
 	public final engineMode:EngineMode;
 	public final engineGameMode:EngineGameMode;
@@ -36,6 +42,9 @@ abstract class BaseEngine {
 
 	public final mainEntityManager:BaseEntityManager;
 	public final playerEntityMap = new Map<String, String>();
+
+	private var addMainEntityQueue = new Array<CreateMainEntityTask>();
+	private var removeMainEntityQueue = new Array<String>();
 
 	// Команды от пользователей, которые будут применены в начале каждого тика
 	private var hotInputCommands = new Array<PlayerInputCommandEngineWrapped>();
@@ -59,6 +68,9 @@ abstract class BaseEngine {
 				coldInputCommands.shift();
 			}
 			ticksSinceLastPop++;
+
+			processCreateEntityQueue();
+			processRemoveEntityQueue();
 
 			// Apply inputs
 			processInputCommands(hotInputCommands);
@@ -92,24 +104,14 @@ abstract class BaseEngine {
 	// -----------------------------------
 
 	public function createMainEntity(entity:EngineBaseGameEntity, fireCallback = false) {
-		mainEntityManager.add(entity);
-		playerEntityMap.set(entity.getOwnerId(), entity.getId());
-		if (fireCallback) {
-			if (createMainEntityCallback != null) {
-				createMainEntityCallback(entity);
-			}
-		}
+		addMainEntityQueue.push({
+			entity: entity,
+			fireCallback: fireCallback
+		});
 	}
 
 	public function removeMainEntity(entityId:String) {
-		final entity = mainEntityManager.getEntityById(entityId);
-		if (entity != null) {
-			if (deleteMainEntityCallback != null) {
-				deleteMainEntityCallback(entity);
-			}
-			playerEntityMap.remove(entity.getOwnerId());
-			mainEntityManager.remove(entity.getId());
-		}
+		removeMainEntityQueue.push(entityId);
 	}
 
 	public function getMainEntityById(id:String) {
@@ -126,6 +128,33 @@ abstract class BaseEngine {
 
 	public function getMainEntities() {
 		return mainEntityManager.entities;
+	}
+
+	private function processCreateEntityQueue() {
+		for (queueTask in addMainEntityQueue) {
+			mainEntityManager.add(queueTask.entity);
+			playerEntityMap.set(queueTask.entity.getOwnerId(), queueTask.entity.getId());
+			if (queueTask.fireCallback) {
+				if (createMainEntityCallback != null) {
+					createMainEntityCallback(queueTask.entity);
+				}
+			}
+		}
+		addMainEntityQueue = [];
+	}
+
+	private function processRemoveEntityQueue() {
+		for (entityId in removeMainEntityQueue) {
+			final entity = mainEntityManager.getEntityById(entityId);
+			if (entity != null) {
+				if (deleteMainEntityCallback != null) {
+					deleteMainEntityCallback(entity);
+				}
+				playerEntityMap.remove(entity.getOwnerId());
+				mainEntityManager.remove(entity.getId());
+			}
+		}
+		removeMainEntityQueue = [];
 	}
 
 	// -----------------------------------

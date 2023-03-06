@@ -160,23 +160,25 @@ class GameEngine extends BaseEngine {
 
 		for (shell in shellManager.entities) {
 			shell.update(dt);
-			if (shell.isAlive && enableCollisions) {
-				for (ship in mainEntityManager.entities) {
-					if (shell.getOwnerId() != ship.getOwnerId() && ship.isAlive) {
-						if (checkShellAndShipCollision(shell, ship)) {
-							ship.collides(true);
-							shell.collides(true);
-							final engineShipEntity = cast(ship, EngineShipEntity);
-							final engineShellEntity = cast(shell, EngineShellEntity);
-							engineShipEntity.inflictDamage(engineShellEntity.getDamage());
-							if (shipHitByShellCallback != null) {
-								shipHitByShellCallback({ship: engineShipEntity, damage: engineShellEntity.getDamage()});
+			if (shell.isAlive) {
+				if (enableCollisions) {
+					for (ship in mainEntityManager.entities) {
+						if (shell.getOwnerId() != ship.getOwnerId() && ship.isAlive) {
+							if (checkShellAndShipCollision(shell, ship)) {
+								ship.collides(true);
+								shell.collides(true);
+								final engineShipEntity = cast(ship, EngineShipEntity);
+								final engineShellEntity = cast(shell, EngineShellEntity);
+								engineShipEntity.inflictDamage(engineShellEntity.getDamage());
+								if (shipHitByShellCallback != null) {
+									shipHitByShellCallback({ship: engineShipEntity, damage: engineShellEntity.getDamage()});
+								}
+								if (!engineShipEntity.isAlive) {
+									engineShipEntity.killerId = shell.getOwnerId();
+									shipsToDelete.push(engineShipEntity.getId());
+								}
+								break;
 							}
-							if (!engineShipEntity.isAlive) {
-								engineShipEntity.killerId = shell.getOwnerId();
-								shipsToDelete.push(engineShipEntity.getId());
-							}
-							break;
 						}
 					}
 				}
@@ -204,7 +206,9 @@ class GameEngine extends BaseEngine {
 
 		botsAllowShoot = false;
 
-		trace('Loop time: ' + (Date.now() - beginTime) + ', shells: ' + shellManager.entities.size);
+		recentEngineLoopTime = Date.now() - beginTime;
+
+		// trace('Loop time: ' + (Date.now() - beginTime) + ', shells: ' + shellManager.entities.size);
 	}
 
 	public function customDelete() {

@@ -37,12 +37,14 @@ export abstract class GameplayBaseService {
     constructor() {
     }
 
-    createTestInstances() {
-        const x = 0, y = 0;
-        const instance = this.initiateGameplayInstance(x, y, SectorContent.SECTOR_CONTENT_EMPTY, true);
-        if (instance) {
-            this.instances.set(instance.instanceId, instance);
-            this.sectorInstance.set(x + '+' + y, instance.instanceId);
+    createTestInstances(instances: number) {
+        for (let i = 0; i < instances; i++) {
+            const x = i, y = 0;
+            const instance = this.initiateGameplayInstance(x, y, SectorContent.SECTOR_CONTENT_EMPTY, true);
+            if (instance) {
+                this.instances.set(instance.instanceId, instance);
+                this.sectorInstance.set(x + '+' + y, instance.instanceId);
+            }
         }
     }
 
@@ -119,6 +121,15 @@ export abstract class GameplayBaseService {
             count += instance.getEntitiesCount();
         });
         return count;
+    }
+
+    getAvgLoopTime() {
+        let avgTime = 0;
+        this.instances.forEach((instance) => {
+            avgTime += instance.getRecentEngineLoopTime();
+        });
+        avgTime /= this.instances.size;
+        return avgTime;
     }
 
     // -------------------------------------
