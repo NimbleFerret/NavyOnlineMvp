@@ -29,7 +29,7 @@ class GameEngine extends BaseEngine {
 	var botsAllowShoot = false;
 	var timePassed = 0.0;
 	var lastBotShootTime = 0.0;
-	final botShootDelaySeconds = 1;
+	final botShootDelaySeconds = 3;
 
 	public function new(engineMode = EngineMode.Server) {
 		super(engineMode, EngineGameMode.Sea, new ShipManager());
@@ -145,32 +145,32 @@ class GameEngine extends BaseEngine {
 			}
 		}
 
-		botsAllowShoot = false;
-
 		final shipsToDelete:Array<String> = [];
 		final shellsToDelete:Array<String> = [];
 
 		for (shell in shellManager.entities) {
 			shell.update(dt);
-			for (ship in mainEntityManager.entities) {
-				if (shell.getOwnerId() != ship.getOwnerId()) {
-					if (checkShellAndShipCollision(shell, ship) && ship.isAlive) {
-						ship.collides(true);
-						shell.collides(true);
-						final engineShipEntity = cast(ship, EngineShipEntity);
-						final engineShellEntity = cast(shell, EngineShellEntity);
-						engineShipEntity.inflictDamage(engineShellEntity.getDamage());
-						if (shipHitByShellCallback != null) {
-							shipHitByShellCallback({ship: engineShipEntity, damage: engineShellEntity.getDamage()});
-						}
-						if (!engineShipEntity.isAlive) {
-							engineShipEntity.killerId = shell.getOwnerId();
-							shipsToDelete.push(engineShipEntity.getId());
+			if (shell.isAlive) {
+				for (ship in mainEntityManager.entities) {
+					if (shell.getOwnerId() != ship.getOwnerId()) {
+						if (checkShellAndShipCollision(shell, ship) && ship.isAlive) {
+							ship.collides(true);
+							shell.collides(true);
+							final engineShipEntity = cast(ship, EngineShipEntity);
+							final engineShellEntity = cast(shell, EngineShellEntity);
+							engineShipEntity.inflictDamage(engineShellEntity.getDamage());
+							if (shipHitByShellCallback != null) {
+								shipHitByShellCallback({ship: engineShipEntity, damage: engineShellEntity.getDamage()});
+							}
+							if (!engineShipEntity.isAlive) {
+								engineShipEntity.killerId = shell.getOwnerId();
+								shipsToDelete.push(engineShipEntity.getId());
+							}
+							break;
 						}
 					}
 				}
-			}
-			if (!shell.isAlive) {
+			} else {
 				shellsToDelete.push(shell.getId());
 			}
 		}
@@ -191,6 +191,8 @@ class GameEngine extends BaseEngine {
 				removeMainEntity(ship.getId());
 			}
 		}
+
+		botsAllowShoot = false;
 	}
 
 	public function customDelete() {
