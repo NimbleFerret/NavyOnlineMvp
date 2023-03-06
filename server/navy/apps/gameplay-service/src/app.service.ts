@@ -6,6 +6,7 @@ import {
 } from '@app/shared-library/gprc/grpc.gameplay-balancer.service';
 import { UserService, UserServiceGrpcClientName, UserServiceName } from '@app/shared-library/gprc/grpc.user.service';
 import { SectorContent, WorldService, WorldServiceGrpcClientName, WorldServiceName } from '@app/shared-library/gprc/grpc.world.service';
+import { MetricsService } from '@app/shared-library/metrics/metrics.service';
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -32,11 +33,15 @@ export class AppService implements OnModuleInit {
     @Inject(WorldServiceGrpcClientName) private readonly worldServiceGrpcClient: ClientGrpc,
     @Inject(UserServiceGrpcClientName) private readonly userServiceGrpcClient: ClientGrpc,
     @Inject(GameplayBalancerServiceGrpcClientName) private readonly gameplayBalancerServiceGrpcClient: ClientGrpc,
+    private readonly metricsService: MetricsService,
     private readonly gameplayBattleService: GameplayBattleService,
     // private readonly gameplayIslandService: GameplayIslandService,
   ) {
     // const ip = require('ip');
     // console.log(ip.address());
+
+    metricsService.registerGauge('instances', 'Total game instances');
+    metricsService.registerGauge('main_entities', 'Entities across all instances');
   }
 
   async onModuleInit() {
@@ -49,8 +54,8 @@ export class AppService implements OnModuleInit {
     }
   }
 
-  @Cron(CronExpression.EVERY_SECOND)
-  balancerPing() {
+  @Cron(CronExpression.EVERY_5_SECONDS)
+  recurentJobs() {
     if (Constants.PING_BALANCER) {
       this.gameplayBalancerService.GameplayServicePing({
         address: this.address,
@@ -60,12 +65,13 @@ export class AppService implements OnModuleInit {
         // islandInstances: this.gameplayIslandService.getInstancesInfo(),
       }).subscribe();
     }
-  }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
-  destroyEmptyInstances() {
     this.gameplayBattleService.destroyEmptyInstancesIfNeeded();
     // this.gameplayIslandService.destroyEmptyInstancesIfNeeded();
+
+    // update metrics
+    this.metricsService.setGaugeValue('instances', this.gameplayBattleService.getInstancesCount());
+    this.metricsService.setGaugeValue('main_entities', this.gameplayBattleService.getEntitiesCount());
   }
 
   // -------------------------------

@@ -109,6 +109,18 @@ export abstract class GameplayBaseService {
         return result;
     }
 
+    getInstancesCount() {
+        return this.instances.size;
+    }
+
+    getEntitiesCount() {
+        let count = 0;
+        this.instances.forEach((instance) => {
+            count += instance.getEntitiesCount();
+        });
+        return count;
+    }
+
     // -------------------------------------
     // Client events from WebSocket
     // ------------------------------------- 

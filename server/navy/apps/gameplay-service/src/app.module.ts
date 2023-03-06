@@ -11,6 +11,7 @@ import {
   WorldServiceGrpcClientName,
   WorldServiceGrpcClientOptions
 } from '@app/shared-library/gprc/grpc.world.service';
+import { MetricsModule } from '@app/shared-library/metrics/metrics.module';
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ClientsModule } from '@nestjs/microservices';
@@ -41,7 +42,8 @@ import { WsModule } from './ws/ws.module';
     ]),
     MongooseModule.forRoot(Config.GetMongoHost()),
     GameplayModule,
-    WsModule
+    WsModule,
+    MetricsModule
   ],
   controllers: [AppController],
   providers: [AppService],
