@@ -8,6 +8,14 @@ export interface AddBotRequestDto {
     instanceId?: string;
 }
 
+export interface KillBotsRequestDto {
+    instanceId: string;
+}
+
+export interface KillInstanceRequestDto {
+    instanceId: string;
+}
+
 export interface AddInstanceRequestDto {
     bots: number;
 }

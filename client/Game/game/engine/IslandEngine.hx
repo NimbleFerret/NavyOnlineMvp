@@ -128,7 +128,7 @@ class IslandEngine extends BaseEngine {
 		}
 	}
 
-	public function customDelete() {}
+	public function customDestroy() {}
 
 	// TODO FIX
 	public function buildEngineEntity(struct:Dynamic) {

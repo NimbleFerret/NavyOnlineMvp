@@ -117,8 +117,8 @@ export abstract class BaseGameplayInstance {
         return false;
     }
 
-    public destroy() {
-        if (this.ifTestInstance()) {
+    public destroy(forced: boolean = false) {
+        if (this.ifTestInstance() && !forced) {
             return false;
         }
         try {

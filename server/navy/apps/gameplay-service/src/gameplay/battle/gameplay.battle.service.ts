@@ -1,10 +1,11 @@
+import { Role } from "@app/shared-library/entities/entity.ship";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 import { Ship, ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { AddBotRequestDto, AddInstanceRequestDto, EnableFeatureRequestDto } from "../../app.dto";
+import { AddBotRequestDto, AddInstanceRequestDto, EnableFeatureRequestDto, KillBotsRequestDto, KillInstanceRequestDto } from "../../app.dto";
 import { AppEvents } from "../../app.events";
 import { SocketClientMessageRespawn } from "../../ws/ws.protocol";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
@@ -47,6 +48,21 @@ export class GameplayBattleService extends GameplayBaseService {
                 instance.addBot(dto.x, dto.y);
             }
         });
+    }
+
+    async killBots(dto: KillBotsRequestDto) {
+        const instance = this.instances.get(dto.instanceId);
+        if (instance) {
+            const entitiesToDelete: string[] = [];
+            instance.gameEngine.mainEntityManager.entities.forEach(entity => {
+                if (entity.baseObjectEntity.role == Role.BOT) {
+                    entitiesToDelete.push(entity.getId());
+                }
+            });
+            entitiesToDelete.forEach(entityId => {
+                instance.gameEngine.removeMainEntity(entityId);
+            });
+        }
     }
 
     // -------------------------------

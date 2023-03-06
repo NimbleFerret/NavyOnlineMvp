@@ -207,14 +207,13 @@ class GameEngine extends BaseEngine {
 		botsAllowShoot = false;
 
 		recentEngineLoopTime = Date.now() - beginTime;
-
-		// trace('Loop time: ' + (Date.now() - beginTime) + ', shells: ' + shellManager.entities.size);
 	}
 
-	public function customDelete() {
+	public function customDestroy() {
 		createShellCallback = null;
 		deleteShellCallback = null;
 		shipHitByShellCallback = null;
+		shellManager.destroy();
 	}
 
 	public function buildEngineEntity(struct:Dynamic) {

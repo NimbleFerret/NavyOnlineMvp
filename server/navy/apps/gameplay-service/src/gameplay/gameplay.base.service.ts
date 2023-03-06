@@ -39,6 +39,24 @@ export abstract class GameplayBaseService {
     constructor() {
     }
 
+    destroyEmptyInstancesIfNeeded() {
+        const instancedToDelete: string[] = [];
+        this.instances.forEach((instance) => {
+            if (instance.destroyByTimeIfNeeded()) {
+                instancedToDelete.push(instance.instanceId);
+                this.sectorInstance.delete(instance.x + '+' + instance.y);
+            }
+        });
+        Utils.DeleteKeysFromMap(this.instances, instancedToDelete);
+    }
+
+    async killInstance(instanceId: string) {
+        const instance = this.instances.get(instanceId);
+        if (instance) {
+            instance.destroy();
+        }
+    }
+
     createTestInstance(addBots: boolean) {
         const x = this.testInstanceX++, y = 0;
         const instance = this.initiateGameplayInstance(x, y, SectorContent.SECTOR_CONTENT_EMPTY, true, addBots);
@@ -86,17 +104,6 @@ export abstract class GameplayBaseService {
     // -------------------------------------
     // Admin api
     // -------------------------------------
-
-    destroyEmptyInstancesIfNeeded() {
-        const instancedToDelete: string[] = [];
-        this.instances.forEach((instance) => {
-            if (instance.destroyByTimeIfNeeded()) {
-                instancedToDelete.push(instance.instanceId);
-                this.sectorInstance.delete(instance.x + '+' + instance.y);
-            }
-        });
-        Utils.DeleteKeysFromMap(this.instances, instancedToDelete);
-    }
 
     getInstancesInfo() {
         const result: InstanceDetails[] = [];

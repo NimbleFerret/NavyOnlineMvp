@@ -95,7 +95,7 @@ abstract class BaseEngine {
 
 	public abstract function engineLoopUpdate(dt:Float):Void;
 
-	public abstract function customDelete():Void;
+	public abstract function customDestroy():Void;
 
 	public abstract function buildEngineEntity(struct:Dynamic):EngineBaseGameEntity;
 
@@ -196,6 +196,6 @@ abstract class BaseEngine {
 		createMainEntityCallback = null;
 		deleteMainEntityCallback = null;
 
-		customDelete();
+		customDestroy();
 	}
 }

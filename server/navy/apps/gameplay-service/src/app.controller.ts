@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { AddBotRequestDto, AddInstanceRequestDto, CreateOrJoinGameRequestDto, EnableFeatureRequestDto } from './app.dto';
+import { AddBotRequestDto, AddInstanceRequestDto, CreateOrJoinGameRequestDto, EnableFeatureRequestDto, KillBotsRequestDto, KillInstanceRequestDto } from './app.dto';
 import { AppService } from './app.service';
 
 @Controller()
@@ -10,6 +10,10 @@ export class AppController {
   async createOrJoinGame(@Body() dto: CreateOrJoinGameRequestDto) {
     return this.appService.createOrJoinGame(dto);
   }
+
+  // ---------------------------
+  // Admin api
+  // ---------------------------
 
   @Post('enableShooting')
   async enableShooting(@Body() dto: EnableFeatureRequestDto) {
@@ -29,6 +33,16 @@ export class AppController {
   @Post('addBot')
   async addBot(@Body() dto: AddBotRequestDto) {
     return this.appService.addBot(dto);
+  }
+
+  @Post('killBots')
+  async killBots(@Body() dto: KillBotsRequestDto) {
+    return this.appService.killBots(dto);
+  }
+
+  @Post('killInstance')
+  async killInstance(@Body() dto: KillInstanceRequestDto) {
+    return this.appService.killInstance(dto);
   }
 
   @Get('instancesInfo')
