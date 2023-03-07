@@ -46,9 +46,13 @@ typedef SocketServerMessageRemoveEntity = {
 	entityId:String
 }
 
+typedef SocketServerMessageEntityInputs = {
+	inputs:Array<SocketServerMessageEntityInput>
+}
+
 typedef SocketServerMessageEntityInput = {
 	playerId:String,
-	playerInputType:PlayerInputType,
+	inputType:PlayerInputType,
 	?shootDetails:ShootInputDetails
 }
 
@@ -94,6 +98,7 @@ class SocketProtocol {
 	public static final SocketServerEventRemoveEntity = 'SocketServerEventRemoveEntity';
 	public static final SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
 	public static final SocketServerEventEntityInput = 'SocketServerEventEntityInput';
+	public static final SocketServerEventEntityInputs = 'SocketServerEventEntityInputs';
 	public static final SocketServerEventSync = 'SocketServerEventSync';
 
 	public static final SocketServerEventDailyTaskUpdate = 'SocketServerEventDailyTaskUpdate';

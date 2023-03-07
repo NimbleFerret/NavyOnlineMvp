@@ -36,12 +36,14 @@ abstract class BaseEngine {
 	public final engineMode:EngineMode;
 	public final engineGameMode:EngineGameMode;
 
-	public var tickCallback:Void->Void;
+	public var postLoopCallback:Void->Void;
 	public var createMainEntityCallback:EngineBaseGameEntity->Void;
 	public var deleteMainEntityCallback:EngineBaseGameEntity->Void;
 
 	public final mainEntityManager:BaseEntityManager;
 	public final playerEntityMap = new Map<String, String>();
+
+	public var validatedInputCommands = new Array<PlayerInputCommand>();
 
 	private var addMainEntityQueue = new Array<CreateMainEntityTask>();
 	private var removeMainEntityQueue = new Array<String>();
@@ -79,9 +81,11 @@ abstract class BaseEngine {
 			// Update all entities
 			engineLoopUpdate(dt);
 
-			if (tickCallback != null) {
-				tickCallback();
+			// Optional backend callback for validated input commands replication
+			if (postLoopCallback != null) {
+				postLoopCallback();
 			}
+			validatedInputCommands = [];
 		});
 
 		okLoopTime = Std.int(1000 / gameLoop.targetFps);
@@ -192,7 +196,7 @@ abstract class BaseEngine {
 
 		mainEntityManager.destroy();
 
-		tickCallback = null;
+		postLoopCallback = null;
 		createMainEntityCallback = null;
 		deleteMainEntityCallback = null;
 

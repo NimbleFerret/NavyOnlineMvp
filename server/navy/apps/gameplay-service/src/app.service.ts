@@ -42,7 +42,7 @@ export class AppService implements OnModuleInit {
 
     metricsService.registerGauge('instances', 'Total game instances');
     metricsService.registerGauge('main_entities', 'Entities across all instances');
-    metricsService.registerGauge('avg_loop_time', 'Average loop time across all instances');
+    metricsService.registerGauge('max_loop_time', 'Average loop time across all instances');
   }
 
   async onModuleInit() {
@@ -73,7 +73,7 @@ export class AppService implements OnModuleInit {
     // update metrics
     this.metricsService.setGaugeValue('instances', this.gameplayBattleService.getInstancesCount());
     this.metricsService.setGaugeValue('main_entities', this.gameplayBattleService.getEntitiesCount());
-    this.metricsService.setGaugeValue('avg_loop_time', this.gameplayBattleService.getAvgLoopTime());
+    this.metricsService.setGaugeValue('max_loop_time', this.gameplayBattleService.getMaxLoopTime());
   }
 
   // -------------------------------

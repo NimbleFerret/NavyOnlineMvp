@@ -25,14 +25,21 @@ export interface SocketServerDailyTaskComplete {
     rewardAKS: number;
 }
 
-export interface SocketServerMessageGameInit {
+// -------------------------------------
+// Gameplay
+// -------------------------------------
+
+export interface BaseServerGameplayMessage {
+    tick: number;
+}
+export interface SocketServerMessageGameInit extends BaseServerGameplayMessage {
     tickRate: number;
     instanceId: string;
     worldStateSyncInterval: number;
     entities: object[];
 }
 
-export interface SocketServerMessageUpdateWorldState {
+export interface SocketServerMessageUpdateWorldState extends BaseServerGameplayMessage {
     tick: number;
     entities: object[];
 }
@@ -45,9 +52,13 @@ export interface SocketServerMessageRemoveEntity {
     entityId: string;
 }
 
+export interface SocketServerMessageEntityInputs extends BaseServerGameplayMessage {
+    inputs: SocketServerMessageEntityInput[];
+}
+
 export interface SocketServerMessageEntityInput {
     playerId: string;
-    playerInputType: PlayerInputType;
+    inputType: PlayerInputType;
     shootDetails?: ShootInputDetails;
 }
 
@@ -113,6 +124,7 @@ export class WsProtocol {
     public static readonly SocketServerEventRemoveEntity = 'SocketServerEventRemoveEntity';
     public static readonly SocketServerEventUpdateWorldState = 'SocketServerEventUpdateWorldState';
     public static readonly SocketServerEventEntityInput = 'SocketServerEventEntityInput';
+    public static readonly SocketServerEventEntityInputs = 'SocketServerEventEntityInputs';
     public static readonly SocketServerEventSync = 'SocketServerEventSync';
 
     public static readonly SocketServerEventDailyTaskUpdate = 'SocketServerEventDailyTaskUpdate';

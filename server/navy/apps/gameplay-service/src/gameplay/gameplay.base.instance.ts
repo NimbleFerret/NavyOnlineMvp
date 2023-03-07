@@ -17,7 +17,8 @@ import {
     SocketServerMessageSync,
     SocketClientMessageInput,
     SocketServerMessageEntityInput,
-    PlayerInputType
+    PlayerInputType,
+    SocketServerMessageEntityInputs
 } from '../ws/ws.protocol';
 import { BaseGameObject } from '@app/shared-library/entities/entity.base';
 import { Constants } from '../app.constants';
@@ -31,7 +32,6 @@ export abstract class BaseGameplayInstance {
     readonly creationTime = new Date().getTime();
     readonly playerEntityMap = new Map<string, string>();
     readonly entityPlayerMap = new Map<string, string>();
-    notifyGameWorldStateTimer: NodeJS.Timer;
 
     constructor(
         public eventEmitter: EventEmitter2,
@@ -53,6 +53,20 @@ export abstract class BaseGameplayInstance {
             default:
                 this.instanceId = uuidv4();
         }
+
+        gameEngine.postLoopCallback = () => {
+            // Replicate inputs
+            if (gameEngine.validatedInputCommands.length > 0 && this.getPlayersCount() > 0) {
+                console.log(gameEngine.validatedInputCommands);
+                const socketServerMessageShipInputs = {
+                    tick: gameEngine.tick,
+                    inputs: gameEngine.validatedInputCommands
+                } as SocketServerMessageEntityInputs;
+                this.notifyAllPlayers(socketServerMessageShipInputs, WsProtocol.SocketServerEventEntityInputs);
+            }
+
+            // Replicate world state
+        };
     }
 
     // -------------------------------------
@@ -122,7 +136,6 @@ export abstract class BaseGameplayInstance {
             return false;
         }
         try {
-            clearInterval(this.notifyGameWorldStateTimer);
             this.playerEntityMap.clear();
             this.entityPlayerMap.clear();
             this.gameEngine.destroy();
@@ -181,13 +194,13 @@ export abstract class BaseGameplayInstance {
             });
 
             // Only basic movement notification inside basic instance logic
-            if (data.playerInputType != PlayerInputType.SHOOT) {
-                const socketServerMessageEntityInput = {
-                    playerId: data.playerId,
-                    playerInputType: data.playerInputType
-                } as SocketServerMessageEntityInput;
-                this.notifyAllPlayers(socketServerMessageEntityInput, WsProtocol.SocketServerEventEntityInput, data.playerId);
-            }
+            // if (data.playerInputType != PlayerInputType.SHOOT) {
+            //     const socketServerMessageEntityInput = {
+            //         playerId: data.playerId,
+            //         playerInputType: data.playerInputType
+            //     } as SocketServerMessageEntityInput;
+            //     this.notifyAllPlayers(socketServerMessageEntityInput, WsProtocol.SocketServerEventEntityInput, data.playerId);
+            // }
         }
     }
 

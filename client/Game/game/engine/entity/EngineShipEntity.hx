@@ -100,7 +100,9 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	}
 
 	public function accelerate() {
-		if (checkMovementInput()) {
+		var stateChanged = false;
+		if (checkMovementInput() && currentSpeed != shipObjectEntity.maxSpeed) {
+			stateChanged = true;
 			currentSpeed += shipObjectEntity.acceleration;
 			if (currentSpeed > shipObjectEntity.maxSpeed)
 				currentSpeed = shipObjectEntity.maxSpeed;
@@ -108,10 +110,13 @@ class EngineShipEntity extends EngineBaseGameEntity {
 				speedChangeCallback(currentSpeed);
 			}
 		}
+		return stateChanged;
 	}
 
 	public function decelerate() {
-		if (checkMovementInput()) {
+		var stateChanged = false;
+		if (checkMovementInput() && currentSpeed != shipObjectEntity.minSpeed) {
+			stateChanged = true;
 			currentSpeed -= shipObjectEntity.acceleration;
 			if (currentSpeed < shipObjectEntity.minSpeed)
 				currentSpeed = shipObjectEntity.minSpeed;
@@ -119,10 +124,13 @@ class EngineShipEntity extends EngineBaseGameEntity {
 				speedChangeCallback(currentSpeed);
 			}
 		}
+		return stateChanged;
 	}
 
 	public function rotateLeft() {
+		var stateChanged = false;
 		if (checkRotationInput()) {
+			stateChanged = true;
 			rotation -= MathUtils.degreeToRads(45);
 			switch (shipObjectEntity.direction) {
 				case EAST:
@@ -146,10 +154,13 @@ class EngineShipEntity extends EngineBaseGameEntity {
 				directionChangeCallbackLeft(shipObjectEntity.direction);
 			}
 		}
+		return stateChanged;
 	}
 
 	public function rotateRight() {
+		var stateChanged = false;
 		if (checkRotationInput()) {
+			stateChanged = true;
 			rotation += MathUtils.degreeToRads(45);
 			switch (shipObjectEntity.direction) {
 				case EAST:
@@ -173,6 +184,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 				directionChangeCallbackRight(shipObjectEntity.direction);
 			}
 		}
+		return stateChanged;
 	}
 
 	// -----------------------

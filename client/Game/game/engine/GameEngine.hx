@@ -15,6 +15,8 @@ import game.engine.geometry.Line;
 typedef ShipHitByShellCallbackParams = {ship:EngineShipEntity, damage:Int}
 typedef CreateShellCallbackParams = {shells:Array<EngineShellEntity>, shooterId:String, side:Side, aimAngleRads:Float}
 
+// typedef ValidatedInputCommands = {};
+
 @:expose
 class GameEngine extends BaseEngine {
 	public final shellManager = new ShellManager();
@@ -26,8 +28,8 @@ class GameEngine extends BaseEngine {
 	public var enableShooting = true;
 	public var enableCollisions = true;
 
-	private var allowShoot = false;
 	private var framesPassed = 0;
+	private var allowShoot = false;
 	private var botsAllowShoot = false;
 	private var timePassed = 0.0;
 	private var lastBotShootTime = 0.0;
@@ -53,13 +55,17 @@ class GameEngine extends BaseEngine {
 			}
 			switch (input.playerInputCommand.inputType) {
 				case MOVE_UP:
-					ship.accelerate();
+					if (ship.accelerate())
+						validatedInputCommands.push(input.playerInputCommand);
 				case MOVE_DOWN:
-					ship.decelerate();
+					if (ship.decelerate())
+						validatedInputCommands.push(input.playerInputCommand);
 				case MOVE_LEFT:
-					ship.rotateLeft();
+					if (ship.rotateLeft())
+						validatedInputCommands.push(input.playerInputCommand);
 				case MOVE_RIGHT:
-					ship.rotateRight();
+					if (ship.rotateRight())
+						validatedInputCommands.push(input.playerInputCommand);
 				case SHOOT:
 					if (enableShooting) {
 						final shootDetails = input.playerInputCommand.shootDetails;
@@ -97,6 +103,8 @@ class GameEngine extends BaseEngine {
 								shells.push(shell);
 							}
 
+							validatedInputCommands.push(input.playerInputCommand);
+
 							if (createShellCallback != null) {
 								createShellCallback({
 									shells: shells,
@@ -117,11 +125,13 @@ class GameEngine extends BaseEngine {
 		framesPassed++;
 		timePassed += dt;
 
-		if (lastBotShootTime == 0) {
-			lastBotShootTime = timePassed;
-		} else if (timePassed - lastBotShootTime >= botShootDelaySeconds) {
-			lastBotShootTime = timePassed;
-			botsAllowShoot = true;
+		if (engineMode == EngineMode.Server) {
+			if (lastBotShootTime == 0) {
+				lastBotShootTime = timePassed;
+			} else if (timePassed - lastBotShootTime >= botShootDelaySeconds) {
+				lastBotShootTime = timePassed;
+				botsAllowShoot = true;
+			}
 		}
 
 		for (ship in mainEntityManager.entities) {

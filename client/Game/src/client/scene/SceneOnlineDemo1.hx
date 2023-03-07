@@ -29,7 +29,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 	public function start(instanceId:String) {
 		this.instanceId = instanceId;
 
-		game = new BattleGameplay(this, EngineMode.Server, function callbackLeave() {
+		game = new BattleGameplay(this, EngineMode.Client, function callbackLeave() {
 			if (leaveCallback != null) {
 				game = null;
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventGameInit, this);
@@ -37,6 +37,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityInput, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityInputs, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventSync, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskUpdate, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventDailyTaskReward, this);
@@ -60,6 +61,7 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityInput, this);
+		EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityInputs, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventDailyTaskUpdate, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventDailyTaskReward, this);
@@ -102,6 +104,8 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				game.removeEntity(message);
 			case SocketProtocol.SocketServerEventUpdateWorldState:
 				game.updateWorldState(message);
+			case SocketProtocol.SocketServerEventEntityInputs:
+				game.entityInputs(message);
 			case SocketProtocol.SocketServerEventEntityInput:
 				game.entityInput(message);
 			case SocketProtocol.SocketServerEventSync:

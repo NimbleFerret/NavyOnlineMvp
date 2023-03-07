@@ -24,7 +24,7 @@ class SceneDemo1 extends Scene {
 	}
 
 	public function start() {
-		game = new BattleGameplay(this, EngineMode.Client, function callback() {}, function callback() {});
+		game = new BattleGameplay(this, EngineMode.Server, function callback() {}, function callback() {});
 
 		// --------------------------------------
 		// Mocked client data
@@ -63,7 +63,7 @@ class SceneDemo1 extends Scene {
 		var botY = 0;
 		var botIndex = 0;
 
-		for (i in 0...0) {
+		for (i in 0...2) {
 			for (j in 0...2) {
 				ships.push(new EngineShipEntity(new ShipObjectEntity({
 					x: botX,

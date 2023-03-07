@@ -40,20 +40,21 @@ export abstract class GameplayBaseService {
     }
 
     destroyEmptyInstancesIfNeeded() {
-        const instancedToDelete: string[] = [];
+        const instancesToDelete: string[] = [];
         this.instances.forEach((instance) => {
             if (instance.destroyByTimeIfNeeded()) {
-                instancedToDelete.push(instance.instanceId);
+                instancesToDelete.push(instance.instanceId);
                 this.sectorInstance.delete(instance.x + '+' + instance.y);
             }
         });
-        Utils.DeleteKeysFromMap(this.instances, instancedToDelete);
+        Utils.DeleteKeysFromMap(this.instances, instancesToDelete);
     }
 
     async killInstance(instanceId: string) {
         const instance = this.instances.get(instanceId);
         if (instance) {
             if (instance.destroy(true)) {
+                this.sectorInstance.delete(instance.x + '+' + instance.y);
                 this.instances.delete(instanceId);
             }
         }
@@ -131,6 +132,15 @@ export abstract class GameplayBaseService {
             count += instance.getEntitiesCount();
         });
         return count;
+    }
+
+    getMaxLoopTime() {
+        let maxTime = 0;
+        this.instances.forEach((instance) => {
+            if (instance.getRecentEngineLoopTime() > maxTime)
+                maxTime = instance.getRecentEngineLoopTime();
+        });
+        return maxTime;
     }
 
     getAvgLoopTime() {

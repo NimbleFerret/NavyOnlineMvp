@@ -26,7 +26,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         eventEmitter: EventEmitter2,
         sectorContent: SectorContent,
         public testInstance: boolean,
-        defaultBots: boolean
+        defaultBots: boolean = false
     ) {
         super(eventEmitter, testInstance ? GameplayType.BattleTest : GameplayType.Battle, new game.engine.GameEngine(), x, y);
 
@@ -70,15 +70,15 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         };
 
         this.gameEngine.createShellCallback = (createShellCallback: any) => {
-            const socketServerMessageShipInput = {
-                playerId: createShellCallback.shooterId,
-                playerInputType: PlayerInputType.SHOOT,
-                shootDetails: {
-                    side: createShellCallback.side,
-                    aimAngleRads: createShellCallback.aimAngleRads
-                }
-            } as SocketServerMessageEntityInput;
-            this.notifyAllPlayers(socketServerMessageShipInput, WsProtocol.SocketServerEventEntityInput, createShellCallback.shooterId);
+            // const socketServerMessageShipInput = {
+            //     playerId: createShellCallback.shooterId,
+            //     playerInputType: PlayerInputType.SHOOT,
+            //     shootDetails: {
+            //         side: createShellCallback.side,
+            //         aimAngleRads: createShellCallback.aimAngleRads
+            //     }
+            // } as SocketServerMessageEntityInput;
+            // this.notifyAllPlayers(socketServerMessageShipInput, WsProtocol.SocketServerEventEntityInput, createShellCallback.shooterId);
         };
 
         this.gameEngine.createMainEntityCallback = (ship: object) => {
@@ -211,8 +211,8 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
 
     private intiateBotShips() {
         let positionX = 0, positionY = 0;
-        for (let i = 0; i < 2; i++) {
-            for (let j = 0; j < 2; j++) {
+        for (let i = 0; i < 1; i++) {
+            for (let j = 0; j < 1; j++) {
                 const ship = ShipEntity.GetFreeShipStats('bot_ship_' + this.botIndex, 'bot_' + this.botIndex);
                 ship.role = Role.BOT;
                 ship.x = positionX;

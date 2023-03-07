@@ -218,12 +218,26 @@ abstract class BasicGameplay {
 		}
 	}
 
+	public function entityInputs(messages:SocketServerMessageEntityInputs) {
+		if (gameState == GameState.Playing) {
+			for (message in messages.inputs) {
+				if (playerId != message.playerId) {
+					baseEngine.addInputCommand({
+						playerId: message.playerId,
+						inputType: message.inputType,
+						shootDetails: message.shootDetails
+					});
+				}
+			}
+		}
+	}
+
 	public function entityInput(message:SocketServerMessageEntityInput) {
 		if (gameState == GameState.Playing && playerId != message.playerId) {
 			baseEngine.addInputCommand({
 				index: 0,
 				playerId: message.playerId,
-				inputType: message.playerInputType,
+				inputType: message.inputType,
 				shootDetails: message.shootDetails
 			});
 		}

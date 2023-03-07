@@ -41,6 +41,10 @@ class Socket {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventEntityInput, data);
 		});
 
+		clientSocket.on(SocketProtocol.SocketServerEventEntityInputs, function(data) {
+			EventManager.instance.notify(SocketProtocol.SocketServerEventEntityInputs, data);
+		});
+
 		clientSocket.on(SocketProtocol.SocketServerEventSync, function(data) {
 			EventManager.instance.notify(SocketProtocol.SocketServerEventSync, data);
 		});
