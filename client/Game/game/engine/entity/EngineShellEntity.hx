@@ -35,6 +35,10 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 		return true;
 	}
 
+	public function updateHashImpl() {
+		return 0;
+	}
+
 	// ------------------------------------------------
 	// General
 	// ------------------------------------------------

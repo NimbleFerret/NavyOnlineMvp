@@ -16,9 +16,8 @@ import {
     SocketClientMessageSync,
     SocketServerMessageSync,
     SocketClientMessageInput,
-    SocketServerMessageEntityInput,
-    PlayerInputType,
-    SocketServerMessageEntityInputs
+    SocketServerMessageEntityInputs,
+    SocketServerMessageUpdateWorldState
 } from '../ws/ws.protocol';
 import { BaseGameObject } from '@app/shared-library/entities/entity.base';
 import { Constants } from '../app.constants';
@@ -55,17 +54,24 @@ export abstract class BaseGameplayInstance {
         }
 
         gameEngine.postLoopCallback = () => {
-            // Replicate inputs
-            if (gameEngine.validatedInputCommands.length > 0 && this.getPlayersCount() > 0) {
-                console.log(gameEngine.validatedInputCommands);
-                const socketServerMessageShipInputs = {
-                    tick: gameEngine.tick,
-                    inputs: gameEngine.validatedInputCommands
-                } as SocketServerMessageEntityInputs;
-                this.notifyAllPlayers(socketServerMessageShipInputs, WsProtocol.SocketServerEventEntityInputs);
-            }
+            if (this.getPlayersCount()) {
+                // Replicate inputs
+                if (gameEngine.validatedInputCommands.length > 0) {
+                    const socketServerMessageShipInputs = {
+                        tick: gameEngine.tick,
+                        inputs: gameEngine.validatedInputCommands
+                    } as SocketServerMessageEntityInputs;
+                    this.notifyAllPlayers(socketServerMessageShipInputs, WsProtocol.SocketServerEventEntityInputs);
+                }
 
-            // Replicate world state
+                // Replicate world state
+                const socketServerMessageUpdateWorldState = {
+                    tick: gameEngine.tick,
+                    entities: this.collectChangedEntities()
+                } as SocketServerMessageUpdateWorldState;
+                console.log(socketServerMessageUpdateWorldState);
+                this.notifyAllPlayers(socketServerMessageUpdateWorldState, WsProtocol.SocketServerEventUpdateWorldState);
+            }
         };
     }
 
@@ -218,13 +224,21 @@ export abstract class BaseGameplayInstance {
     // Data preparation
     // -------------------------------------
 
-    private collectEntities() {
+    protected collectEntities(full: boolean = true) {
         const entities: BaseGameObject[] = [];
         for (const [key, value] of this.gameEngine.mainEntityManager.entities) {
-            entities.push(this.converJsEntityToTypeScript(value));
+            entities.push(this.converJsEntityToTypeScript(value, full));
         }
         return entities;
     }
 
-    public abstract converJsEntityToTypeScript(jsEntity: any): BaseGameObject;
+    private collectChangedEntities() {
+        const entities: BaseGameObject[] = [];
+        for (const entity of this.gameEngine.mainEntityManager.getChangedEntities()) {
+            entities.push(this.converJsEntityToTypeScript(entity, false));
+        }
+        return entities;
+    }
+
+    public abstract converJsEntityToTypeScript(jsEntity: any, full: boolean): BaseGameObject;
 }

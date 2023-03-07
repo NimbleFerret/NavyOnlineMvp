@@ -13,6 +13,16 @@ class BaseEntityManager {
 		updateCallback = null;
 	}
 
+	public function getChangedEntities() {
+		final result = new Array<EngineBaseGameEntity>();
+		entities.forEach((value, key, map) -> {
+			if (value.isChanged()) {
+				result.push(value);
+			}
+		});
+		return result;
+	}
+
 	public function add(entity:EngineBaseGameEntity) {
 		entities.set(entity.getId(), entity);
 	}

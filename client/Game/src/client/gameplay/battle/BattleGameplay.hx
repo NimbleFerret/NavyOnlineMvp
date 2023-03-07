@@ -232,11 +232,10 @@ class BattleGameplay extends BasicGameplay {
 					playerShip.updateCannonsSight(debugGraphics, mouseToShipRelation.toTheLeft ? LEFT : RIGHT, mouseToShipRelation.projectedMouseCoords);
 				}
 				waterScene.updatePlayerMovement(playerShip.isMoving, playerShip.isMovingForward, playerShip.localDirection, playerShip.currentSpeed);
+				hud.updatePlayerParams(playerShip);
 			} else {
 				waterScene.updatePlayerMovement(false);
 			}
-
-			hud.updatePlayerParams(playerShip);
 		}
 	}
 

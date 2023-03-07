@@ -63,7 +63,7 @@ class SceneDemo1 extends Scene {
 		var botY = 0;
 		var botIndex = 0;
 
-		for (i in 0...2) {
+		for (i in 0...0) {
 			for (j in 0...2) {
 				ships.push(new EngineShipEntity(new ShipObjectEntity({
 					x: botX,

@@ -1,5 +1,7 @@
 package game.engine.entity;
 
+import haxe.Int32;
+import js.html.svg.Number;
 import uuid.Uuid;
 import game.engine.entity.TypesAndClasses;
 import game.engine.entity.EngineShipEntityConfig;
@@ -20,6 +22,8 @@ abstract class EngineBaseGameEntity {
 	// ----------------------
 	private var baseObjectEntity:BaseObjectEntity;
 	private var lastDeltaTime:Float;
+	private var previousTickHash:Int32;
+	private var currentTickHash:Int32;
 
 	public var entityType:GameEntityType;
 	public var isAlive = true;
@@ -65,6 +69,10 @@ abstract class EngineBaseGameEntity {
 
 	public abstract function canMove(playerInputType:PlayerInputType):Bool;
 
+	public abstract function updateHashImpl():Int32;
+
+	// ------------------------------------------------
+	// General
 	// ------------------------------------------------
 
 	public function update(dt:Float) {
@@ -74,6 +82,7 @@ abstract class EngineBaseGameEntity {
 		move();
 		if (customUpdate != null)
 			customUpdate.postUpdate();
+		updateHash();
 	}
 
 	public function getBodyRectangle() {
@@ -115,6 +124,25 @@ abstract class EngineBaseGameEntity {
 			customCollide.onCollide();
 	}
 
+	public function isChanged() {
+		return previousTickHash != currentTickHash;
+	}
+
+	function updateHash() {
+		final hash = updateHashImpl();
+		if (previousTickHash == null && currentTickHash == null) {
+			previousTickHash = hash;
+			currentTickHash = hash;
+		} else {
+			previousTickHash = currentTickHash;
+			currentTickHash = hash;
+		}
+	}
+
+	// ------------------------------------------------
+	// Movement
+	// ------------------------------------------------
+
 	function move() {
 		dx = currentSpeed * Math.cos(rotation) * lastDeltaTime;
 		dy = currentSpeed * Math.sin(rotation) * lastDeltaTime;
@@ -142,19 +170,9 @@ abstract class EngineBaseGameEntity {
 		}
 	}
 
-	// public function accelerateLeft() {
-	// 	baseObjectEntity.x += baseObjectEntity.acceleration;
-	// }
-	// public function accelerateRight() {
-	// 	baseObjectEntity.x -= baseObjectEntity.acceleration;
-	// }
-	// public function accelerateUp() {
-	// 	baseObjectEntity.y += baseObjectEntity.acceleration;
-	// }
-	// public function accelerateDown() {
-	// 	baseObjectEntity.y -= baseObjectEntity.acceleration;
-	// }
+	// ------------------------------------------------
 	// Getters
+	// ------------------------------------------------
 
 	public function getX() {
 		return baseObjectEntity.x;
@@ -184,7 +202,9 @@ abstract class EngineBaseGameEntity {
 		return baseObjectEntity.minSpeed;
 	}
 
+	// ------------------------------------------------
 	// Setters
+	// ------------------------------------------------
 
 	public function setX(x:Float) {
 		baseObjectEntity.x = x;

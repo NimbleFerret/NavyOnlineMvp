@@ -3,6 +3,7 @@ package game.engine.entity;
 import game.engine.entity.EngineBaseGameEntity;
 import game.engine.entity.TypesAndClasses;
 import game.engine.geometry.Point;
+import game.engine.EngineUtils;
 import game.engine.MathUtils;
 
 class EngineShipEntity extends EngineBaseGameEntity {
@@ -82,6 +83,13 @@ class EngineShipEntity extends EngineBaseGameEntity {
 			case _:
 		}
 		return result;
+	}
+
+	public function updateHashImpl() {
+		final e = baseObjectEntity;
+		final s:String = e.id + e.x + e.y + e.direction + currentArmor + currentHull;
+		final hc = EngineUtils.HashString(s);
+		return hc;
 	}
 
 	// -----------------------

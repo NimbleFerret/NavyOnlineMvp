@@ -7,10 +7,8 @@ import { game } from "../../js/GameEngine.js"
 import { ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import {
     WsProtocol,
-    SocketServerMessageEntityInput,
     SocketServerMessageAddEntity,
     SocketClientMessageRespawn,
-    PlayerInputType
 } from "../../ws/ws.protocol";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 import { Role, ShipEntity, ShipObjectEntity } from "@app/shared-library/entities/entity.ship";
@@ -83,7 +81,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
 
         this.gameEngine.createMainEntityCallback = (ship: object) => {
             const socketServerMessageAddEntity = {
-                entity: this.converJsEntityToTypeScript(ship)
+                entity: this.converJsEntityToTypeScript(ship, true)
             } as SocketServerMessageAddEntity;
             this.notifyAllPlayers(socketServerMessageAddEntity, WsProtocol.SocketServerEventAddEntity);
         };
@@ -159,31 +157,34 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         return engineEntity;
     }
 
-    public converJsEntityToTypeScript(jsEntity: any) {
-        return {
+    public converJsEntityToTypeScript(jsEntity: any, full: boolean) {
+        const objectEntity = {
             x: jsEntity.shipObjectEntity.x,
             y: jsEntity.shipObjectEntity.y,
             id: jsEntity.shipObjectEntity.id,
             ownerId: jsEntity.shipObjectEntity.ownerId,
-            acceleration: jsEntity.shipObjectEntity.acceleration,
-            minSpeed: jsEntity.shipObjectEntity.minSpeed,
-            maxSpeed: jsEntity.shipObjectEntity.maxSpeed,
             direction: jsEntity.shipObjectEntity.direction,
-            serverShipRef: jsEntity.shipObjectEntity.serverShipRef,
-            free: jsEntity.shipObjectEntity.free,
-            role: jsEntity.shipObjectEntity.role,
-            shipHullSize: jsEntity.shipObjectEntity.shipHullSize,
-            shipWindows: jsEntity.shipObjectEntity.shipWindows,
-            shipCannons: jsEntity.shipObjectEntity.shipCannons,
-            cannonsRange: jsEntity.shipObjectEntity.cannonsRange,
-            cannonsDamage: jsEntity.shipObjectEntity.cannonsDamage,
-            cannonsAngleSpread: jsEntity.shipObjectEntity.cannonsAngleSpread,
             armor: jsEntity.shipObjectEntity.armor,
             hull: jsEntity.shipObjectEntity.hull,
-            accDelay: jsEntity.shipObjectEntity.accDelay,
-            turnDelay: jsEntity.shipObjectEntity.turnDelay,
-            fireDelay: jsEntity.shipObjectEntity.fireDelay
         } as ShipObjectEntity;
+        if (full) {
+            objectEntity.acceleration = jsEntity.shipObjectEntity.acceleration;
+            objectEntity.minSpeed = jsEntity.shipObjectEntity.minSpeed;
+            objectEntity.maxSpeed = jsEntity.shipObjectEntity.maxSpeed;
+            objectEntity.serverShipRef = jsEntity.shipObjectEntity.serverShipRef;
+            objectEntity.free = jsEntity.shipObjectEntity.free;
+            objectEntity.role = jsEntity.shipObjectEntity.role;
+            objectEntity.shipHullSize = jsEntity.shipObjectEntity.shipHullSize;
+            objectEntity.shipWindows = jsEntity.shipObjectEntity.shipWindows;
+            objectEntity.shipCannons = jsEntity.shipObjectEntity.shipCannons;
+            objectEntity.cannonsRange = jsEntity.shipObjectEntity.cannonsRange;
+            objectEntity.cannonsDamage = jsEntity.shipObjectEntity.cannonsDamage;
+            objectEntity.cannonsAngleSpread = jsEntity.shipObjectEntity.cannonsAngleSpread;
+            objectEntity.accDelay = jsEntity.shipObjectEntity.accDelay;
+            objectEntity.turnDelay = jsEntity.shipObjectEntity.turnDelay;
+            objectEntity.fireDelay = jsEntity.shipObjectEntity.fireDelay;
+        }
+        return objectEntity;
     }
 
     // --------------------------
@@ -211,7 +212,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
 
     private intiateBotShips() {
         let positionX = 0, positionY = 0;
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 0; i++) {
             for (let j = 0; j < 1; j++) {
                 const ship = ShipEntity.GetFreeShipStats('bot_ship_' + this.botIndex, 'bot_' + this.botIndex);
                 ship.role = Role.BOT;

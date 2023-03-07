@@ -30,6 +30,10 @@ class EngineCharacterEntity extends EngineBaseGameEntity {
 		return true;
 	}
 
+	public function updateHashImpl() {
+		return 0;
+	}
+
 	// public function moveUp(revert = false) {
 	// 	if (revert) {
 	// 		accelerateUp();
