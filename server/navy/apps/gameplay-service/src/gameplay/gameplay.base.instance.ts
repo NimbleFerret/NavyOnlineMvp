@@ -32,6 +32,9 @@ export abstract class BaseGameplayInstance {
     readonly playerEntityMap = new Map<string, string>();
     readonly entityPlayerMap = new Map<string, string>();
 
+    private readonly forcedStateUpdateIntervalTicks = 10;
+    private ticksSinceLastForcedUpdate = 0;
+
     constructor(
         public eventEmitter: EventEmitter2,
         public gameplayType: GameplayType,
@@ -64,15 +67,29 @@ export abstract class BaseGameplayInstance {
                     this.notifyAllPlayers(socketServerMessageShipInputs, WsProtocol.SocketServerEventEntityInputs);
                 }
 
-                // Replicate world state
+                // Replicate world state if it is changed
                 const socketServerMessageUpdateWorldState = {
                     tick: gameEngine.tick,
                     entities: this.collectChangedEntities()
                 } as SocketServerMessageUpdateWorldState;
-                console.log(socketServerMessageUpdateWorldState);
-                this.notifyAllPlayers(socketServerMessageUpdateWorldState, WsProtocol.SocketServerEventUpdateWorldState);
-            }
-        };
+                if (socketServerMessageUpdateWorldState.entities.length > 0) {
+                    this.notifyAllPlayers(socketServerMessageUpdateWorldState, WsProtocol.SocketServerEventUpdateWorldState);
+                }
+
+                // World state control info 
+                if (this.ticksSinceLastForcedUpdate == this.forcedStateUpdateIntervalTicks) {
+                    this.ticksSinceLastForcedUpdate = 0;
+                    const socketServerMessageUpdateWorldState = {
+                        tick: gameEngine.tick,
+                        entities: this.collectEntities(false),
+                        forced: true
+                    } as SocketServerMessageUpdateWorldState;
+                    this.notifyAllPlayers(socketServerMessageUpdateWorldState, WsProtocol.SocketServerEventUpdateWorldState);
+                }
+
+                this.ticksSinceLastForcedUpdate++;
+            };
+        }
     }
 
     // -------------------------------------

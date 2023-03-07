@@ -162,12 +162,12 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             x: jsEntity.shipObjectEntity.x,
             y: jsEntity.shipObjectEntity.y,
             id: jsEntity.shipObjectEntity.id,
-            ownerId: jsEntity.shipObjectEntity.ownerId,
             direction: jsEntity.shipObjectEntity.direction,
             armor: jsEntity.shipObjectEntity.armor,
             hull: jsEntity.shipObjectEntity.hull,
         } as ShipObjectEntity;
         if (full) {
+            objectEntity.ownerId = jsEntity.shipObjectEntity.ownerId;
             objectEntity.acceleration = jsEntity.shipObjectEntity.acceleration;
             objectEntity.minSpeed = jsEntity.shipObjectEntity.minSpeed;
             objectEntity.maxSpeed = jsEntity.shipObjectEntity.maxSpeed;

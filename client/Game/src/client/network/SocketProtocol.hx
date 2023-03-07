@@ -35,7 +35,9 @@ typedef SocketServerMessageGameInit = {
 }
 
 typedef SocketServerMessageUpdateWorldState = {
-	entities:Array<Dynamic>
+	tick:Int,
+	entities:Array<Dynamic>,
+	?forced:Bool
 }
 
 typedef SocketServerMessageAddEntity = {

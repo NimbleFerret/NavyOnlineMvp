@@ -262,7 +262,8 @@ abstract class BasicGameplay {
 					}
 				}
 			}
-			if (message.entities.length != clientMainEntitiesCount) {
+
+			if (message.forced != null && message.entities.length != clientMainEntitiesCount) {
 				Socket.instance.sync({
 					playerId: playerId
 				});

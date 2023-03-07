@@ -10,7 +10,6 @@ import {
 import {
     SocketClientMessageInput,
     SocketClientMessageJoinGame,
-    // SocketClientMessageMove,
     SocketClientMessageSync
 } from "../ws/ws.protocol";
 import { BaseGameplayInstance } from "./gameplay.base.instance";

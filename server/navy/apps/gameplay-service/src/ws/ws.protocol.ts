@@ -42,6 +42,7 @@ export interface SocketServerMessageGameInit extends BaseServerGameplayMessage {
 export interface SocketServerMessageUpdateWorldState extends BaseServerGameplayMessage {
     tick: number;
     entities: object[];
+    forced?: boolean;
 }
 
 export interface SocketServerMessageAddEntity {
