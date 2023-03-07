@@ -35,7 +35,7 @@ class SceneDemo1 extends Scene {
 		final ships = new Array<EngineBaseGameEntity>();
 
 		ships.push(new EngineShipEntity(new ShipObjectEntity({
-			x: 100,
+			x: -300,
 			y: 207,
 			minSpeed: 0,
 			maxSpeed: 300,

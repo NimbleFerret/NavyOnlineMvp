@@ -150,8 +150,12 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
     // Implementations
     // --------------------------
 
+    private playerX = 100;
+
     public initiateEngineEntity(playerId: string, entityid: string) {
         const ship = ShipEntity.GetFreeShipStats(entityid, playerId);
+        ship.x = this.playerX;
+        this.playerX += 250;
         const engineEntity = this.gameEngine.buildEngineEntity(ship);
         this.gameEngine.createMainEntity(engineEntity, true);
         return engineEntity;
@@ -194,12 +198,23 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
     private botIndex = 0;
     private botAutoPosX = 0;
     private botAutoPosY = -200;
+    private swapBotPosition = false;
 
     public addBot(x?: number, y?: number) {
         if (!x || !y) {
+            if (this.botIndex > 0) {
+                if (!this.swapBotPosition) {
+                    this.botAutoPosY = 50;
+                    this.swapBotPosition = true;
+                } else {
+                    this.botAutoPosX += 250;
+                    this.botAutoPosY = -200;
+                    this.swapBotPosition = false;
+                }
+            }
+
             x = this.botAutoPosX;
             y = this.botAutoPosY;
-            this.botAutoPosX += 250;
         }
         this.botIndex++;
         const ship = ShipEntity.GetFreeShipStats('bot_ship_' + this.botIndex, 'bot_' + this.botIndex);
@@ -211,22 +226,8 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
     }
 
     private intiateBotShips() {
-        let positionX = 0, positionY = 0;
-        for (let i = 0; i < 0; i++) {
-            for (let j = 0; j < 1; j++) {
-                const ship = ShipEntity.GetFreeShipStats('bot_ship_' + this.botIndex, 'bot_' + this.botIndex);
-                ship.role = Role.BOT;
-                ship.x = positionX;
-                ship.y = positionY;
-                const engineEntity = this.gameEngine.buildEngineEntity(ship);
-                this.gameEngine.createMainEntity(engineEntity, true);
-
-                positionX += 200;
-                this.botIndex++;
-            }
-            positionX = 0;
-            positionY += 300;
-            this.botIndex++;
+        for (let i = 0; i < 15; i++) {
+            this.addBot()
         }
     }
 

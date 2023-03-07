@@ -157,8 +157,16 @@ class ClientShip extends ClientBaseGameEntity {
 	}
 
 	public function update(dt:Float) {
-		x = hxd.Math.lerp(x, engineEntity.getX(), 0.1);
-		y = hxd.Math.lerp(y, engineEntity.getY(), 0.1);
+		if (MathUtils.differ(x, engineEntity.getX(), engineEntity.getMinSpeed())
+			|| MathUtils.differ(y, engineEntity.getY(), engineEntity.getMinSpeed())) {
+			x = hxd.Math.lerp(x, engineEntity.getX(), 0.1);
+			y = hxd.Math.lerp(y, engineEntity.getY(), 0.1);
+		} else {
+			final dx = engineEntity.currentSpeed * Math.cos(engineEntity.rotation) * dt;
+			final dy = engineEntity.currentSpeed * Math.sin(engineEntity.rotation) * dt;
+			x = x + dx * 0.96;
+			y = y + dy * 0.96;
+		}
 		shipTemplate.update();
 	}
 

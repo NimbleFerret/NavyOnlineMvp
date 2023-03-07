@@ -28,8 +28,8 @@ class ClientShell extends ClientBaseGameEntity {
 	public function update(dt:Float) {
 		final dx = engineEntity.currentSpeed * dt * Math.cos(bmp.rotation);
 		final dy = engineEntity.currentSpeed * dt * Math.sin(bmp.rotation);
-		x += dx;
-		y += dy;
+		x = x + dx * 0.96;
+		y = y + dy * 0.96;
 	}
 
 	public function debugDraw(graphics:h2d.Graphics) {

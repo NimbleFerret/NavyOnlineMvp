@@ -115,4 +115,8 @@ class MathUtils {
 		final uB = numB / deNom;
 		return uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1;
 	}
+
+	public static function differ(a:Float, b:Float, error:Float) {
+		return Math.abs(a - b) > error;
+	}
 }
