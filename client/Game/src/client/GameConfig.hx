@@ -8,8 +8,8 @@ class GameConfig {
 
 	public static var ShipConfigMode = false;
 
-	public static var ShowWaterBackground = false;
-	public static var DebugDraw = false;
+	public static var ShowWaterBackground = true;
+	public static var DebugDraw = true;
 	public static var DebugCannonFiringArea = true;
 	public static var DrawCannonsSight = true;
 }

@@ -1,4 +1,4 @@
-package game.engine.geometry;
+package game.engine.base.geometry;
 
 class Line {
 	public var x1:Float;

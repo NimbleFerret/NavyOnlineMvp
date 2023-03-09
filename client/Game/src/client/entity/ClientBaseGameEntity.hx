@@ -1,7 +1,7 @@
 package client.entity;
 
 import h2d.Layers;
-import game.engine.entity.EngineBaseGameEntity;
+import game.engine.base.entity.EngineBaseGameEntity;
 
 abstract class ClientBaseGameEntity extends h2d.Object {
 	var engineEntity:EngineBaseGameEntity;
@@ -18,7 +18,6 @@ abstract class ClientBaseGameEntity extends h2d.Object {
 	public function initiateEngineEntity(engineEntity:EngineBaseGameEntity) {
 		this.engineEntity = engineEntity;
 		setPosition(engineEntity.getX(), engineEntity.getY());
-		// set_rotation(engineEntity.rotation);
 	}
 
 	public function updateEntityPosition(x:Float, y:Float) {
@@ -38,7 +37,6 @@ abstract class ClientBaseGameEntity extends h2d.Object {
 		return engineEntity.isAlive;
 	}
 
-	// TODO make it abs ?
 	public function onCollision() {}
 
 	abstract public function update(dt:Float):Void;

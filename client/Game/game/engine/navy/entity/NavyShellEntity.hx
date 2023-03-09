@@ -1,15 +1,17 @@
-package game.engine.entity;
+package game.engine.navy.entity;
 
-import game.engine.entity.EngineBaseGameEntity;
-import game.engine.entity.TypesAndClasses;
-import game.engine.geometry.Point;
+import game.engine.base.entity.EngineBaseGameEntity;
+import game.engine.base.geometry.Point;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.navy.NavyTypesAndClasses;
+import game.engine.navy.NavyEngineConfig;
 
 enum DieEffect {
 	Splash;
 	Explosion;
 }
 
-class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustomUpdate implements GameEntityCustomCollide {
+class NavyShellEntity extends EngineBaseGameEntity implements GameEntityCustomUpdate implements GameEntityCustomCollide {
 	private final shellObjectEntity:ShellObjectEntity;
 	private var distanceTraveled = 0.0;
 	private var preUpdatePos = new Point();
@@ -17,14 +19,13 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 	public var dieEffect = DieEffect.Splash;
 
 	public function new(shellObjectEntity:ShellObjectEntity) {
-		super(GameEntityType.SHELL, shellObjectEntity);
+		super(shellObjectEntity, NavyEntitiesConfig.EntityShapeByType.get(GameEntityType.SHELL));
 
 		this.shellObjectEntity = shellObjectEntity;
-		this.rotation = shellObjectEntity.rotation;
 
 		customUpdate = this;
 		customCollide = this;
-		currentSpeed = GameEngineConfig.ShellDefaultSpeed;
+		currentSpeed = NavyEngineConfig.ShellDefaultSpeed;
 	}
 
 	// ------------------------------------------------
@@ -75,9 +76,5 @@ class EngineShellEntity extends EngineBaseGameEntity implements GameEntityCustom
 
 	public function getDamage() {
 		return shellObjectEntity.damage;
-	}
-
-	public function getRotation() {
-		return shellObjectEntity.rotation;
 	}
 }

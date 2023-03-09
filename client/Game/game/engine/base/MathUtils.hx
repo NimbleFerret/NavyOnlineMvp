@@ -1,8 +1,8 @@
-package game.engine;
+package game.engine.base;
 
-import game.engine.entity.TypesAndClasses;
-import game.engine.geometry.Line;
-import game.engine.geometry.Point;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.base.geometry.Line;
+import game.engine.base.geometry.Point;
 
 class MathUtils {
 	public static function getHullRadByDir(dir:GameEntityDirection) {

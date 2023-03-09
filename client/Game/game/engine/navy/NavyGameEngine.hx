@@ -1,28 +1,30 @@
-package game.engine;
+package game.engine.navy;
 
 import js.lib.Date;
-import game.engine.BaseEngine.PlayerInputCommandEngineWrapped;
-import game.engine.BaseEngine.EngineGameMode;
-import game.engine.BaseEngine.EngineMode;
-import game.engine.entity.EngineBaseGameEntity;
-import game.engine.entity.TypesAndClasses;
-import game.engine.entity.EngineShipEntity;
-import game.engine.entity.EngineShellEntity;
-import game.engine.entity.manager.ShipManager;
-import game.engine.entity.manager.ShellManager;
-import game.engine.geometry.Line;
+import game.engine.base.MathUtils;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.base.core.BaseEngine;
+import game.engine.base.core.BaseEngine.EngineGameMode;
+import game.engine.base.core.BaseEngine.EngineMode;
+import game.engine.base.entity.EngineBaseGameEntity;
+import game.engine.base.geometry.Line;
+import game.engine.navy.NavyTypesAndClasses;
+import game.engine.navy.entity.NavyShipEntity;
+import game.engine.navy.entity.NavyShellEntity;
+import game.engine.navy.entity.manager.ShipManager;
+import game.engine.navy.entity.manager.ShellManager;
 
-typedef ShipHitByShellCallbackParams = {ship:EngineShipEntity, damage:Int}
-typedef CreateShellCallbackParams = {shells:Array<EngineShellEntity>, shooterId:String, side:Side, aimAngleRads:Float}
+typedef ShipHitByShellCallbackParams = {ship:NavyShipEntity, damage:Int}
+typedef CreateShellCallbackParams = {shells:Array<NavyShellEntity>, shooterId:String, side:Side, aimAngleRads:Float}
 
 // typedef ValidatedInputCommands = {};
 
 @:expose
-class GameEngine extends BaseEngine {
+class NavyGameEngine extends BaseEngine {
 	public final shellManager = new ShellManager();
 
 	public var createShellCallback:CreateShellCallbackParams->Void;
-	public var deleteShellCallback:EngineShellEntity->Void;
+	public var deleteShellCallback:NavyShellEntity->Void;
 	public var shipHitByShellCallback:ShipHitByShellCallbackParams->Void;
 
 	public var enableShooting = true;
@@ -45,35 +47,36 @@ class GameEngine extends BaseEngine {
 	// Implementation
 	// ------------------------------------
 
-	public function processInputCommands(inputs:Array<PlayerInputCommandEngineWrapped>) {
-		for (input in inputs) {
-			final inputInitiator = input.playerInputCommand.playerId;
+	public function processInputCommands(inputs:Array<InputCommandEngineWrapped>) {
+		for (i in inputs) {
+			final input = cast(i.playerInputCommand, NavyInputCommand);
+			final inputInitiator = input.playerId;
 			final entityId = playerEntityMap.get(inputInitiator);
-			final ship = cast(mainEntityManager.getEntityById(entityId), EngineShipEntity);
+			final ship = cast(mainEntityManager.getEntityById(entityId), NavyShipEntity);
 			if (ship == null || ship.getOwnerId() != inputInitiator) {
 				continue;
 			}
-			switch (input.playerInputCommand.inputType) {
+			switch (input.inputType) {
 				case MOVE_UP:
 					if (ship.accelerate())
-						validatedInputCommands.push(input.playerInputCommand);
+						validatedInputCommands.push(input);
 				case MOVE_DOWN:
 					if (ship.decelerate())
-						validatedInputCommands.push(input.playerInputCommand);
+						validatedInputCommands.push(input);
 				case MOVE_LEFT:
 					if (ship.rotateLeft())
-						validatedInputCommands.push(input.playerInputCommand);
+						validatedInputCommands.push(input);
 				case MOVE_RIGHT:
 					if (ship.rotateRight())
-						validatedInputCommands.push(input.playerInputCommand);
+						validatedInputCommands.push(input);
 				case SHOOT:
 					if (enableShooting) {
-						final shootDetails = input.playerInputCommand.shootDetails;
+						final shootDetails = input.shootDetails;
 						final side = shootDetails.side;
 						if (ship != null && ship.tryShoot(side)) {
 							final aimAngleRads = shootDetails.aimAngleRads;
-							final shipSideRadRotation = aimAngleRads == 0 ? ship.rotation + MathUtils.degreeToRads(side == LEFT ? 90 : -90) : aimAngleRads;
-							final shells = new Array<EngineShellEntity>();
+							final shipSideRadRotation = aimAngleRads == 0 ? ship.getRotation() + MathUtils.degreeToRads(side == LEFT ? 90 : -90) : aimAngleRads;
+							final shells = new Array<NavyShellEntity>();
 
 							var cannonsTotal = 0;
 							switch (ship.getShipCannons()) {
@@ -103,7 +106,7 @@ class GameEngine extends BaseEngine {
 								shells.push(shell);
 							}
 
-							validatedInputCommands.push(input.playerInputCommand);
+							validatedInputCommands.push(input);
 
 							if (createShellCallback != null) {
 								createShellCallback({
@@ -139,17 +142,13 @@ class GameEngine extends BaseEngine {
 				ship.collides(false);
 				ship.update(dt);
 
-				final engineShipEntity = cast(ship, EngineShipEntity);
+				final engineShipEntity = cast(ship, NavyShipEntity);
 
 				if (engineShipEntity.shipObjectEntity.role == Role.BOT && botsAllowShoot) {
-					addInputCommand({
-						playerId: engineShipEntity.getOwnerId(),
-						inputType: PlayerInputType.SHOOT,
-						shootDetails: {
-							side: RIGHT,
-							aimAngleRads: MathUtils.getGunRadByDir(engineShipEntity.getDirection())
-						}
-					});
+					addInputCommand(new NavyInputCommand(PlayerInputType.SHOOT, engineShipEntity.getOwnerId(), 0, {
+						side: RIGHT,
+						aimAngleRads: MathUtils.getGunRadByDir(engineShipEntity.getDirection())
+					}));
 				}
 
 				if (enableCollisions) {
@@ -177,8 +176,8 @@ class GameEngine extends BaseEngine {
 							if (checkShellAndShipCollision(shell, ship)) {
 								ship.collides(true);
 								shell.collides(true);
-								final engineShipEntity = cast(ship, EngineShipEntity);
-								final engineShellEntity = cast(shell, EngineShellEntity);
+								final engineShipEntity = cast(ship, NavyShipEntity);
+								final engineShellEntity = cast(shell, NavyShellEntity);
 								engineShipEntity.inflictDamage(engineShellEntity.getDamage());
 								if (shipHitByShellCallback != null) {
 									shipHitByShellCallback({ship: engineShipEntity, damage: engineShellEntity.getDamage()});
@@ -198,7 +197,7 @@ class GameEngine extends BaseEngine {
 		}
 
 		for (i in 0...shellsToDelete.length) {
-			final shell = cast(shellManager.getEntityById(shellsToDelete[i]), EngineShellEntity);
+			final shell = cast(shellManager.getEntityById(shellsToDelete[i]), NavyShellEntity);
 			if (shell != null) {
 				if (deleteShellCallback != null) {
 					deleteShellCallback(shell);
@@ -208,7 +207,7 @@ class GameEngine extends BaseEngine {
 		}
 
 		for (i in 0...shipsToDelete.length) {
-			final ship = cast(mainEntityManager.getEntityById(shipsToDelete[i]), EngineShipEntity);
+			final ship = cast(mainEntityManager.getEntityById(shipsToDelete[i]), NavyShipEntity);
 			if (ship != null) {
 				removeMainEntity(ship.getId());
 			}
@@ -227,7 +226,7 @@ class GameEngine extends BaseEngine {
 	}
 
 	public function buildEngineEntity(struct:Dynamic) {
-		return new EngineShipEntity(new ShipObjectEntity(struct));
+		return new NavyShipEntity(new ShipObjectEntity(struct));
 	}
 
 	// ------------------------------------
@@ -243,8 +242,8 @@ class GameEngine extends BaseEngine {
 	// Shell game object
 	// --------------------------------------
 
-	public function addShell(entity:ShellObjectEntityStruct):EngineShellEntity {
-		final newShell = new EngineShellEntity(new ShellObjectEntity(entity));
+	public function addShell(entity:ShellObjectEntityStruct):NavyShellEntity {
+		final newShell = new NavyShellEntity(new ShellObjectEntity(entity));
 		shellManager.add(newShell);
 		return newShell;
 	}

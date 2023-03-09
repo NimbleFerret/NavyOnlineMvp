@@ -13,7 +13,8 @@ import client.ui.components.UiToken;
 import client.ui.components.UiAvatar;
 import client.ui.hud.SceneMainHud;
 import client.web3.Moralis;
-import game.engine.entity.TypesAndClasses;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.navy.NavyTypesAndClasses;
 
 class SceneHomeMenu extends Scene {
 	public final hud:SceneMainHud;
@@ -38,7 +39,8 @@ class SceneHomeMenu extends Scene {
 	// Collections info
 	private var captains = new Array<CaptainEntity>();
 	private var ships = new Array<ShipEntity>();
-	private var islands = new Array<IslandEntity>();
+
+	// private var islands = new Array<IslandEntity>();
 
 	public function new(startCallback:Void->Void) {
 		super();
@@ -64,19 +66,19 @@ class SceneHomeMenu extends Scene {
 		}, function refreshNFTsCallback() {
 			trace('refreshNFTsCallback');
 		}, function collectRewardCallback() {
-			if (islands[currentIslandIndex].mining) {
-				// TODO send request
-			}
+			// if (islands[currentIslandIndex].mining) {
+			// TODO send request
+			// }
 			trace('collectRewardCallback');
 		}, function startMining() {
-			if (!islands[currentIslandIndex].mining) {
-				Moralis.startIslandMining(islands[currentIslandIndex].id, function miningStarted() {
-					Rest.instance.startMining(client.Player.instance.ethAddress, islands[currentIslandIndex].id);
-					trace('mining started');
-				}, function miningErrir() {
-					trace('mining start error');
-				});
-			}
+			// if (!islands[currentIslandIndex].mining) {
+			// 	Moralis.startIslandMining(islands[currentIslandIndex].id, function miningStarted() {
+			// 		Rest.instance.startMining(client.Player.instance.ethAddress, islands[currentIslandIndex].id);
+			// 		trace('mining started');
+			// 	}, function miningErrir() {
+			// 		trace('mining start error');
+			// 	});
+			// }
 		}, function repairCallback() {
 			Moralis.repairShip(ships[currentShipIndex].id, function repairSuccess() {
 				trace('repair success');
@@ -128,7 +130,7 @@ class SceneHomeMenu extends Scene {
 
 			captains = player.ownedCaptains;
 			ships = player.ownedShips;
-			islands = player.ownedIslands;
+			// islands = player.ownedIslands;
 
 			if (!signedInOrUpBefore) {
 				currentCaptainIndex = 0;
@@ -139,9 +141,9 @@ class SceneHomeMenu extends Scene {
 				initiateShips();
 				initiateIslands();
 			} else {
-				if (!islandsAdded && islands.length > 0) {
-					initiateIslands();
-				}
+				// if (!islandsAdded && islands.length > 0) {
+				// 	initiateIslands();
+				// }
 				changeCaptain(0);
 				changeShip(0);
 				changeIsland(0);
@@ -227,43 +229,43 @@ class SceneHomeMenu extends Scene {
 	}
 
 	private function changeIsland(dir:Int) {
-		function newIslandByIndex(index:Int) {
-			var terrainType = IslandTerrainType.GREEN;
-			if (islands[index].terrain == 'Dark') {
-				terrainType = IslandTerrainType.DARK;
-			} else if (islands[index].terrain == 'Snow') {
-				terrainType = IslandTerrainType.SNOW;
-			}
-			currentIsland = new UiIsland(terrainType);
-			miningAnimation.alpha = islands[index].mining ? 1 : 0;
-		}
+		// function newIslandByIndex(index:Int) {
+		// 	var terrainType = IslandTerrainType.GREEN;
+		// 	if (islands[index].terrain == 'Dark') {
+		// 		terrainType = IslandTerrainType.DARK;
+		// 	} else if (islands[index].terrain == 'Snow') {
+		// 		terrainType = IslandTerrainType.SNOW;
+		// 	}
+		// 	currentIsland = new UiIsland(terrainType);
+		// 	miningAnimation.alpha = islands[index].mining ? 1 : 0;
+		// }
 
-		if (islands.length > 1 || dir == 0) {
-			if (currentIsland != null) {
-				removeChild(currentIsland);
-				removeChild(miningAnimation);
-			}
-			if (dir == 0) {
-				newIslandByIndex(0);
-			} else {
-				if (dir == 1) {
-					currentIslandIndex += 1;
-					if (currentIslandIndex == islands.length) {
-						currentIslandIndex = 0;
-					}
-				} else {
-					currentIslandIndex -= 1;
-					if (currentIslandIndex < 0) {
-						currentIslandIndex = islands.length - 1;
-					}
-				}
-				newIslandByIndex(currentIslandIndex);
-			}
-			currentIsland.setPosition(1700, 100);
-			addChild(currentIsland);
-			addChild(miningAnimation);
-			hud.updateIslandUi(islands[currentIslandIndex]);
-		}
+		// if (islands.length > 1 || dir == 0) {
+		// 	if (currentIsland != null) {
+		// 		removeChild(currentIsland);
+		// 		removeChild(miningAnimation);
+		// 	}
+		// 	if (dir == 0) {
+		// 		newIslandByIndex(0);
+		// 	} else {
+		// 		if (dir == 1) {
+		// 			currentIslandIndex += 1;
+		// 			if (currentIslandIndex == islands.length) {
+		// 				currentIslandIndex = 0;
+		// 			}
+		// 		} else {
+		// 			currentIslandIndex -= 1;
+		// 			if (currentIslandIndex < 0) {
+		// 				currentIslandIndex = islands.length - 1;
+		// 			}
+		// 		}
+		// 		newIslandByIndex(currentIslandIndex);
+		// 	}
+		// 	currentIsland.setPosition(1700, 100);
+		// 	addChild(currentIsland);
+		// 	addChild(miningAnimation);
+		// 	hud.updateIslandUi(islands[currentIslandIndex]);
+		// }
 	}
 
 	// ---------------------------------
@@ -325,42 +327,42 @@ class SceneHomeMenu extends Scene {
 	private var islandsAdded = false;
 
 	private function initiateIslands() {
-		if (islands.length > 0) {
-			islandsAdded = true;
+		// if (islands.length > 0) {
+		// 	islandsAdded = true;
 
-			final miningAnimation1 = hxd.Res.mine_anims._1.toTile();
-			final miningAnimation2 = hxd.Res.mine_anims._2.toTile();
-			final miningAnimation3 = hxd.Res.mine_anims._3.toTile();
-			final miningAnimation4 = hxd.Res.mine_anims._4.toTile();
-			final miningAnimation5 = hxd.Res.mine_anims._5.toTile();
-			final miningAnimation6 = hxd.Res.mine_anims._6.toTile();
-			final miningAnimation7 = hxd.Res.mine_anims._7.toTile();
-			final miningAnimation8 = hxd.Res.mine_anims._8.toTile();
+		// 	final miningAnimation1 = hxd.Res.mine_anims._1.toTile();
+		// 	final miningAnimation2 = hxd.Res.mine_anims._2.toTile();
+		// 	final miningAnimation3 = hxd.Res.mine_anims._3.toTile();
+		// 	final miningAnimation4 = hxd.Res.mine_anims._4.toTile();
+		// 	final miningAnimation5 = hxd.Res.mine_anims._5.toTile();
+		// 	final miningAnimation6 = hxd.Res.mine_anims._6.toTile();
+		// 	final miningAnimation7 = hxd.Res.mine_anims._7.toTile();
+		// 	final miningAnimation8 = hxd.Res.mine_anims._8.toTile();
 
-			miningAnimation = new h2d.Anim([
-				miningAnimation1,
-				miningAnimation2,
-				miningAnimation3,
-				miningAnimation4,
-				miningAnimation5,
-				miningAnimation6,
-				miningAnimation7,
-				miningAnimation8
-			]);
-			miningAnimation.setScale(5);
-			miningAnimation.setPosition(1764, 230);
-			miningAnimation.alpha = 1;
+		// 	miningAnimation = new h2d.Anim([
+		// 		miningAnimation1,
+		// 		miningAnimation2,
+		// 		miningAnimation3,
+		// 		miningAnimation4,
+		// 		miningAnimation5,
+		// 		miningAnimation6,
+		// 		miningAnimation7,
+		// 		miningAnimation8
+		// 	]);
+		// 	miningAnimation.setScale(5);
+		// 	miningAnimation.setPosition(1764, 230);
+		// 	miningAnimation.alpha = 1;
 
-			final arrowLeftIsland = hud.buttonArrowLeft(function callback() {
-				changeIsland(-1);
-			}, false);
-			final arrowRightIsland = hud.buttonArrowRight(function callback() {
-				changeIsland(1);
-			}, false);
-			arrowLeftIsland.setPosition(Main.ScreenWidth - 340, 200);
-			arrowRightIsland.setPosition(Main.ScreenWidth + 100, 200);
+		// 	final arrowLeftIsland = hud.buttonArrowLeft(function callback() {
+		// 		changeIsland(-1);
+		// 	}, false);
+		// 	final arrowRightIsland = hud.buttonArrowRight(function callback() {
+		// 		changeIsland(1);
+		// 	}, false);
+		// 	arrowLeftIsland.setPosition(Main.ScreenWidth - 340, 200);
+		// 	arrowRightIsland.setPosition(Main.ScreenWidth + 100, 200);
 
-			changeIsland(0);
-		}
+		// 	changeIsland(0);
+		// }
 	}
 }

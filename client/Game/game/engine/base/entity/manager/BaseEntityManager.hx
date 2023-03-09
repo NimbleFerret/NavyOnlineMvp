@@ -1,7 +1,7 @@
-package game.engine.entity.manager;
+package game.engine.base.entity.manager;
 
-import game.engine.entity.EngineBaseGameEntity;
 import js.lib.Map;
+import game.engine.base.entity.EngineBaseGameEntity;
 
 class BaseEntityManager {
 	public final entities = new js.lib.Map<String, EngineBaseGameEntity>();

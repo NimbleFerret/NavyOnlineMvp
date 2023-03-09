@@ -3,9 +3,10 @@ package client.entity;
 import h2d.col.Point;
 import utils.Utils;
 import client.entity.ship.ShipTemplate;
-import game.engine.MathUtils;
-import game.engine.entity.EngineShipEntity;
-import game.engine.entity.TypesAndClasses;
+import game.engine.base.MathUtils;
+import game.engine.navy.entity.NavyShipEntity;
+import game.engine.navy.NavyTypesAndClasses;
+import game.engine.base.BaseTypesAndClasses;
 
 final RippleOffsetByDirSmall:Map<GameEntityDirection, PosOffset> = [
 	GameEntityDirection.EAST => new PosOffset(-20, 0, 90),
@@ -51,16 +52,16 @@ class ClientShip extends ClientBaseGameEntity {
 
 	// TODO cast engine entity once ?
 
-	public function new(engineShipEntity:EngineShipEntity) {
+	public function new(navyShipEntity:NavyShipEntity) {
 		super();
 
-		final direction = engineShipEntity.getDirection();
-		final shipHullSize = engineShipEntity.getShipHullSize();
-		final ownerId = engineShipEntity.getOwnerId();
+		final direction = navyShipEntity.getDirection();
+		final shipHullSize = navyShipEntity.getShipHullSize();
+		final ownerId = navyShipEntity.getOwnerId();
 
 		localDirection = direction;
 
-		engineShipEntity.speedChangeCallback = function callback(speed) {
+		navyShipEntity.speedChangeCallback = function callback(speed) {
 			if (speed != 0) {
 				rippleAnim.alpha = 1;
 				isMoving = true;
@@ -73,7 +74,7 @@ class ClientShip extends ClientBaseGameEntity {
 
 			isMovingForward = speed > 0;
 		};
-		engineShipEntity.directionChangeCallbackLeft = function callback(dir) {
+		navyShipEntity.directionChangeCallbackLeft = function callback(dir) {
 			localDirection = dir;
 			shipTemplate.changeDirLeft();
 
@@ -81,7 +82,7 @@ class ClientShip extends ClientBaseGameEntity {
 			rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
 			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
-		engineShipEntity.directionChangeCallbackRight = function callback(dir) {
+		navyShipEntity.directionChangeCallbackRight = function callback(dir) {
 			localDirection = dir;
 			shipTemplate.changeDirRight();
 
@@ -89,14 +90,14 @@ class ClientShip extends ClientBaseGameEntity {
 			rippleAnim.rotation = MathUtils.degreeToRads(rippleOffsetByDir.r);
 			rippleAnim.setPosition(rippleOffsetByDir.x, rippleOffsetByDir.y);
 		};
-		engineShipEntity.shootLeftCallback = function callback() {
+		navyShipEntity.shootLeftCallback = function callback() {
 			shipTemplate.shootLeft();
 		};
-		engineShipEntity.shootRightCallback = function callback() {
+		navyShipEntity.shootRightCallback = function callback() {
 			shipTemplate.shootRight();
 		};
 
-		initiateEngineEntity(engineShipEntity);
+		initiateEngineEntity(navyShipEntity);
 
 		final rippleTile1 = hxd.Res.water_ripple_big_000.toTile().center();
 		final rippleTile2 = hxd.Res.water_ripple_big_001.toTile().center();
@@ -114,28 +115,28 @@ class ClientShip extends ClientBaseGameEntity {
 		rippleAnim.scaleY = 0.9 * (shipHullSize == SMALL ? 1 : 1.5);
 		rippleAnim.alpha = 0;
 
-		shipTemplate = new ShipTemplate(direction, shipHullSize, engineShipEntity.getShipWindows(), engineShipEntity.getShipCannons());
+		shipTemplate = new ShipTemplate(direction, shipHullSize, navyShipEntity.getShipWindows(), navyShipEntity.getShipCannons());
 		addChild(shipTemplate);
 
 		final nickname = new h2d.Text(hxd.res.DefaultFont.get(), this);
-		if (engineShipEntity.shipObjectEntity.role == Role.PLAYER) {
+		if (navyShipEntity.shipObjectEntity.role == Role.PLAYER) {
 			if (ownerId == client.Player.instance.playerId || ownerId == 'Player1') {
 				nickname.text = 'You';
 			} else {
 				nickname.text = Utils.MaskEthAddress(ownerId);
 			}
 			nickname.textColor = 0xFBF0DD;
-		} else if (engineShipEntity.shipObjectEntity.role == Role.BOT) {
+		} else if (navyShipEntity.shipObjectEntity.role == Role.BOT) {
 			nickname.text = 'Pirate';
 			nickname.textColor = 0xFD7D7D;
-		} else if (engineShipEntity.shipObjectEntity.role == Role.BOSS) {
+		} else if (navyShipEntity.shipObjectEntity.role == Role.BOSS) {
 			nickname.text = 'BOSS Pirate';
 			nickname.textColor = 0xFF0000;
 		}
 		if (shipHullSize == ShipHullSize.SMALL) {
 			nickname.setPosition(-50, -180);
 		} else {
-			if (engineShipEntity.shipObjectEntity.role == Role.PLAYER) {
+			if (navyShipEntity.shipObjectEntity.role == Role.PLAYER) {
 				nickname.setPosition(-150, -220);
 			} else {
 				nickname.setPosition(-150, -220);
@@ -151,7 +152,7 @@ class ClientShip extends ClientBaseGameEntity {
 	}
 
 	public function updateHullAndArmor(currentHull:Int, currentArmor:Int) {
-		final shipEntity = cast(engineEntity, EngineShipEntity);
+		final shipEntity = cast(engineEntity, NavyShipEntity);
 		shipEntity.currentHull = currentHull;
 		shipEntity.currentArmor = currentArmor;
 	}
@@ -162,8 +163,8 @@ class ClientShip extends ClientBaseGameEntity {
 			x = hxd.Math.lerp(x, engineEntity.getX(), 0.1);
 			y = hxd.Math.lerp(y, engineEntity.getY(), 0.1);
 		} else {
-			final dx = engineEntity.currentSpeed * Math.cos(engineEntity.rotation) * dt;
-			final dy = engineEntity.currentSpeed * Math.sin(engineEntity.rotation) * dt;
+			final dx = engineEntity.currentSpeed * Math.cos(engineEntity.getRotation()) * dt;
+			final dy = engineEntity.currentSpeed * Math.sin(engineEntity.getRotation()) * dt;
 			x = x + dx * 0.96;
 			y = y + dy * 0.96;
 		}
@@ -171,7 +172,7 @@ class ClientShip extends ClientBaseGameEntity {
 	}
 
 	public function debugDraw(graphics:h2d.Graphics) {
-		final shipEntity = cast(engineEntity, EngineShipEntity);
+		final shipEntity = cast(engineEntity, NavyShipEntity);
 		Utils.DrawRect(graphics, shipEntity.getBodyRectangle(), GameConfig.GreenColor);
 
 		if (GameConfig.DebugCannonFiringArea) {
@@ -193,7 +194,7 @@ class ClientShip extends ClientBaseGameEntity {
 	}
 
 	public function updateCannonsSight(graphics:h2d.Graphics, mouseSide:Side, mousePos:Point) {
-		final shipEntity = cast(engineEntity, EngineShipEntity);
+		final shipEntity = cast(engineEntity, NavyShipEntity);
 		var index = 0;
 		for (cannonFiringArea in shipEntity.getCannonsFiringAreaBySide(mouseSide)) {
 			final origin = cannonFiringArea.origin;
@@ -253,17 +254,17 @@ class ClientShip extends ClientBaseGameEntity {
 	}
 
 	public function getCannonsFiringAreaBySide(side:Side) {
-		final shipEntity = cast(engineEntity, EngineShipEntity);
+		final shipEntity = cast(engineEntity, NavyShipEntity);
 		return shipEntity.getCannonsFiringAreaBySide(side);
 	}
 
 	public function getCannonPositionBySideAndIndex(side:Side, index:Int) {
-		final shipEntity = cast(engineEntity, EngineShipEntity);
+		final shipEntity = cast(engineEntity, NavyShipEntity);
 		return shipEntity.getCannonPositionBySideAndIndex(side, index);
 	}
 
 	public function getStats() {
-		final shipEntity = cast(engineEntity, EngineShipEntity);
+		final shipEntity = cast(engineEntity, NavyShipEntity);
 		return {
 			hull: shipEntity.getHull(),
 			currentHull: shipEntity.currentHull,
@@ -280,14 +281,14 @@ class ClientShip extends ClientBaseGameEntity {
 	}
 
 	public function getBodyShape() {
-		final shipEntity = cast(engineEntity, EngineShipEntity);
+		final shipEntity = cast(engineEntity, NavyShipEntity);
 		return shipEntity.shape;
 	}
 
 	public function updateBodyShape(x:Float, y:Float, angle:Float) {
-		final shipEntity = cast(engineEntity, EngineShipEntity);
+		final shipEntity = cast(engineEntity, NavyShipEntity);
 		shipEntity.shape.rectOffsetX = x;
 		shipEntity.shape.rectOffsetY = y;
-		shipEntity.shape.angle = angle;
+		shipEntity.shape.rotation = angle;
 	}
 }

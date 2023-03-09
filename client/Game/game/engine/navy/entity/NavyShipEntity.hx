@@ -1,12 +1,13 @@
-package game.engine.entity;
+package game.engine.navy.entity;
 
-import game.engine.entity.EngineBaseGameEntity;
-import game.engine.entity.TypesAndClasses;
-import game.engine.geometry.Point;
-import game.engine.EngineUtils;
-import game.engine.MathUtils;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.base.EngineUtils;
+import game.engine.base.MathUtils;
+import game.engine.base.entity.EngineBaseGameEntity;
+import game.engine.base.geometry.Point;
+import game.engine.navy.NavyTypesAndClasses;
 
-class EngineShipEntity extends EngineBaseGameEntity {
+class NavyShipEntity extends EngineBaseGameEntity {
 	// -----------------------
 	// Callbacks
 	// -----------------------
@@ -39,7 +40,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 	public var allowShoot = false;
 
 	public function new(shipObjectEntity:ShipObjectEntity) {
-		super(getShipTypeBySize(shipObjectEntity.shipHullSize), shipObjectEntity);
+		super(shipObjectEntity, NavyEntitiesConfig.EntityShapeByType.get(getShipTypeBySize(shipObjectEntity.shipHullSize)));
 
 		this.shipObjectEntity = shipObjectEntity;
 		currentHull = this.shipObjectEntity.hull;
@@ -47,21 +48,21 @@ class EngineShipEntity extends EngineBaseGameEntity {
 
 		switch (this.shipObjectEntity.direction) {
 			case NORTH:
-				rotation = MathUtils.degreeToRads(-90);
+				setRotation(MathUtils.degreeToRads(-90));
 			case NORTH_EAST:
-				rotation = MathUtils.degreeToRads(-45);
+				setRotation(MathUtils.degreeToRads(-45));
 			case NORTH_WEST:
-				rotation -= MathUtils.degreeToRads(135);
+				setRotation(-MathUtils.degreeToRads(135));
 			case SOUTH:
-				rotation -= MathUtils.degreeToRads(-90);
+				setRotation(-MathUtils.degreeToRads(-90));
 			case SOUTH_EAST:
-				rotation -= MathUtils.degreeToRads(-45);
+				setRotation(-MathUtils.degreeToRads(-45));
 			case SOUTH_WEST:
-				rotation -= MathUtils.degreeToRads(-135);
+				setRotation(-MathUtils.degreeToRads(-135));
 			case WEST:
-				rotation -= MathUtils.degreeToRads(180);
+				setRotation(-MathUtils.degreeToRads(180));
 			case EAST:
-				rotation = MathUtils.degreeToRads(0);
+				setRotation(MathUtils.degreeToRads(0));
 		}
 	}
 
@@ -139,7 +140,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		var stateChanged = false;
 		if (checkRotationInput()) {
 			stateChanged = true;
-			rotation -= MathUtils.degreeToRads(45);
+			decrementRotation(MathUtils.degreeToRads(45));
 			switch (shipObjectEntity.direction) {
 				case EAST:
 					shipObjectEntity.direction = NORTH_EAST;
@@ -169,7 +170,7 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		var stateChanged = false;
 		if (checkRotationInput()) {
 			stateChanged = true;
-			rotation += MathUtils.degreeToRads(45);
+			incrementRotation(MathUtils.degreeToRads(45));
 			switch (shipObjectEntity.direction) {
 				case EAST:
 					shipObjectEntity.direction = SOUTH_EAST;
@@ -394,9 +395,9 @@ class EngineShipEntity extends EngineBaseGameEntity {
 		}
 
 		if (shipObjectEntity.shipHullSize == ShipHullSize.MEDIUM) {
-			offset = side == Side.LEFT ? EngineShipEntityConfig.LeftCannonsOffsetByDirMid.get(direction) : EngineShipEntityConfig.RightCannonsOffsetByDirMid.get(direction);
+			offset = side == Side.LEFT ? NavyEntitiesConfig.LeftCannonsOffsetByDirMid.get(direction) : NavyEntitiesConfig.RightCannonsOffsetByDirMid.get(direction);
 		} else {
-			offset = side == Side.LEFT ? EngineShipEntityConfig.LeftCannonsOffsetByDirSm.get(direction) : EngineShipEntityConfig.RightCannonsOffsetByDirSm.get(direction);
+			offset = side == Side.LEFT ? NavyEntitiesConfig.LeftCannonsOffsetByDirSm.get(direction) : NavyEntitiesConfig.RightCannonsOffsetByDirSm.get(direction);
 		}
 
 		final offsetX = offset.positions[index].x - additionalOffsetX;

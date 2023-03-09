@@ -11,14 +11,15 @@ import client.manager.EffectsManager;
 import client.network.SocketProtocol;
 import client.network.Socket;
 import client.ui.hud.BattleHud;
-import game.engine.BaseEngine;
-import game.engine.GameEngine;
-import game.engine.MathUtils;
-import game.engine.entity.EngineBaseGameEntity;
-import game.engine.entity.EngineShellEntity;
-import game.engine.entity.EngineShipEntity;
-import game.engine.entity.TypesAndClasses;
-import game.engine.geometry.Line;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.base.MathUtils;
+import game.engine.base.entity.EngineBaseGameEntity;
+import game.engine.base.core.BaseEngine;
+import game.engine.base.geometry.Line;
+import game.engine.navy.NavyGameEngine;
+import game.engine.navy.NavyTypesAndClasses;
+import game.engine.navy.entity.NavyShellEntity;
+import game.engine.navy.entity.NavyShipEntity;
 
 enum InputType {
 	Game;
@@ -41,7 +42,7 @@ class BattleGameplay extends BasicGameplay {
 	private var leaveCallback:Void->Void;
 
 	public function new(scene:h2d.Scene, engineMode:EngineMode, leaveCallback:Void->Void, diedCallback:Void->Void) {
-		super(scene, new GameEngine(engineMode));
+		super(scene, new NavyGameEngine(engineMode));
 
 		this.leaveCallback = leaveCallback;
 
@@ -49,7 +50,7 @@ class BattleGameplay extends BasicGameplay {
 		// Game managers and services init
 		// --------------------------------------
 
-		final gameEngine = cast(baseEngine, GameEngine);
+		final gameEngine = cast(baseEngine, NavyGameEngine);
 
 		gameEngine.createMainEntityCallback = function callback(engineShipEntity:EngineBaseGameEntity) {}
 
@@ -70,7 +71,7 @@ class BattleGameplay extends BasicGameplay {
 			}
 		};
 
-		gameEngine.deleteShellCallback = function callback(engineShellEntity:EngineShellEntity) {
+		gameEngine.deleteShellCallback = function callback(engineShellEntity:NavyShellEntity) {
 			// clientShells.get(engineShellEntity.)
 		};
 
@@ -175,10 +176,10 @@ class BattleGameplay extends BasicGameplay {
 
 	public override function debugDraw() {
 		if (GameConfig.DebugDraw) {
-			super.debugDraw();
 			for (entity in clientShells) {
 				entity.debugDraw(debugGraphics);
 			}
+			super.debugDraw();
 		}
 	}
 
@@ -247,7 +248,7 @@ class BattleGameplay extends BasicGameplay {
 		final leftClick = K.isPressed(K.MOUSE_LEFT);
 		if (leftClick) {
 			final mouseToShipRelation = getMouseToShipRelation();
-			final gameEngine = cast(baseEngine, GameEngine);
+			final gameEngine = cast(baseEngine, NavyGameEngine);
 			final playerShip = cast(getPlayerEntity(), ClientShip);
 			final side = mouseToShipRelation.toTheLeft ? LEFT : RIGHT;
 			final cannonsFiringRange = playerShip.getCannonsFiringAreaBySide(side);
@@ -257,12 +258,7 @@ class BattleGameplay extends BasicGameplay {
 					aimAngleRads: playerShip.getCannonFiringAreaAngle(side, index)
 				};
 
-				baseEngine.addInputCommand({
-					index: Player.instance.incrementAndGetInputIndex(),
-					playerId: playerId,
-					inputType: PlayerInputType.SHOOT,
-					shootDetails: shootDetails
-				});
+				baseEngine.addInputCommand(new NavyInputCommand(PlayerInputType.SHOOT, playerId, Player.instance.incrementAndGetInputIndex(), shootDetails));
 
 				Socket.instance.input({
 					index: Player.instance.getInputIndex(),
@@ -312,12 +308,12 @@ class BattleGameplay extends BasicGameplay {
 	// Utils
 
 	public function jsEntityToEngineEntity(message:Dynamic):EngineBaseGameEntity {
-		return new EngineShipEntity(serverMessageToObjectEntity(message));
+		return new NavyShipEntity(serverMessageToObjectEntity(message));
 	}
 
 	public function jsEntitiesToEngineEntities(entities:Dynamic):Array<EngineBaseGameEntity> {
 		return entities.map(entity -> {
-			return new EngineShipEntity(serverMessageToObjectEntity(entity));
+			return new NavyShipEntity(serverMessageToObjectEntity(entity));
 		});
 	}
 

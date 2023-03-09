@@ -1,9 +1,9 @@
-package game.engine;
+package game.engine.base.core;
 
-import game.engine.GameLoop;
-import game.engine.entity.EngineBaseGameEntity;
-import game.engine.entity.TypesAndClasses;
-import game.engine.entity.manager.BaseEntityManager;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.base.core.GameLoop;
+import game.engine.base.entity.EngineBaseGameEntity;
+import game.engine.base.entity.manager.BaseEntityManager;
 
 enum EngineMode {
 	Client;
@@ -13,11 +13,6 @@ enum EngineMode {
 enum EngineGameMode {
 	Island;
 	Sea;
-}
-
-typedef PlayerInputCommandEngineWrapped = {
-	var playerInputCommand:PlayerInputCommand;
-	var tick:Int;
 }
 
 typedef CreateMainEntityTask = {
@@ -49,12 +44,12 @@ abstract class BaseEngine {
 	private var removeMainEntityQueue = new Array<String>();
 
 	// Команды от пользователей, которые будут применены в начале каждого тика
-	private var hotInputCommands = new Array<PlayerInputCommandEngineWrapped>();
+	private var hotInputCommands = new Array<InputCommandEngineWrapped>();
 
 	// История команд за последние N тиков
 	public var ticksSinceLastPop = 0;
 	public final coldInputCommandsTreshhold = 10;
-	public final coldInputCommands = new Array<PlayerInputCommandEngineWrapped>();
+	public final coldInputCommands = new Array<InputCommandEngineWrapped>();
 
 	public function new(engineMode = EngineMode.Server, engineGameMode:EngineGameMode, mainEntityManager:BaseEntityManager) {
 		this.engineMode = engineMode;
@@ -95,7 +90,7 @@ abstract class BaseEngine {
 	// Abstract functions
 	// -----------------------------------
 
-	public abstract function processInputCommands(playerInputCommands:Array<PlayerInputCommandEngineWrapped>):Void;
+	public abstract function processInputCommands(playerInputCommands:Array<InputCommandEngineWrapped>):Void;
 
 	public abstract function engineLoopUpdate(dt:Float):Void;
 
@@ -176,14 +171,9 @@ abstract class BaseEngine {
 
 	public function addInputCommand(playerInputCommand:PlayerInputCommand) {
 		if (playerInputCommand.inputType != null && playerInputCommand.playerId != null) {
-			hotInputCommands.push({
-				playerInputCommand: playerInputCommand,
-				tick: tick
-			});
-			coldInputCommands.push({
-				playerInputCommand: playerInputCommand,
-				tick: tick
-			});
+			final wrappedCommand = new InputCommandEngineWrapped(playerInputCommand, tick);
+			hotInputCommands.push(wrappedCommand);
+			coldInputCommands.push(wrappedCommand);
 		}
 	}
 

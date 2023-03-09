@@ -2,7 +2,8 @@ package client.entity.ship;
 
 import h2d.col.Point;
 import client.entity.ship.ShipTemplate;
-import game.engine.entity.TypesAndClasses;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.navy.NavyTypesAndClasses;
 
 class ShipDecorations extends ShipVisualComponent {
 	public static final CaptainPosMid:Map<GameEntityDirection, PosOffset> = [

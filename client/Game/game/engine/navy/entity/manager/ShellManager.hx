@@ -1,6 +1,6 @@
-package game.engine.entity.manager;
+package game.engine.navy.entity.manager;
 
-import game.engine.entity.manager.BaseEntityManager;
+import game.engine.base.entity.manager.BaseEntityManager;
 
 class ShellManager extends BaseEntityManager {
 	public function new() {}

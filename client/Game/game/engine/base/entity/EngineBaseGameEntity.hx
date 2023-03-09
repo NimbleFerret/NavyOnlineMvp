@@ -1,11 +1,9 @@
-package game.engine.entity;
+package game.engine.base.entity;
 
 import haxe.Int32;
-import js.html.svg.Number;
 import uuid.Uuid;
-import game.engine.entity.TypesAndClasses;
-import game.engine.entity.EngineShipEntityConfig;
-import game.engine.geometry.Rectangle;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.base.geometry.Rectangle;
 
 interface GameEntityCustomUpdate {
 	public function onUpdate():Void;
@@ -25,7 +23,6 @@ abstract class EngineBaseGameEntity {
 	private var previousTickHash:Int32;
 	private var currentTickHash:Int32;
 
-	public var entityType:GameEntityType;
 	public var isAlive = true;
 	public var isCollides = true;
 	public var killerId:String;
@@ -37,7 +34,6 @@ abstract class EngineBaseGameEntity {
 	private var lastLocalMovementInputCheck = 0.0;
 	private var inputMovementCheckDelayMS = 0.1;
 
-	public var rotation = 0.0;
 	public var dx = 0.0;
 	public var dy = 0.0;
 	public var currentSpeed = 0.0;
@@ -50,10 +46,9 @@ abstract class EngineBaseGameEntity {
 	public var customUpdate:GameEntityCustomUpdate;
 	public var customCollide:GameEntityCustomCollide;
 
-	public function new(entityType:GameEntityType, baseObjectEntity:BaseObjectEntity) {
-		this.entityType = entityType;
+	public function new(baseObjectEntity:BaseObjectEntity, shape:EntityShape) {
 		this.baseObjectEntity = baseObjectEntity;
-		this.shape = EngineShipEntityConfig.EntityShapeByType.get(entityType);
+		this.shape = shape;
 
 		if (baseObjectEntity.id == null) {
 			this.baseObjectEntity.id = Uuid.short();
@@ -93,7 +88,7 @@ abstract class EngineBaseGameEntity {
 		final x = baseObjectEntity.x;
 		final y = baseObjectEntity.y;
 		final direction = baseObjectEntity.direction;
-		return new Rectangle(x + rectOffsetX, y + rectOffsetY, shapeWidth, shapeHeight, MathUtils.dirToRad(direction) + shape.angle);
+		return new Rectangle(x + rectOffsetX, y + rectOffsetY, shapeWidth, shapeHeight, MathUtils.dirToRad(direction) + shape.rotation);
 	}
 
 	public function getVirtualBodyRectangleInFuture(ticks:Int) {
@@ -114,7 +109,7 @@ abstract class EngineBaseGameEntity {
 		final y = rect.getCenter().y;
 		return {
 			p1: rect.getCenter(),
-			p2: MathUtils.rotatePointAroundCenter(x + lineLength, y, x, y, rotation)
+			p2: MathUtils.rotatePointAroundCenter(x + lineLength, y, x, y, baseObjectEntity.rotation)
 		}
 	}
 
@@ -144,8 +139,8 @@ abstract class EngineBaseGameEntity {
 	// ------------------------------------------------
 
 	function move() {
-		dx = currentSpeed * Math.cos(rotation) * lastDeltaTime;
-		dy = currentSpeed * Math.sin(rotation) * lastDeltaTime;
+		dx = currentSpeed * Math.cos(baseObjectEntity.rotation) * lastDeltaTime;
+		dy = currentSpeed * Math.sin(baseObjectEntity.rotation) * lastDeltaTime;
 		baseObjectEntity.x += dx;
 		baseObjectEntity.y += dy;
 	}
@@ -202,6 +197,10 @@ abstract class EngineBaseGameEntity {
 		return baseObjectEntity.minSpeed;
 	}
 
+	public function getRotation() {
+		return baseObjectEntity.rotation;
+	}
+
 	// ------------------------------------------------
 	// Setters
 	// ------------------------------------------------
@@ -212,5 +211,17 @@ abstract class EngineBaseGameEntity {
 
 	public function setY(y:Float) {
 		baseObjectEntity.y = y;
+	}
+
+	public function setRotation(r:Float) {
+		baseObjectEntity.rotation = r;
+	}
+
+	public function incrementRotation(r:Float) {
+		baseObjectEntity.rotation += r;
+	}
+
+	public function decrementRotation(r:Float) {
+		baseObjectEntity.rotation -= r;
 	}
 }

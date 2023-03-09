@@ -1,6 +1,7 @@
-package game.engine.entity;
+package game.engine.navy;
 
-import game.engine.geometry.Point;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.base.geometry.Point;
 
 // -------------------------------
 // General
@@ -14,88 +15,9 @@ enum abstract GameEntityType(Int) {
 	var CHARACTER = 5;
 }
 
-enum abstract GameEntityDirection(Int) {
-	var EAST = 1;
-	var NORTH = 2;
-	var NORTH_EAST = 3;
-	var NORTH_WEST = 4;
-	var SOUTH = 5;
-	var SOUTH_EAST = 6;
-	var SOUTH_WEST = 7;
-	var WEST = 8;
-}
-
 enum abstract Side(Int) {
 	var LEFT = 1;
 	var RIGHT = 2;
-}
-
-class PosOffset {
-	public var r:Float;
-	public var x:Float;
-	public var y:Float;
-
-	public function new(x:Float, y:Float, r:Float = 0) {
-		this.x = x;
-		this.y = y;
-		this.r = r;
-	}
-}
-
-class PosOffsetArray {
-	public var positions = new Array<PosOffset>();
-
-	public function new(positions:Array<PosOffset>) {
-		this.positions = positions;
-	}
-}
-
-class EntityShape {
-	public var width:Float;
-	public var height:Float;
-	public var rectOffsetX:Float;
-	public var rectOffsetY:Float;
-	public var angle = 0.0;
-
-	public function new(width:Float, height:Float, rectOffsetX:Float = 0, rectOffsetY:Float = 0) {
-		this.width = width;
-		this.height = height;
-		this.rectOffsetX = rectOffsetX;
-		this.rectOffsetY = rectOffsetY;
-	}
-}
-
-typedef BaseObjectEntityStruct = {
-	x:Float,
-	y:Float,
-	?acceleration:Int,
-	?minSpeed:Int,
-	?maxSpeed:Int,
-	?direction:GameEntityDirection,
-	?id:String,
-	?ownerId:String
-}
-
-class BaseObjectEntity {
-	public var x:Float;
-	public var y:Float;
-	public var acceleration:Int;
-	public var minSpeed:Int;
-	public var maxSpeed:Int;
-	public var direction:GameEntityDirection;
-	public var id:String;
-	public var ownerId:String;
-
-	public function new(struct:BaseObjectEntityStruct) {
-		this.x = struct.x;
-		this.y = struct.y;
-		this.acceleration = struct.acceleration;
-		this.minSpeed = struct.minSpeed;
-		this.maxSpeed = struct.maxSpeed;
-		this.direction = struct.direction;
-		this.id = struct.id;
-		this.ownerId = struct.ownerId;
-	}
 }
 
 // -------------------------------
@@ -182,12 +104,6 @@ class ShipObjectEntity extends BaseObjectEntity {
 	}
 }
 
-typedef ShellRnd = {
-	speed:Int,
-	dir:Int,
-	rotation:Int
-}
-
 typedef ShellObjectEntityStruct = {
 	> BaseObjectEntityStruct,
 	rotation:Float,
@@ -198,7 +114,6 @@ typedef ShellObjectEntityStruct = {
 }
 
 class ShellObjectEntity extends BaseObjectEntity {
-	public var rotation:Float;
 	public var side:Side;
 	public var pos:Int;
 	public var damage:Int;
@@ -212,7 +127,6 @@ class ShellObjectEntity extends BaseObjectEntity {
 		this.pos = struct.pos;
 		this.damage = struct.damage;
 		this.range = struct.range;
-		// this.shellRnd = struct.shellRnd;
 	}
 }
 
@@ -227,22 +141,16 @@ typedef CannonFiringRangeDetails = {
 // Multiplayer
 // -------------------------------
 
-enum abstract PlayerInputType(Int) {
-	var MOVE_UP = 1;
-	var MOVE_DOWN = 2;
-	var MOVE_LEFT = 3;
-	var MOVE_RIGHT = 4;
-	var SHOOT = 5;
-}
-
 typedef ShootInputDetails = {
 	var side:Side;
 	var aimAngleRads:Float;
 }
 
-typedef PlayerInputCommand = {
-	var ?index:Int;
-	var inputType:PlayerInputType;
-	var ?playerId:String;
-	var ?shootDetails:ShootInputDetails;
+class NavyInputCommand extends PlayerInputCommand {
+	public var shootDetails:ShootInputDetails;
+
+	public function new(inputType:PlayerInputType, playerId:String, ?index:Int, ?shootDetails:ShootInputDetails) {
+		super(inputType, playerId, index);
+		this.shootDetails = shootDetails;
+	}
 }

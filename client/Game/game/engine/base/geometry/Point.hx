@@ -1,4 +1,4 @@
-package game.engine.geometry;
+package game.engine.base.geometry;
 
 class Point {
 	public var x:Float;

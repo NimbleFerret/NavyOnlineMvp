@@ -1,7 +1,7 @@
-package game.engine.geometry;
+package game.engine.base.geometry;
 
-import game.engine.geometry.Point;
-import game.engine.geometry.Line;
+import game.engine.base.geometry.Point;
+import game.engine.base.geometry.Line;
 
 // TODO Make some functions Inline ?
 class Rectangle {

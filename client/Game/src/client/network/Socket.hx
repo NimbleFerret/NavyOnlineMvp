@@ -1,9 +1,9 @@
 package client.network;
 
-import client.network.SocketProtocol.SocketServerDailyTaskChange;
+import js.node.socketio.Client;
 import haxe.Timer;
 import client.event.EventManager;
-import js.node.socketio.Client;
+import client.network.SocketProtocol.SocketServerDailyTaskChange;
 
 class Socket {
 	public static final instance:Socket = new Socket();

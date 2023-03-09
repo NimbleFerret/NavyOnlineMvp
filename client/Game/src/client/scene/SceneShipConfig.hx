@@ -6,8 +6,9 @@ import hxd.Key in K;
 import client.entity.ClientShip;
 import client.entity.ship.ShipDecorations.CaptainConfigPosition;
 import client.ui.hud.BasicHud;
-import game.engine.entity.EngineShipEntity;
-import game.engine.entity.TypesAndClasses;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.navy.NavyTypesAndClasses;
+import game.engine.navy.entity.NavyShipEntity;
 
 class SceneShipConfig extends Scene {
 	public final hud:BasicHud;
@@ -21,7 +22,7 @@ class SceneShipConfig extends Scene {
 		camera.setViewport(1920, 1080, 0, 0);
 		camera.setScale(3.5, 3.5);
 
-		ship = new ClientShip(new EngineShipEntity(new ShipObjectEntity({
+		ship = new ClientShip(new NavyShipEntity(new ShipObjectEntity({
 			x: -100,
 			y: -100,
 			minSpeed: 0,
@@ -91,14 +92,14 @@ class SceneShipConfig extends Scene {
 		final minBodyOffsetY = ship.getBodyShape().rectOffsetY - 200;
 		final maxBodyOffsetY = ship.getBodyShape().rectOffsetY + 200;
 
-		final minBodyOffsetAngle = ship.getBodyShape().angle - Math.PI;
-		final maxBodyOffsetAngle = ship.getBodyShape().angle + Math.PI;
+		final minBodyOffsetAngle = ship.getBodyShape().rotation - Math.PI;
+		final maxBodyOffsetAngle = ship.getBodyShape().rotation + Math.PI;
 
 		hud.addSlider("Body offset X ", function() return ship.getBodyShape().rectOffsetX, function(v) ship.updateBodyShape(v, 0, 0), minBodyOffsetX,
 			maxBodyOffsetX, 2);
 		hud.addSlider("Body offset Y ", function() return ship.getBodyShape().rectOffsetY, function(v) ship.updateBodyShape(0, v, 0), minBodyOffsetY,
 			maxBodyOffsetY, 2);
-		hud.addSlider("Body offset angle ", function() return ship.getBodyShape().angle, function(v) ship.updateBodyShape(0, 0, v), minBodyOffsetAngle,
+		hud.addSlider("Body offset angle ", function() return ship.getBodyShape().rotation, function(v) ship.updateBodyShape(0, 0, v), minBodyOffsetAngle,
 			maxBodyOffsetAngle, 2);
 	}
 

@@ -1,14 +1,14 @@
 package utils;
 
-import game.engine.geometry.Rectangle;
+import game.engine.base.geometry.Rectangle;
 
 class Utils {
-	public static function EngineToClientPoint(p:game.engine.geometry.Point) {
+	public static function EngineToClientPoint(p:game.engine.base.geometry.Point) {
 		return new h2d.col.Point(p.x, p.y);
 	}
 
 	public static function ClientToEnginePoint(p:h2d.col.Point) {
-		return new game.engine.geometry.Point(p.x, p.y);
+		return new game.engine.base.geometry.Point(p.x, p.y);
 	}
 
 	public static function MaskEthAddress(text:String) {

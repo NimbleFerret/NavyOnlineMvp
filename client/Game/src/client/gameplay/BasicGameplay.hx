@@ -1,21 +1,23 @@
 package client.gameplay;
 
-import game.engine.entity.TypesAndClasses.PlayerInputType;
-import game.engine.entity.EngineCharacterEntity;
-import utils.Utils;
-import client.entity.ClientShip;
-import client.entity.ClientCharacter;
-import client.entity.ClientBaseGameEntity;
-import client.network.Socket;
-import client.network.SocketProtocol;
-import game.engine.BaseEngine;
-import game.engine.GameEngine;
-import game.engine.IslandEngine;
-import game.engine.entity.EngineBaseGameEntity;
-import game.engine.entity.EngineShipEntity;
+import game.engine.navy.NavyTypesAndClasses.NavyInputCommand;
 import hxd.Key in K;
 import hxd.Window;
 import h2d.col.Point;
+import utils.Utils;
+import client.entity.ClientShip;
+// import client.entity.ClientCharacter;
+import client.entity.ClientBaseGameEntity;
+import client.network.Socket;
+import client.network.SocketProtocol;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.base.entity.EngineBaseGameEntity;
+import game.engine.base.core.BaseEngine;
+import game.engine.navy.NavyGameEngine;
+import game.engine.navy.entity.NavyShipEntity;
+
+// import game.engine.IslandEngine;
+// import game.engine.entity.EngineCharacterEntity;
 
 enum GameState {
 	Init;
@@ -83,6 +85,7 @@ abstract class BasicGameplay {
 				entity.debugDraw(debugGraphics);
 			}
 		}
+		debugGraphics.clear();
 	}
 
 	public function clearGraphics() {
@@ -141,11 +144,7 @@ abstract class BasicGameplay {
 		final movementAllowance = baseEngine.checkLocalMovementInputAllowance(playerEntityId, playerInputType);
 
 		if (playerInputType != null && (up || down || left || right) && movementAllowance) {
-			baseEngine.addInputCommand({
-				index: Player.instance.incrementAndGetInputIndex(),
-				playerId: playerId,
-				inputType: playerInputType
-			});
+			baseEngine.addInputCommand(new NavyInputCommand(playerInputType, playerId, Player.instance.incrementAndGetInputIndex()));
 
 			Socket.instance.input({
 				index: Player.instance.getInputIndex(),
@@ -220,11 +219,7 @@ abstract class BasicGameplay {
 		if (gameState == GameState.Playing) {
 			for (message in messages.inputs) {
 				if (playerId != message.playerId) {
-					baseEngine.addInputCommand({
-						playerId: message.playerId,
-						inputType: message.inputType,
-						shootDetails: message.shootDetails
-					});
+					baseEngine.addInputCommand(new NavyInputCommand(message.inputType, message.playerId, 0, message.shootDetails));
 				}
 			}
 		}
@@ -232,12 +227,7 @@ abstract class BasicGameplay {
 
 	public function entityInput(message:SocketServerMessageEntityInput) {
 		if (gameState == GameState.Playing && playerId != message.playerId) {
-			baseEngine.addInputCommand({
-				index: 0,
-				playerId: message.playerId,
-				inputType: message.inputType,
-				shootDetails: message.shootDetails
-			});
+			baseEngine.addInputCommand(new NavyInputCommand(message.inputType, message.playerId, 0, message.shootDetails));
 		}
 	}
 
@@ -293,25 +283,25 @@ abstract class BasicGameplay {
 		var newClientEntity:Null<ClientBaseGameEntity> = null;
 
 		if (baseEngine.engineGameMode == EngineGameMode.Sea) {
-			final gameEngine = cast(baseEngine, GameEngine);
-			final shipEntity = cast(entity, EngineShipEntity);
+			final gameEngine = cast(baseEngine, NavyGameEngine);
+			final shipEntity = cast(entity, NavyShipEntity);
 			if (shipEntity.getOwnerId() == playerId) {
 				playerEntityId = shipEntity.getId();
 			}
 			gameEngine.createMainEntity(shipEntity, true);
 			newClientEntity = new ClientShip(shipEntity);
 		} else if (baseEngine.engineGameMode == EngineGameMode.Island) {
-			final islandEngine = cast(baseEngine, IslandEngine);
-			final islandEntity = cast(entity, EngineCharacterEntity);
-			islandEngine.createMainEntity(islandEntity, true);
+			// final islandEngine = cast(baseEngine, IslandEngine);
+			// final islandEntity = cast(entity, EngineCharacterEntity);
+			// islandEngine.createMainEntity(islandEntity, true);
 
-			var characterName = Utils.MaskEthAddress(entity.getOwnerId());
-			if (islandEntity.getOwnerId() == playerId) {
-				playerEntityId = islandEntity.getId();
-				characterName = 'You';
-			}
+			// var characterName = Utils.MaskEthAddress(entity.getOwnerId());
+			// if (islandEntity.getOwnerId() == playerId) {
+			// 	playerEntityId = islandEntity.getId();
+			// 	characterName = 'You';
+			// }
 
-			newClientEntity = new ClientCharacter(characterName, islandEntity);
+			// newClientEntity = new ClientCharacter(characterName, islandEntity);
 		}
 
 		if (newClientEntity != null) {

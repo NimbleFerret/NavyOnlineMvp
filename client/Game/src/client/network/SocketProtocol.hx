@@ -1,6 +1,7 @@
 package client.network;
 
-import game.engine.entity.TypesAndClasses;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.navy.NavyTypesAndClasses;
 
 // -------------------------------------
 // WebSocket server messages

@@ -1,4 +1,4 @@
-package game.engine;
+package game.engine.base.core;
 
 #if js
 import js.lib.Date;

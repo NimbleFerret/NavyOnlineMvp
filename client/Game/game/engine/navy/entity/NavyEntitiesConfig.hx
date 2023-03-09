@@ -1,8 +1,9 @@
-package game.engine.entity;
+package game.engine.navy.entity;
 
-import game.engine.entity.TypesAndClasses;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.navy.NavyTypesAndClasses;
 
-class EngineShipEntityConfig {
+class NavyEntitiesConfig {
 	public static final EntityShapeByType:Map<GameEntityType, EntityShape> = [
 		GameEntityType.SMALL_SHIP => new EntityShape(200, 80),
 		GameEntityType.MEDIUM_SHIP => new EntityShape(300, 120),

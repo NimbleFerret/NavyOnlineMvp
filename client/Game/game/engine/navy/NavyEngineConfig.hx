@@ -1,6 +1,6 @@
-package game.engine;
+package game.engine.navy;
 
-class GameEngineConfig {
+class NavyEngineConfig {
 	public static var ShellRandomSpeedFactor = 0;
 	public static var ShellRandomAngleSpreadDegree = 0;
 	public static var ShellDefaultSpeed = 380;

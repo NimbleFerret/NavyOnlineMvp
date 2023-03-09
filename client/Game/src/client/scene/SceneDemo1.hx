@@ -1,13 +1,14 @@
 package client.scene;
 
-import game.engine.entity.EngineBaseGameEntity;
-import game.engine.entity.EngineShipEntity;
 import h2d.Scene;
 import h3d.Engine;
 import client.gameplay.battle.BattleGameplay;
 import client.manager.IslandsManager;
-import game.engine.entity.TypesAndClasses;
-import game.engine.BaseEngine.EngineMode;
+import game.engine.navy.NavyTypesAndClasses;
+import game.engine.navy.entity.NavyShipEntity;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.base.entity.EngineBaseGameEntity;
+import game.engine.base.core.BaseEngine.EngineMode;
 
 class SceneDemo1 extends Scene {
 	private var game:BattleGameplay;
@@ -34,7 +35,7 @@ class SceneDemo1 extends Scene {
 
 		final ships = new Array<EngineBaseGameEntity>();
 
-		ships.push(new EngineShipEntity(new ShipObjectEntity({
+		ships.push(new NavyShipEntity(new ShipObjectEntity({
 			x: -300,
 			y: 207,
 			minSpeed: 0,
@@ -65,7 +66,7 @@ class SceneDemo1 extends Scene {
 
 		for (i in 0...0) {
 			for (j in 0...2) {
-				ships.push(new EngineShipEntity(new ShipObjectEntity({
+				ships.push(new NavyShipEntity(new ShipObjectEntity({
 					x: botX,
 					y: botY,
 					minSpeed: 0,

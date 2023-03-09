@@ -1,7 +1,7 @@
 import client.network.RestProtocol.JoinSectorResponse;
 import client.network.RestProtocol.GameWorldData;
 import client.scene.SceneWorldMap;
-import client.scene.SceneIsland;
+// import client.scene.SceneIsland;
 import client.scene.SceneShipConfig;
 import client.scene.SceneHomeMenu;
 import client.scene.SceneDemo1;
@@ -23,14 +23,14 @@ enum Scene {
 }
 
 class Main extends hxd.App {
-	// private final defaultScene = Scene.SceneDemo1;
-	private final defaultScene = Scene.SceneOnlineDemo1;
+	private final defaultScene = Scene.SceneDemo1;
+	// private final defaultScene = Scene.SceneOnlineDemo1;
 	private var sceneHomeMenu:SceneHomeMenu;
 	private var sceneDemo1:SceneDemo1;
 	private var sceneGeomTest:SceneGeomTest;
 	private var sceneShipConfig:SceneShipConfig;
 	private var sceneOnlineDemo1:SceneOnlineDemo1;
-	private var sceneIsland:SceneIsland;
+	// private var sceneIsland:SceneIsland;
 	private var sceneWorldMap:SceneWorldMap;
 	private var currentScene:Scene;
 	private var lastAddedIteractiveScene:hxd.SceneEvents.InteractiveScene;
@@ -60,14 +60,14 @@ class Main extends hxd.App {
 		// sceneShipConfig = new SceneShipConfig();
 
 		// Init scene island
-		sceneIsland = new SceneIsland(engine.width, engine.height, function leaveCallback() {
-			initiateSceneWorldMap();
-		});
+		// sceneIsland = new SceneIsland(engine.width, engine.height, function leaveCallback() {
+		// initiateSceneWorldMap();
+		// });
 
 		// init scene world map
 		sceneWorldMap = new SceneWorldMap(function callback(sector:EnterSectorCallback) {
 			if (sector.joinSectorResponse.sectorType == GameWorldData.SectorIslandType) {
-				initiateSceneIsland(sector.joinSectorResponse);
+				// initiateSceneIsland(sector.joinSectorResponse);
 			} else {
 				initiateSceneOnlineDemo1(sector.joinSectorResponse.instanceId);
 			}
@@ -103,10 +103,10 @@ class Main extends hxd.App {
 			// sevents.addScene(sceneShipConfig.hud);
 			// setScene2D(sceneShipConfig);
 			case SceneIsland:
-				final response = new JoinSectorResponse(true, null, 0, 'instance', 1, 'islandId', '0x87400A03678dd03c8BF536404B5B14C609a23b79', 'Green', true);
-				sceneIsland.start(response);
-				sevents.addScene(sceneIsland.getHud());
-				setScene2D(sceneIsland);
+			// final response = new JoinSectorResponse(true, null, 0, 'instance', 1, 'islandId', '0x87400A03678dd03c8BF536404B5B14C609a23b79', 'Green', true);
+			// sceneIsland.start(response);
+			// sevents.addScene(sceneIsland.getHud());
+			// setScene2D(sceneIsland);
 			case SceneWorldMap:
 				setScene2D(sceneWorldMap);
 		}
@@ -136,16 +136,14 @@ class Main extends hxd.App {
 		setScene2D(sceneWorldMap);
 	}
 
-	private function initiateSceneIsland(joinSectorResponse:JoinSectorResponse) {
-		currentScene = SceneIsland;
-		sceneIsland.start(joinSectorResponse);
-
-		sevents.removeScene(lastAddedIteractiveScene);
-		lastAddedIteractiveScene = sceneIsland.getHud();
-		sevents.addScene(lastAddedIteractiveScene);
-
-		setScene2D(sceneIsland);
-	}
+	// private function initiateSceneIsland(joinSectorResponse:JoinSectorResponse) {
+	// 	currentScene = SceneIsland;
+	// 	sceneIsland.start(joinSectorResponse);
+	// 	sevents.removeScene(lastAddedIteractiveScene);
+	// 	lastAddedIteractiveScene = sceneIsland.getHud();
+	// 	sevents.addScene(lastAddedIteractiveScene);
+	// 	setScene2D(sceneIsland);
+	// }
 
 	private function initiateSceneOnlineDemo1(instanceId:String) {
 		currentScene = SceneOnlineDemo1;
@@ -167,8 +165,8 @@ class Main extends hxd.App {
 				sceneGeomTest.update(dt, engine.fps);
 			case SceneShipConfig:
 			// sceneShipConfig.update();
-			case SceneIsland:
-				sceneIsland.update(dt, engine.fps);
+			// case SceneIsland:
+			// sceneIsland.update(dt, engine.fps);
 			case SceneDemo1:
 				sceneDemo1.update(dt, engine.fps);
 			case _:
