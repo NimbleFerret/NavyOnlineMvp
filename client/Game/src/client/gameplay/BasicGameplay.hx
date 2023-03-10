@@ -34,9 +34,9 @@ abstract class BasicGameplay {
 
 	private final debugGraphics:h2d.Graphics;
 
-	// TODO no need ?
-	private final GameEntityLayer = 4;
-	private final DebugLayer = 4;
+	private final ObjectLayer = 1;
+	private final GameEntityLayer = 2;
+	private final DebugLayer = 3;
 
 	public var gameState = GameState.Init;
 	// TODO replace by static ?
@@ -79,16 +79,12 @@ abstract class BasicGameplay {
 	}
 
 	public function debugDraw() {
+		debugGraphics.clear();
 		if (GameConfig.DebugDraw) {
 			for (entity in clientMainEntities) {
 				entity.debugDraw(debugGraphics);
 			}
 		}
-		debugGraphics.clear();
-	}
-
-	public function clearGraphics() {
-		debugGraphics.clear();
 	}
 
 	private function getPlayerEntity() {
@@ -288,6 +284,10 @@ abstract class BasicGameplay {
 			clientMainEntitiesCount++;
 		}
 		addGameEntityToScene(newClientEntity);
+	}
+
+	function addObjectToScene(object:h2d.Object) {
+		scene.add(object, ObjectLayer);
 	}
 
 	function addGameEntityToScene(entity:ClientBaseGameEntity) {

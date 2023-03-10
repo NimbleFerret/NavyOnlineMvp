@@ -62,8 +62,10 @@ class SceneIsland extends Scene implements EventListener {
 	}
 
 	public override function render(e:Engine) {
+		game.waterScene.render(e);
 		super.render(e);
 		game.hud.render(e);
+		game.debugDraw();
 	}
 
 	public function update(dt:Float, fps:Float) {

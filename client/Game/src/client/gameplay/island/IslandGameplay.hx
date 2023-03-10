@@ -1,10 +1,12 @@
 package client.gameplay.island;
 
+import h2d.Scene;
 import h2d.col.Point;
 import hxd.Window;
 import utils.Utils;
 import client.entity.ClientCharacter;
 import client.gameplay.BasicGameplay.GameState;
+import client.gameplay.WaterScene;
 import client.manager.IslandsManager;
 import client.network.Socket;
 import client.ui.hud.IslandHud;
@@ -31,7 +33,8 @@ class Contour {
 
 class IslandGameplay extends BasicGameplay {
 	private final islandsManager:IslandsManager;
-	private final waterBg:WaterBg;
+
+	public final waterScene:WaterScene;
 
 	// UI
 	public var hud:IslandHud;
@@ -40,9 +43,11 @@ class IslandGameplay extends BasicGameplay {
 			engineMode = EngineMode.Server) {
 		super(scene, new NavyIslandEngine(engineMode));
 
-		waterBg = new WaterBg(scene, -1650, -700, 5, 21, 10);
-		// Pass additional island info here.
-		islandsManager = new IslandsManager(scene, islandTerrain, islandMining);
+		waterScene = new WaterScene(false, -1650, -700, 5, 21, 10);
+
+		islandsManager = new IslandsManager(islandTerrain, islandMining);
+		addObjectToScene(islandsManager.getIslandObject());
+
 		final islandEngine = cast(baseEngine, NavyIslandEngine);
 
 		islandEngine.deleteMainEntityCallback = function callback(engineCharacterEntity:EngineBaseGameEntity) {
@@ -55,6 +60,9 @@ class IslandGameplay extends BasicGameplay {
 				}
 			}
 		};
+
+		islandEngine.postLoopCallback = function callback() {};
+
 		for (lineCollider in islandEngine.lineColliders) {
 			addLineCollider(scene, lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2);
 		}
@@ -115,11 +123,13 @@ class IslandGameplay extends BasicGameplay {
 	}
 
 	// --------------------------------------
-	// Basic implementations
+	// Impl
 	// --------------------------------------
+
 	public function customUpdate(dt:Float, fps:Float) {
 		islandsManager.update();
-		waterBg.update(dt);
+		waterScene.update(dt);
+
 		for (character in clientMainEntities) {
 			character.update(dt);
 			// if (character.debugRect == null) {

@@ -1,18 +1,17 @@
 package client.gameplay.battle;
 
-import utils.Utils;
 import h2d.col.Point;
 import h2d.Scene;
 import hxd.Key in K;
 import client.entity.ClientShell;
 import client.entity.ClientShip;
 import client.gameplay.BasicGameplay.GameState;
+import client.gameplay.WaterScene;
 import client.manager.EffectsManager;
 import client.network.SocketProtocol;
 import client.network.Socket;
 import client.ui.hud.BattleHud;
 import game.engine.base.BaseTypesAndClasses;
-import game.engine.base.MathUtils;
 import game.engine.base.entity.EngineBaseGameEntity;
 import game.engine.base.core.BaseEngine;
 import game.engine.base.geometry.Line;
@@ -44,11 +43,15 @@ class BattleGameplay extends BasicGameplay {
 	public function new(scene:h2d.Scene, engineMode:EngineMode, leaveCallback:Void->Void, diedCallback:Void->Void) {
 		super(scene, new NavyGameEngine(engineMode));
 		this.leaveCallback = leaveCallback;
+
 		// --------------------------------------
 		// Game managers and services init
 		// --------------------------------------
+
 		final gameEngine = cast(baseEngine, NavyGameEngine);
+
 		gameEngine.createMainEntityCallback = function callback(engineShipEntity:EngineBaseGameEntity) {}
+
 		gameEngine.createShellCallback = function callback(callback:CreateShellCallbackParams) {
 			if (gameState == GameState.Playing) {
 				if (baseEngine.playerEntityMap.exists(callback.shooterId)) {
@@ -65,9 +68,11 @@ class BattleGameplay extends BasicGameplay {
 				}
 			}
 		};
+
 		gameEngine.deleteShellCallback = function callback(engineShellEntity:NavyShellEntity) {
 			// clientShells.get(engineShellEntity.)
 		};
+
 		gameEngine.deleteMainEntityCallback = function callback(engineShipEntity:EngineBaseGameEntity) {
 			if (gameState == GameState.Playing) {
 				final clientEntity = clientMainEntities.get(engineShipEntity.getId());
@@ -92,6 +97,7 @@ class BattleGameplay extends BasicGameplay {
 				}
 			}
 		};
+
 		gameEngine.shipHitByShellCallback = function callback(params:ShipHitByShellCallbackParams) {
 			if (gameState == GameState.Playing) {
 				final clientShip = clientMainEntities.get(params.ship.getId());
@@ -100,10 +106,13 @@ class BattleGameplay extends BasicGameplay {
 				}
 			}
 		};
+
 		effectsManager = new EffectsManager(scene);
+
 		// --------------------------------------
 		// UI
 		// --------------------------------------
+
 		hud = new BattleHud(function callbackLeave() {
 			destroy();
 			Socket.instance.leaveGame({playerId: playerId});
@@ -117,7 +126,9 @@ class BattleGameplay extends BasicGameplay {
 				diedCallback();
 			}
 		});
-		waterScene = new WaterScene();
+
+		waterScene = new WaterScene(true);
+
 		maxDragX = 200;
 		maxDragY = 200;
 	}

@@ -1,5 +1,7 @@
 package client.entity;
 
+import utils.Utils;
+import game.engine.base.MathUtils;
 import game.engine.navy.entity.NavyCharacterEntity;
 
 class ClientCharacter extends ClientBaseGameEntity {
@@ -102,80 +104,52 @@ class ClientCharacter extends ClientBaseGameEntity {
 	}
 
 	public function update(dt:Float) {
-		final lerpX = hxd.Math.lerp(x, engineEntity.getX(), 0.1);
-		final lerpY = hxd.Math.lerp(y, engineEntity.getY(), 0.1);
-		final intEngineX = Std.int(engineEntity.getX());
-		final intClientX = Std.int(x);
-		final intEngineY = Std.int(engineEntity.getY());
-		final intClientY = Std.int(y);
-		// idleAnim.alpha = 0;
-		// upAnim.alpha = 0;
-		// downAnim.alpha = 0;
-		// leftAnim.alpha = 0;
-		// rightAnim.alpha = 0;
-		if (Math.abs(intEngineX - intClientX) > 1) {
+		// final lerpX = hxd.Math.lerp(x, engineEntity.getX(), 0.1);
+		// final lerpY = hxd.Math.lerp(y, engineEntity.getY(), 0.1);
+		final intEngineX = engineEntity.getX();
+		final intClientX = x;
+		final intEngineY = engineEntity.getY();
+		final intClientY = y;
+		idleAnim.alpha = 0;
+		upAnim.alpha = 0;
+		downAnim.alpha = 0;
+		leftAnim.alpha = 0;
+		rightAnim.alpha = 0;
+
+		trace(intEngineX, intClientX, engineEntity.getMaxSpeed());
+
+		if (MathUtils.differ(intEngineX, intClientX, engineEntity.getMaxSpeed() - 1)) {
 			if (intEngineX > intClientX) {
-				// leftAnim.alpha = 0;
-				// rightAnim.alpha = 1;
+				leftAnim.alpha = 0;
+				rightAnim.alpha = 1;
+
+				final dx = engineEntity.getMaxSpeed() * dt;
+				x = x + dx * 1;
 			} else if (intEngineX < intClientX) {
-				// leftAnim.alpha = 1;
-				// rightAnim.alpha = 0;
+				leftAnim.alpha = 1;
+				rightAnim.alpha = 0;
+
+				final dx = engineEntity.getMaxSpeed() * dt;
+				x = x - dx * 1;
 			}
-			x = lerpX;
-		} else if (Math.abs(intEngineY - intClientY) > 1) {
+			// x = lerpX;
+		} else if (MathUtils.differ(intEngineY, intClientY, engineEntity.getMaxSpeed())) {
 			if (intEngineY > intClientY) {
-				// upAnim.alpha = 0;
-				// downAnim.alpha = 1;
+				upAnim.alpha = 0;
+				downAnim.alpha = 1;
 			} else if (intEngineY < intClientY) {
-				// upAnim.alpha = 1;
-				// downAnim.alpha = 0;
+				upAnim.alpha = 1;
+				downAnim.alpha = 0;
 			}
-			y = lerpY;
+			// y = lerpY;
 		} else {
-			// idleAnim.alpha = 1;
+			idleAnim.alpha = 1;
 		}
 	}
 
-	public function debugDraw(graphics:h2d.Graphics) {}
-
-	public function moveUp() {
-		// if (getCharacterEngineEntity().moveUp()) {
-		// 	idleAnim.alpha = 0;
-		// 	upAnim.alpha = 1;
-		// 	downAnim.alpha = 0;
-		// 	leftAnim.alpha = 0;
-		// 	rightAnim.alpha = 0;
-		// }
-	}
-
-	public function moveDown() {
-		// if (getCharacterEngineEntity().moveDown()) {
-		// 	idleAnim.alpha = 0;
-		// 	upAnim.alpha = 0;
-		// 	downAnim.alpha = 1;
-		// 	leftAnim.alpha = 0;
-		// 	rightAnim.alpha = 0;
-		// }
-	}
-
-	public function moveLeft() {
-		// if (getCharacterEngineEntity().moveLeft()) {
-		// 	idleAnim.alpha = 0;
-		// 	upAnim.alpha = 0;
-		// 	downAnim.alpha = 0;
-		// 	leftAnim.alpha = 1;
-		// 	rightAnim.alpha = 0;
-		// }
-	}
-
-	public function moveRight() {
-		// if (getCharacterEngineEntity().moveRight()) {
-		// 	idleAnim.alpha = 0;
-		// 	upAnim.alpha = 0;
-		// 	downAnim.alpha = 0;
-		// 	leftAnim.alpha = 0;
-		// 	rightAnim.alpha = 1;
-		// }
+	public function debugDraw(graphics:h2d.Graphics) {
+		final characterEntity = cast(engineEntity, NavyCharacterEntity);
+		Utils.DrawRect(graphics, characterEntity.getBodyRectangle(), GameConfig.GreenColor);
 	}
 
 	private function getCharacterEngineEntity() {

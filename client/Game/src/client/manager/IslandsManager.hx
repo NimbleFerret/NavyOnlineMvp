@@ -1,12 +1,13 @@
 package client.manager;
 
+import h2d.Object;
 import haxe.Timer;
 import client.ui.components.UiToken.TokenType;
 import client.ui.components.UiToken.TokenAnimation;
 
 using tweenxcore.Tools;
 
-class CoinAnimationTween {
+private class CoinAnimationTween {
 	public final tweeningObject:Dynamic;
 	public var delete = false;
 
@@ -49,19 +50,23 @@ class CoinAnimationTween {
 
 class IslandsManager {
 	private final tweenAnimations:Array<CoinAnimationTween> = [];
-	private final s2d:h2d.Scene;
+	private final islandObject:h2d.Object;
 
-	public function new(s2d:h2d.Scene, terrain:String, mining:Bool, offsetX:Float = 1000, offsetY:Float = 400) {
-		this.s2d = s2d;
+	public function new(terrain:String, mining:Bool, offsetX:Float = 1000, offsetY:Float = 400) {
+		islandObject = new Object();
+
 		var islandCompositeTile = hxd.Res.island_green_composite.toTile().center();
 		if (terrain == 'Snow') {
 			islandCompositeTile = hxd.Res.island_snow_composite.toTile().center();
 		} else if (terrain == 'Dark') {
 			islandCompositeTile = hxd.Res.island_dark_composite.toTile().center();
 		}
-		final islandCompositeBmp = new h2d.Bitmap(islandCompositeTile, s2d);
+
+		final islandCompositeBmp = new h2d.Bitmap(islandCompositeTile);
 		islandCompositeBmp.setScale(3);
 		islandCompositeBmp.setPosition(offsetX, offsetY);
+		islandObject.addChild(islandCompositeBmp);
+
 		if (mining) {
 			final miningAnimation1 = hxd.Res.mine_anims._1.toTile();
 			final miningAnimation2 = hxd.Res.mine_anims._2.toTile();
@@ -83,7 +88,7 @@ class IslandsManager {
 			]);
 			miningAnimation.setScale(4);
 			miningAnimation.setPosition(656, 460);
-			s2d.addChild(miningAnimation);
+			islandObject.addChild(miningAnimation);
 			loop(1000);
 			loop(1000);
 			loop(1000);
@@ -93,13 +98,8 @@ class IslandsManager {
 		}
 	}
 
-	private function loop(delay:Int) {
-		Timer.delay(function callback() {
-			final coinAnimation = addCoinAnim();
-			s2d.addChild(coinAnimation);
-			tweenAnimations.push(new CoinAnimationTween(coinAnimation));
-			loop(delay);
-		}, delay);
+	public function getIslandObject() {
+		return islandObject;
 	}
 
 	public function update() {
@@ -111,12 +111,20 @@ class IslandsManager {
 			}
 		}
 		for (tween in tweensToDelete) {
-			s2d.removeChild(tween.tweeningObject);
+			islandObject.removeChild(tween.tweeningObject);
 			tweenAnimations.remove(tween);
 		}
 	}
 
-	// Make it component
+	private function loop(delay:Int) {
+		Timer.delay(function callback() {
+			final coinAnimation = addCoinAnim();
+			islandObject.addChild(coinAnimation);
+			tweenAnimations.push(new CoinAnimationTween(coinAnimation));
+			loop(delay);
+		}, delay);
+	}
+
 	private function addCoinAnim() {
 		return new TokenAnimation(TokenType.NVY, 3, 720, 520);
 	}

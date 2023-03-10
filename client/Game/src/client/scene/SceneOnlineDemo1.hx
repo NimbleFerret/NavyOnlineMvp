@@ -67,7 +67,6 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		game.waterScene.render(e);
 		super.render(e);
 		game.hud.render(e);
-		game.clearGraphics();
 		game.debugDraw();
 	}
 

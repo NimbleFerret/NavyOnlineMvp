@@ -76,7 +76,6 @@ abstract class BaseEngine {
 			// Update all entities
 			engineLoopUpdate(dt);
 
-			// Optional backend callback for validated input commands replication
 			if (postLoopCallback != null) {
 				postLoopCallback();
 			}
