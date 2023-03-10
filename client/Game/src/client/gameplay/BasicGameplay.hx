@@ -1,5 +1,8 @@
 package client.gameplay;
 
+import game.engine.navy.entity.NavyCharacterEntity;
+import game.engine.navy.NavyIslandEngine;
+import client.entity.ClientCharacter;
 import game.engine.navy.NavyTypesAndClasses.NavyInputCommand;
 import hxd.Key in K;
 import hxd.Window;
@@ -30,8 +33,10 @@ abstract class BasicGameplay {
 	public final baseEngine:BaseEngine;
 
 	private final debugGraphics:h2d.Graphics;
-	private final GameEntityLayer = 1;
-	private final DebugLayer = 2;
+
+	// TODO no need ?
+	private final GameEntityLayer = 4;
+	private final DebugLayer = 4;
 
 	public var gameState = GameState.Init;
 	// TODO replace by static ?
@@ -153,6 +158,7 @@ abstract class BasicGameplay {
 	// --------------------------------------
 	// Simgleplayer
 	// --------------------------------------
+
 	public function startGameSingleplayer(playerId:String, entities:Array<EngineBaseGameEntity>) {
 		if (gameState == GameState.Init) {
 			this.playerId = playerId;
@@ -166,6 +172,7 @@ abstract class BasicGameplay {
 	// --------------------------------------
 	// Multiplayer
 	// --------------------------------------
+
 	public function startGameMultiplayer(playerId:String, message:SocketServerMessageGameInit) {
 		if (gameState == GameState.Init) {
 			this.playerId = playerId;
@@ -252,26 +259,29 @@ abstract class BasicGameplay {
 	// --------------------------------------
 	// Entities manipulation
 	// --------------------------------------
+
 	function createNewMainEntity(entity:EngineBaseGameEntity) {
 		var newClientEntity:Null<ClientBaseGameEntity> = null;
 		if (baseEngine.engineGameMode == EngineGameMode.Sea) {
 			final gameEngine = cast(baseEngine, NavyGameEngine);
 			final shipEntity = cast(entity, NavyShipEntity);
+			gameEngine.createMainEntity(shipEntity, true);
+
 			if (shipEntity.getOwnerId() == playerId) {
 				playerEntityId = shipEntity.getId();
 			}
-			gameEngine.createMainEntity(shipEntity, true);
 			newClientEntity = new ClientShip(shipEntity);
 		} else if (baseEngine.engineGameMode == EngineGameMode.Island) {
-			// final islandEngine = cast(baseEngine, IslandEngine);
-			// final islandEntity = cast(entity, EngineCharacterEntity);
-			// islandEngine.createMainEntity(islandEntity, true);
-			// var characterName = Utils.MaskEthAddress(entity.getOwnerId());
-			// if (islandEntity.getOwnerId() == playerId) {
-			// 	playerEntityId = islandEntity.getId();
-			// 	characterName = 'You';
-			// }
-			// newClientEntity = new ClientCharacter(characterName, islandEntity);
+			final islandEngine = cast(baseEngine, NavyIslandEngine);
+			final characterEntity = cast(entity, NavyCharacterEntity);
+			islandEngine.createMainEntity(characterEntity, true);
+
+			var characterName = Utils.MaskEthAddress(entity.getOwnerId());
+			if (characterEntity.getOwnerId() == playerId) {
+				playerEntityId = characterEntity.getId();
+				characterName = 'You';
+			}
+			newClientEntity = new ClientCharacter(characterName, characterEntity);
 		}
 		if (newClientEntity != null) {
 			clientMainEntities.set(entity.getId(), newClientEntity);
@@ -299,6 +309,7 @@ abstract class BasicGameplay {
 	// --------------------------------------
 	// Utils
 	// --------------------------------------
+
 	public function mouseCoordsToCamera() {
 		final mousePos = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
 		final mouseToCameraPos = new Point(mousePos.x, mousePos.y);

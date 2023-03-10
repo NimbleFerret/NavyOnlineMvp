@@ -138,13 +138,6 @@ abstract class EngineBaseGameEntity {
 	// Movement
 	// ------------------------------------------------
 
-	function move() {
-		dx = currentSpeed * Math.cos(baseObjectEntity.rotation) * lastDeltaTime;
-		dy = currentSpeed * Math.sin(baseObjectEntity.rotation) * lastDeltaTime;
-		baseObjectEntity.x += dx;
-		baseObjectEntity.y += dy;
-	}
-
 	public function checkMovementInput() {
 		final now = haxe.Timer.stamp();
 		if (lastMovementInputCheck == 0 || lastMovementInputCheck + inputMovementCheckDelayMS < now) {
@@ -162,6 +155,28 @@ abstract class EngineBaseGameEntity {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	function moveStepInDirection(plainDirection:PlainDirection) {
+		switch (plainDirection) {
+			case UP:
+				baseObjectEntity.y -= baseObjectEntity.acceleration;
+			case DOWN:
+				baseObjectEntity.y += baseObjectEntity.acceleration;
+			case LEFT:
+				baseObjectEntity.x -= baseObjectEntity.acceleration;
+			case RIGHT:
+				baseObjectEntity.x += baseObjectEntity.acceleration;
+		}
+	}
+
+	private function move() {
+		if (currentSpeed != 0) {
+			dx = currentSpeed * Math.cos(baseObjectEntity.rotation) * lastDeltaTime;
+			dy = currentSpeed * Math.sin(baseObjectEntity.rotation) * lastDeltaTime;
+			baseObjectEntity.x += dx;
+			baseObjectEntity.y += dy;
 		}
 	}
 

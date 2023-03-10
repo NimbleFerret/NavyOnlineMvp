@@ -8,11 +8,12 @@ import client.gameplay.BasicGameplay.GameState;
 import client.manager.IslandsManager;
 import client.network.Socket;
 import client.ui.hud.IslandHud;
-import game.engine.IslandEngine;
-import game.engine.BaseEngine.EngineMode;
-import game.engine.entity.EngineBaseGameEntity;
-import game.engine.entity.EngineCharacterEntity;
-import game.engine.entity.TypesAndClasses;
+import game.engine.base.BaseTypesAndClasses;
+import game.engine.base.core.BaseEngine.EngineMode;
+import game.engine.base.entity.EngineBaseGameEntity;
+import game.engine.navy.NavyIslandEngine;
+import game.engine.navy.NavyTypesAndClasses;
+import game.engine.navy.entity.NavyCharacterEntity;
 
 class Contour {
 	private final from:Point;
@@ -37,11 +38,13 @@ class IslandGameplay extends BasicGameplay {
 
 	public function new(scene:h2d.Scene, islandId:String, islandOwner:String, islandTerrain:String, islandMining:Bool, leaveCallback:Void->Void,
 			engineMode = EngineMode.Server) {
-		super(scene, new IslandEngine(engineMode));
+		super(scene, new NavyIslandEngine(engineMode));
+
 		waterBg = new WaterBg(scene, -1650, -700, 5, 21, 10);
 		// Pass additional island info here.
 		islandsManager = new IslandsManager(scene, islandTerrain, islandMining);
-		final islandEngine = cast(baseEngine, IslandEngine);
+		final islandEngine = cast(baseEngine, NavyIslandEngine);
+
 		islandEngine.deleteMainEntityCallback = function callback(engineCharacterEntity:EngineBaseGameEntity) {
 			if (gameState == GameState.Playing) {
 				final clientEntity = clientMainEntities.get(engineCharacterEntity.getId());
@@ -52,9 +55,8 @@ class IslandGameplay extends BasicGameplay {
 				}
 			}
 		};
-		final islandEngine = cast(baseEngine, IslandEngine);
 		for (lineCollider in islandEngine.lineColliders) {
-			// addLineCollider(scene, lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2);
+			addLineCollider(scene, lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2);
 		}
 		hud = new IslandHud(islandId, islandOwner, function callback() {
 			destroy();
@@ -70,6 +72,7 @@ class IslandGameplay extends BasicGameplay {
 	// --------------------------------------
 	// Collider debug stuff
 	// --------------------------------------
+
 	function addColliderObject() {
 		if (firstColliderAdded) {
 			final to = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
@@ -160,30 +163,16 @@ class IslandGameplay extends BasicGameplay {
 	public function customSync() {}
 
 	// --------------------------------------
-	// Singleplayer
-	// --------------------------------------
-	public function addCharacterByClient(x:Int, y:Int, charId:String, ownerId:String) {
-		final islandEngine = cast(baseEngine, IslandEngine);
-		final charEntity = jsEntityToEngineEntity({
-			x: x,
-			y: y,
-			id: charId,
-			ownerId: ownerId
-		});
-		islandEngine.createMainEntity(charEntity, true);
-		return charEntity;
-	}
-
-	// --------------------------------------
 	// Utils
 	// --------------------------------------
+
 	public function jsEntityToEngineEntity(message:Dynamic):EngineBaseGameEntity {
-		return new EngineCharacterEntity(serverMessageToObjectEntity(message));
+		return new NavyCharacterEntity(serverMessageToObjectEntity(message));
 	}
 
 	public function jsEntitiesToEngineEntities(entities:Dynamic):Array<EngineBaseGameEntity> {
 		return entities.map(entity -> {
-			return new EngineCharacterEntity(serverMessageToObjectEntity(entity));
+			return new NavyCharacterEntity(serverMessageToObjectEntity(entity));
 		});
 	}
 

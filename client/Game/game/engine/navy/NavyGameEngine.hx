@@ -17,8 +17,6 @@ import game.engine.navy.entity.manager.ShellManager;
 typedef ShipHitByShellCallbackParams = {ship:NavyShipEntity, damage:Int}
 typedef CreateShellCallbackParams = {shells:Array<NavyShellEntity>, shooterId:String, side:Side, aimAngleRads:Float}
 
-// typedef ValidatedInputCommands = {};
-
 @:expose
 class NavyGameEngine extends BaseEngine {
 	public final shellManager = new ShellManager();

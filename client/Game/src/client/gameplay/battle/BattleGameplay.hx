@@ -125,6 +125,7 @@ class BattleGameplay extends BasicGameplay {
 	// --------------------------------------
 	// Multiplayer events
 	// --------------------------------------
+
 	public function updateDailyTasks() {
 		hud.updateDailyTasks();
 	}
@@ -133,17 +134,10 @@ class BattleGameplay extends BasicGameplay {
 		hud.dailyTaskComplete(message);
 	}
 
-	// public function shipShoot(message:SocketServerMessageShipShoot) {
-	// 	if (gameState == GameState.Playing && playerId != message.playerId) {
-	// 		final side = message.left ? Side.LEFT : Side.RIGHT;
-	// 		final gameEngine = cast(baseEngine, GameEngine);
-	// 		final shipId = gameEngine.getMainEntityIdByOwnerId(message.playerId);
-	// 		gameEngine.shipShootBySide(side, shipId, true, 0, message.shotParams);
-	// 	}
-	// }
 	// --------------------------------------
 	// Singleplayer
 	// --------------------------------------
+
 	public override function startGameSingleplayer(playerId:String, entities:Array<EngineBaseGameEntity>) {
 		super.startGameSingleplayer(playerId, entities);
 		hud.show(true);
@@ -154,6 +148,7 @@ class BattleGameplay extends BasicGameplay {
 	// --------------------------------------
 	// Impl
 	// --------------------------------------
+
 	public override function debugDraw() {
 		if (GameConfig.DebugDraw) {
 			for (entity in clientShells) {
@@ -219,7 +214,6 @@ class BattleGameplay extends BasicGameplay {
 		final leftClick = K.isPressed(K.MOUSE_LEFT);
 		if (leftClick) {
 			final mouseToShipRelation = getMouseToShipRelation();
-			final gameEngine = cast(baseEngine, NavyGameEngine);
 			final playerShip = cast(getPlayerEntity(), ClientShip);
 			final side = mouseToShipRelation.toTheLeft ? LEFT : RIGHT;
 			final cannonsFiringRange = playerShip.getCannonsFiringAreaBySide(side);
@@ -270,7 +264,7 @@ class BattleGameplay extends BasicGameplay {
 		return result;
 	}
 
-	// Utils
+	// Utils or impl ?
 	public function jsEntityToEngineEntity(message:Dynamic):EngineBaseGameEntity {
 		return new NavyShipEntity(serverMessageToObjectEntity(message));
 	}

@@ -1,10 +1,15 @@
 package game.engine.base;
 
-import game.engine.base.geometry.Point;
-
 // -------------------------------
 // General
 // -------------------------------
+
+enum abstract PlainDirection(Int) {
+	var UP = 1;
+	var DOWN = 2;
+	var LEFT = 3;
+	var RIGHT = 4;
+}
 
 enum abstract GameEntityDirection(Int) {
 	var EAST = 1;
