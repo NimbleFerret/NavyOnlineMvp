@@ -32,8 +32,10 @@ abstract class EngineBaseGameEntity {
 	// ----------------------
 	private var lastMovementInputCheck = 0.0;
 	private var lastLocalMovementInputCheck = 0.0;
-	private var inputMovementCheckDelayMS = 0.1;
+	// WTF ?
+	private var inputMovementCheckDelayMS = 0.08;
 
+	// private var inputMovementCheckDelayMS = 0.1;
 	public var dx = 0.0;
 	public var dy = 0.0;
 	public var currentSpeed = 0.0;
@@ -161,13 +163,13 @@ abstract class EngineBaseGameEntity {
 	function moveStepInDirection(plainDirection:PlainDirection) {
 		switch (plainDirection) {
 			case UP:
-				baseObjectEntity.y -= baseObjectEntity.acceleration;
+				baseObjectEntity.y -= baseObjectEntity.acceleration * lastDeltaTime;
 			case DOWN:
-				baseObjectEntity.y += baseObjectEntity.acceleration;
+				baseObjectEntity.y += baseObjectEntity.acceleration * lastDeltaTime;
 			case LEFT:
-				baseObjectEntity.x -= baseObjectEntity.acceleration;
+				baseObjectEntity.x -= baseObjectEntity.acceleration * lastDeltaTime;
 			case RIGHT:
-				baseObjectEntity.x += baseObjectEntity.acceleration;
+				baseObjectEntity.x += baseObjectEntity.acceleration * lastDeltaTime;
 		}
 	}
 

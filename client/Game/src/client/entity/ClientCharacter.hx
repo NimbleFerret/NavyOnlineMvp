@@ -97,51 +97,48 @@ class ClientCharacter extends ClientBaseGameEntity {
 		downAnim.alpha = 0;
 		leftAnim.alpha = 0;
 		rightAnim.alpha = 0;
+
 		final nickname = new h2d.Text(hxd.res.DefaultFont.get(), this);
 		nickname.text = name;
 		nickname.setPosition(20, 0);
+
 		setScale(1.5);
 	}
 
 	public function update(dt:Float) {
-		// final lerpX = hxd.Math.lerp(x, engineEntity.getX(), 0.1);
-		// final lerpY = hxd.Math.lerp(y, engineEntity.getY(), 0.1);
+		final delta = engineEntity.getMaxSpeed() * dt;
 		final intEngineX = engineEntity.getX();
-		final intClientX = x;
 		final intEngineY = engineEntity.getY();
-		final intClientY = y;
 		idleAnim.alpha = 0;
 		upAnim.alpha = 0;
 		downAnim.alpha = 0;
 		leftAnim.alpha = 0;
 		rightAnim.alpha = 0;
 
-		trace(intEngineX, intClientX, engineEntity.getMaxSpeed());
-
-		if (MathUtils.differ(intEngineX, intClientX, engineEntity.getMaxSpeed() - 1)) {
-			if (intEngineX > intClientX) {
+		if (MathUtils.differ(intEngineX, x, 1)) {
+			if (intEngineX > x) {
 				leftAnim.alpha = 0;
 				rightAnim.alpha = 1;
 
-				final dx = engineEntity.getMaxSpeed() * dt;
-				x = x + dx * 1;
-			} else if (intEngineX < intClientX) {
+				x = x + delta * 0.96;
+			} else if (intEngineX < x) {
 				leftAnim.alpha = 1;
 				rightAnim.alpha = 0;
 
-				final dx = engineEntity.getMaxSpeed() * dt;
-				x = x - dx * 1;
+				x = x - delta * 0.96;
 			}
-			// x = lerpX;
-		} else if (MathUtils.differ(intEngineY, intClientY, engineEntity.getMaxSpeed())) {
-			if (intEngineY > intClientY) {
+		} else if (MathUtils.differ(intEngineY, y, 1)) {
+			if (intEngineY > y) {
 				upAnim.alpha = 0;
 				downAnim.alpha = 1;
-			} else if (intEngineY < intClientY) {
+
+				y = y + delta * 0.96;
+			} else if (intEngineY < y) {
 				upAnim.alpha = 1;
 				downAnim.alpha = 0;
+
+				y = y - delta * 0.96;
 			}
-			// y = lerpY;
 		} else {
 			idleAnim.alpha = 1;
 		}

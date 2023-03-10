@@ -52,8 +52,8 @@ class SceneIsland extends Scene implements EventListener {
 				x: 350,
 				y: 290,
 				minSpeed: 0,
-				maxSpeed: 50,
-				acceleration: 50,
+				maxSpeed: 150,
+				acceleration: 150,
 				id: 'char_' + playerId,
 				ownerId: playerId,
 			}));
