@@ -1,0 +1,11 @@
+<vbox style="padding: 5px;">
+    <style>
+        .button {
+            font-size: 20px;
+        }
+    </style>
+    <hbox>
+        <button text="Stop snowflake 1!" id="button1" style="color: red;" />
+        <button text="Teleport player 2!" id="button2" onclick="this.text='Thanks!'"  style="color: green;" />
+    </hbox>    
+</vbox>

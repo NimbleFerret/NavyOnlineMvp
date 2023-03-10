@@ -12,31 +12,23 @@ class CoinAnimationTween {
 
 	// Two seconds
 	private final totalFrames = 3 * 60;
-
 	private final start_x:Float;
 	private final end_x:Float;
 	private final start_y:Float;
 	private final end_y:Float;
-
 	private var x = 0.0;
 	private var y = 0.0;
-
 	private var frameCount = 0;
 
 	public function new(tweeningObject:Dynamic) {
 		this.tweeningObject = tweeningObject;
-
 		final max_rnd = 100;
-
 		final rnd_x_dir = Std.random(2);
 		final rnd_x_offset = rnd_x_dir == 0 ? Std.random(-max_rnd) : Std.random(max_rnd);
-
 		final rnd_y_dir = Std.random(2);
 		final rnd_y_offset = rnd_y_dir == 0 ? Std.random(-max_rnd) : Std.random(max_rnd);
-
 		start_x = x = tweeningObject.x;
 		end_x = tweeningObject.x + 75 * 1.5 + rnd_x_offset;
-
 		start_y = y = tweeningObject.y;
 		end_y = tweeningObject.y - 150 * 1.5 + rnd_y_offset;
 	}
@@ -61,18 +53,15 @@ class IslandsManager {
 
 	public function new(s2d:h2d.Scene, terrain:String, mining:Bool, offsetX:Float = 1000, offsetY:Float = 400) {
 		this.s2d = s2d;
-
 		var islandCompositeTile = hxd.Res.island_green_composite.toTile().center();
 		if (terrain == 'Snow') {
 			islandCompositeTile = hxd.Res.island_snow_composite.toTile().center();
 		} else if (terrain == 'Dark') {
 			islandCompositeTile = hxd.Res.island_dark_composite.toTile().center();
 		}
-
 		final islandCompositeBmp = new h2d.Bitmap(islandCompositeTile, s2d);
 		islandCompositeBmp.setScale(3);
 		islandCompositeBmp.setPosition(offsetX, offsetY);
-
 		if (mining) {
 			final miningAnimation1 = hxd.Res.mine_anims._1.toTile();
 			final miningAnimation2 = hxd.Res.mine_anims._2.toTile();
@@ -82,7 +71,6 @@ class IslandsManager {
 			final miningAnimation6 = hxd.Res.mine_anims._6.toTile();
 			final miningAnimation7 = hxd.Res.mine_anims._7.toTile();
 			final miningAnimation8 = hxd.Res.mine_anims._8.toTile();
-
 			final miningAnimation = new h2d.Anim([
 				miningAnimation1,
 				miningAnimation2,
@@ -93,12 +81,9 @@ class IslandsManager {
 				miningAnimation7,
 				miningAnimation8
 			]);
-
 			miningAnimation.setScale(4);
 			miningAnimation.setPosition(656, 460);
-
 			s2d.addChild(miningAnimation);
-
 			loop(1000);
 			loop(1000);
 			loop(1000);

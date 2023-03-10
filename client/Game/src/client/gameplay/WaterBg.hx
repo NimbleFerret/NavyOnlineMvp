@@ -13,10 +13,8 @@ class WaterBg {
 	public function new(s2d:h2d.Scene, offsetX:Float, offsetY:Float, scale:Float, width:Int = 11, height:Int = 7) {
 		displacementTile = hxd.Res.normalmap.toTile();
 		waterBgObject = new h2d.Object(s2d);
-
 		final waterBgTile = hxd.Res.water_tile.toTile().center();
 		waterBgbatch = new h2d.SpriteBatch(waterBgTile, waterBgObject);
-
 		for (y in 0...height) // 8
 			for (x in 0...width) { // 15
 				final batchElement = new h2d.BatchElement(waterBgTile);
@@ -24,7 +22,6 @@ class WaterBg {
 				batchElement.y = 48 * y;
 				waterBgbatch.add(batchElement);
 			}
-
 		waterBgbatch.tileWrap = true;
 		waterBgbatch.setScale(scale);
 		waterBgbatch.setPosition(offsetX, offsetY);
@@ -33,7 +30,6 @@ class WaterBg {
 
 	public function update(dt:Float) {
 		waterBgObject.visible = GameConfig.ShowWaterBackground;
-
 		if (waterBgObject.visible) {
 			displacementTile.scrollDiscrete(6 * dt, 12 * dt);
 			waterBgbatch.tile.scrollDiscrete(playerDX * 0.4, -playerDY * 0.4);

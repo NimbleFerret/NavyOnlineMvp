@@ -1,3 +1,4 @@
+
 -cp engine
 -cp src
 -lib heaps
@@ -6,6 +7,10 @@
 -lib tweenxcore
 -lib hxsocketio
 -lib hxmoralis
--js navy.js
+
+-lib haxeui-core
+-lib haxeui-heaps
 -main Main
+
+-js navy.js
 -debug

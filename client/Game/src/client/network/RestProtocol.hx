@@ -3,7 +3,6 @@ package client.network;
 // -----------------------------------
 // Common api
 // -----------------------------------
-
 class FounderCollections {
 	public final captainsOnSale:Int;
 	public final shipsOnSale:Int;
@@ -89,19 +88,16 @@ class NFTs {
 // -----------------------------------
 // Player
 // -----------------------------------
-
 class PlayerData {
 	public final ethAddress:String;
 	public final nickname:String;
 	public final ownedCaptains:Array<CaptainEntity>;
 	public final ownedShips:Array<ShipEntity>;
 	public final ownedIslands:Array<IslandEntity>;
-
 	public var worldX:Int;
 	public var worldY:Int;
 	public var nvy:Float;
 	public var aks:Float;
-
 	public var dailyPlayersKilledCurrent:Int;
 	public var dailyPlayersKilledMax:Int;
 	public var dailyBotsKilledCurrent:Int;
@@ -118,11 +114,9 @@ class PlayerData {
 		this.worldY = worldY;
 		this.nvy = nvy;
 		this.aks = aks;
-
 		this.ownedCaptains = ownedCaptains;
 		this.ownedShips = ownedShips;
 		this.ownedIslands = ownedIslands;
-
 		this.dailyPlayersKilledCurrent = dailyPlayersKilledCurrent;
 		this.dailyPlayersKilledMax = dailyPlayersKilledMax;
 		this.dailyBotsKilledCurrent = dailyBotsKilledCurrent;
@@ -135,7 +129,6 @@ class PlayerData {
 // -----------------------------------
 // World and sectors
 // -----------------------------------
-
 typedef Sector = {
 	x:Int,
 	y:Int,
@@ -164,7 +157,6 @@ class JoinSectorResponse {
 	public final reason:String;
 	public final instanceId:String;
 	public final sectorType:Int;
-
 	public final islandId:String;
 	public final islandOwner:String;
 	public final islandTerrain:String;
@@ -176,7 +168,6 @@ class JoinSectorResponse {
 		this.reason = reason;
 		this.instanceId = instanceId;
 		this.sectorType = sectorType;
-
 		// Island
 		this.islandId = islandId;
 		this.islandOwner = islandOwner;

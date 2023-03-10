@@ -20,14 +20,11 @@ class SectorRectObject {
 	public function new(scene:Scene, x:Float, y:Float, sectorType:Int) {
 		object = new h2d.Object(scene);
 		object.setPosition(x, y);
-
 		final borderRect = new h2d.Graphics(object);
 		borderRect.lineStyle(3, 0xC79161);
 		borderRect.drawRect(0, 0, SectorSize, SectorSize);
 		borderRect.endFill();
-
 		var isSkull = false;
-
 		switch (sectorType) {
 			case GameWorldData.SectorBaseType:
 				contentBmp = new h2d.Bitmap(SceneWorldMap.AcnhorTile);
@@ -43,7 +40,6 @@ class SectorRectObject {
 				contentBmp = new h2d.Bitmap(SceneWorldMap.PinkSkullTile);
 				isSkull = true;
 		}
-
 		if (contentBmp != null) {
 			if (isSkull) {
 				contentBmp.setScale(1.5);
@@ -69,7 +65,6 @@ class SceneWorldMap extends Scene {
 	public final hud:SceneWorldMapHud;
 
 	var playerBmp:h2d.Bitmap;
-
 	var playerInitialized = false;
 	var gameWorldInitialized = false;
 	var allowPlayerMove = false;
@@ -85,17 +80,13 @@ class SceneWorldMap extends Scene {
 
 	public function new(enterSectorCallback:EnterSectorCallback->Void, mainMenuCallback:Void->Void) {
 		super();
-
 		scaleMode = LetterBox(1920, 1080, false, Left, Center);
-
 		SceneWorldMap.AcnhorTile = hxd.Res.anchor.toTile();
 		SceneWorldMap.IslandTile = hxd.Res.small_palm.toTile();
 		SceneWorldMap.CommonSkullTile = hxd.Res.common_skull.toTile();
 		SceneWorldMap.BlueSkullTile = hxd.Res.blue_skull.toTile();
 		SceneWorldMap.PinkSkullTile = hxd.Res.pink_skull.toTile();
-
 		hud = new SceneWorldMapHud(mainMenuCallback);
-
 		this.enterSectorCallback = enterSectorCallback;
 	}
 
@@ -113,12 +104,10 @@ class SceneWorldMap extends Scene {
 		gameWorldInitialized = false;
 		allowPlayerMove = false;
 		gameWorldSectors = new Array<SectorRectObject>();
-
 		if (playerBmp != null) {
 			removeChild(playerBmp);
 			playerBmp = null;
 		}
-
 		playerInitialized = true;
 		initOrUpdateGameWorld();
 	}
@@ -133,7 +122,6 @@ class SceneWorldMap extends Scene {
 				if (result) {
 					final pos = sectorPosToWorldCoords(x, y);
 					playerBmp.setPosition(pos.x - 10, pos.y - 10);
-
 					Player.instance.playerData.worldX = x;
 					Player.instance.playerData.worldY = y;
 				}
@@ -164,14 +152,12 @@ class SceneWorldMap extends Scene {
 			for (y in 0...world.size) {
 				final posX = x > 0 ? x * SectorSize - 1 : x * SectorSize;
 				final posY = y > 0 ? y * SectorSize - 1 : y * SectorSize;
-
 				var sectorType = GameWorldData.SectorEmptyType;
 				for (sector in world.sectors) {
 					if (sector.x == x && sector.y == y) {
 						sectorType = sector.content;
 					}
 				}
-
 				final sectorRectObject = new SectorRectObject(this, posX + SectorSize, posY + SectorSize, sectorType);
 				final interaction = new h2d.Interactive(SectorSize, SectorSize, sectorRectObject.object);
 				interaction.onClick = function(event:hxd.Event) {
@@ -186,16 +172,12 @@ class SceneWorldMap extends Scene {
 				gameWorldSectors.push(sectorRectObject);
 			}
 		}
-
 		gameWorldInitialized = true;
 		allowPlayerMove = true;
-
 		final playerTile = Tile.fromColor(0x863D0D, 20, 20);
 		playerBmp = new Bitmap(playerTile);
-
 		final pos = sectorPosToWorldCoords(Player.instance.playerData.worldX, Player.instance.playerData.worldY);
 		playerBmp.setPosition(pos.x - 10, pos.y - 10);
-
 		addChild(playerBmp);
 	}
 

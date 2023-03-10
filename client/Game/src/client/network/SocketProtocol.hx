@@ -6,7 +6,6 @@ import game.engine.navy.NavyTypesAndClasses;
 // -------------------------------------
 // WebSocket server messages
 // -------------------------------------
-
 typedef SocketServerDailyTaskChange = {
 	dailyPlayersKilledCurrent:Int,
 	dailyPlayersKilledMax:Int,
@@ -66,7 +65,6 @@ typedef SocketServerMessageSync = {
 // -------------------------------------
 // WebSocket client messages
 // -------------------------------------
-
 typedef SocketClientMessageJoinGame = {
 	playerId:String,
 	instanceId:String,
@@ -103,17 +101,13 @@ class SocketProtocol {
 	public static final SocketServerEventEntityInput = 'SocketServerEventEntityInput';
 	public static final SocketServerEventEntityInputs = 'SocketServerEventEntityInputs';
 	public static final SocketServerEventSync = 'SocketServerEventSync';
-
 	public static final SocketServerEventDailyTaskUpdate = 'SocketServerEventDailyTaskUpdate';
 	public static final SocketServerEventDailyTaskReward = 'SocketServerEventDailyTaskReward';
-
 	// Client -> Server events
 	public static final SocketClientEventPing = 'SocketClientEventPing';
 	public static final SocketClientEventJoinGame = 'SocketClientEventJoinGame';
 	public static final SocketClientEventLeaveGame = 'SocketClientEventLeaveGame';
-
 	public static final SocketClientEventInput = 'SocketClientEventInput';
-
 	// public static final SocketClientEventMove = 'SocketClientEventMove';
 	// public static final SocketClientEventShoot = 'SocketClientEventShoot';
 	public static final SocketClientEventSync = 'SocketClientEventSync';

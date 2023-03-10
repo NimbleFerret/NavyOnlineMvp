@@ -8,7 +8,6 @@ class Player {
 
 	// Carefully drop playerData
 	public var playerData:PlayerData;
-
 	public var ethAddress:String;
 	public var playerId:String;
 	public var playerEntityId:String;

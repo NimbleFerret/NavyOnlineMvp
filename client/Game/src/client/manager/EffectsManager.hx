@@ -3,38 +3,29 @@ package client.manager;
 using tweenxcore.Tools;
 
 // TODO add abstraction and move to some effects folder ?
-
 class TextDamageTween {
 	public final tweeningObject:Dynamic;
 	public var delete = false;
 
 	// Two seconds
 	private final totalFrames = 2 * 60;
-
 	private final start_x:Float;
 	private final end_x:Float;
 	private final start_y:Float;
 	private final end_y:Float;
-
 	private var x = 0.0;
 	private var y = 0.0;
-
 	private var frameCount = 0;
 
 	public function new(tweeningObject:Dynamic) {
 		this.tweeningObject = tweeningObject;
-
 		final max_rnd = 50;
-
 		final rnd_x_dir = Std.random(2);
 		final rnd_x_offset = rnd_x_dir == 0 ? Std.random(-max_rnd) : Std.random(max_rnd);
-
 		final rnd_y_dir = Std.random(2);
 		final rnd_y_offset = rnd_y_dir == 0 ? Std.random(-max_rnd) : Std.random(max_rnd);
-
 		start_x = x = tweeningObject.x;
 		end_x = tweeningObject.x + 75 + rnd_x_offset;
-
 		start_y = y = tweeningObject.y;
 		end_y = tweeningObject.y - 150 + rnd_y_offset;
 	}
@@ -55,37 +46,27 @@ class TextDamageTween {
 
 class EffectsManager {
 	final s2d:h2d.Scene;
-
 	final splashTexture:h3d.mat.Texture;
 	final explosionTexture:h3d.mat.Texture;
-
 	final fire1Tile:h2d.Tile;
 	final fire2Tile:h2d.Tile;
-
 	final explosion1Tile:h2d.Tile;
 	final explosion2Tile:h2d.Tile;
 	final explosion3Tile:h2d.Tile;
-
 	final tweenAnimations:Array<TextDamageTween> = [];
 
 	public function new(s2d:h2d.Scene) {
 		this.s2d = s2d;
-
 		splashTexture = hxd.Res.Splash.toTexture();
 		explosionTexture = hxd.Res.explosion.toTexture();
-
 		fire1Tile = hxd.Res.fire1.toTile();
 		fire1Tile = fire1Tile.center();
-
 		fire2Tile = hxd.Res.fire2.toTile();
 		fire2Tile = fire2Tile.center();
-
 		explosion1Tile = hxd.Res.explosion1.toTile();
 		explosion1Tile = explosion1Tile.center();
-
 		explosion2Tile = hxd.Res.explosion2.toTile();
 		explosion2Tile = explosion2Tile.center();
-
 		explosion3Tile = hxd.Res.explosion3.toTile();
 		explosion3Tile = explosion3Tile.center();
 	}
@@ -113,7 +94,6 @@ class EffectsManager {
 	// -----------------
 	// Animation effects
 	// -----------------
-
 	public function addFire(x:Float, y:Float) {
 		var anim = new h2d.Anim([fire1Tile, fire2Tile], s2d);
 		anim.setPosition(x, y);
@@ -161,7 +141,6 @@ class EffectsManager {
 	// -----------------
 	// Text effects
 	// -----------------
-
 	public function addDamageText(x:Float, y:Float, damage:Int) {
 		final text = new h2d.Text(getFont(), s2d);
 		text.setPosition(x, y);
@@ -174,7 +153,6 @@ class EffectsManager {
 		};
 		text.scale(5);
 		text.text = "- " + damage + " !";
-
 		tweenAnimations.push(new TextDamageTween(text));
 	}
 

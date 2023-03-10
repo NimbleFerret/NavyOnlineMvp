@@ -43,17 +43,12 @@ class BattleGameplay extends BasicGameplay {
 
 	public function new(scene:h2d.Scene, engineMode:EngineMode, leaveCallback:Void->Void, diedCallback:Void->Void) {
 		super(scene, new NavyGameEngine(engineMode));
-
 		this.leaveCallback = leaveCallback;
-
 		// --------------------------------------
 		// Game managers and services init
 		// --------------------------------------
-
 		final gameEngine = cast(baseEngine, NavyGameEngine);
-
 		gameEngine.createMainEntityCallback = function callback(engineShipEntity:EngineBaseGameEntity) {}
-
 		gameEngine.createShellCallback = function callback(callback:CreateShellCallbackParams) {
 			if (gameState == GameState.Playing) {
 				if (baseEngine.playerEntityMap.exists(callback.shooterId)) {
@@ -70,17 +65,14 @@ class BattleGameplay extends BasicGameplay {
 				}
 			}
 		};
-
 		gameEngine.deleteShellCallback = function callback(engineShellEntity:NavyShellEntity) {
 			// clientShells.get(engineShellEntity.)
 		};
-
 		gameEngine.deleteMainEntityCallback = function callback(engineShipEntity:EngineBaseGameEntity) {
 			if (gameState == GameState.Playing) {
 				final clientEntity = clientMainEntities.get(engineShipEntity.getId());
 				if (clientEntity != null) {
 					final clientShip = cast(clientEntity, ClientShip);
-
 					for (i in 0...7) {
 						final dirX = Std.random(2);
 						final dirY = Std.random(2);
@@ -88,12 +80,9 @@ class BattleGameplay extends BasicGameplay {
 						final offsetY = Std.random(50);
 						effectsManager.addShipExplosion(clientShip.x + (dirX == 1 ? offsetX : -offsetX), clientShip.y + (dirY == 1 ? offsetY : -offsetY));
 					}
-
 					scene.removeChild(clientShip);
-
 					clientMainEntities.remove(engineShipEntity.getId());
 					clientMainEntitiesCount--;
-
 					if (engineShipEntity.getOwnerId() == playerId) {
 						gameState = GameState.Died;
 						hud.show(false);
@@ -103,7 +92,6 @@ class BattleGameplay extends BasicGameplay {
 				}
 			}
 		};
-
 		gameEngine.shipHitByShellCallback = function callback(params:ShipHitByShellCallbackParams) {
 			if (gameState == GameState.Playing) {
 				final clientShip = clientMainEntities.get(params.ship.getId());
@@ -112,13 +100,10 @@ class BattleGameplay extends BasicGameplay {
 				}
 			}
 		};
-
 		effectsManager = new EffectsManager(scene);
-
 		// --------------------------------------
 		// UI
 		// --------------------------------------
-
 		hud = new BattleHud(function callbackLeave() {
 			destroy();
 			Socket.instance.leaveGame({playerId: playerId});
@@ -132,9 +117,7 @@ class BattleGameplay extends BasicGameplay {
 				diedCallback();
 			}
 		});
-
 		waterScene = new WaterScene();
-
 		maxDragX = 200;
 		maxDragY = 200;
 	}
@@ -142,7 +125,6 @@ class BattleGameplay extends BasicGameplay {
 	// --------------------------------------
 	// Multiplayer events
 	// --------------------------------------
-
 	public function updateDailyTasks() {
 		hud.updateDailyTasks();
 	}
@@ -162,7 +144,6 @@ class BattleGameplay extends BasicGameplay {
 	// --------------------------------------
 	// Singleplayer
 	// --------------------------------------
-
 	public override function startGameSingleplayer(playerId:String, entities:Array<EngineBaseGameEntity>) {
 		super.startGameSingleplayer(playerId, entities);
 		hud.show(true);
@@ -173,7 +154,6 @@ class BattleGameplay extends BasicGameplay {
 	// --------------------------------------
 	// Impl
 	// --------------------------------------
-
 	public override function debugDraw() {
 		if (GameConfig.DebugDraw) {
 			for (entity in clientShells) {
@@ -186,30 +166,23 @@ class BattleGameplay extends BasicGameplay {
 	public function customUpdate(dt:Float, fps:Float) {
 		hud.update(dt);
 		waterScene.update(dt);
-
 		if (gameState == GameState.Playing) {
 			hud.updateSystemInfo(fps);
-
 			effectsManager.update();
-
 			updateInput();
-
 			for (ship in baseEngine.getMainEntities()) {
 				if (clientMainEntities.exists(ship.getId())) {
 					final clientShip = clientMainEntities.get(ship.getId());
 					clientShip.update(dt);
 				}
 			}
-
 			final shellsToDelete:Array<String> = [];
-
 			for (shell in clientShells) {
 				shell.update(dt);
 				if (!shell.isAlive()) {
 					shellsToDelete.push(shell.getId());
 				}
 			}
-
 			for (i in 0...shellsToDelete.length) {
 				final key = shellsToDelete[i];
 				var shell = clientShells.get(key);
@@ -224,9 +197,7 @@ class BattleGameplay extends BasicGameplay {
 					clientShells.remove(key);
 				}
 			}
-
 			final playerShip = cast(getPlayerEntity(), ClientShip);
-
 			if (playerShip != null) {
 				final mouseToShipRelation = getMouseToShipRelation();
 				if (mouseToShipRelation.toTheLeft || mouseToShipRelation.toTheRight) {
@@ -257,9 +228,7 @@ class BattleGameplay extends BasicGameplay {
 					side: side,
 					aimAngleRads: playerShip.getCannonFiringAreaAngle(side, index)
 				};
-
 				baseEngine.addInputCommand(new NavyInputCommand(PlayerInputType.SHOOT, playerId, Player.instance.incrementAndGetInputIndex(), shootDetails));
-
 				Socket.instance.input({
 					index: Player.instance.getInputIndex(),
 					playerId: playerId,
@@ -289,24 +258,19 @@ class BattleGameplay extends BasicGameplay {
 			toTheRight: false,
 			projectedMouseCoords: mouseCoordsToCamera()
 		}
-
 		// If mouse is within firing area ?
-
 		final playerShip = cast(getPlayerEntity(), ClientShip);
 		final playerShipRect = playerShip.getBodyRectangle();
 		final cursorToPlayerShipLine = new Line(result.projectedMouseCoords.x, result.projectedMouseCoords.y, playerShip.x, playerShip.y);
-
 		if (playerShipRect.getLines().lineA.intersectsWithLine(cursorToPlayerShipLine)) {
 			result.toTheLeft = true;
 		} else if (playerShipRect.getLines().lineC.intersectsWithLine(cursorToPlayerShipLine)) {
 			result.toTheRight = true;
 		}
-
 		return result;
 	}
 
 	// Utils
-
 	public function jsEntityToEngineEntity(message:Dynamic):EngineBaseGameEntity {
 		return new NavyShipEntity(serverMessageToObjectEntity(message));
 	}

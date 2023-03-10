@@ -13,10 +13,11 @@ import game.engine.base.core.BaseEngine.EngineMode;
 class SceneDemo1 extends Scene {
 	private var game:BattleGameplay;
 	private var islandsManager:IslandsManager;
-
 	// UI parts
 	// public final debugHud:DebugHud;
 	private var allowSomething = false;
+
+	public var baseUiScene:BaseUiScene;
 
 	public function new(width:Int, height:Int) {
 		super();
@@ -27,14 +28,13 @@ class SceneDemo1 extends Scene {
 	public function start() {
 		game = new BattleGameplay(this, EngineMode.Server, function callback() {}, function callback() {});
 
+		baseUiScene = new BaseUiScene();
+
 		// --------------------------------------
 		// Mocked client data
 		// --------------------------------------
-
 		final playerId = Player.instance.playerId;
-
 		final ships = new Array<EngineBaseGameEntity>();
-
 		ships.push(new NavyShipEntity(new ShipObjectEntity({
 			x: -300,
 			y: 207,
@@ -59,11 +59,9 @@ class SceneDemo1 extends Scene {
 			turnDelay: 0.500,
 			fireDelay: 0.500
 		})));
-
 		var botX = 0;
 		var botY = 0;
 		var botIndex = 0;
-
 		for (i in 0...0) {
 			for (j in 0...2) {
 				ships.push(new NavyShipEntity(new ShipObjectEntity({
@@ -97,7 +95,6 @@ class SceneDemo1 extends Scene {
 			botY += 300;
 			botIndex++;
 		}
-
 		game.startGameSingleplayer(playerId, ships);
 	}
 
@@ -111,12 +108,10 @@ class SceneDemo1 extends Scene {
 	public function update(dt:Float, fps:Float) {
 		if (game != null) {
 			final c = camera;
-
 			if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))
 				c.scale(1.25, 1.25);
 			if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_DOWN))
 				c.scale(0.8, 0.8);
-
 			game.update(dt, fps);
 		}
 	}

@@ -17,7 +17,6 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 
 	public function new(leaveCallback:Void->Void, diedCallback:Void->Void) {
 		super();
-
 		this.leaveCallback = leaveCallback;
 		this.diedCallback = diedCallback;
 		// scaleMode = LetterBox(1920, 1080, true, Center, Center);
@@ -28,7 +27,6 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 
 	public function start(instanceId:String) {
 		this.instanceId = instanceId;
-
 		game = new BattleGameplay(this, EngineMode.Client, function callbackLeave() {
 			if (leaveCallback != null) {
 				game = null;
@@ -48,14 +46,12 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 				diedCallback();
 			}
 		});
-
 		Socket.instance.joinGame({
 			playerId: Player.instance.playerId,
 			instanceId: instanceId,
 			sectorType: 1,
 			entityId: Player.instance.playerEntityId
 		});
-
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddEntity, this);
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
@@ -81,12 +77,10 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 
 	public function update(dt:Float, fps:Float) {
 		final c = camera;
-
 		// if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_UP))
 		// 	c.scale(1.25, 1.25);
 		// if (hxd.Key.isPressed(hxd.Key.MOUSE_WHEEL_DOWN))
 		// 	c.scale(0.8, 0.8);
-
 		game.update(dt, fps);
 	}
 

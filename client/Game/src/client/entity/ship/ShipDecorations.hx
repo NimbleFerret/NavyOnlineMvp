@@ -1,7 +1,6 @@
 package client.entity.ship;
 
 import h2d.col.Point;
-import client.entity.ship.ShipTemplate;
 import game.engine.base.BaseTypesAndClasses;
 import game.engine.navy.NavyTypesAndClasses;
 
