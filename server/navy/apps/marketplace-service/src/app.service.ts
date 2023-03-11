@@ -164,22 +164,27 @@ export class AppService implements OnModuleInit {
     return this.collectionModel.findOne({ address: address }).select(['-_id', '-__v']);
   }
 
-  async getCollectionListed(address: string) {
-    return this.collectionItemModel.find({
+  async getCollectionItems(marketplaceNftsType: MarketplaceNftsType, address: string, page: number, size: number) {
+    const query = {
       nftContract: address.toLowerCase(),
-      marketplaceState: MarketplaceNftsType.LISTED
-    }).select(['-_id', '-__v', '-id', '-needUpdate']).sort([['lastUpdated', -1]]);
+      marketplaceState: marketplaceNftsType
+    };
+    const count = await this.collectionItemModel.countDocuments(query);
+    const response = {
+      pages: Number(Math.round(count / size).toFixed(0))
+    };
+    response['data'] = await this.collectionItemModel
+      .find(query)
+      .select(['-_id', '-__v', '-id', '-needUpdate'])
+      .skip((page - 1) * size)
+      .limit(size)
+      .sort([['lastUpdated', -1]]);
+    return response;
   }
 
-  async getCollectionSold(address: string) {
-    return this.collectionItemModel.find({
-      nftContract: address.toLowerCase(),
-      marketplaceState: MarketplaceNftsType.SOLD
-    }).select(['-_id', '-__v', '-id', '-needUpdate']).sort([['lastUpdated', -1]]);
-  }
-
-  async getMint(id: string) {
-    return this.mintModel.findOne({ _id: id }).select(['-_id', '-__v']);
+  async getMintByCollection(collectionAddress: string) {
+    const collection = await this.getCollection(collectionAddress);
+    return this.mintModel.findOne({ _id: collection.mint }).select(['-_id', '-__v']);
   }
 
   getCronosUsdPrice() {

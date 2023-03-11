@@ -1,13 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { AppService } from './app.service';
-import { SaleBetDto } from './dto/dto.sale.bet';
-import { SaleCancelDto } from './dto/dto.sale.cancel';
-import { SaleNewDto } from './dto/dto.sale.new';
-import { SaleRedeemDto } from './dto/dto.sale.redeem';
 
-// TODO implement caches
 @Controller()
 export class AppController {
+
+  private static readonly DefaultPaginationSize = 1;
+
   constructor(private readonly appService: AppService) { }
 
   @Get('cronosUsdPrice')
@@ -25,39 +24,33 @@ export class AppController {
     return this.appService.getCollection(address);
   }
 
-  @Get('collection/listed/:address')
-  getCollectionListed(@Param('address') address: string) {
-    return this.appService.getCollectionListed(address);
+  @Get('collection/:address/listed')
+  getCollectionListedItems(
+    @Param('address') address: string,
+    @Query('page') page: number = 1,
+    @Query('size') size: number = AppController.DefaultPaginationSize) {
+    return this.appService.getCollectionItems(MarketplaceNftsType.LISTED, address, page, size);
   }
 
-  @Get('collection/sold/:address')
-  getCollectionSold(@Param('address') address: string) {
-    return this.appService.getCollectionSold(address);
+  @Get('collection/:address/sold')
+  getCollectionSoldItems(
+    @Param('address') address: string,
+    @Query('page') page: number = 1,
+    @Query('size') size: number = AppController.DefaultPaginationSize) {
+    return this.appService.getCollectionItems(MarketplaceNftsType.SOLD, address, page, size);
   }
 
-  @Get('mint/:mintId')
-  getMint(@Param('mintId') mintId: string) {
-    return this.appService.getMint(mintId);
+  @Get('collection/:address/all')
+  getCollectionAllItems(
+    @Param('address') address: string,
+    @Query('page') page: number = 1,
+    @Query('size') size: number = AppController.DefaultPaginationSize) {
+    return this.appService.getCollectionItems(MarketplaceNftsType.ALL, address, page, size);
   }
 
-  @Post('sale/new')
-  saleNew(@Body() request: SaleNewDto) {
-
-  }
-
-  @Post('sale/cancel')
-  saleCancel(@Body() request: SaleCancelDto) {
-
-  }
-
-  @Post('sale/redeem')
-  saleRedeem(@Body() request: SaleRedeemDto) {
-
-  }
-
-  @Post('sale/bet')
-  saleBet(@Body() request: SaleBetDto) {
-
+  @Get('mint/:collectionAddress')
+  getMint(@Param('collectionAddress') collectionAddress: string) {
+    return this.appService.getMintByCollection(collectionAddress);
   }
 
 }
