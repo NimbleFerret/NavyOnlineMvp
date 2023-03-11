@@ -5,8 +5,12 @@ import { Config } from "../config";
 
 export interface NotificationService {
     SendEmail(request: SendEmailRequest): Observable<SendEmailResponse>;
+    GetUserNotifications(request: GetUserNotificationsRequest): Observable<GetUserNotificationsResponse>;
+    ReadUserNotifications(request: ReadUserNotificationsRequest): Observable<ReadUserNotificationsResponse>;
 }
 
+//-----------------------------
+// SendEmail
 //-----------------------------
 
 export interface SendEmailRequest {
@@ -17,6 +21,41 @@ export interface SendEmailRequest {
 
 export interface SendEmailResponse {
     success: boolean;
+}
+
+//-----------------------------
+// GetUserNotifications
+//-----------------------------
+
+export enum NotificationType {
+    NFT_MINTED = 0,
+    NFT_SOLD = 1
+}
+
+export interface UserNotification {
+    type: NotificationType;
+    message: string;
+    date: string;
+    read: boolean;
+}
+
+export interface GetUserNotificationsRequest {
+    walletAddress: string;
+}
+
+export interface GetUserNotificationsResponse {
+    notifications: UserNotification[];
+}
+
+//-----------------------------
+// ReadUserNotifications
+//-----------------------------
+
+export interface ReadUserNotificationsRequest {
+    walletAddress: string;
+}
+
+export interface ReadUserNotificationsResponse {
 }
 
 //-----------------------------

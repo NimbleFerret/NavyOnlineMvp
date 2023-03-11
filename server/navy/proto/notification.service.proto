@@ -4,7 +4,13 @@ package notificationservice;
 
 service NotificationService {
   rpc SendEmail (SendEmailRequest) returns (SendEmailResponse);
+  rpc GetUserNotifications (GetUserNotificationsRequest) returns (GetUserNotificationsResponse);
+  rpc ReadUserNotifications (ReadUserNotificationsRequest) returns (ReadUserNotificationsResponse);
 }
+
+//-----------------------------
+// SendEmail
+//-----------------------------
 
 message SendEmailRequest {
     string recipient = 1;
@@ -14,4 +20,39 @@ message SendEmailRequest {
 
 message SendEmailResponse {
     bool success = 1;
+}
+
+//-----------------------------
+// GetUserNotifications
+//-----------------------------
+
+enum NotificationType {
+  NFT_MINTED = 0;
+  NFT_SOLD = 1;
+}
+
+message UserNotification {
+  NotificationType type = 1;
+  string message = 2;
+  string date = 3;
+  bool read = 4;
+}
+
+message GetUserNotificationsRequest {
+  string walletAddress = 1;
+}
+
+message GetUserNotificationsResponse {
+  repeated UserNotification notifications  = 1;
+}
+
+//-----------------------------
+// ReadUserNotifications
+//-----------------------------
+
+message ReadUserNotificationsRequest {
+  string walletAddress = 1;
+}
+
+message ReadUserNotificationsResponse {
 }

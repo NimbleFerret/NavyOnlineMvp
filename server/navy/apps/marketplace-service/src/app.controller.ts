@@ -1,6 +1,7 @@
 import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
+import { NotificationsReadDto } from './dto/dto.notifications.read';
 
 @Controller()
 export class AppController {
@@ -58,6 +59,16 @@ export class AppController {
   @Get('mint/:collectionAddress')
   getMint(@Param('collectionAddress') collectionAddress: string) {
     return this.appService.getMintByCollection(collectionAddress);
+  }
+
+  @Get('notifications/:walletAddress')
+  getNotifications(@Param('walletAddress') walletAddress: string) {
+    return this.appService.getNotifications(walletAddress);
+  }
+
+  @Post('notifications/read')
+  readNotifications(@Body() dto: NotificationsReadDto) {
+    return this.appService.readNotifications(dto.walletAddress);
   }
 
 }

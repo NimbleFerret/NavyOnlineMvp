@@ -1,8 +1,10 @@
 import { Web3ServiceGrpcClientName, Web3ServiceGrpcClientOptions } from '@app/shared-library/gprc/grpc.web3.service';
+import { NotificationServiceGrpcClientName, NotificationServiceGrpcClientOptions } from '@app/shared-library/gprc/grpc.notification.service';
 import { Project, ProjectSchema } from '@app/shared-library/schemas/marketplace/schema.project';
 import { Collection, CollectionSchema } from '@app/shared-library/schemas/marketplace/schema.collection';
 import { Mint, MintSchema } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { CollectionItem, CollectionItemSchema } from '@app/shared-library/schemas/marketplace/schema.collection.item';
+import { NotificationSchema } from '@app/shared-library/schemas/marketplace/schema.notification';
 import { Module } from '@nestjs/common';
 import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -24,13 +26,18 @@ import { ScheduleModule } from '@nestjs/schedule';
       { name: Project.name, schema: ProjectSchema },
       { name: Mint.name, schema: MintSchema },
       { name: Collection.name, schema: CollectionSchema },
-      { name: CollectionItem.name, schema: CollectionItemSchema }
+      { name: CollectionItem.name, schema: CollectionItemSchema },
+      { name: CollectionItem.name, schema: NotificationSchema }
     ]),
     MongooseModule.forRoot(Config.GetMongoHost()),
     ClientsModule.register([
       {
         name: Web3ServiceGrpcClientName,
         ...Web3ServiceGrpcClientOptions,
+      },
+      {
+        name: NotificationServiceGrpcClientName,
+        ...NotificationServiceGrpcClientOptions,
       },
     ]),
     ScheduleModule.forRoot()

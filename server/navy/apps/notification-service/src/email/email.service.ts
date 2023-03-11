@@ -1,4 +1,4 @@
-import { SendEmailRequest, SendEmailResponse } from '@app/shared-library/gprc/grpc.notification.service';
+import { GetUserNotificationsRequest, ReadUserNotificationsRequest, SendEmailRequest, SendEmailResponse } from '@app/shared-library/gprc/grpc.notification.service';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 

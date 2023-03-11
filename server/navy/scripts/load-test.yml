@@ -1,0 +1,11 @@
+config:
+  target: "file:///C:/Users/justin/dev/NavyOnline/client/Game/index.html"
+  phases:
+    - duration: 300
+      arrivalRate: 50
+
+scenarios:
+  - name: "Dummy flow"
+    flow:
+      - get:
+          url: "/"

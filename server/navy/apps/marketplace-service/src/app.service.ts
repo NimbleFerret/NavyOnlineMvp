@@ -1,4 +1,5 @@
 import { Web3Service, Web3ServiceGrpcClientName, Web3ServiceName } from '@app/shared-library/gprc/grpc.web3.service';
+import { NotificationService, NotificationServiceGrpcClientName, NotificationServiceName } from '@app/shared-library/gprc/grpc.notification.service';
 import { Project, ProjectDocument, ProjectState } from '@app/shared-library/schemas/marketplace/schema.project';
 import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
 import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
@@ -13,6 +14,7 @@ import { CollectionItem, CollectionItemDocument } from '@app/shared-library/sche
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
 import fetch from 'node-fetch';
+import { lastValueFrom } from 'rxjs';
 
 const fs = require('fs');
 
@@ -20,6 +22,8 @@ const fs = require('fs');
 export class AppService implements OnModuleInit {
 
   private web3Service: Web3Service;
+  private notificationService: NotificationService;
+
   private memoryCache: MemoryCache;
 
   private cronosTokenUsdPrice = 0;
@@ -29,7 +33,8 @@ export class AppService implements OnModuleInit {
     @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
     @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
     @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
-    @Inject(Web3ServiceGrpcClientName) private readonly web3ServiceGrpcClient: ClientGrpc) {
+    @Inject(Web3ServiceGrpcClientName) private readonly web3ServiceGrpcClient: ClientGrpc,
+    @Inject(NotificationServiceGrpcClientName) private readonly notificationServiceGrpcClient: ClientGrpc) {
   }
 
   async onModuleInit() {
@@ -119,6 +124,7 @@ export class AppService implements OnModuleInit {
     }
 
     this.web3Service = this.web3ServiceGrpcClient.getService<Web3Service>(Web3ServiceName);
+    this.notificationService = this.notificationServiceGrpcClient.getService<NotificationService>(NotificationServiceName);
 
     this.memoryCache = await caching('memory', {
       max: 100,
@@ -214,6 +220,19 @@ export class AppService implements OnModuleInit {
   async getMintByCollection(collectionAddress: string) {
     const collection = await this.getCollection(collectionAddress);
     return this.mintModel.findOne({ _id: collection.mint }).select(['-_id', '-__v']);
+  }
+
+  async getNotifications(walletAddress: string) {
+    const signUpResult = await lastValueFrom(this.notificationService.GetUserNotifications({
+      walletAddress
+    }));
+    return signUpResult;
+  }
+
+  async readNotifications(walletAddress: string) {
+    const signUpResult = await lastValueFrom(this.notificationService.ReadUserNotifications({
+      walletAddress
+    }));
   }
 
   getCronosUsdPrice() {
