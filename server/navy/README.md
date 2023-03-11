@@ -43,3 +43,6 @@ CI/CD V1:
     * npm i && npm run build
 3) Собираем докер образы и указываем релиз версию нужного приложения
     * docker build --tag navy-gateway-service:X.Y.Z -f ./docker-gateway-service.dockerfile .
+
+Prometheus: http://localhost:9090/
+Grafana: http://localhost:3000/

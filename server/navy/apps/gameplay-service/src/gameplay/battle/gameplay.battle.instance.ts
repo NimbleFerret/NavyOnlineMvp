@@ -13,7 +13,6 @@ import {
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 import { Role, ShipEntity, ShipObjectEntity } from "@app/shared-library/entities/entity.ship";
 
-
 // ---------------------------------------
 export class GameplayBattleInstance extends BaseGameplayInstance {
 

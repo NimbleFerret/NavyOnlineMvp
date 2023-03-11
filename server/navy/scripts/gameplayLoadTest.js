@@ -3,7 +3,7 @@ const { io } = require("socket.io-client");
 const transports = ["websocket"];
 
 const URL = process.env.URL || "http://localhost:4020";
-const MAX_CLIENTS = 2;
+const MAX_CLIENTS = 100;
 const CLIENT_CREATION_INTERVAL_IN_MS = 2000;
 const SHOOTING_INTERVAL_IN_MS = 1000;
 
