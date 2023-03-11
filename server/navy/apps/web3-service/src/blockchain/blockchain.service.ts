@@ -8,7 +8,6 @@ import * as CollectionSale from '../abi/CollectionSale.json';
 import * as Marketplace from '../abi/Marketplace.json';
 import {
     Injectable,
-    Logger,
     OnModuleInit
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
@@ -52,7 +51,8 @@ export class BlockchainService implements OnModuleInit {
             Marketplace
         });
 
-        await this.web3Sync();
+        await this.syncSaleContracts();
+        await this.syncNftContracts();
 
         this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
             this.mintQueue.add({
@@ -70,11 +70,9 @@ export class BlockchainService implements OnModuleInit {
         } as CheckEthersAuthSignatureResponse;
     }
 
-    @Cron(CronExpression.EVERY_MINUTE)
-    async web3Sync() {
-        await this.updateSaleCollections('Captains');
-
-        // TODO better to listen for events
+    // TODO better to listen for events
+    @Cron(CronExpression.EVERY_5_MINUTES)
+    async syncSaleContracts() {
         this.updateMarketplaceQueue.empty();
         this.updateMarketplaceQueue.add({
             marketplaceNftsType: MarketplaceNftsType.LISTED,
@@ -82,24 +80,13 @@ export class BlockchainService implements OnModuleInit {
         } as UpdateMarketplaceJob);
     }
 
-    private async updateSaleCollections(name: string) {
-        const captainsCollection = await this.collectionModel.findOne({ name }).populate('mint');
-        if (captainsCollection) {
-            const tokensLeft = (await this.ethersProvider.captainCollectionSaleContract.tokensLeft()).toNumber();
-
-            captainsCollection.collectionItemsLeft = tokensLeft;
-            captainsCollection.save();
-
-            const collectionMint = await this.mintModel.findById(captainsCollection.mint);
-            if (collectionMint) {
-                collectionMint.collectionItemsLeft = tokensLeft;
-                await collectionMint.save();
-            } else {
-                Logger.error('Unable to update collection mint tokens. Collection id: ' + captainsCollection._id);
-            }
-        } else {
-            Logger.error('Unable to update collection tokens. Collection name: ' + name);
-        }
+    @Cron(CronExpression.EVERY_10_MINUTES)
+    async syncNftContracts() {
+        this.updateMarketplaceQueue.empty();
+        this.updateMarketplaceQueue.add({
+            marketplaceNftsType: MarketplaceNftsType.ALL,
+            nftType: NftType.CAPTAIN
+        } as UpdateMarketplaceJob);
     }
 
 }

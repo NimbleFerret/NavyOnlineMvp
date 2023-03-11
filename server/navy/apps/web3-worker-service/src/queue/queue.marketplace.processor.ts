@@ -8,14 +8,16 @@ import * as CollectionSale from '../abi/CollectionSale.json';
 import * as Marketplace from '../abi/Marketplace.json';
 import { MarketplaceNFT } from "@app/shared-library/entities/entity.marketplace.nft";
 import { EthersProvider } from "@app/shared-library/ethers/ethers.provider";
-import { MarketplaceNftsType, UpdateMarketplaceJob, WorkersMarketplace } from "@app/shared-library/workers/workers.marketplace";
-import { OnQueueActive, OnQueueCompleted, OnQueueError, OnQueueFailed, Process, Processor } from "@nestjs/bull";
+import { OnQueueError, OnQueueFailed, Process, Processor } from "@nestjs/bull";
 import { Logger, OnModuleInit } from "@nestjs/common";
 import { Job } from "bull";
 import { Contract, ethers } from 'ethers';
 import { NftType } from '@app/shared-library/shared-library.main';
-import { CollectionItem, CollectionItemDocument, MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { InjectModel } from '@nestjs/mongoose';
+import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
+import { CollectionItem, CollectionItemDocument, MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
+import { MarketplaceNftsType, UpdateMarketplaceJob, WorkersMarketplace } from "@app/shared-library/workers/workers.marketplace";
+import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { Model } from 'mongoose';
 
 @Processor(WorkersMarketplace.UpdateMarketplaceQueue)
@@ -24,7 +26,10 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
     private readonly logger = new Logger(QueueMarketplaceProcessor.name);
     private readonly ethersProvider = new EthersProvider();
 
-    constructor(@InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>) {
+    constructor(
+        @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
+        @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
+        @InjectModel(Mint.name) private mintModel: Model<MintDocument>) {
     }
 
     async onModuleInit() {
@@ -43,18 +48,83 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
     @Process()
     async process(job: Job<UpdateMarketplaceJob>) {
         let marketplaceContract = this.ethersProvider.captainMarketplaceContract;
+        let nftContractAddress = this.ethersProvider.captainContract.address;
 
         switch (job.data.nftType) {
             case NftType.SHIP:
                 marketplaceContract = this.ethersProvider.shipMarketplaceContract;
+                nftContractAddress = this.ethersProvider.shipContract.address;
                 break;
             case NftType.ISLAND:
                 marketplaceContract = this.ethersProvider.islandMarketplaceContract;
+                nftContractAddress = this.ethersProvider.islandContract.address;
                 break;
         }
 
-        await this.getMarketplaceNfts(marketplaceContract, MarketplaceNftsType.LISTED);
-        await this.getMarketplaceNfts(marketplaceContract, MarketplaceNftsType.SOLD);
+        if (job.data.marketplaceNftsType == MarketplaceNftsType.ALL) {
+            await this.updateNfts(nftContractAddress);
+        } else {
+            await this.updateSaleCollections(nftContractAddress);
+            await this.getMarketplaceNfts(marketplaceContract, MarketplaceNftsType.LISTED);
+            await this.getMarketplaceNfts(marketplaceContract, MarketplaceNftsType.SOLD);
+        }
+    }
+
+    private async updateNfts(contractAddress: string) {
+        const collection = await this.collectionModel.findOne({ address: contractAddress });
+        if (collection) {
+            let contract: Contract;
+            if (collection.name == 'Captains') {
+                contract = this.ethersProvider.captainContract;
+            }
+            if (contract) {
+                const totalSupply = (await this.ethersProvider.captainContract.totalSupply()).toNumber();
+                if (totalSupply > 0) {
+                    for (let i = 1; i < totalSupply + 1; i++) {
+                        const collectionItem = await this.collectionItemModel.findOne({
+                            contractAddress,
+                            tokenId: i,
+                            marketplaceState: MarketplaceState.NONE
+                        });
+
+                        const nftOwner = (await this.ethersProvider.captainContract.ownerOf(i)).toLowerCase();
+                        const nftUri = await this.ethersProvider.captainContract.tokenURI(i);
+
+                        if (collectionItem) {
+                            let nftChanged = false;
+                            if (collectionItem.tokenUri != nftUri) {
+                                collectionItem.tokenUri = nftUri;
+                                const uriResponse = await fetch(nftUri);
+                                const body = await uriResponse.json();
+                                collectionItem.image = body.image;
+                                nftChanged = true;
+                            }
+                            if (collectionItem.owner != nftOwner) {
+                                collectionItem.owner = nftOwner;
+                                nftChanged = true;
+                            }
+                            if (nftChanged) {
+                                await collectionItem.save();
+                            }
+                        } else {
+                            const uriResponse = await fetch(nftUri);
+                            const body = await uriResponse.json();
+
+                            const model = new this.collectionItemModel();
+                            model.id = contractAddress + '_' + i;
+                            model.tokenId = i;
+                            model.tokenUri = nftUri;
+                            model.owner = nftOwner;
+                            model.image = body.image;
+                            model.nftContract = contractAddress;
+                            model.marketplaceState = MarketplaceState.NONE;
+                            model.chainId = '338';
+                            await model.save();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private async getMarketplaceNfts(marketpalceContract: Contract, marketplaceNftsType: MarketplaceNftsType) {
@@ -79,10 +149,10 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
             const contractAddress = marketplaceNFTs[0].nftContract;
 
             // Skip nfts that we have already
-            const contractItems = await this.collectionItemModel.find({
+            const collectionItems = await this.collectionItemModel.find({
                 contractAddress
             });
-            const tokenIds = contractItems.map(f => {
+            const tokenIds = collectionItems.map(f => {
                 return f.tokenId;
             });
 
@@ -114,19 +184,33 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
         }
     }
 
+    private async updateSaleCollections(address: string) {
+        const collection = await this.collectionModel.findOne({ address }).populate('mint');
+        if (collection && collection.collectionItemsLeft > 0) {
+            let tokensLeft = 0;
+            if (collection.name == 'Captains') {
+                tokensLeft = (await this.ethersProvider.captainCollectionSaleContract.tokensLeft()).toNumber();
+            }
+            if (tokensLeft > 0) {
+                collection.collectionItemsLeft = tokensLeft;
+                collection.save();
+
+                const collectionMint = await this.mintModel.findById(collection.mint);
+                if (collectionMint) {
+                    collectionMint.collectionItemsLeft = tokensLeft;
+                    await collectionMint.save();
+                } else {
+                    Logger.error('Unable to update collection mint tokens. Collection id: ' + collection._id);
+                }
+            }
+        } else {
+            Logger.error('Unable to update collection tokens. Collection name: ' + address);
+        }
+    }
+
     @OnQueueError()
     onQueueError(error: Error) {
         this.logger.error(error);
-    }
-
-    @OnQueueActive()
-    onQueueActive(job: Job<UpdateMarketplaceJob>) {
-        this.logger.log(`Processing job ${this.jobInfo(job)}`);
-    }
-
-    @OnQueueCompleted()
-    onQueueCompleted(job: Job<UpdateMarketplaceJob>, result: any) {
-        this.logger.log(`Job completed ${this.jobInfo(job)}`);
     }
 
     @OnQueueFailed()
