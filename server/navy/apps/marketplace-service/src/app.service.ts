@@ -11,9 +11,8 @@ import { join } from 'path';
 import { ProjectCollection, ProjectDto } from './dto/dto.projects';
 import { CollectionItem, CollectionItemDocument } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { lastValueFrom } from 'rxjs';
-import fetch from 'node-fetch';
 import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
+import fetch from 'node-fetch';
 
 const fs = require('fs');
 
@@ -67,7 +66,7 @@ export class AppService implements OnModuleInit {
             collections[i].name = fixtures[i].name;
             collections[i].description = fixtures[i].description;
             collections[i].chainId = fixtures[i].chainId;
-            collections[i].address = fixtures[i].address;
+            collections[i].address = fixtures[i].address.toLowerCase();
             collections[i].collectionSize = fixtures[i].collectionSize;
             collections[i].collectionItemsLeft = fixtures[i].collectionItemsLeft;
             collections[i].preview = fixtures[i].preview;
@@ -76,6 +75,11 @@ export class AppService implements OnModuleInit {
           loadFixture('3_mints.json', async (fixtures: any) => {
             for (let i = 0; i < fixtures.length; i++) {
               const mint = new this.mintModel();
+
+              fixtures[i].mintingDetails.forEach(mintingDetail => {
+                mintingDetail.saleContractAddress = mintingDetail.saleContractAddress.toLowerCase();
+                mintingDetail.tokenContractAddress = mintingDetail.tokenContractAddress.toLowerCase();
+              });
 
               mint.mintingEnabled = fixtures[i].mintingEnabled;
               mint.mintingStartTime = fixtures[i].mintingStartTime;
@@ -182,6 +186,31 @@ export class AppService implements OnModuleInit {
     return response;
   }
 
+  async getCollectionItemsByOwner(address: string, owner: string) {
+    const result = [];
+
+    address = address.toLowerCase();
+    owner = owner.toLowerCase();
+
+    result.push(...(await this.collectionItemModel
+      .find({
+        nftContract: address.toLowerCase(),
+        marketplaceState: MarketplaceNftsType.LISTED,
+        seller: owner
+      })
+      .select(['-_id', '-__v', '-id', '-needUpdate'])));
+
+    result.push(...await this.collectionItemModel
+      .find({
+        nftContract: address.toLowerCase(),
+        marketplaceState: MarketplaceNftsType.ALL,
+        owner: owner.toLocaleLowerCase()
+      })
+      .select(['-_id', '-__v', '-id', '-needUpdate']));
+
+    return result;
+  }
+
   async getMintByCollection(collectionAddress: string) {
     const collection = await this.getCollection(collectionAddress);
     return this.mintModel.findOne({ _id: collection.mint }).select(['-_id', '-__v']);
@@ -206,27 +235,4 @@ export class AppService implements OnModuleInit {
     }
   }
 
-  // const value = await this.memoryCache.get('projectMintDetails_' + id);
-  // if (value) {
-  //   const cachedResponse = JSON.parse(value as string);
-  //   return cachedResponse;
-  // } else {
-  //   const mintDetails = await this.mintModel.find({
-  //     projectDetails: id
-  //   }).select(['-_id', '-__v']);
-  //   if (mintDetails) {
-  //     for (const details of mintDetails) {
-  //       const collectionSaleDetails = await lastValueFrom(this.web3Service.GetCollectionSaleDetails({ address: details.saleContractAddress }));
-
-  //       details.mintDetails.
-
-  //         details.tokensLeft = collectionSaleDetails.tokensLeft;
-  //       details.tokensTotal = collectionSaleDetails.tokensTotal;
-  //     }
-  //     await this.memoryCache.set('projectMintDetails_' + id, JSON.stringify(mintDetails));
-  //     return mintDetails;
-  //   } else {
-  //     throw new BadRequestException();
-  //   }
-  // }
 }

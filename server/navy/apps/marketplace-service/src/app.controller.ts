@@ -48,6 +48,13 @@ export class AppController {
     return this.appService.getCollectionItems(MarketplaceNftsType.ALL, address, page, size);
   }
 
+  @Get('collection/:address/owner/:owner')
+  getCollectionMyItems(
+    @Param('address') address: string,
+    @Param('owner') owner: string) {
+    return this.appService.getCollectionItemsByOwner(address, owner);
+  }
+
   @Get('mint/:collectionAddress')
   getMint(@Param('collectionAddress') collectionAddress: string) {
     return this.appService.getMintByCollection(collectionAddress);

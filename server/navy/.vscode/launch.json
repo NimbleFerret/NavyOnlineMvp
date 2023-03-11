@@ -30,5 +30,31 @@
             ],
             "type": "node"
         },
+        {
+            "name": "Launch Marketplace-Service",
+            "request": "launch",
+            "runtimeArgs": [
+                "run-script",
+                "start:marketplace-service:dev"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Launch Web3-Worker-Service",
+            "request": "launch",
+            "runtimeArgs": [
+                "run-script",
+                "start:web3-worker-service:dev"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
     ]
 }
