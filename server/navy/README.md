@@ -5,6 +5,7 @@
 * docker build --tag navy-web3-service -f ./docker-web3-service.dockerfile .
 * docker build --tag navy-web3-worker-service -f ./docker-web3-worker-service.dockerfile .
 * docker build --tag navy-gameplay-service -f ./docker-gameplay-service.dockerfile .
+* docker build --tag navy-notification-service -f ./docker-notification-service.dockerfile .
 
 Создать пользовательскую bridge сеть:
 * docker network create navy-online
@@ -23,6 +24,7 @@
 * docker run --rm --net navy-online --name navy-web3-service -d -p 3020:3020 navy-web3-service
 * docker run --rm --net navy-online --name navy-web3-worker-service -d -p 3010:3010 navy-web3-worker-service
 * docker run --rm --net navy-online --name navy-gameplay-service -d -p 4020:4020 navy-gameplay-service
+* docker run --rm --net navy-online --name navy-notification-service -d -p 3028:3028 navy-notification-service
 
 Связать локальный образ с новым удаленным:
 * docker tag navy-marketplace-service:0.1.0 ferret228/navy-marketplace-service:0.1.0
