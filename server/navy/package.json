@@ -46,6 +46,7 @@
     "@nestjs/platform-socket.io": "9.3.9",
     "@nestjs/schedule": "2.1.0",
     "@nestjs/serve-static": "3.0.0",
+    "@nestjs/swagger": "^6.2.1",
     "@nestjs/terminus": "9.2.1",
     "@nestjs/websockets": "9.3.9",
     "bull": "4.10.0",
