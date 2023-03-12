@@ -7,7 +7,7 @@ import {
     SocketServerMessageRemoveEntity,
     WsProtocol,
 } from "../../ws/ws.protocol";
-import { game } from "../../js/IslandEngine.js"
+import { game } from "../../js/NavyIslandEngine.js"
 import { BaseGameObject } from "@app/shared-library/entities/entity.base";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 
