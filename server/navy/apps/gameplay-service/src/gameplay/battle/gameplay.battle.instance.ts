@@ -166,6 +166,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             y: jsEntity.shipObjectEntity.y,
             id: jsEntity.shipObjectEntity.id,
             direction: jsEntity.shipObjectEntity.direction,
+            currentSpeed: jsEntity.shipObjectEntity.currentSpeed,
             armor: jsEntity.shipObjectEntity.armor,
             hull: jsEntity.shipObjectEntity.hull,
         } as ShipObjectEntity;

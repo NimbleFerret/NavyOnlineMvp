@@ -37,5 +37,5 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 navy.js
-GameEngine.js
-IslandEngine.js
+NavyGameEngine.js
+NavyIslandEngine.js

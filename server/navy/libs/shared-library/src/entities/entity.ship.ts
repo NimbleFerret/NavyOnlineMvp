@@ -41,6 +41,7 @@ export interface ShipObjectEntity extends BaseGameObject {
     acceleration: number;
     minSpeed: number;
     maxSpeed: number;
+    currentSpeed: number;
     direction: GameEntityDirection;
     serverShipRef: String;
     free: Boolean;
@@ -66,6 +67,7 @@ export class ShipEntity {
             y: 207,
             minSpeed: 0,
             maxSpeed: 300,
+            currentSpeed: 0,
             acceleration: 50,
             direction: GameEntityDirection.EAST,
             id,

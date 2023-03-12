@@ -310,6 +310,7 @@ class BattleGameplay extends BasicGameplay {
 			y: message.y,
 			minSpeed: message.minSpeed,
 			maxSpeed: message.maxSpeed,
+			currentSpeed: message.currentSpeed,
 			acceleration: message.acceleration,
 			direction: message.direction,
 			id: message.id,

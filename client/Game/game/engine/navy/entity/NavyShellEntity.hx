@@ -25,7 +25,6 @@ class NavyShellEntity extends EngineBaseGameEntity implements GameEntityCustomUp
 
 		customUpdate = this;
 		customCollide = this;
-		currentSpeed = NavyEngineConfig.ShellDefaultSpeed;
 	}
 
 	// ------------------------------------------------

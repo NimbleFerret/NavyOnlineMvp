@@ -74,11 +74,11 @@ class NavyShipEntity extends EngineBaseGameEntity {
 		var result = true;
 		switch (playerInputType) {
 			case MOVE_UP:
-				if (currentSpeed + shipObjectEntity.acceleration > shipObjectEntity.maxSpeed) {
+				if (baseObjectEntity.currentSpeed + shipObjectEntity.acceleration > shipObjectEntity.maxSpeed) {
 					result = false;
 				}
 			case MOVE_DOWN:
-				if (currentSpeed - shipObjectEntity.acceleration < shipObjectEntity.minSpeed) {
+				if (baseObjectEntity.currentSpeed - shipObjectEntity.acceleration < shipObjectEntity.minSpeed) {
 					result = false;
 				}
 			case _:
@@ -110,13 +110,13 @@ class NavyShipEntity extends EngineBaseGameEntity {
 
 	public function accelerate() {
 		var stateChanged = false;
-		if (checkMovementInput() && currentSpeed != shipObjectEntity.maxSpeed) {
+		if (checkMovementInput() && baseObjectEntity.currentSpeed != shipObjectEntity.maxSpeed) {
 			stateChanged = true;
-			currentSpeed += shipObjectEntity.acceleration;
-			if (currentSpeed > shipObjectEntity.maxSpeed)
-				currentSpeed = shipObjectEntity.maxSpeed;
+			baseObjectEntity.currentSpeed += shipObjectEntity.acceleration;
+			if (baseObjectEntity.currentSpeed > shipObjectEntity.maxSpeed)
+				baseObjectEntity.currentSpeed = shipObjectEntity.maxSpeed;
 			if (speedChangeCallback != null) {
-				speedChangeCallback(currentSpeed);
+				speedChangeCallback(baseObjectEntity.currentSpeed);
 			}
 		}
 		return stateChanged;
@@ -124,13 +124,13 @@ class NavyShipEntity extends EngineBaseGameEntity {
 
 	public function decelerate() {
 		var stateChanged = false;
-		if (checkMovementInput() && currentSpeed != shipObjectEntity.minSpeed) {
+		if (checkMovementInput() && baseObjectEntity.currentSpeed != shipObjectEntity.minSpeed) {
 			stateChanged = true;
-			currentSpeed -= shipObjectEntity.acceleration;
-			if (currentSpeed < shipObjectEntity.minSpeed)
-				currentSpeed = shipObjectEntity.minSpeed;
+			baseObjectEntity.currentSpeed -= shipObjectEntity.acceleration;
+			if (baseObjectEntity.currentSpeed < shipObjectEntity.minSpeed)
+				baseObjectEntity.currentSpeed = shipObjectEntity.minSpeed;
 			if (speedChangeCallback != null) {
-				speedChangeCallback(currentSpeed);
+				speedChangeCallback(baseObjectEntity.currentSpeed);
 			}
 		}
 		return stateChanged;

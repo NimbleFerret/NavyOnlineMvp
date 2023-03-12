@@ -227,6 +227,9 @@ abstract class BasicGameplay {
 				final clientEntity = clientMainEntities.get(entity.id);
 				if (clientEntity != null) {
 					customUpdateWorldState();
+					if (clientEntity.getEngineEntity().getCurrentSpeed() != entity.currentSpeed) {
+						clientEntity.getEngineEntity().setCurrentSpeed(entity.currentSpeed);
+					}
 					final distanceBetweenServerAndClient = hxd.Math.distance(entity.x - clientEntity.x, entity.y - clientEntity.y);
 					if (distanceBetweenServerAndClient >= 50) {
 						clientEntity.updateEntityPosition(entity.x, entity.y);

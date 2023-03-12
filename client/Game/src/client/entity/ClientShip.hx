@@ -163,8 +163,8 @@ class ClientShip extends ClientBaseGameEntity {
 			x = hxd.Math.lerp(x, engineEntity.getX(), 0.1);
 			y = hxd.Math.lerp(y, engineEntity.getY(), 0.1);
 		} else {
-			final dx = engineEntity.currentSpeed * Math.cos(engineEntity.getRotation()) * dt;
-			final dy = engineEntity.currentSpeed * Math.sin(engineEntity.getRotation()) * dt;
+			final dx = engineEntity.getCurrentSpeed() * Math.cos(engineEntity.getRotation()) * dt;
+			final dy = engineEntity.getCurrentSpeed() * Math.sin(engineEntity.getRotation()) * dt;
 			x = x + dx * 0.96;
 			y = y + dy * 0.96;
 		}
@@ -270,7 +270,7 @@ class ClientShip extends ClientBaseGameEntity {
 			currentHull: shipEntity.currentHull,
 			armor: shipEntity.getArmor(),
 			currentArmor: shipEntity.currentArmor,
-			currentSpeed: shipEntity.currentSpeed,
+			currentSpeed: shipEntity.getCurrentSpeed(),
 			maxSpeed: shipEntity.getMaxSpeed(),
 			dir: shipEntity.getDirection(),
 			allowShootLeft: shipEntity.shootAllowanceBySide(LEFT),

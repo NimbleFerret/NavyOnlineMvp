@@ -35,7 +35,6 @@ abstract class EngineBaseGameEntity {
 
 	public var dx = 0.0;
 	public var dy = 0.0;
-	public var currentSpeed = 0.0;
 
 	// ----------------------
 	// Geom shape
@@ -171,9 +170,9 @@ abstract class EngineBaseGameEntity {
 	}
 
 	private function move() {
-		if (currentSpeed != 0) {
-			dx = currentSpeed * Math.cos(baseObjectEntity.rotation) * lastDeltaTime;
-			dy = currentSpeed * Math.sin(baseObjectEntity.rotation) * lastDeltaTime;
+		if (baseObjectEntity.currentSpeed != 0) {
+			dx = baseObjectEntity.currentSpeed * Math.cos(baseObjectEntity.rotation) * lastDeltaTime;
+			dy = baseObjectEntity.currentSpeed * Math.sin(baseObjectEntity.rotation) * lastDeltaTime;
 			baseObjectEntity.x += dx;
 			baseObjectEntity.y += dy;
 		}
@@ -215,6 +214,10 @@ abstract class EngineBaseGameEntity {
 		return baseObjectEntity.rotation;
 	}
 
+	public function getCurrentSpeed() {
+		return baseObjectEntity.currentSpeed;
+	}
+
 	// ------------------------------------------------
 	// Setters
 	// ------------------------------------------------
@@ -237,5 +240,9 @@ abstract class EngineBaseGameEntity {
 
 	public function decrementRotation(r:Float) {
 		baseObjectEntity.rotation -= r;
+	}
+
+	public function setCurrentSpeed(speed:Int) {
+		return baseObjectEntity.currentSpeed = speed;
 	}
 }

@@ -63,6 +63,7 @@ typedef BaseObjectEntityStruct = {
 	?acceleration:Int,
 	?minSpeed:Int,
 	?maxSpeed:Int,
+	?currentSpeed:Int,
 	?direction:GameEntityDirection,
 	?movementDelay:Float,
 	?rotation:Float,
@@ -76,6 +77,7 @@ class BaseObjectEntity {
 	public var acceleration:Int;
 	public var minSpeed:Int;
 	public var maxSpeed:Int;
+	public var currentSpeed:Int;
 	public var direction:GameEntityDirection;
 	public var rotation:Float;
 	public var movementDelay:Float;
@@ -88,6 +90,7 @@ class BaseObjectEntity {
 		this.acceleration = struct.acceleration;
 		this.minSpeed = struct.minSpeed;
 		this.maxSpeed = struct.maxSpeed;
+		this.currentSpeed = struct.currentSpeed;
 		this.direction = struct.direction;
 		this.rotation = struct.rotation;
 		this.id = struct.id;

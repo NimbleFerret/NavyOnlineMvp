@@ -117,6 +117,6 @@ class MathUtils {
 	}
 
 	public static function differ(a:Float, b:Float, error:Float) {
-		return Math.abs(a - b) > error;
+		return Math.abs(a - b) > (error == 0 ? 1 : error);
 	}
 }

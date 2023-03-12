@@ -37,6 +37,10 @@ abstract class ClientBaseGameEntity extends h2d.Object {
 		return engineEntity.isAlive;
 	}
 
+	public function getEngineEntity() {
+		return engineEntity;
+	}
+
 	public function onCollision() {}
 
 	abstract public function update(dt:Float):Void;
