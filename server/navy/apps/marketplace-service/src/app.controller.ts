@@ -3,7 +3,7 @@ import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { NotificationsReadDto } from './dto/dto.notifications.read';
 
-@Controller()
+@Controller('marketplace')
 export class AppController {
 
   private static readonly DefaultPaginationSize = 1;
