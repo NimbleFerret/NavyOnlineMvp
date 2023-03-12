@@ -238,11 +238,19 @@ class NavyGameEngine extends BaseEngine {
 
 	// -------------------------------------
 	// Shell game object
-	// --------------------------------------
+	// -------------------------------------
 
 	public function addShell(entity:ShellObjectEntityStruct):NavyShellEntity {
 		final newShell = new NavyShellEntity(new ShellObjectEntity(entity));
 		shellManager.add(newShell);
 		return newShell;
+	}
+
+	// -------------------------------------
+	// Input wrappers
+	// -------------------------------------
+
+	public function applyPlayerInput(inputType:PlayerInputType, playerId:String, ?index:Int, ?shootDetails:ShootInputDetails) {
+		addInputCommand(new NavyInputCommand(inputType, playerId, index, shootDetails));
 	}
 }

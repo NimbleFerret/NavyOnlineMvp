@@ -37,6 +37,7 @@ class BattleGameplay extends BasicGameplay {
 	public final hud:BattleHud;
 	public final waterScene:WaterScene;
 
+	private var lockMouseClickInput = false;
 	private var inputType = InputType.Game;
 	private var leaveCallback:Void->Void;
 
@@ -103,6 +104,20 @@ class BattleGameplay extends BasicGameplay {
 				final clientShip = clientMainEntities.get(params.ship.getId());
 				if (clientShip != null) {
 					effectsManager.addDamageText(clientShip.x, clientShip.y, params.damage);
+				}
+			}
+		};
+
+		gameEngine.postLoopCallback = function callback() {
+			for (input in gameEngine.validatedInputCommands) {
+				if (input.playerId == Player.instance.playerId) {
+					final playerInput = cast(input, NavyInputCommand);
+					Socket.instance.input({
+						index: Player.instance.getInputIndex(),
+						playerId: playerInput.playerId,
+						playerInputType: playerInput.inputType,
+						shootDetails: playerInput.shootDetails
+					});
 				}
 			}
 		};
@@ -222,24 +237,27 @@ class BattleGameplay extends BasicGameplay {
 	}
 
 	public function customInput(mousePos:Point, mouseLeft:Bool, mouseRight:Bool) {
+		if (lockMouseClickInput && K.isReleased(K.MOUSE_LEFT)) {
+			lockMouseClickInput = false;
+		}
+
 		final leftClick = K.isPressed(K.MOUSE_LEFT);
-		if (leftClick) {
+		if (leftClick && !lockMouseClickInput) {
+			lockMouseClickInput = true;
+
 			final mouseToShipRelation = getMouseToShipRelation();
 			final playerShip = cast(getPlayerEntity(), ClientShip);
 			final side = mouseToShipRelation.toTheLeft ? LEFT : RIGHT;
 			final cannonsFiringRange = playerShip.getCannonsFiringAreaBySide(side);
+
 			for (index in 0...cannonsFiringRange.length) {
 				final shootDetails = {
 					side: side,
 					aimAngleRads: playerShip.getCannonFiringAreaAngle(side, index)
 				};
-				baseEngine.addInputCommand(new NavyInputCommand(PlayerInputType.SHOOT, playerId, Player.instance.incrementAndGetInputIndex(), shootDetails));
-				Socket.instance.input({
-					index: Player.instance.getInputIndex(),
-					playerId: playerId,
-					playerInputType: PlayerInputType.SHOOT,
-					shootDetails: shootDetails
-				});
+
+				final gameEngine = cast(baseEngine, NavyGameEngine);
+				gameEngine.applyPlayerInput(PlayerInputType.SHOOT, playerId, Player.instance.incrementAndGetInputIndex(), shootDetails);
 			}
 		}
 	}
@@ -307,7 +325,7 @@ class BattleGameplay extends BasicGameplay {
 			cannonsAngleSpread: message.cannonsAngleSpread,
 			armor: message.armor,
 			hull: message.hull,
-			accDelay: message.accDelay,
+			movementDelay: message.movementDelay,
 			turnDelay: message.turnDelay,
 			fireDelay: message.fireDelay
 		});

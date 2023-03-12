@@ -3,7 +3,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayType } from "../gameplay.base.service";
 import { Model } from "mongoose";
-import { game } from "../../js/GameEngine.js"
+import { game } from "../../js/NavyGameEngine.js"
 import { ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import {
     WsProtocol,
@@ -25,7 +25,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         public testInstance: boolean,
         defaultBots: boolean = false
     ) {
-        super(eventEmitter, testInstance ? GameplayType.BattleTest : GameplayType.Battle, new game.engine.GameEngine(), x, y);
+        super(eventEmitter, testInstance ? GameplayType.BattleTest : GameplayType.Battle, new game.engine.navy.NavyGameEngine(), x, y);
 
         this.gameEngine.deleteMainEntityCallback = async (ship: object) => {
             // const jsShip = this.converJsEntityToTypeScript(ship);
@@ -183,7 +183,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
             objectEntity.cannonsRange = jsEntity.shipObjectEntity.cannonsRange;
             objectEntity.cannonsDamage = jsEntity.shipObjectEntity.cannonsDamage;
             objectEntity.cannonsAngleSpread = jsEntity.shipObjectEntity.cannonsAngleSpread;
-            objectEntity.accDelay = jsEntity.shipObjectEntity.accDelay;
+            objectEntity.movementDelay = jsEntity.shipObjectEntity.movementDelay;
             objectEntity.turnDelay = jsEntity.shipObjectEntity.turnDelay;
             objectEntity.fireDelay = jsEntity.shipObjectEntity.fireDelay;
         }
@@ -225,7 +225,7 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
     }
 
     private intiateBotShips() {
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 0; i++) {
             this.addBot()
         }
     }

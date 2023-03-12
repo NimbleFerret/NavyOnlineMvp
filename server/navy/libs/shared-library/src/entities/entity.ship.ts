@@ -53,7 +53,7 @@ export interface ShipObjectEntity extends BaseGameObject {
     cannonsAngleSpread: number;
     armor: number;
     hull: number;
-    accDelay: number;
+    movementDelay: number;
     turnDelay: number;
     fireDelay: number;
 }
@@ -81,9 +81,9 @@ export class ShipEntity {
             cannonsAngleSpread: 40,
             armor: 300,
             hull: 300,
-            accDelay: 0.500,
-            turnDelay: 0.500,
-            fireDelay: 0.500
+            movementDelay: 0.100,
+            turnDelay: 0.100,
+            fireDelay: 0.200
         };
         return ship;
     }

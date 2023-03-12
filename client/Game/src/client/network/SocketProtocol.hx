@@ -108,8 +108,6 @@ class SocketProtocol {
 	public static final SocketClientEventJoinGame = 'SocketClientEventJoinGame';
 	public static final SocketClientEventLeaveGame = 'SocketClientEventLeaveGame';
 	public static final SocketClientEventInput = 'SocketClientEventInput';
-	// public static final SocketClientEventMove = 'SocketClientEventMove';
-	// public static final SocketClientEventShoot = 'SocketClientEventShoot';
 	public static final SocketClientEventSync = 'SocketClientEventSync';
 	public static final SocketClientEventRespawn = 'SocketClientEventRespawn';
 }

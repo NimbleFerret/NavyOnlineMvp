@@ -64,6 +64,7 @@ typedef BaseObjectEntityStruct = {
 	?minSpeed:Int,
 	?maxSpeed:Int,
 	?direction:GameEntityDirection,
+	?movementDelay:Float,
 	?rotation:Float,
 	?id:String,
 	?ownerId:String
@@ -77,6 +78,7 @@ class BaseObjectEntity {
 	public var maxSpeed:Int;
 	public var direction:GameEntityDirection;
 	public var rotation:Float;
+	public var movementDelay:Float;
 	public var id:String;
 	public var ownerId:String;
 

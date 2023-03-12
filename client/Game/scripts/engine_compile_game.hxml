@@ -1,4 +1,4 @@
 -cp ../engine
 -lib uuid
--js GameEngine.js
--main game.engine.GameEngine
+-js NavyGameEngine.js
+-main game.engine.navy.NavyGameEngine

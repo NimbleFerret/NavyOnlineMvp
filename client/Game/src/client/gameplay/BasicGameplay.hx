@@ -93,6 +93,7 @@ abstract class BasicGameplay {
 
 	private function updateInput() {
 		final newMousePos = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
+
 		if (isDragging) {
 			currentDrag.x = newMousePos.x - dragMousePosStart.x;
 			currentDrag.y = newMousePos.y - dragMousePosStart.y;
@@ -105,22 +106,27 @@ abstract class BasicGameplay {
 				currentDrag.y = currentDrag.y > 0 ? maxDragY : -maxDragY;
 			}
 		}
+
 		if (!isDragging && hxd.Key.isDown(hxd.Key.MOUSE_RIGHT)) {
 			isDragging = true;
 			dragMousePosStart = new Point(Window.getInstance().mouseX, Window.getInstance().mouseY);
 			currentDrag.x = 0;
 			currentDrag.y = 0;
 		}
+
 		if (isDragging && !hxd.Key.isDown(hxd.Key.MOUSE_RIGHT)) {
 			isDragging = false;
 			currentDrag.x = 0;
 			currentDrag.y = 0;
 		}
+
 		final left = K.isDown(K.LEFT);
 		final right = K.isDown(K.RIGHT);
 		final up = K.isDown(K.UP);
 		final down = K.isDown(K.DOWN);
+
 		var playerInputType:PlayerInputType = null;
+
 		if (left)
 			playerInputType = PlayerInputType.MOVE_LEFT;
 		if (right)
@@ -129,15 +135,13 @@ abstract class BasicGameplay {
 			playerInputType = PlayerInputType.MOVE_UP;
 		if (down)
 			playerInputType = PlayerInputType.MOVE_DOWN;
+
 		final movementAllowance = baseEngine.checkLocalMovementInputAllowance(playerEntityId, playerInputType);
+
 		if (playerInputType != null && (up || down || left || right) && movementAllowance) {
 			baseEngine.addInputCommand(new NavyInputCommand(playerInputType, playerId, Player.instance.incrementAndGetInputIndex()));
-			Socket.instance.input({
-				index: Player.instance.getInputIndex(),
-				playerId: playerId,
-				playerInputType: playerInputType
-			});
 		}
+
 		customInput(newMousePos, K.isPressed(hxd.Key.MOUSE_LEFT), hxd.Key.isPressed(hxd.Key.MOUSE_RIGHT));
 	}
 

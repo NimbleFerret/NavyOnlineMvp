@@ -32,10 +32,7 @@ abstract class EngineBaseGameEntity {
 	// ----------------------
 	private var lastMovementInputCheck = 0.0;
 	private var lastLocalMovementInputCheck = 0.0;
-	// WTF ?
-	private var inputMovementCheckDelayMS = 0.08;
 
-	// private var inputMovementCheckDelayMS = 0.1;
 	public var dx = 0.0;
 	public var dy = 0.0;
 	public var currentSpeed = 0.0;
@@ -142,7 +139,7 @@ abstract class EngineBaseGameEntity {
 
 	public function checkMovementInput() {
 		final now = haxe.Timer.stamp();
-		if (lastMovementInputCheck == 0 || lastMovementInputCheck + inputMovementCheckDelayMS < now) {
+		if (lastMovementInputCheck == 0 || lastMovementInputCheck + baseObjectEntity.movementDelay < now) {
 			lastMovementInputCheck = now;
 			return true;
 		} else {
@@ -152,7 +149,7 @@ abstract class EngineBaseGameEntity {
 
 	public function checkLocalMovementInput() {
 		final now = haxe.Timer.stamp();
-		if (lastLocalMovementInputCheck == 0 || lastLocalMovementInputCheck + inputMovementCheckDelayMS < now) {
+		if (lastLocalMovementInputCheck == 0 || lastLocalMovementInputCheck + baseObjectEntity.movementDelay < now) {
 			lastLocalMovementInputCheck = now;
 			return true;
 		} else {

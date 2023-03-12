@@ -63,7 +63,6 @@ typedef ShipObjectEntityStruct = {
 	cannonsAngleSpread:Int,
 	armor:Int,
 	hull:Int,
-	accDelay:Float,
 	turnDelay:Float,
 	fireDelay:Float
 }
@@ -80,7 +79,6 @@ class ShipObjectEntity extends BaseObjectEntity {
 	public var cannonsAngleSpread:Int;
 	public var armor:Int;
 	public var hull:Int;
-	public var accDelay:Float;
 	public var turnDelay:Float;
 	public var fireDelay:Float;
 
@@ -98,7 +96,7 @@ class ShipObjectEntity extends BaseObjectEntity {
 		this.cannonsAngleSpread = struct.cannonsAngleSpread;
 		this.armor = struct.armor;
 		this.hull = struct.hull;
-		this.accDelay = struct.accDelay;
+		this.movementDelay = struct.movementDelay;
 		this.turnDelay = struct.turnDelay;
 		this.fireDelay = struct.fireDelay;
 	}

@@ -209,21 +209,7 @@ export abstract class BaseGameplayInstance {
     async handlePlayerInput(data: SocketClientMessageInput) {
         const playerEntityId = this.playerEntityMap.get(data.playerId);
         if (playerEntityId) {
-            this.gameEngine.addInputCommand({
-                index: data.index,
-                inputType: data.playerInputType,
-                playerId: data.playerId,
-                shootDetails: data.shootDetails
-            });
-
-            // Only basic movement notification inside basic instance logic
-            // if (data.playerInputType != PlayerInputType.SHOOT) {
-            //     const socketServerMessageEntityInput = {
-            //         playerId: data.playerId,
-            //         playerInputType: data.playerInputType
-            //     } as SocketServerMessageEntityInput;
-            //     this.notifyAllPlayers(socketServerMessageEntityInput, WsProtocol.SocketServerEventEntityInput, data.playerId);
-            // }
+            this.gameEngine.applyPlayerInput(data.playerInputType, data.playerId, data.index, data.shootDetails);
         }
     }
 

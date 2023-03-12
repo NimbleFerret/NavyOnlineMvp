@@ -50,12 +50,12 @@ class SceneDemo1 extends Scene {
 			shipHullSize: ShipHullSize.SMALL,
 			shipWindows: ShipWindows.NONE,
 			shipCannons: ShipCannons.ONE,
-			cannonsRange: 500,
+			cannonsRange: 1500,
 			cannonsDamage: 1,
 			cannonsAngleSpread: 40,
 			armor: 300,
 			hull: 300,
-			accDelay: 0.500,
+			movementDelay: 0.500,
 			turnDelay: 0.500,
 			fireDelay: 0.500
 		})));
@@ -79,12 +79,12 @@ class SceneDemo1 extends Scene {
 					shipHullSize: ShipHullSize.SMALL,
 					shipWindows: ShipWindows.NONE,
 					shipCannons: ShipCannons.ONE,
-					cannonsRange: 500,
+					cannonsRange: 1500,
 					cannonsDamage: 1,
 					cannonsAngleSpread: 40,
 					armor: 100,
 					hull: 100,
-					accDelay: 0.500,
+					movementDelay: 0.500,
 					turnDelay: 0.500,
 					fireDelay: 0.500
 				})));
