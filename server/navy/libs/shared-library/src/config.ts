@@ -14,11 +14,11 @@ export class Config {
     public static readonly GAMEPLAY_SERVICE_DEFAULT_REGION = 'EU';
 
     // TODO get from env ?
-    private static readonly testEnv = false;
+    public static readonly TestEnv = false;
 
     public static GetRedisHost() {
         return {
-            host: Config.testEnv ? 'localhost' : 'navy-redis',
+            host: Config.TestEnv ? 'localhost' : 'navy-redis',
             port: 6379,
             password: ''
         }

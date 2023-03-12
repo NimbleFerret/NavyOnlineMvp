@@ -14,7 +14,8 @@ async function bootstrap() {
     .setVersion('0.0.1')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('', app, document);
+
+  SwaggerModule.setup(Config.TestEnv ? '' : 'marketplace', app, document);
 
   await app.listen(Config.MARKETPLACE_SERVICE_PORT);
   Logger.log(`Marketplace-Service started at port: ${Config.MARKETPLACE_SERVICE_PORT}`);
