@@ -4,7 +4,7 @@ import { Project, ProjectSchema } from '@app/shared-library/schemas/marketplace/
 import { Collection, CollectionSchema } from '@app/shared-library/schemas/marketplace/schema.collection';
 import { Mint, MintSchema } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { CollectionItem, CollectionItemSchema } from '@app/shared-library/schemas/marketplace/schema.collection.item';
-import { NotificationSchema } from '@app/shared-library/schemas/marketplace/schema.notification';
+import { Notification, NotificationSchema } from '@app/shared-library/schemas/marketplace/schema.notification';
 import { Module } from '@nestjs/common';
 import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -27,7 +27,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       { name: Mint.name, schema: MintSchema },
       { name: Collection.name, schema: CollectionSchema },
       { name: CollectionItem.name, schema: CollectionItemSchema },
-      { name: CollectionItem.name, schema: NotificationSchema }
+      { name: Notification.name, schema: NotificationSchema }
     ]),
     MongooseModule.forRoot(Config.GetMongoHost()),
     ClientsModule.register([
