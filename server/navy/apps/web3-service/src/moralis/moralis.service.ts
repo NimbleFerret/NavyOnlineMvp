@@ -154,179 +154,179 @@ export class MoralisService implements OnModuleInit {
         }
     }
 
-    private async getCaptainNFTsByOwnerAddress(entity: any, userAvatar: UserAvatarDocument) {
-        const metadataAttributes = JSON.parse(entity.metadata).attributes;
-        const playerCaptainEntity = {
-            id: entity.token_id,
-            miningRewardNVY: metadataAttributes[0]['miningRewardNVY'],
-            stakingRewardNVY: metadataAttributes[1]['stakingRewardNVY'],
-            traits: metadataAttributes[2]['traits'],
-            level: metadataAttributes[3]['level'],
-            rarity: metadataAttributes[4]['rarity'],
-            bg: metadataAttributes[5]['bg'],
-            acc: metadataAttributes[6]['acc'],
-            head: metadataAttributes[7]['head'],
-            haircutOrHat: metadataAttributes[8]['haircutOrHat'],
-            clothes: metadataAttributes[9]['clothes'],
-        } as CaptainEntity;
+    // private async getCaptainNFTsByOwnerAddress(entity: any, userAvatar: UserAvatarDocument) {
+    //     const metadataAttributes = JSON.parse(entity.metadata).attributes;
+    //     const playerCaptainEntity = {
+    //         id: entity.token_id,
+    //         miningRewardNVY: metadataAttributes[0]['miningRewardNVY'],
+    //         stakingRewardNVY: metadataAttributes[1]['stakingRewardNVY'],
+    //         traits: metadataAttributes[2]['traits'],
+    //         level: metadataAttributes[3]['level'],
+    //         rarity: metadataAttributes[4]['rarity'],
+    //         bg: metadataAttributes[5]['bg'],
+    //         acc: metadataAttributes[6]['acc'],
+    //         head: metadataAttributes[7]['head'],
+    //         haircutOrHat: metadataAttributes[8]['haircutOrHat'],
+    //         clothes: metadataAttributes[9]['clothes'],
+    //     } as CaptainEntity;
 
-        const captain = await this.captainModel.findOne({
-            tokenId: playerCaptainEntity.id
-        });
+    //     const captain = await this.captainModel.findOne({
+    //         tokenId: playerCaptainEntity.id
+    //     });
 
-        if (!captain) {
-            const newCaptain = new this.captainModel();
-            newCaptain.tokenId = playerCaptainEntity.id;
-            newCaptain.owner = userAvatar;
-            newCaptain.miningRewardNVY = playerCaptainEntity.miningRewardNVY;
-            newCaptain.stakingRewardNVY = playerCaptainEntity.stakingRewardNVY;
-            newCaptain.traits = playerCaptainEntity.traits;
-            newCaptain.level = playerCaptainEntity.level;
-            newCaptain.rarity = Rarity[Rarity[playerCaptainEntity.rarity]];
-            newCaptain.bg = playerCaptainEntity.bg;
-            newCaptain.acc = playerCaptainEntity.acc;
-            newCaptain.head = playerCaptainEntity.head;
-            newCaptain.haircutOrHat = playerCaptainEntity.haircutOrHat;
-            newCaptain.clothes = playerCaptainEntity.clothes;
-            await newCaptain.save();
-        } else {
-            captain.owner = userAvatar;
-            captain.miningRewardNVY = playerCaptainEntity.miningRewardNVY;
-            captain.stakingRewardNVY = playerCaptainEntity.stakingRewardNVY;
-            captain.traits = playerCaptainEntity.traits;
-            captain.level = playerCaptainEntity.level;
-            await captain.save();
-        }
+    //     if (!captain) {
+    //         const newCaptain = new this.captainModel();
+    //         newCaptain.tokenId = playerCaptainEntity.id;
+    //         newCaptain.owner = userAvatar;
+    //         newCaptain.miningRewardNVY = playerCaptainEntity.miningRewardNVY;
+    //         newCaptain.stakingRewardNVY = playerCaptainEntity.stakingRewardNVY;
+    //         newCaptain.traits = playerCaptainEntity.traits;
+    //         newCaptain.level = playerCaptainEntity.level;
+    //         newCaptain.rarity = Rarity[Rarity[playerCaptainEntity.rarity]];
+    //         newCaptain.bg = playerCaptainEntity.bg;
+    //         newCaptain.acc = playerCaptainEntity.acc;
+    //         newCaptain.head = playerCaptainEntity.head;
+    //         newCaptain.haircutOrHat = playerCaptainEntity.haircutOrHat;
+    //         newCaptain.clothes = playerCaptainEntity.clothes;
+    //         await newCaptain.save();
+    //     } else {
+    //         captain.owner = userAvatar;
+    //         captain.miningRewardNVY = playerCaptainEntity.miningRewardNVY;
+    //         captain.stakingRewardNVY = playerCaptainEntity.stakingRewardNVY;
+    //         captain.traits = playerCaptainEntity.traits;
+    //         captain.level = playerCaptainEntity.level;
+    //         await captain.save();
+    //     }
 
-        return playerCaptainEntity;
-    }
+    //     return playerCaptainEntity;
+    // }
 
-    private async getShipNFTsByOwnerAddress(entity: any, userAvatar: UserAvatarDocument) {
-        const metadataAttributes = JSON.parse(entity.metadata).attributes;
-        const playerShipEntity = {
-            id: entity.token_id,
-            type: AssetType.COMMON,
-            hull: metadataAttributes[0]['hull'],
-            armor: metadataAttributes[1]['armor'],
-            maxSpeed: metadataAttributes[2]['maxSpeed'],
-            accelerationStep: metadataAttributes[3]['accelerationStep'],
-            accelerationDelay: metadataAttributes[4]['accelerationDelay'],
-            rotationDelay: metadataAttributes[5]['rotationDelay'],
-            fireDelay: metadataAttributes[6]['fireDelay'],
-            cannons: metadataAttributes[7]['cannons'],
-            cannonsRange: metadataAttributes[8]['cannonsRange'],
-            cannonsDamage: metadataAttributes[9]['cannonsDamage'],
-            traits: metadataAttributes[10]['traits'],
-            level: metadataAttributes[11]['level'],
-            rarity: metadataAttributes[12]['rarity'],
-            size: metadataAttributes[13]['size'],
-            currentIntegrity: metadataAttributes[14]['currentIntegrity'],
-            maxIntegrity: metadataAttributes[15]['maxIntegrity'],
-            windows: metadataAttributes[16]['windows'],
-            anchor: metadataAttributes[17]['anchor'],
-        } as ShipEntity;
+    // private async getShipNFTsByOwnerAddress(entity: any, userAvatar: UserAvatarDocument) {
+    //     const metadataAttributes = JSON.parse(entity.metadata).attributes;
+    //     const playerShipEntity = {
+    //         id: entity.token_id,
+    //         type: AssetType.COMMON,
+    //         hull: metadataAttributes[0]['hull'],
+    //         armor: metadataAttributes[1]['armor'],
+    //         maxSpeed: metadataAttributes[2]['maxSpeed'],
+    //         accelerationStep: metadataAttributes[3]['accelerationStep'],
+    //         accelerationDelay: metadataAttributes[4]['accelerationDelay'],
+    //         rotationDelay: metadataAttributes[5]['rotationDelay'],
+    //         fireDelay: metadataAttributes[6]['fireDelay'],
+    //         cannons: metadataAttributes[7]['cannons'],
+    //         cannonsRange: metadataAttributes[8]['cannonsRange'],
+    //         cannonsDamage: metadataAttributes[9]['cannonsDamage'],
+    //         traits: metadataAttributes[10]['traits'],
+    //         level: metadataAttributes[11]['level'],
+    //         rarity: metadataAttributes[12]['rarity'],
+    //         size: metadataAttributes[13]['size'],
+    //         currentIntegrity: metadataAttributes[14]['currentIntegrity'],
+    //         maxIntegrity: metadataAttributes[15]['maxIntegrity'],
+    //         windows: metadataAttributes[16]['windows'],
+    //         anchor: metadataAttributes[17]['anchor'],
+    //     } as ShipEntity;
 
-        const ship = await this.shipModel.findOne({
-            tokenId: playerShipEntity.id
-        });
+    //     const ship = await this.shipModel.findOne({
+    //         tokenId: playerShipEntity.id
+    //     });
 
-        if (!ship) {
-            const newShip = new this.shipModel();
-            newShip.tokenId = playerShipEntity.id;
-            newShip.owner = userAvatar;
-            newShip.hull = playerShipEntity.hull;
-            newShip.armor = playerShipEntity.armor;
-            newShip.maxSpeed = playerShipEntity.maxSpeed;
-            newShip.accelerationStep = playerShipEntity.accelerationStep;
-            newShip.accelerationDelay = playerShipEntity.accelerationDelay;
-            newShip.rotationDelay = playerShipEntity.rotationDelay;
-            newShip.fireDelay = playerShipEntity.fireDelay;
-            newShip.cannons = playerShipEntity.cannons;
-            newShip.cannonsRange = playerShipEntity.cannonsRange;
-            newShip.cannonsDamage = playerShipEntity.cannonsDamage;
-            newShip.size = ShipSize[ShipSize[playerShipEntity.size]];
-            newShip.rarity = Rarity[Rarity[playerShipEntity.rarity]];
-            newShip.level = playerShipEntity.level;
-            newShip.windows = playerShipEntity.windows;
-            newShip.anchor = playerShipEntity.anchor;
-            newShip.currentIntegrity = playerShipEntity.currentIntegrity;
-            newShip.maxIntegrity = playerShipEntity.maxIntegrity;
-            await newShip.save();
-        } else {
-            ship.hull = playerShipEntity.hull;
-            ship.owner = userAvatar;
-            ship.armor = playerShipEntity.armor;
-            ship.maxSpeed = playerShipEntity.maxSpeed;
-            ship.accelerationStep = playerShipEntity.accelerationStep;
-            ship.accelerationDelay = playerShipEntity.accelerationDelay;
-            ship.rotationDelay = playerShipEntity.rotationDelay;
-            ship.cannons = playerShipEntity.cannons;
-            ship.cannonsRange = playerShipEntity.cannonsRange;
-            ship.cannonsDamage = playerShipEntity.cannonsDamage;
-            ship.traits = playerShipEntity.traits;
-            ship.level = playerShipEntity.level;
-            await ship.save();
-        }
+    //     if (!ship) {
+    //         const newShip = new this.shipModel();
+    //         newShip.tokenId = playerShipEntity.id;
+    //         newShip.owner = userAvatar;
+    //         newShip.hull = playerShipEntity.hull;
+    //         newShip.armor = playerShipEntity.armor;
+    //         newShip.maxSpeed = playerShipEntity.maxSpeed;
+    //         newShip.accelerationStep = playerShipEntity.accelerationStep;
+    //         newShip.accelerationDelay = playerShipEntity.accelerationDelay;
+    //         newShip.rotationDelay = playerShipEntity.rotationDelay;
+    //         newShip.fireDelay = playerShipEntity.fireDelay;
+    //         newShip.cannons = playerShipEntity.cannons;
+    //         newShip.cannonsRange = playerShipEntity.cannonsRange;
+    //         newShip.cannonsDamage = playerShipEntity.cannonsDamage;
+    //         newShip.size = ShipSize[ShipSize[playerShipEntity.size]];
+    //         newShip.rarity = Rarity[Rarity[playerShipEntity.rarity]];
+    //         newShip.level = playerShipEntity.level;
+    //         newShip.windows = playerShipEntity.windows;
+    //         newShip.anchor = playerShipEntity.anchor;
+    //         newShip.currentIntegrity = playerShipEntity.currentIntegrity;
+    //         newShip.maxIntegrity = playerShipEntity.maxIntegrity;
+    //         await newShip.save();
+    //     } else {
+    //         ship.hull = playerShipEntity.hull;
+    //         ship.owner = userAvatar;
+    //         ship.armor = playerShipEntity.armor;
+    //         ship.maxSpeed = playerShipEntity.maxSpeed;
+    //         ship.accelerationStep = playerShipEntity.accelerationStep;
+    //         ship.accelerationDelay = playerShipEntity.accelerationDelay;
+    //         ship.rotationDelay = playerShipEntity.rotationDelay;
+    //         ship.cannons = playerShipEntity.cannons;
+    //         ship.cannonsRange = playerShipEntity.cannonsRange;
+    //         ship.cannonsDamage = playerShipEntity.cannonsDamage;
+    //         ship.traits = playerShipEntity.traits;
+    //         ship.level = playerShipEntity.level;
+    //         await ship.save();
+    //     }
 
-        return playerShipEntity;
-    }
+    //     return playerShipEntity;
+    // }
 
-    private async getIslandNFTsByOwnerAddress(entity: any, user: UserAvatarDocument) {
-        const metadataAttributes = JSON.parse(entity.metadata).attributes;
-        const playerIslandEntity = {
-            id: entity.token_id,
-            level: metadataAttributes[0]['level'],
-            rarity: metadataAttributes[1]['rarity'],
-            terrain: metadataAttributes[2]['terrain'],
-            miningRewardNVY: metadataAttributes[3]['miningRewardNVY'],
-            shipAndCaptainFee: metadataAttributes[4]['shipAndCaptainFee'],
-            maxMiners: metadataAttributes[5]['maxMiners'],
-            minersFee: metadataAttributes[6]['minersFee'],
-            x: metadataAttributes[7]['x'],
-            y: metadataAttributes[8]['y']
-        } as IslandEntity;
+    // private async getIslandNFTsByOwnerAddress(entity: any, user: UserAvatarDocument) {
+    //     const metadataAttributes = JSON.parse(entity.metadata).attributes;
+    //     const playerIslandEntity = {
+    //         id: entity.token_id,
+    //         level: metadataAttributes[0]['level'],
+    //         rarity: metadataAttributes[1]['rarity'],
+    //         terrain: metadataAttributes[2]['terrain'],
+    //         miningRewardNVY: metadataAttributes[3]['miningRewardNVY'],
+    //         shipAndCaptainFee: metadataAttributes[4]['shipAndCaptainFee'],
+    //         maxMiners: metadataAttributes[5]['maxMiners'],
+    //         minersFee: metadataAttributes[6]['minersFee'],
+    //         x: metadataAttributes[7]['x'],
+    //         y: metadataAttributes[8]['y']
+    //     } as IslandEntity;
 
-        // TODO add size also
-        // TODO redeploy contract and replace terrain type to number
+    //     // TODO add size also
+    //     // TODO redeploy contract and replace terrain type to number
 
-        const island = await this.islandModel.findOne({
-            tokenId: playerIslandEntity.id
-        });
+    //     const island = await this.islandModel.findOne({
+    //         tokenId: playerIslandEntity.id
+    //     });
 
-        if (!island) {
-            try {
-                const newIsland = new this.islandModel();
-                newIsland.tokenId = playerIslandEntity.id;
-                newIsland.owner = user;
-                newIsland.x = playerIslandEntity.x;
-                newIsland.y = playerIslandEntity.y;
-                newIsland.terrain = Terrain.GREEN;
-                // newIsland.terrain = Terrain[Terrain[playerIslandEntity.terrain]];
-                newIsland.rarity = Rarity[Rarity[playerIslandEntity.rarity]];
-                newIsland.size = IslandSize.SMALL;
-                newIsland.mining = false;
-                newIsland.miningStartedAt = 0;
-                newIsland.miningDurationSeconds = 604800;
-                newIsland.miningRewardNVY = 45;
-                newIsland.shipAndCaptainFee = 10;
-                newIsland.minersFee = 5;
-                newIsland.miners = 0;
-                newIsland.maxMiners = 3;
-                newIsland.level = 0;
-                await newIsland.save();
-                await lastValueFrom(this.worldService.AddNewIslandToSector({
-                    tokenId: newIsland.tokenId,
-                }));
-            } catch (e) {
-                this.logger.error('Unable to add island to sector', e);
-            }
-        } else {
-            island.owner = user;
-            await island.save();
-        }
+    //     if (!island) {
+    //         try {
+    //             const newIsland = new this.islandModel();
+    //             newIsland.tokenId = playerIslandEntity.id;
+    //             newIsland.owner = user;
+    //             newIsland.x = playerIslandEntity.x;
+    //             newIsland.y = playerIslandEntity.y;
+    //             newIsland.terrain = Terrain.GREEN;
+    //             // newIsland.terrain = Terrain[Terrain[playerIslandEntity.terrain]];
+    //             newIsland.rarity = Rarity[Rarity[playerIslandEntity.rarity]];
+    //             newIsland.size = IslandSize.SMALL;
+    //             newIsland.mining = false;
+    //             newIsland.miningStartedAt = 0;
+    //             newIsland.miningDurationSeconds = 604800;
+    //             newIsland.miningRewardNVY = 45;
+    //             newIsland.shipAndCaptainFee = 10;
+    //             newIsland.minersFee = 5;
+    //             newIsland.miners = 0;
+    //             newIsland.maxMiners = 3;
+    //             newIsland.level = 0;
+    //             await newIsland.save();
+    //             await lastValueFrom(this.worldService.AddNewIslandToSector({
+    //                 tokenId: newIsland.tokenId,
+    //             }));
+    //         } catch (e) {
+    //             this.logger.error('Unable to add island to sector', e);
+    //         }
+    //     } else {
+    //         island.owner = user;
+    //         await island.save();
+    //     }
 
-        return playerIslandEntity;
-    }
+    //     return playerIslandEntity;
+    // }
 
 
     //
