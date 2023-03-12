@@ -10,6 +10,9 @@ enum CurrentState {
 }
 
 class NavyCharacterEntity extends EngineBaseGameEntity {
+	public var lastMovementDirection:PlainDirection;
+	public var blockedMovementDirection:PlainDirection;
+
 	public function new(baseObjectEntity:BaseObjectEntity) {
 		super(baseObjectEntity, NavyEntitiesConfig.EntityShapeByType.get(GameEntityType.CHARACTER));
 
@@ -23,7 +26,7 @@ class NavyCharacterEntity extends EngineBaseGameEntity {
 	// ------------------------------------------------
 
 	public function canMove(playerInputType:PlayerInputType) {
-		return true;
+		return isMovable;
 	}
 
 	public function updateHashImpl() {
@@ -32,10 +35,27 @@ class NavyCharacterEntity extends EngineBaseGameEntity {
 
 	public function moveInDirection(plainDirection:PlainDirection) {
 		var stateChanged = false;
-		if (checkMovementInput()) {
+		if (checkMovementInput() && canMoveIfBlocked(plainDirection)) {
 			stateChanged = true;
 			moveStepInDirection(plainDirection);
+			lastMovementDirection = plainDirection;
 		}
 		return stateChanged;
+	}
+
+	public function blockMovement() {
+		blockedMovementDirection = lastMovementDirection;
+	}
+
+	public function resetMovementBlock() {
+		blockedMovementDirection = null;
+	}
+
+	private function canMoveIfBlocked(newDirection:PlainDirection) {
+		if (blockedMovementDirection != null) {
+			return blockedMovementDirection == LEFT && newDirection == RIGHT || blockedMovementDirection == RIGHT && newDirection == LEFT
+				|| blockedMovementDirection == UP && newDirection == DOWN || blockedMovementDirection == DOWN && newDirection == UP;
+		}
+		return true;
 	}
 }

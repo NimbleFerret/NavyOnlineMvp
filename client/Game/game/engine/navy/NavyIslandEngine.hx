@@ -1,5 +1,6 @@
 package game.engine.navy;
 
+import game.engine.base.MathUtils;
 import game.engine.navy.entity.NavyCharacterEntity;
 import game.engine.base.BaseTypesAndClasses;
 import game.engine.base.core.BaseEngine;
@@ -92,60 +93,27 @@ class NavyIslandEngine extends BaseEngine {
 						validatedInputCommands.push(input);
 				case _:
 			}
-			// public function processInputCommand(playerInputCommand:PlayerInputCommand) {
-			// var success = true;
-			// switch (playerInputCommand.inputType) {
-			// 	case MOVE_UP:
-			// 	case MOVE_DOWN:
-			// 	case MOVE_LEFT:
-			// 	case MOVE_RIGHT:
-			// 	case _:
-			// }
 		}
 	}
 
 	public function engineLoopUpdate(dt:Float) {
 		for (character in mainEntityManager.entities) {
+			final char = cast(character, NavyCharacterEntity);
+			char.resetMovementBlock();
+
 			character.collides(false);
 			character.update(dt);
-			final char = cast(character, NavyCharacterEntity);
-			// if (char.wantToMoveLeft) {
-			// 	// char.moveLeft();
-			// }
-			// if (char.wantToMoveRight) {
-			// 	// char.moveRight();
-			// }
-			// if (char.wantToMoveUp) {
-			// 	// char.moveUp();
-			// }
-			// if (char.wantToMoveDown) {
-			// 	// char.moveDown();
-			// }
-			// var revertMovement = false;
-			// for (lineCollider in lineColliders) {
-			// 	if (character.getBodyRectangle().intersectsWithLine(lineCollider)) {
-			// 		character.collides(true);
-			// 		revertMovement = true;
-			// 	}
-			// }
-			// if (revertMovement) {
-			// 	if (char.wantToMoveLeft) {
-			// 		// char.moveLeft(true);
-			// 	}
-			// 	if (char.wantToMoveRight) {
-			// 		// char.moveRight(true);
-			// 	}
-			// 	if (char.wantToMoveUp) {
-			// 		// char.moveUp(true);
-			// 	}
-			// 	if (char.wantToMoveDown) {
-			// 		// char.moveDown(true);
-			// 	}
-			// }
-			// char.wantToMoveLeft = false;
-			// char.wantToMoveRight = false;
-			// char.wantToMoveUp = false;
-			// char.wantToMoveDown = false;
+
+			for (lineCollider in lineColliders) {
+				final charRect = character.getBodyRectangle();
+				if (lineCollider.getMidPoint().distance(charRect.getCenter()) < (charRect.getMaxSide() * 3)) {
+					if (charRect.intersectsWithLine(lineCollider)) {
+						character.collides(true);
+						char.blockMovement();
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -156,47 +124,8 @@ class NavyIslandEngine extends BaseEngine {
 	}
 
 	// ------------------------------------
+
 	public function addLineCollider(x1:Int, y1:Int, x2:Int, y2:Int) {
 		lineColliders.push(new Line(x1, y1, x2, y2));
-	}
-
-	public function entityMoveUp(id:String) {
-		final character = cast(mainEntityManager.getEntityById(id), NavyCharacterEntity);
-		// if (character != null && character.moveUp()) {
-		// 	character.wantToMoveUp = true;
-		// 	return true;
-		// } else {
-		// 	return false;
-		// }
-	}
-
-	public function entityMoveDown(id:String) {
-		final character = cast(mainEntityManager.getEntityById(id), NavyCharacterEntity);
-		// if (character != null && character.moveDown()) {
-		// 	character.wantToMoveDown = true;
-		// 	return true;
-		// } else {
-		// 	return false;
-		// }
-	}
-
-	public function entityMoveLeft(id:String) {
-		final character = cast(mainEntityManager.getEntityById(id), NavyCharacterEntity);
-		// if (character != null && character.moveLeft()) {
-		// 	character.wantToMoveLeft = true;
-		// 	return true;
-		// } else {
-		// 	return false;
-		// }
-	}
-
-	public function entityMoveRight(id:String) {
-		final character = cast(mainEntityManager.getEntityById(id), NavyCharacterEntity);
-		// if (character != null && character.moveRight()) {
-		// 	character.wantToMoveRight = true;
-		// 	return true;
-		// } else {
-		// 	return false;
-		// }
 	}
 }

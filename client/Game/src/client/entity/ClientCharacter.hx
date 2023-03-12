@@ -115,29 +115,29 @@ class ClientCharacter extends ClientBaseGameEntity {
 		leftAnim.alpha = 0;
 		rightAnim.alpha = 0;
 
-		if (MathUtils.differ(intEngineX, x, 1)) {
+		if (MathUtils.differ(intEngineX, x, 2)) {
 			if (intEngineX > x) {
 				leftAnim.alpha = 0;
 				rightAnim.alpha = 1;
 
-				x = x + delta * 0.96;
+				x = x + delta * 0.90;
 			} else if (intEngineX < x) {
 				leftAnim.alpha = 1;
 				rightAnim.alpha = 0;
 
-				x = x - delta * 0.96;
+				x = x - delta * 0.90;
 			}
-		} else if (MathUtils.differ(intEngineY, y, 1)) {
+		} else if (MathUtils.differ(intEngineY, y, 2)) {
 			if (intEngineY > y) {
 				upAnim.alpha = 0;
 				downAnim.alpha = 1;
 
-				y = y + delta * 0.96;
+				y = y + delta * 0.90;
 			} else if (intEngineY < y) {
 				upAnim.alpha = 1;
 				downAnim.alpha = 0;
 
-				y = y - delta * 0.96;
+				y = y - delta * 0.90;
 			}
 		} else {
 			idleAnim.alpha = 1;

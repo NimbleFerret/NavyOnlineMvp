@@ -13,6 +13,10 @@ class Line {
 		this.y2 = y2;
 	}
 
+	public function getMidPoint() {
+		return new Point((x1 + x2) / 2, (y1 + y2) / 2);
+	}
+
 	public function intersectsWithLine(line:Line) {
 		return MathUtils.lineToLineIntersection(this, line);
 	}

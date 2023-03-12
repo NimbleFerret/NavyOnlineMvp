@@ -25,6 +25,8 @@ abstract class EngineBaseGameEntity {
 
 	public var isAlive = true;
 	public var isCollides = true;
+	public var isMovable = true;
+
 	public var killerId:String;
 
 	// ----------------------

@@ -136,10 +136,12 @@ abstract class BasicGameplay {
 		if (down)
 			playerInputType = PlayerInputType.MOVE_DOWN;
 
-		final movementAllowance = baseEngine.checkLocalMovementInputAllowance(playerEntityId, playerInputType);
+		if (playerInputType != null) {
+			final movementAllowance = baseEngine.checkLocalMovementInputAllowance(playerEntityId, playerInputType);
 
-		if (playerInputType != null && (up || down || left || right) && movementAllowance) {
-			baseEngine.addInputCommand(new NavyInputCommand(playerInputType, playerId, Player.instance.incrementAndGetInputIndex()));
+			if (playerInputType != null && (up || down || left || right) && movementAllowance) {
+				baseEngine.addInputCommand(new NavyInputCommand(playerInputType, playerId, Player.instance.incrementAndGetInputIndex()));
+			}
 		}
 
 		customInput(newMousePos, K.isPressed(hxd.Key.MOUSE_LEFT), hxd.Key.isPressed(hxd.Key.MOUSE_RIGHT));
@@ -301,18 +303,6 @@ abstract class BasicGameplay {
 		scene.add(entity, GameEntityLayer);
 	}
 
-	// private function moveUp(entityId:String) {
-	// 	return baseEngine.entityMoveUp(entityId);
-	// }
-	// private function moveDown(entityId:String) {
-	// 	return baseEngine.entityMoveDown(entityId);
-	// }
-	// private function moveLeft(entityId:String) {
-	// 	return baseEngine.entityMoveLeft(entityId);
-	// }
-	// private function moveRight(entityId:String) {
-	// 	return baseEngine.entityMoveRight(entityId);
-	// }
 	// --------------------------------------
 	// Utils
 	// --------------------------------------

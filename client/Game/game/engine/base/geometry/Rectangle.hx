@@ -23,6 +23,10 @@ class Rectangle {
 		return new Point(x, y);
 	}
 
+	public function getMaxSide() {
+		return w > h ? w : h;
+	}
+
 	private function getLeft() {
 		return x - w / 2;
 	}

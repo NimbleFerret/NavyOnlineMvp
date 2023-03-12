@@ -91,6 +91,7 @@ class BaseObjectEntity {
 		this.minSpeed = struct.minSpeed;
 		this.maxSpeed = struct.maxSpeed;
 		this.currentSpeed = struct.currentSpeed;
+		this.movementDelay = struct.movementDelay;
 		this.direction = struct.direction;
 		this.rotation = struct.rotation;
 		this.id = struct.id;
