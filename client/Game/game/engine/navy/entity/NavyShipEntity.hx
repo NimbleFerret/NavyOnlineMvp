@@ -21,8 +21,7 @@ class NavyShipEntity extends EngineBaseGameEntity {
 	// -----------------------
 	// Ship details
 	// -----------------------
-	public final shipObjectEntity:ShipObjectEntity;
-
+	// public final shipObjectEntity:ShipObjectEntity;
 	// -----------------------
 	// Health and damage stuff
 	// -----------------------
@@ -42,11 +41,11 @@ class NavyShipEntity extends EngineBaseGameEntity {
 	public function new(shipObjectEntity:ShipObjectEntity) {
 		super(shipObjectEntity, NavyEntitiesConfig.EntityShapeByType.get(getShipTypeBySize(shipObjectEntity.shipHullSize)));
 
-		this.shipObjectEntity = shipObjectEntity;
-		currentHull = this.shipObjectEntity.hull;
-		currentArmor = this.shipObjectEntity.armor;
+		// this.shipObjectEntity = shipObjectEntity;
+		currentHull = shipObjectEntity.hull;
+		currentArmor = shipObjectEntity.armor;
 
-		switch (this.shipObjectEntity.direction) {
+		switch (this.baseObjectEntity.direction) {
 			case NORTH:
 				setRotation(MathUtils.degreeToRads(-90));
 			case NORTH_EAST:
@@ -74,11 +73,11 @@ class NavyShipEntity extends EngineBaseGameEntity {
 		var result = true;
 		switch (playerInputType) {
 			case MOVE_UP:
-				if (baseObjectEntity.currentSpeed + shipObjectEntity.acceleration > shipObjectEntity.maxSpeed) {
+				if (baseObjectEntity.currentSpeed + baseObjectEntity.acceleration > baseObjectEntity.maxSpeed) {
 					result = false;
 				}
 			case MOVE_DOWN:
-				if (baseObjectEntity.currentSpeed - shipObjectEntity.acceleration < shipObjectEntity.minSpeed) {
+				if (baseObjectEntity.currentSpeed - baseObjectEntity.acceleration < baseObjectEntity.minSpeed) {
 					result = false;
 				}
 			case _:
@@ -100,7 +99,7 @@ class NavyShipEntity extends EngineBaseGameEntity {
 	private function checkRotationInput() {
 		final now = haxe.Timer.stamp();
 
-		if (lastRotationInputCheck == 0 || lastRotationInputCheck + shipObjectEntity.turnDelay < now) {
+		if (lastRotationInputCheck == 0 || lastRotationInputCheck + getShipObjectEntity().turnDelay < now) {
 			lastRotationInputCheck = now;
 			return true;
 		} else {
@@ -110,11 +109,11 @@ class NavyShipEntity extends EngineBaseGameEntity {
 
 	public function accelerate() {
 		var stateChanged = false;
-		if (checkMovementInput() && baseObjectEntity.currentSpeed != shipObjectEntity.maxSpeed) {
+		if (checkMovementInput() && baseObjectEntity.currentSpeed != baseObjectEntity.maxSpeed) {
 			stateChanged = true;
-			baseObjectEntity.currentSpeed += shipObjectEntity.acceleration;
-			if (baseObjectEntity.currentSpeed > shipObjectEntity.maxSpeed)
-				baseObjectEntity.currentSpeed = shipObjectEntity.maxSpeed;
+			baseObjectEntity.currentSpeed += baseObjectEntity.acceleration;
+			if (baseObjectEntity.currentSpeed > baseObjectEntity.maxSpeed)
+				baseObjectEntity.currentSpeed = baseObjectEntity.maxSpeed;
 			if (speedChangeCallback != null) {
 				speedChangeCallback(baseObjectEntity.currentSpeed);
 			}
@@ -124,11 +123,11 @@ class NavyShipEntity extends EngineBaseGameEntity {
 
 	public function decelerate() {
 		var stateChanged = false;
-		if (checkMovementInput() && baseObjectEntity.currentSpeed != shipObjectEntity.minSpeed) {
+		if (checkMovementInput() && baseObjectEntity.currentSpeed != baseObjectEntity.minSpeed) {
 			stateChanged = true;
-			baseObjectEntity.currentSpeed -= shipObjectEntity.acceleration;
-			if (baseObjectEntity.currentSpeed < shipObjectEntity.minSpeed)
-				baseObjectEntity.currentSpeed = shipObjectEntity.minSpeed;
+			baseObjectEntity.currentSpeed -= baseObjectEntity.acceleration;
+			if (baseObjectEntity.currentSpeed < baseObjectEntity.minSpeed)
+				baseObjectEntity.currentSpeed = baseObjectEntity.minSpeed;
 			if (speedChangeCallback != null) {
 				speedChangeCallback(baseObjectEntity.currentSpeed);
 			}
@@ -141,26 +140,26 @@ class NavyShipEntity extends EngineBaseGameEntity {
 		if (checkRotationInput()) {
 			stateChanged = true;
 			decrementRotation(MathUtils.degreeToRads(45));
-			switch (shipObjectEntity.direction) {
+			switch (getShipObjectEntity().direction) {
 				case EAST:
-					shipObjectEntity.direction = NORTH_EAST;
+					getShipObjectEntity().direction = NORTH_EAST;
 				case NORTH_EAST:
-					shipObjectEntity.direction = NORTH;
+					getShipObjectEntity().direction = NORTH;
 				case NORTH:
-					shipObjectEntity.direction = NORTH_WEST;
+					getShipObjectEntity().direction = NORTH_WEST;
 				case NORTH_WEST:
-					shipObjectEntity.direction = WEST;
+					getShipObjectEntity().direction = WEST;
 				case WEST:
-					shipObjectEntity.direction = SOUTH_WEST;
+					getShipObjectEntity().direction = SOUTH_WEST;
 				case SOUTH_WEST:
-					shipObjectEntity.direction = SOUTH;
+					getShipObjectEntity().direction = SOUTH;
 				case SOUTH:
-					shipObjectEntity.direction = SOUTH_EAST;
+					getShipObjectEntity().direction = SOUTH_EAST;
 				case SOUTH_EAST:
-					shipObjectEntity.direction = EAST;
+					getShipObjectEntity().direction = EAST;
 			}
 			if (directionChangeCallbackLeft != null) {
-				directionChangeCallbackLeft(shipObjectEntity.direction);
+				directionChangeCallbackLeft(getShipObjectEntity().direction);
 			}
 		}
 		return stateChanged;
@@ -171,26 +170,26 @@ class NavyShipEntity extends EngineBaseGameEntity {
 		if (checkRotationInput()) {
 			stateChanged = true;
 			incrementRotation(MathUtils.degreeToRads(45));
-			switch (shipObjectEntity.direction) {
+			switch (getShipObjectEntity().direction) {
 				case EAST:
-					shipObjectEntity.direction = SOUTH_EAST;
+					getShipObjectEntity().direction = SOUTH_EAST;
 				case SOUTH_EAST:
-					shipObjectEntity.direction = SOUTH;
+					getShipObjectEntity().direction = SOUTH;
 				case SOUTH:
-					shipObjectEntity.direction = SOUTH_WEST;
+					getShipObjectEntity().direction = SOUTH_WEST;
 				case SOUTH_WEST:
-					shipObjectEntity.direction = WEST;
+					getShipObjectEntity().direction = WEST;
 				case WEST:
-					shipObjectEntity.direction = NORTH_WEST;
+					getShipObjectEntity().direction = NORTH_WEST;
 				case NORTH_WEST:
-					shipObjectEntity.direction = NORTH;
+					getShipObjectEntity().direction = NORTH;
 				case NORTH:
-					shipObjectEntity.direction = NORTH_EAST;
+					getShipObjectEntity().direction = NORTH_EAST;
 				case NORTH_EAST:
-					shipObjectEntity.direction = EAST;
+					getShipObjectEntity().direction = EAST;
 			}
 			if (directionChangeCallbackRight != null) {
-				directionChangeCallbackRight(shipObjectEntity.direction);
+				directionChangeCallbackRight(getShipObjectEntity().direction);
 			}
 		}
 		return stateChanged;
@@ -203,16 +202,16 @@ class NavyShipEntity extends EngineBaseGameEntity {
 	public function shootAllowanceBySide(side:Side) {
 		final now = haxe.Timer.stamp();
 		if (side == RIGHT) {
-			return lastRightShootInputCheck == 0 || lastRightShootInputCheck + shipObjectEntity.fireDelay < now;
+			return lastRightShootInputCheck == 0 || lastRightShootInputCheck + getShipObjectEntity().fireDelay < now;
 		} else {
-			return lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + shipObjectEntity.fireDelay < now;
+			return lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + getShipObjectEntity().fireDelay < now;
 		}
 	}
 
 	public function tryShoot(side:Side) {
 		final now = haxe.Timer.stamp();
 		if (side == RIGHT) {
-			if (lastRightShootInputCheck == 0 || lastRightShootInputCheck + shipObjectEntity.fireDelay < now) {
+			if (lastRightShootInputCheck == 0 || lastRightShootInputCheck + getShipObjectEntity().fireDelay < now) {
 				lastRightShootInputCheck = now;
 				if (shootRightCallback != null) {
 					shootRightCallback();
@@ -222,7 +221,7 @@ class NavyShipEntity extends EngineBaseGameEntity {
 				return false;
 			}
 		} else {
-			if (lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + shipObjectEntity.fireDelay < now) {
+			if (lastLeftShootInputCheck == 0 || lastLeftShootInputCheck + getShipObjectEntity().fireDelay < now) {
 				lastLeftShootInputCheck = now;
 				if (shootLeftCallback != null) {
 					shootLeftCallback();
@@ -259,7 +258,7 @@ class NavyShipEntity extends EngineBaseGameEntity {
 		final result = new Array<Point>();
 		var cannonsTotal = 0;
 
-		switch (shipObjectEntity.shipCannons) {
+		switch (getShipObjectEntity().shipCannons) {
 			case ONE:
 				cannonsTotal = 1;
 			case TWO:
@@ -283,7 +282,7 @@ class NavyShipEntity extends EngineBaseGameEntity {
 		final result = new Array<CannonFiringRangeDetails>();
 		var cannonsTotal = 0;
 
-		switch (shipObjectEntity.shipCannons) {
+		switch (getShipObjectEntity().shipCannons) {
 			case ONE:
 				cannonsTotal = 1;
 			case TWO:
@@ -299,10 +298,10 @@ class NavyShipEntity extends EngineBaseGameEntity {
 			final cannonPosition = getCannonPositionBySideAndIndex(side, i);
 
 			final x = cannonPosition.x, y = cannonPosition.y;
-			final spreadDegree = MathUtils.degreeToRads(shipObjectEntity.cannonsAngleSpread / 2);
-			final lineHorizontalLength = x + (side == RIGHT ? shipObjectEntity.cannonsRange : -shipObjectEntity.cannonsRange);
+			final spreadDegree = MathUtils.degreeToRads(getShipObjectEntity().cannonsAngleSpread / 2);
+			final lineHorizontalLength = x + (side == RIGHT ? getShipObjectEntity().cannonsRange : -getShipObjectEntity().cannonsRange);
 
-			final centralLineEndPoint = MathUtils.rotatePointAroundCenter(lineHorizontalLength, y, x, y, MathUtils.getGunRadByDir(shipObjectEntity.direction));
+			final centralLineEndPoint = MathUtils.rotatePointAroundCenter(lineHorizontalLength, y, x, y, MathUtils.getGunRadByDir(baseObjectEntity.direction));
 			final leftLineEndPoint = MathUtils.rotatePointAroundCenter(centralLineEndPoint.x, centralLineEndPoint.y, x, y, spreadDegree);
 			final rightLineEndPoint = MathUtils.rotatePointAroundCenter(centralLineEndPoint.x, centralLineEndPoint.y, x, y, -spreadDegree);
 
@@ -324,7 +323,7 @@ class NavyShipEntity extends EngineBaseGameEntity {
 		var additionalOffsetX = 0;
 		var additionalOffsetY = 0;
 
-		final direction = shipObjectEntity.direction;
+		final direction = baseObjectEntity.direction;
 
 		if (side == Side.LEFT) {
 			if (direction == EAST) {
@@ -394,7 +393,7 @@ class NavyShipEntity extends EngineBaseGameEntity {
 			}
 		}
 
-		if (shipObjectEntity.shipHullSize == ShipHullSize.MEDIUM) {
+		if (getShipObjectEntity().shipHullSize == ShipHullSize.MEDIUM) {
 			offset = side == Side.LEFT ? NavyEntitiesConfig.LeftCannonsOffsetByDirMid.get(direction) : NavyEntitiesConfig.RightCannonsOffsetByDirMid.get(direction);
 		} else {
 			offset = side == Side.LEFT ? NavyEntitiesConfig.LeftCannonsOffsetByDirSm.get(direction) : NavyEntitiesConfig.RightCannonsOffsetByDirSm.get(direction);
@@ -403,7 +402,7 @@ class NavyShipEntity extends EngineBaseGameEntity {
 		final offsetX = offset.positions[index].x - additionalOffsetX;
 		final offsetY = offset.positions[index].y - additionalOffsetY;
 
-		return new Point(shipObjectEntity.x + offsetX, shipObjectEntity.y + offsetY);
+		return new Point(baseObjectEntity.x + offsetX, baseObjectEntity.y + offsetY);
 	}
 
 	private static function getShipTypeBySize(size:ShipHullSize) {
@@ -421,31 +420,43 @@ class NavyShipEntity extends EngineBaseGameEntity {
 	// Getters
 	// -----------------------
 
+	private function getShipObjectEntity() {
+		return cast(baseObjectEntity, ShipObjectEntity);
+	}
+
 	public function getShipHullSize() {
-		return shipObjectEntity.shipHullSize;
+		return getShipObjectEntity().shipHullSize;
 	}
 
 	public function getHull() {
-		return shipObjectEntity.hull;
+		return getShipObjectEntity().hull;
 	}
 
 	public function getArmor() {
-		return shipObjectEntity.armor;
+		return getShipObjectEntity().armor;
 	}
 
 	public function getShipWindows() {
-		return shipObjectEntity.shipWindows;
+		return getShipObjectEntity().shipWindows;
 	}
 
 	public function getShipCannons() {
-		return shipObjectEntity.shipCannons;
+		return getShipObjectEntity().shipCannons;
 	}
 
 	public function getCannonsDamage() {
-		return shipObjectEntity.cannonsDamage;
+		return getShipObjectEntity().cannonsDamage;
 	}
 
 	public function getCannonsRange() {
-		return shipObjectEntity.cannonsRange;
+		return getShipObjectEntity().cannonsRange;
+	}
+
+	public function getCannonsShellSpeed() {
+		return getShipObjectEntity().cannonsShellSpeed;
+	}
+
+	public function getRole() {
+		return getShipObjectEntity().role;
 	}
 }
