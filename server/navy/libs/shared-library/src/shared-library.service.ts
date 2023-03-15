@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CaptainEntity } from './entities/entity.captain';
-import { ShipEntity } from './entities/entity.ship';
-import { ShipSize, Rarity, AssetType } from './shared-library.main';
+import { Rarity } from './shared-library.main';
 
 export interface SelectPercentageOptions<T> {
     value: T;
@@ -80,24 +78,6 @@ export class SharedLibraryService {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    public static GetFreeCaptain() {
-        return {
-            miningRewardNVY: 0,
-            stakingRewardNVY: 0,
-            miningStartedAt: 0,
-            miningDurationSeconds: 0,
-            traits: 0,
-            level: 0,
-            bg: 1,
-            acc: 0,
-            head: 3,
-            haircutOrHat: 3,
-            clothes: 3,
-            type: AssetType.FREE,
-            rarity: Rarity.COMMON
-        } as CaptainEntity
     }
 
 }
