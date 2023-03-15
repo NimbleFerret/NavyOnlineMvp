@@ -11,9 +11,9 @@ export class CharacterEntity {
             y: 290,
             id,
             ownerId,
-            acceleration: 50,
+            acceleration: 150,
             minSpeed: 0,
-            maxSpeed: 300,
+            maxSpeed: 150,
             currentSpeed: 0,
             movementDelay: 0.100,
         };
