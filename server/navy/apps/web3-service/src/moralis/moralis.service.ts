@@ -4,7 +4,7 @@ import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
 import { ClientGrpc } from "@nestjs/microservices";
 import { Model } from "mongoose";
-import { CaptainEntity } from "@app/shared-library/entities/entity.captain";
+// import { CaptainEntity } from "@app/shared-library/entities/entity.captain";
 import { IslandEntity } from "@app/shared-library/entities/entity.island";
 import { ShipEntity } from "@app/shared-library/entities/entity.ship";
 import { AssetType, IslandSize, Rarity, ShipSize, Terrain } from "@app/shared-library/shared-library.main";
@@ -78,7 +78,7 @@ export class MoralisService implements OnModuleInit {
             result.aks = userAssets[0].aks;
             result.nvy = userAssets[0].nvy;
 
-            result.captains = userAssets[1].captains;
+            // result.captains = userAssets[1].captains;
             result.ships = userAssets[1].ships;
             result.islands = userAssets[1].islands;
         } else {
@@ -112,7 +112,7 @@ export class MoralisService implements OnModuleInit {
     }
 
     private async getUserNFTs(userAvatar: UserAvatarDocument) {
-        const captains: CaptainEntity[] = [];
+        // const captains: CaptainEntity[] = [];
         const ships: ShipEntity[] = [];
         const islands: IslandEntity[] = [];
 
