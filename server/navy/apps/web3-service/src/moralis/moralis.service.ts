@@ -148,7 +148,7 @@ export class MoralisService implements OnModuleInit {
         // }
 
         return {
-            captains,
+            // captains,
             ships,
             islands
         }
