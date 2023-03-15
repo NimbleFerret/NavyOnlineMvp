@@ -38,6 +38,7 @@ class SceneShipConfig extends Scene {
 			cannonsRange: 500,
 			cannonsDamage: 50,
 			cannonsAngleSpread: 40,
+			cannonsShellSpeed: 400,
 			armor: 100,
 			hull: 100,
 			movementDelay: 0.500,

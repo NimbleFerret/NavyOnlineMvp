@@ -40,22 +40,17 @@ export abstract class BaseGameplayInstance {
         public gameplayType: GameplayType,
         public gameEngine: any,
         public x: number,
-        public y: number) {
-        switch (gameplayType) {
-            case GameplayType.BattleTest:
-                if (x == 0 && y == 0) {
-                    this.instanceId = Constants.BATTLE_TEST_INSTANCE_ID;
-                } else {
-                    this.instanceId = uuidv4();
-                }
-                break;
-            case GameplayType.IslandTest:
+        public y: number,
+        public isTest: boolean) {
+        if (isTest) {
+            if (gameplayType == GameplayType.Battle) {
+                this.instanceId = Constants.BATTLE_TEST_INSTANCE_ID;
+            } else {
                 this.instanceId = Constants.ISLAND_TEST_INSTANCE_ID;
-                break;
-            default:
-                this.instanceId = uuidv4();
+            }
+        } else {
+            this.instanceId = uuidv4();
         }
-
         gameEngine.postLoopCallback = () => {
             if (this.getPlayersCount()) {
                 // Replicate inputs
@@ -155,7 +150,7 @@ export abstract class BaseGameplayInstance {
     }
 
     public destroy(forced: boolean = false) {
-        if (this.ifTestInstance() && !forced) {
+        if (this.isTest && !forced) {
             return false;
         }
         try {
@@ -168,10 +163,6 @@ export abstract class BaseGameplayInstance {
             Logger.error(e);
         }
         return false;
-    }
-
-    private ifTestInstance() {
-        return this.gameplayType == GameplayType.BattleTest || this.gameplayType == GameplayType.IslandTest;
     }
 
     // -------------------------------------

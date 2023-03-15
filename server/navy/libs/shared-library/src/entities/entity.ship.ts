@@ -1,4 +1,3 @@
-import { AssetType, Rarity, ShipSize } from "../shared-library.main";
 import { BaseGameObject } from "./entity.base";
 
 export enum Role {
@@ -38,10 +37,6 @@ export enum GameEntityDirection {
     WEST = 8
 }
 export interface ShipObjectEntity extends BaseGameObject {
-    acceleration: number;
-    minSpeed: number;
-    maxSpeed: number;
-    currentSpeed: number;
     direction: GameEntityDirection;
     serverShipRef: String;
     free: Boolean;
@@ -52,9 +47,9 @@ export interface ShipObjectEntity extends BaseGameObject {
     cannonsRange: number;
     cannonsDamage: number;
     cannonsAngleSpread: number;
+    cannonsShellSpeed: number;
     armor: number;
     hull: number;
-    movementDelay: number;
     turnDelay: number;
     fireDelay: number;
 }
@@ -81,6 +76,7 @@ export class ShipEntity {
             cannonsRange: 500,
             cannonsDamage: 0,
             cannonsAngleSpread: 40,
+            cannonsShellSpeed: 400,
             armor: 300,
             hull: 300,
             movementDelay: 0.100,

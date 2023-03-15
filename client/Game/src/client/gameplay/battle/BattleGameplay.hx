@@ -324,6 +324,7 @@ class BattleGameplay extends BasicGameplay {
 			cannonsRange: message.cannonsRange,
 			cannonsDamage: message.cannonsDamage,
 			cannonsAngleSpread: message.cannonsAngleSpread,
+			cannonsShellSpeed: message.cannonsShellSpeed,
 			armor: message.armor,
 			hull: message.hull,
 			movementDelay: message.movementDelay,

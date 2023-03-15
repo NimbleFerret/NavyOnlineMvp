@@ -1,15 +1,15 @@
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayType } from "../gameplay.base.service";
-import { NotifyEachPlayerEventMsg, AppEvents } from "../../app.events";
 import {
     SocketServerMessageAddEntity,
-    SocketServerMessageRemoveEntity,
     WsProtocol,
 } from "../../ws/ws.protocol";
 import { game } from "../../js/NavyIslandEngine.js"
 import { BaseGameObject } from "@app/shared-library/entities/entity.base";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
+import { Logger } from "@nestjs/common";
+import { CaptainEntity, CaptainObjectEntity } from "@app/shared-library/entities/entity.captain";
 
 export class GameplayIslandInstance extends BaseGameplayInstance {
 
@@ -18,13 +18,13 @@ export class GameplayIslandInstance extends BaseGameplayInstance {
         x: number,
         y: number,
         public sectorContent: SectorContent,
-        testInstance: Boolean
+        testInstance: boolean
     ) {
-        super(eventEmitter, testInstance ? GameplayType.IslandTest : GameplayType.Island, new game.engine.IslandEngine(), x, y);
+        super(eventEmitter, GameplayType.Island, new game.engine.navy.NavyIslandEngine(), x, y, testInstance);
 
         this.gameEngine.createMainEntityCallback = (entity: object) => {
             const socketServerMessageAddEntity = {
-                entity: this.converJsEntityToTypeScript(entity)
+                entity: this.converJsEntityToTypeScript(entity, true)
             } as SocketServerMessageAddEntity;
             this.notifyAllPlayers(socketServerMessageAddEntity, WsProtocol.SocketServerEventAddEntity);
         };
@@ -47,6 +47,8 @@ export class GameplayIslandInstance extends BaseGameplayInstance {
 
             // this.eventEmitter.emit(AppEvents.NotifyEachPlayer, notifyEachPlayerEventMsg);
         };
+
+        Logger.log(`GameplayIslandInstance created. x: ${x}, y: ${y}, content :${sectorContent} test: ${testInstance}`);
     }
 
     // --------------------------
@@ -54,10 +56,25 @@ export class GameplayIslandInstance extends BaseGameplayInstance {
     // --------------------------
 
     public initiateEngineEntity(playerId: string, entityid: string) {
-        return this.gameEngine.createEntity(350, 290, undefined, playerId);
+        const captain = CaptainEntity.GetFreeCaptainStats(entityid, playerId);
+        // captain.x = this.playerX;
+        // this.playerX += 250;
+        const engineEntity = this.gameEngine.buildEngineEntity(captain);
+        this.gameEngine.createMainEntity(engineEntity, true);
+        return engineEntity;
     }
 
-    public converJsEntityToTypeScript(jsEntity: any) {
+    public converJsEntityToTypeScript(jsEntity: any, full: boolean) {
+        const objectEntity = {
+            // x: jsEntity.shipObjectEntity.x,
+            // y: jsEntity.shipObjectEntity.y,
+            // id: jsEntity.shipObjectEntity.id,
+            // direction: jsEntity.shipObjectEntity.direction,
+            // currentSpeed: jsEntity.shipObjectEntity.currentSpeed,
+            // armor: jsEntity.shipObjectEntity.armor,
+            // hull: jsEntity.shipObjectEntity.hull,
+        } as CaptainObjectEntity;
+
         return {} as BaseGameObject;
         // const result = {
         //     y: jsEntity.y,

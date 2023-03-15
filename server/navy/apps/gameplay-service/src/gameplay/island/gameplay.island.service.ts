@@ -12,7 +12,7 @@ export class GameplayIslandService extends GameplayBaseService {
         super();
     }
 
-    public initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent, testInstance: Boolean): BaseGameplayInstance {
+    public initiateGameplayInstance(x: number, y: number, sectorContent: SectorContent, testInstance: boolean): BaseGameplayInstance {
         return new GameplayIslandInstance(this.eventEmitter, x, y, sectorContent, testInstance)
     }
 

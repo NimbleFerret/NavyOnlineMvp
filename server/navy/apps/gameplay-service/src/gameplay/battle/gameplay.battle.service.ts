@@ -5,7 +5,7 @@ import { Injectable } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { AddBotRequestDto, AddInstanceRequestDto, EnableFeatureRequestDto, KillBotsRequestDto, KillInstanceRequestDto } from "../../app.dto";
+import { AddBotRequestDto, EnableFeatureRequestDto, KillBotsRequestDto } from "../../app.dto";
 import { AppEvents } from "../../app.events";
 import { SocketClientMessageRespawn } from "../../ws/ws.protocol";
 import { BaseGameplayInstance } from "../gameplay.base.instance";
@@ -44,7 +44,7 @@ export class GameplayBattleService extends GameplayBaseService {
     async addBot(dto: AddBotRequestDto) {
         this.instances.forEach((v, k) => {
             const instance = v as GameplayBattleInstance;
-            if (instance.testInstance && (dto.instanceId && instance.instanceId == dto.instanceId || !dto.instanceId)) {
+            if (instance.isTest && (dto.instanceId && instance.instanceId == dto.instanceId || !dto.instanceId)) {
                 instance.addBot(dto.x, dto.y);
             }
         });
@@ -62,19 +62,6 @@ export class GameplayBattleService extends GameplayBaseService {
             entitiesToDelete.forEach(entityId => {
                 instance.gameEngine.removeMainEntity(entityId);
             });
-        }
-    }
-
-    // -------------------------------
-    // Socket events
-    // -------------------------------
-
-    @OnEvent(AppEvents.PlayerRespawn)
-    async handlePlayerRespawn(data: SocketClientMessageRespawn) {
-        const instanceId = this.playerInstanceMap.get(data.playerId);
-        if (instanceId) {
-            const gameInstance = this.instances.get(instanceId) as GameplayBattleInstance;
-            gameInstance.handlePlayerRespawn(data);
         }
     }
 

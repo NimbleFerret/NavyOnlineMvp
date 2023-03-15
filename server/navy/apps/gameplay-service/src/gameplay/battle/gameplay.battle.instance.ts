@@ -13,7 +13,6 @@ import {
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 import { Role, ShipEntity, ShipObjectEntity } from "@app/shared-library/entities/entity.ship";
 
-// ---------------------------------------
 export class GameplayBattleInstance extends BaseGameplayInstance {
 
     constructor(
@@ -22,10 +21,10 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
         y: number,
         eventEmitter: EventEmitter2,
         sectorContent: SectorContent,
-        public testInstance: boolean,
+        testInstance: boolean,
         defaultBots: boolean = false
     ) {
-        super(eventEmitter, testInstance ? GameplayType.BattleTest : GameplayType.Battle, new game.engine.navy.NavyGameEngine(), x, y);
+        super(eventEmitter, GameplayType.Battle, new game.engine.navy.NavyGameEngine(), x, y, testInstance);
 
         this.gameEngine.deleteMainEntityCallback = async (ship: object) => {
             // const jsShip = this.converJsEntityToTypeScript(ship);
@@ -162,31 +161,32 @@ export class GameplayBattleInstance extends BaseGameplayInstance {
 
     public converJsEntityToTypeScript(jsEntity: any, full: boolean) {
         const objectEntity = {
-            x: jsEntity.shipObjectEntity.x,
-            y: jsEntity.shipObjectEntity.y,
-            id: jsEntity.shipObjectEntity.id,
-            direction: jsEntity.shipObjectEntity.direction,
-            currentSpeed: jsEntity.shipObjectEntity.currentSpeed,
-            armor: jsEntity.shipObjectEntity.armor,
-            hull: jsEntity.shipObjectEntity.hull,
+            x: jsEntity.baseObjectEntity.x,
+            y: jsEntity.baseObjectEntity.y,
+            id: jsEntity.baseObjectEntity.id,
+            direction: jsEntity.baseObjectEntity.direction,
+            currentSpeed: jsEntity.baseObjectEntity.currentSpeed,
+            armor: jsEntity.baseObjectEntity.armor,
+            hull: jsEntity.baseObjectEntity.hull,
         } as ShipObjectEntity;
         if (full) {
-            objectEntity.ownerId = jsEntity.shipObjectEntity.ownerId;
-            objectEntity.acceleration = jsEntity.shipObjectEntity.acceleration;
-            objectEntity.minSpeed = jsEntity.shipObjectEntity.minSpeed;
-            objectEntity.maxSpeed = jsEntity.shipObjectEntity.maxSpeed;
-            objectEntity.serverShipRef = jsEntity.shipObjectEntity.serverShipRef;
-            objectEntity.free = jsEntity.shipObjectEntity.free;
-            objectEntity.role = jsEntity.shipObjectEntity.role;
-            objectEntity.shipHullSize = jsEntity.shipObjectEntity.shipHullSize;
-            objectEntity.shipWindows = jsEntity.shipObjectEntity.shipWindows;
-            objectEntity.shipCannons = jsEntity.shipObjectEntity.shipCannons;
-            objectEntity.cannonsRange = jsEntity.shipObjectEntity.cannonsRange;
-            objectEntity.cannonsDamage = jsEntity.shipObjectEntity.cannonsDamage;
-            objectEntity.cannonsAngleSpread = jsEntity.shipObjectEntity.cannonsAngleSpread;
-            objectEntity.movementDelay = jsEntity.shipObjectEntity.movementDelay;
-            objectEntity.turnDelay = jsEntity.shipObjectEntity.turnDelay;
-            objectEntity.fireDelay = jsEntity.shipObjectEntity.fireDelay;
+            objectEntity.ownerId = jsEntity.baseObjectEntity.ownerId;
+            objectEntity.acceleration = jsEntity.baseObjectEntity.acceleration;
+            objectEntity.minSpeed = jsEntity.baseObjectEntity.minSpeed;
+            objectEntity.maxSpeed = jsEntity.baseObjectEntity.maxSpeed;
+            objectEntity.serverShipRef = jsEntity.baseObjectEntity.serverShipRef;
+            objectEntity.free = jsEntity.baseObjectEntity.free;
+            objectEntity.role = jsEntity.baseObjectEntity.role;
+            objectEntity.shipHullSize = jsEntity.baseObjectEntity.shipHullSize;
+            objectEntity.shipWindows = jsEntity.baseObjectEntity.shipWindows;
+            objectEntity.shipCannons = jsEntity.baseObjectEntity.shipCannons;
+            objectEntity.cannonsRange = jsEntity.baseObjectEntity.cannonsRange;
+            objectEntity.cannonsDamage = jsEntity.baseObjectEntity.cannonsDamage;
+            objectEntity.cannonsAngleSpread = jsEntity.baseObjectEntity.cannonsAngleSpread;
+            objectEntity.cannonsShellSpeed = jsEntity.baseObjectEntity.cannonsShellSpeed;
+            objectEntity.movementDelay = jsEntity.baseObjectEntity.movementDelay;
+            objectEntity.turnDelay = jsEntity.baseObjectEntity.turnDelay;
+            objectEntity.fireDelay = jsEntity.baseObjectEntity.fireDelay;
         }
         return objectEntity;
     }

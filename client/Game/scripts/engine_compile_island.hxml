@@ -1,4 +1,4 @@
 -cp ../engine
 -lib uuid
--js IslandEngine.js
--main game.engine.IslandEngine
+-js NavyIslandEngine.js
+-main game.engine.navy.NavyIslandEngine

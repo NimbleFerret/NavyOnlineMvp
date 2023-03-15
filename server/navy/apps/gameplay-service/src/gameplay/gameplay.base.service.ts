@@ -16,9 +16,7 @@ import { BaseGameplayInstance } from "./gameplay.base.instance";
 
 export enum GameplayType {
     Battle,
-    BattleTest,
     Island,
-    IslandTest
 }
 
 export interface JoinWorldOrCreateResult {
@@ -31,7 +29,6 @@ export abstract class GameplayBaseService {
     readonly maxPlayersPerInstance = 10;
     readonly instances = new Map<string, BaseGameplayInstance>();
     readonly sectorInstance = new Map<string, string>();
-    playerInstanceMap = new Map<string, string>();
 
     private testInstanceX = 0;
 
@@ -47,9 +44,10 @@ export abstract class GameplayBaseService {
             }
         });
         Utils.DeleteKeysFromMap(this.instances, instancesToDelete);
+        return instancesToDelete;
     }
 
-    async killInstance(instanceId: string) {
+    killInstance(instanceId: string) {
         const instance = this.instances.get(instanceId);
         if (instance) {
             if (instance.destroy(true)) {
@@ -59,14 +57,22 @@ export abstract class GameplayBaseService {
         }
     }
 
-    createTestInstance(addBots: boolean) {
+    createTestInstance(sectorContent: SectorContent, addBots: boolean) {
         const x = this.testInstanceX++, y = 0;
-        const instance = this.initiateGameplayInstance(x, y, SectorContent.SECTOR_CONTENT_EMPTY, true, addBots);
+        const instance = this.initiateGameplayInstance(x, y, sectorContent, true, addBots);
         if (instance) {
             this.instances.set(instance.instanceId, instance);
             this.sectorInstance.set(x + '+' + y, instance.instanceId);
         }
         return instance.instanceId;
+    }
+
+    hasInstance(instanceId: string) {
+        return this.instances.has(instanceId);
+    }
+
+    getInstance(instanceId: string) {
+        return this.instances.get(instanceId);
     }
 
     // -------------------------------------
@@ -149,71 +155,6 @@ export abstract class GameplayBaseService {
         });
         avgTime /= this.instances.size;
         return avgTime;
-    }
-
-    // -------------------------------------
-    // Client events from WebSocket
-    // ------------------------------------- 
-
-    @OnEvent(AppEvents.PlayerJoinedInstance)
-    async handlePlayerJoinedEvent(data: SocketClientMessageJoinGame) {
-        if (this.instances.size > 0) {
-            if (!this.playerInstanceMap.has(data.playerId.toLowerCase())) {
-                const instance = this.instances.get(data.instanceId);
-                if (instance) {
-                    await instance.handlePlayerJoinedEvent(data);
-                    this.playerInstanceMap.set(data.playerId.toLowerCase(), data.instanceId);
-                    Logger.log(`Player: ${data.playerId} was added to the existing instance: ${data.instanceId}`);
-                } else {
-                    // Commented becasuse both island and battle gameplay has the same logic  
-                    Logger.error(`Unable to add player into any game instance. Players: ${this.playerInstanceMap.size}, Instances: ${this.instances.size}`);
-                }
-            } else {
-                // Commented becasuse both island and battle gameplay has the same logic  
-                Logger.error('Player cant join more than once');
-            }
-        }
-    }
-
-    @OnEvent(AppEvents.PlayerDisconnected)
-    async handlePlayerDisconnected(data: PlayerDisconnectedEvent) {
-        const playerId = data.playerId.toLowerCase();
-        const instanceId = this.playerInstanceMap.get(playerId);
-        if (instanceId) {
-            this.playerInstanceMap.delete(playerId);
-            const instance = this.instances.get(instanceId);
-            instance.handlePlayerDisconnected(data);
-            if (instance.getPlayersCount() == 0 && instance.destroy()) {
-                Logger.log(`No more players in instance: ${instanceId}, destroying...`);
-                this.instances.delete(instanceId);
-                this.sectorInstance.delete(instance.x + '+' + instance.y);
-                Logger.log(`Instance: ${instanceId} destroyed !`);
-            }
-        } else {
-            Logger.error('Unable to delete instance while player disconnected. Player id: ' + playerId);
-        }
-    }
-
-    @OnEvent(AppEvents.PlayerInput)
-    async handlePlayerInput(data: SocketClientMessageInput) {
-        const instanceId = this.playerInstanceMap.get(data.playerId.toLowerCase());
-        if (instanceId) {
-            const instance = this.instances.get(instanceId);
-            await instance.handlePlayerInput(data);
-        } else {
-            // Logger.error(`Unable to handlePlayerMove, instanceId:${instanceId}, playerId:${data.playerId.toLowerCase()}`);
-        }
-    }
-
-    @OnEvent(AppEvents.PlayerSync)
-    async handlePlayerSync(data: SocketClientMessageSync) {
-        const instanceId = this.playerInstanceMap.get(data.playerId.toLowerCase());
-        if (instanceId) {
-            const gameInstance = this.instances.get(instanceId);
-            gameInstance.handlePlayerSync(data);
-        } else {
-            // Logger.error(`Unable to handlePlayerSync, instanceId:${instanceId}, playerId:${data.playerId.toLowerCase()}`);
-        }
     }
 
 }

@@ -49,7 +49,6 @@ class SceneOnlineDemo1 extends Scene implements EventListener {
 		Socket.instance.joinGame({
 			playerId: Player.instance.playerId,
 			instanceId: instanceId,
-			sectorType: 1,
 			entityId: Player.instance.playerEntityId
 		});
 		EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);

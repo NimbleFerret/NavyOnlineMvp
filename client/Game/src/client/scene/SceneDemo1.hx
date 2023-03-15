@@ -26,7 +26,7 @@ class SceneDemo1 extends Scene {
 	}
 
 	public function start() {
-		game = new BattleGameplay(this, EngineMode.Server, function callback() {}, function callback() {});
+		game = new BattleGameplay(this, EngineMode.Client, function callback() {}, function callback() {});
 
 		baseUiScene = new BaseUiScene();
 
@@ -40,6 +40,7 @@ class SceneDemo1 extends Scene {
 			y: 207,
 			minSpeed: 0,
 			maxSpeed: 300,
+			currentSpeed: 0,
 			acceleration: 50,
 			direction: GameEntityDirection.EAST,
 			id: null,
@@ -53,22 +54,24 @@ class SceneDemo1 extends Scene {
 			cannonsRange: 1500,
 			cannonsDamage: 1,
 			cannonsAngleSpread: 40,
+			cannonsShellSpeed: 400,
 			armor: 300,
 			hull: 300,
 			movementDelay: 0.500,
 			turnDelay: 0.500,
-			fireDelay: 0.500
+			fireDelay: 0.100
 		})));
 		var botX = 0;
 		var botY = 0;
 		var botIndex = 0;
 		for (i in 0...0) {
-			for (j in 0...2) {
+			for (j in 0...0) {
 				ships.push(new NavyShipEntity(new ShipObjectEntity({
 					x: botX,
 					y: botY,
 					minSpeed: 0,
 					maxSpeed: 300,
+					currentSpeed: 0,
 					acceleration: 50,
 					direction: GameEntityDirection.EAST,
 					id: 'botShip_' + botIndex,
@@ -82,6 +85,7 @@ class SceneDemo1 extends Scene {
 					cannonsRange: 1500,
 					cannonsDamage: 1,
 					cannonsAngleSpread: 40,
+					cannonsShellSpeed: 400,
 					armor: 100,
 					hull: 100,
 					movementDelay: 0.500,

@@ -3,4 +3,10 @@ export interface BaseGameObject {
     y: number;
     id: string;
     ownerId: string;
+
+    acceleration: number;
+    minSpeed: number;
+    maxSpeed: number;
+    currentSpeed: number;
+    movementDelay: number;
 }

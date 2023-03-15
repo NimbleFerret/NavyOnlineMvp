@@ -68,7 +68,6 @@ typedef SocketServerMessageSync = {
 typedef SocketClientMessageJoinGame = {
 	playerId:String,
 	instanceId:String,
-	sectorType:Int,
 	?entityId:String
 }
 

@@ -1,3 +1,4 @@
+import client.Player;
 import client.network.RestProtocol.JoinSectorResponse;
 import client.network.RestProtocol.GameWorldData;
 import client.scene.SceneWorldMap;
@@ -23,8 +24,8 @@ enum Scene {
 }
 
 class Main extends hxd.App {
-	// private final defaultScene = Scene.SceneDemo1;
-	private final defaultScene = Scene.SceneIsland;
+	private final defaultScene = Scene.SceneDemo1;
+	// private final defaultScene = Scene.SceneIsland;
 	// private final defaultScene = Scene.SceneShipConfig;
 	// private final defaultScene = Scene.SceneOnlineDemo1;
 	private var sceneHomeMenu:SceneHomeMenu;
@@ -98,13 +99,15 @@ class Main extends hxd.App {
 				setScene2D(sceneGeomTest);
 			case SceneOnlineDemo1:
 				sceneOnlineDemo1.start("9fd5b610-93a3-45cf-9d38-311775a33ec5");
+				// sceneOnlineDemo1.start("88601987-c5f8-4076-b51b-d64845334210");
 				setScene2D(sceneOnlineDemo1);
 			case SceneShipConfig:
 				sceneShipConfig.start();
 				sevents.addScene(sceneShipConfig.hud);
 				setScene2D(sceneShipConfig);
 			case SceneIsland:
-				final response = new JoinSectorResponse(true, null, 0, 'instance', 1, 'islandId', '0x87400A03678dd03c8BF536404B5B14C609a23b79', 'Green', true);
+				final response = new JoinSectorResponse(true, null, 0, Player.instance.TestIslandInstanceId, 1, 'island_123',
+					'0x87400A03678dd03c8BF536404B5B14C609a23b79', 'Green', true);
 				sceneIsland.start(response);
 				sevents.addScene(sceneIsland.getHud());
 				setScene2D(sceneIsland);

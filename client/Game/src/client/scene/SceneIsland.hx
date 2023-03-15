@@ -37,9 +37,9 @@ class SceneIsland extends Scene implements EventListener {
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventSync, this);
 				leaveCallback();
 			}
-		}, EngineMode.Client);
+		}, Player.instance.SinglePlayer ? EngineMode.Client : EngineMode.Server);
 		if (game.baseEngine.engineMode == EngineMode.Server) {
-			Socket.instance.joinGame({playerId: Player.instance.playerData.ethAddress, instanceId: instanceId, sectorType: 3});
+			Socket.instance.joinGame({playerId: Player.instance.playerId, instanceId: instanceId});
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddEntity, this);
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventRemoveEntity, this);

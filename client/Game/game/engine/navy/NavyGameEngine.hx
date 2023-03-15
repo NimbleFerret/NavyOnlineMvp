@@ -98,6 +98,7 @@ class NavyGameEngine extends BaseEngine {
 									rotation: shipSideRadRotation,
 									side: side,
 									pos: i,
+									currentSpeed: ship.getCannonsShellSpeed(),
 									damage: ship.getCannonsDamage(),
 									range: ship.getCannonsRange()
 								});
@@ -142,7 +143,7 @@ class NavyGameEngine extends BaseEngine {
 
 				final engineShipEntity = cast(ship, NavyShipEntity);
 
-				if (engineShipEntity.shipObjectEntity.role == Role.BOT && botsAllowShoot) {
+				if (engineShipEntity.getRole() == Role.BOT && botsAllowShoot) {
 					addInputCommand(new NavyInputCommand(PlayerInputType.SHOOT, engineShipEntity.getOwnerId(), 0, {
 						side: RIGHT,
 						aimAngleRads: MathUtils.getGunRadByDir(engineShipEntity.getDirection())
