@@ -18,7 +18,18 @@ class ClientShell extends ClientBaseGameEntity {
 		// Graphics init
 		bmp = new h2d.Bitmap(hxd.Res.cannonBall.toTile().center());
 		bmp.rotation = navyShellEntity.getRotation();
+		bmp.setScale(1);
 		addChild(bmp);
+
+		// var part = new h2d.Particles();
+		// part.load(haxe.Json.parse(hxd.Res.bullet_2.entry.getText()), hxd.Res.bullet_2.entry.path);
+		// part.rotation = Math.PI + navyShellEntity.getRotation();
+
+		// part.getGroup("Default").tiles = [h2d.Tile.fromColor(0xD0CDC9, 15, 15, 1)];
+		// part.setPosition(-10, 0);
+		// // part.rotation += navyShellEntity.getRotation();
+
+		// addChild(part);
 	}
 
 	public function getDieEffect() {

@@ -2,6 +2,9 @@
     "use strict";
     $hx_exports["game"] = $hx_exports["game"] || {};
     $hx_exports["game"]["engine"] = $hx_exports["game"]["engine"] || {};
+    $hx_exports["game"]["engine"]["base"] = $hx_exports["game"]["engine"]["base"] || {};
+    $hx_exports["game"]["engine"]["base"]["core"] = $hx_exports["game"]["engine"]["base"]["core"] || {};
+    ; $hx_exports["game"]["engine"]["navy"] = $hx_exports["game"]["engine"]["navy"] || {};
     var $estr = function () { return js_Boot.__string_rec(this, ''); }, $hxEnums = $hxEnums || {}, $_;
     function $extend(from, fields) {
         var proto = Object.create(from);
@@ -86,367 +89,80 @@
     StringTools.replace = function (s, sub, by) {
         return s.split(sub).join(by);
     };
-    var game_engine_EngineMode = $hxEnums["game.engine.EngineMode"] = {
-        __ename__: true, __constructs__: null
-        , Client: { _hx_name: "Client", _hx_index: 0, __enum__: "game.engine.EngineMode", toString: $estr }
-        , Server: { _hx_name: "Server", _hx_index: 1, __enum__: "game.engine.EngineMode", toString: $estr }
+    var game_engine_base_PosOffset = function (x, y, r) {
+        if (r == null) {
+            r = 0;
+        }
+        this.x = x;
+        this.y = y;
+        this.r = r;
     };
-    game_engine_EngineMode.__constructs__ = [game_engine_EngineMode.Client, game_engine_EngineMode.Server];
-    var game_engine_EngineGameMode = $hxEnums["game.engine.EngineGameMode"] = {
-        __ename__: true, __constructs__: null
-        , Island: { _hx_name: "Island", _hx_index: 0, __enum__: "game.engine.EngineGameMode", toString: $estr }
-        , Sea: { _hx_name: "Sea", _hx_index: 1, __enum__: "game.engine.EngineGameMode", toString: $estr }
+    game_engine_base_PosOffset.__name__ = true;
+    game_engine_base_PosOffset.prototype = {
+        __class__: game_engine_base_PosOffset
     };
-    game_engine_EngineGameMode.__constructs__ = [game_engine_EngineGameMode.Island, game_engine_EngineGameMode.Sea];
-    var game_engine_BaseEngine = $hx_exports["game"]["engine"]["BaseEngine"] = function (engineMode, engineGameMode, mainEntityManager) {
-        if (engineMode == null) {
-            engineMode = game_engine_EngineMode.Server;
-        }
-        this.coldInputCommands = [];
-        this.coldInputCommandsTreshhold = 10;
-        this.ticksSinceLastPop = 0;
-        this.hotInputCommands = [];
-        this.playerEntityMap = new haxe_ds_StringMap();
-        var _gthis = this;
-        this.engineMode = engineMode;
-        this.engineGameMode = engineGameMode;
-        this.mainEntityManager = mainEntityManager;
-        var loop = function (dt, tick) {
-            _gthis.tick = tick;
-            if (_gthis.ticksSinceLastPop == _gthis.coldInputCommandsTreshhold) {
-                _gthis.ticksSinceLastPop = 0;
-                _gthis.coldInputCommands.shift();
-            }
-            _gthis.ticksSinceLastPop++;
-            _gthis.processInputCommands(_gthis.hotInputCommands);
-            _gthis.hotInputCommands = [];
-            _gthis.engineLoopUpdate(dt);
-            if (_gthis.tickCallback != null) {
-                _gthis.tickCallback();
-            }
-        };
-        this.gameLoop = new game_engine_GameLoop(loop);
+    var game_engine_base_PosOffsetArray = function (positions) {
+        this.positions = [];
+        this.positions = positions;
     };
-    game_engine_BaseEngine.__name__ = true;
-    game_engine_BaseEngine.prototype = {
-        createMainEntity: function (entity, fireCallback) {
-            if (fireCallback == null) {
-                fireCallback = false;
-            }
-            this.mainEntityManager.add(entity);
-            var this1 = this.playerEntityMap;
-            var key = entity.getOwnerId();
-            var value = entity.getId();
-            this1.h[key] = value;
-            if (fireCallback) {
-                if (this.createMainEntityCallback != null) {
-                    this.createMainEntityCallback(entity);
-                }
-            }
-        }
-        , removeMainEntity: function (entityId) {
-            var entity = this.mainEntityManager.getEntityById(entityId);
-            if (entity != null) {
-                if (this.deleteMainEntityCallback != null) {
-                    this.deleteMainEntityCallback(entity);
-                }
-                var this1 = this.playerEntityMap;
-                var key = entity.getOwnerId();
-                var _this = this1;
-                if (Object.prototype.hasOwnProperty.call(_this.h, key)) {
-                    delete (_this.h[key]);
-                }
-                this.mainEntityManager.remove(entity.getId());
-            }
-        }
-        , getMainEntityById: function (id) {
-            return this.mainEntityManager.getEntityById(id);
-        }
-        , getMainEntityIdByOwnerId: function (id) {
-            return this.playerEntityMap.h[id];
-        }
-        , getMainEntityByOwnerId: function (id) {
-            return this.mainEntityManager.getEntityById(this.playerEntityMap.h[id]);
-        }
-        , getMainEntities: function () {
-            return this.mainEntityManager.entities;
-        }
-        , checkLocalMovementInputAllowance: function (entityId) {
-            var entity = this.mainEntityManager.getEntityById(entityId);
-            if (entity == null) {
-                return false;
-            } else {
-                return entity.checkLocalMovementInput();
-            }
-        }
-        , addInputCommand: function (playerInputCommand) {
-            if (playerInputCommand.inputType != null && playerInputCommand.entityId != null) {
-                this.hotInputCommands.push({ playerInputCommand: playerInputCommand, tick: this.tick });
-                this.coldInputCommands.push({ playerInputCommand: playerInputCommand, tick: this.tick });
-            }
-        }
-        , destroy: function () {
-            this.gameLoop.stopLoop();
-            this.mainEntityManager.destroy();
-            this.tickCallback = null;
-            this.createMainEntityCallback = null;
-            this.deleteMainEntityCallback = null;
-            this.customDelete();
-        }
-        , __class__: game_engine_BaseEngine
+    game_engine_base_PosOffsetArray.__name__ = true;
+    game_engine_base_PosOffsetArray.prototype = {
+        __class__: game_engine_base_PosOffsetArray
     };
-    var game_engine_GameEngine = $hx_exports["game"]["engine"]["GameEngine"] = function (engineMode) {
-        if (engineMode == null) {
-            engineMode = game_engine_EngineMode.Server;
+    var game_engine_base_EntityShape = function (width, height, rectOffsetX, rectOffsetY) {
+        if (rectOffsetY == null) {
+            rectOffsetY = 0;
         }
-        this.framesPassed = 0;
-        this.allowShoot = false;
-        this.shellManager = new game_engine_entity_manager_ShellManager();
-        game_engine_BaseEngine.call(this, engineMode, game_engine_EngineGameMode.Sea, new game_engine_entity_manager_ShipManager());
+        if (rectOffsetX == null) {
+            rectOffsetX = 0;
+        }
+        this.rotation = 0.0;
+        this.width = width;
+        this.height = height;
+        this.rectOffsetX = rectOffsetX;
+        this.rectOffsetY = rectOffsetY;
     };
-    game_engine_GameEngine.__name__ = true;
-    game_engine_GameEngine.main = function () {
+    game_engine_base_EntityShape.__name__ = true;
+    game_engine_base_EntityShape.prototype = {
+        __class__: game_engine_base_EntityShape
     };
-    game_engine_GameEngine.__super__ = game_engine_BaseEngine;
-    game_engine_GameEngine.prototype = $extend(game_engine_BaseEngine.prototype, {
-        processInputCommands: function (inputs) {
-            var _g = 0;
-            while (_g < inputs.length) {
-                var input = inputs[_g];
-                ++_g;
-                var ship = js_Boot.__cast(this.mainEntityManager.getEntityById(input.playerInputCommand.entityId), game_engine_entity_EngineShipEntity);
-                if (ship == null && ship.getOwnerId() == input.playerInputCommand.playerId) {
-                    continue;
-                }
-                switch (input.playerInputCommand.inputType._hx_index) {
-                    case 0:
-                        ship.accelerate();
-                        break;
-                    case 1:
-                        ship.decelerate();
-                        break;
-                    case 2:
-                        ship.rotateLeft();
-                        break;
-                    case 3:
-                        ship.rotateRight();
-                        break;
-                    case 4:
-                        break;
-                }
-            }
-        }
-        , engineLoopUpdate: function (dt) {
-            this.framesPassed++;
-            var jsIterator = this.mainEntityManager.entities.values();
-            var _g_jsIterator = jsIterator;
-            var _g_lastStep = jsIterator.next();
-            while (!_g_lastStep.done) {
-                var v = _g_lastStep.value;
-                _g_lastStep = _g_jsIterator.next();
-                var ship = v;
-                if (ship.isAlive) {
-                    ship.collides(false);
-                    ship.update(dt);
-                    var engineShipEntity = js_Boot.__cast(ship, game_engine_entity_EngineShipEntity);
-                    if (this.framesPassed == 50) {
-                        engineShipEntity.allowShoot = true;
-                    }
-                    if (engineShipEntity.role == 1 && engineShipEntity.allowShoot) {
-                        engineShipEntity.allowShoot = false;
-                        this.shipShootBySide(2, engineShipEntity.getId(), null, 0);
-                    }
-                    var jsIterator = this.mainEntityManager.entities.values();
-                    var _g_jsIterator1 = jsIterator;
-                    var _g_lastStep1 = jsIterator.next();
-                    while (!_g_lastStep1.done) {
-                        var v1 = _g_lastStep1.value;
-                        _g_lastStep1 = _g_jsIterator1.next();
-                        var ship2 = v1;
-                        if (ship.getId() != ship2.getId()) {
-                            if (ship.getBodyRectangle().intersectsWithRect(ship2.getBodyRectangle())) {
-                                ship.collides(true);
-                                ship2.collides(true);
-                            }
-                        }
-                    }
-                }
-                if (this.framesPassed > 50) {
-                    this.framesPassed = 0;
-                }
-            }
-            var shipsToDelete = [];
-            var shellsToDelete = [];
-            var jsIterator = this.shellManager.entities.values();
-            var _g1_jsIterator = jsIterator;
-            var _g1_lastStep = jsIterator.next();
-            while (!_g1_lastStep.done) {
-                var v = _g1_lastStep.value;
-                _g1_lastStep = _g1_jsIterator.next();
-                var shell = v;
-                shell.update(dt);
-                var jsIterator = this.mainEntityManager.entities.values();
-                var _g1_jsIterator1 = jsIterator;
-                var _g1_lastStep1 = jsIterator.next();
-                while (!_g1_lastStep1.done) {
-                    var v1 = _g1_lastStep1.value;
-                    _g1_lastStep1 = _g1_jsIterator1.next();
-                    var ship = v1;
-                    if (shell.getOwnerId() != ship.getId()) {
-                        if (this.checkShellAndShipCollision(shell, ship) && ship.isAlive) {
-                            ship.collides(true);
-                            shell.collides(true);
-                            var engineShipEntity = js_Boot.__cast(ship, game_engine_entity_EngineShipEntity);
-                            var engineShellEntity = js_Boot.__cast(shell, game_engine_entity_EngineShellEntity);
-                            engineShipEntity.inflictDamage(engineShellEntity.getDamage());
-                            if (this.shipHitByShellCallback != null) {
-                                this.shipHitByShellCallback({ ship: engineShipEntity, damage: engineShellEntity.getDamage() });
-                            }
-                            if (!engineShipEntity.isAlive) {
-                                engineShipEntity.killerId = shell.getOwnerId();
-                                shipsToDelete.push(engineShipEntity.getId());
-                            }
-                        }
-                    }
-                }
-                if (!shell.isAlive) {
-                    shellsToDelete.push(shell.getId());
-                }
-            }
-            var _g = 0;
-            var _g1 = shellsToDelete.length;
-            while (_g < _g1) {
-                var i = _g++;
-                var shell = js_Boot.__cast(this.shellManager.getEntityById(shellsToDelete[i]), game_engine_entity_EngineShellEntity);
-                if (shell != null) {
-                    if (this.deleteShellCallback != null) {
-                        this.deleteShellCallback(shell);
-                    }
-                    this.shellManager.remove(shell.getId());
-                }
-            }
-            var _g = 0;
-            var _g1 = shipsToDelete.length;
-            while (_g < _g1) {
-                var i = _g++;
-                var ship = js_Boot.__cast(this.mainEntityManager.getEntityById(shipsToDelete[i]), game_engine_entity_EngineShipEntity);
-                if (ship != null) {
-                    this.removeMainEntity(ship.getId());
-                }
-            }
-        }
-        , customDelete: function () {
-            this.createShellCallback = null;
-            this.deleteShellCallback = null;
-            this.shipHitByShellCallback = null;
-        }
-        , buildEngineEntity: function (struct) {
-            return new game_engine_entity_EngineShipEntity(new game_engine_entity_ShipObjectEntity(struct));
-        }
-        , checkShellAndShipCollision: function (shell, ship) {
-            var shellLine = shell.getForwardLookingLine(15);
-            if (ship.getBodyRectangle().intersectsWithPoint(shellLine.p1)) {
-                return true;
-            }
-            return ship.getBodyRectangle().intersectsWithLine(new game_engine_geometry_Line(shellLine.p1.x, shellLine.p1.y, shellLine.p2.x, shellLine.p2.y));
-        }
-        , shipShootBySide: function (side, shipId, serverSide, aimAngleRads, shellRnd) {
-            if (serverSide == null) {
-                serverSide = true;
-            }
-            var ship = js_Boot.__cast(this.mainEntityManager.getEntityById(shipId), game_engine_entity_EngineShipEntity);
-            if (ship != null && ship.tryShoot(side)) {
-                var shipSideRadRotation = aimAngleRads == 0 ? ship.rotation + game_engine_MathUtils.degreeToRads(side == 1 ? 90 : -90) : aimAngleRads;
-                var shells = [];
-                var cannonsTotal = 0;
-                switch (ship.getShipCannons()) {
-                    case 1:
-                        cannonsTotal = 1;
-                        break;
-                    case 2:
-                        cannonsTotal = 2;
-                        break;
-                    case 3:
-                        cannonsTotal = 3;
-                        break;
-                    case 4:
-                        cannonsTotal = 4;
-                        break;
-                    default:
-                }
-                var _g = 0;
-                var _g1 = cannonsTotal;
-                while (_g < _g1) {
-                    var i = _g++;
-                    var cannonPosition = ship.getCannonPositionBySideAndIndex(side, i);
-                    var shell = this.addShell({ x: cannonPosition.x, y: cannonPosition.y, ownerId: ship.getId(), rotation: shipSideRadRotation, side: side, pos: i, damage: ship.getCannonsDamage(), range: ship.getCannonsRange(), shellRnd: shellRnd != null && shellRnd[i] != null ? shellRnd[i] : null });
-                    shell.serverSide = serverSide;
-                    shells.push(shell);
-                }
-                if (this.createShellCallback != null) {
-                    this.createShellCallback(shells);
-                }
-                return true;
-            } else {
-                return false;
-            }
-        }
-        , addShell: function (entity) {
-            var newShell = new game_engine_entity_EngineShellEntity(new game_engine_entity_ShellObjectEntity(entity));
-            this.shellManager.add(newShell);
-            return newShell;
-        }
-        , __class__: game_engine_GameEngine
-    });
-    var game_engine_GameEngineConfig = function () { };
-    game_engine_GameEngineConfig.__name__ = true;
-    var game_engine_Loop = function () { };
-    game_engine_Loop.__name__ = true;
-    game_engine_Loop.__isInterface__ = true;
-    game_engine_Loop.prototype = {
-        __class__: game_engine_Loop
+    var game_engine_base_BaseObjectEntity = function (struct) {
+        this.x = struct.x;
+        this.y = struct.y;
+        this.acceleration = struct.acceleration;
+        this.minSpeed = struct.minSpeed;
+        this.maxSpeed = struct.maxSpeed;
+        this.currentSpeed = struct.currentSpeed;
+        this.movementDelay = struct.movementDelay;
+        this.direction = struct.direction;
+        this.rotation = struct.rotation;
+        this.id = struct.id;
+        this.ownerId = struct.ownerId;
     };
-    var game_engine_GameLoop = $hx_exports["game"]["engine"]["GameLoop"] = function (update) {
-        this.targetFps = 10;
-        this.gameLoop = new game_engine_DummyJsLoop(update, this.targetFps);
+    game_engine_base_BaseObjectEntity.__name__ = true;
+    game_engine_base_BaseObjectEntity.prototype = {
+        __class__: game_engine_base_BaseObjectEntity
     };
-    game_engine_GameLoop.__name__ = true;
-    game_engine_GameLoop.prototype = {
-        stopLoop: function () {
-            this.gameLoop.stopLoop();
-        }
-        , __class__: game_engine_GameLoop
+    var game_engine_base_PlayerInputCommand = function (inputType, playerId, index) {
+        this.inputType = inputType;
+        this.playerId = playerId;
+        this.index = index;
     };
-    var game_engine_DummyJsLoop = function (update, targetFps) {
-        this.active = true;
-        this.delta = 0.0;
-        this.previous = Date.now();
-        this.tick = 0;
-        this.targetFPSMillis = Math.floor(1000 / targetFps);
-        this.update = update;
-        this.loop();
+    game_engine_base_PlayerInputCommand.__name__ = true;
+    game_engine_base_PlayerInputCommand.prototype = {
+        __class__: game_engine_base_PlayerInputCommand
     };
-    game_engine_DummyJsLoop.__name__ = true;
-    game_engine_DummyJsLoop.__interfaces__ = [game_engine_Loop];
-    game_engine_DummyJsLoop.prototype = {
-        stopLoop: function () {
-            this.active = false;
-        }
-        , loop: function () {
-            if (this.active) {
-                haxe_Timer.delay($bind(this, this.loop), this.targetFPSMillis);
-                var now = Date.now();
-                this.delta = (now - this.previous) / 1000;
-                this.update(this.delta, this.tick);
-                this.previous = now;
-                this.tick++;
-            }
-        }
-        , __class__: game_engine_DummyJsLoop
+    var game_engine_base_InputCommandEngineWrapped = function (playerInputCommand, tick) {
+        this.playerInputCommand = playerInputCommand;
+        this.tick = tick;
     };
-    var game_engine_MathUtils = function () { };
-    game_engine_MathUtils.__name__ = true;
-    game_engine_MathUtils.getHullRadByDir = function (dir) {
+    game_engine_base_InputCommandEngineWrapped.__name__ = true;
+    game_engine_base_InputCommandEngineWrapped.prototype = {
+        __class__: game_engine_base_InputCommandEngineWrapped
+    };
+    var game_engine_base_MathUtils = function () { };
+    game_engine_base_MathUtils.__name__ = true;
+    game_engine_base_MathUtils.getHullRadByDir = function (dir) {
         var degree = 0;
         switch (dir) {
             case 1:
@@ -474,9 +190,9 @@
                 degree = -90;
                 break;
         }
-        return game_engine_MathUtils.degreeToRads(degree);
+        return game_engine_base_MathUtils.degreeToRads(degree);
     };
-    game_engine_MathUtils.getGunRadByDir = function (dir) {
+    game_engine_base_MathUtils.getGunRadByDir = function (dir) {
         var degree = 0;
         switch (dir) {
             case 1:
@@ -504,9 +220,9 @@
                 degree = -90;
                 break;
         }
-        return game_engine_MathUtils.degreeToRads(degree);
+        return game_engine_base_MathUtils.degreeToRads(degree);
     };
-    game_engine_MathUtils.dirToRad = function (dir) {
+    game_engine_base_MathUtils.dirToRad = function (dir) {
         if (dir == null) {
             return 0.0;
         }
@@ -525,35 +241,43 @@
                 degree = -155;
                 break;
             case 5:
-                degree = -90;
+                degree = 90;
                 break;
             case 6:
                 degree = 25;
                 break;
             case 7:
-                degree = -25;
+                degree = 155;
                 break;
             case 8:
-                degree = 0;
+                degree = 180;
                 break;
         }
-        return game_engine_MathUtils.degreeToRads(degree);
+        return game_engine_base_MathUtils.degreeToRads(degree);
     };
-    game_engine_MathUtils.angleBetweenPoints = function (point1, point2) {
+    game_engine_base_MathUtils.angleBetweenPoints = function (point1, point2) {
         return Math.atan2(point2.y - point1.y, point2.x - point1.x);
     };
-    game_engine_MathUtils.degreeToRads = function (degrees) {
+    game_engine_base_MathUtils.degreeToRads = function (degrees) {
         return Math.PI / 180 * degrees;
     };
-    game_engine_MathUtils.radsToDegree = function (rads) {
+    game_engine_base_MathUtils.radsToDegree = function (rads) {
         return rads * (180 / Math.PI);
     };
-    game_engine_MathUtils.rotatePointAroundCenter = function (x, y, cx, cy, r) {
+    game_engine_base_MathUtils.normalizeAngle = function (rads) {
+        rads %= 2 * Math.PI;
+        if (rads >= 0) {
+            return rads;
+        } else {
+            return rads + 2 * Math.PI;
+        }
+    };
+    game_engine_base_MathUtils.rotatePointAroundCenter = function (x, y, cx, cy, r) {
         var cos = Math.cos(r);
         var sin = Math.sin(r);
-        return new game_engine_geometry_Point(cos * (x - cx) - sin * (y - cy) + cx, cos * (y - cy) + sin * (x - cx) + cy);
+        return new game_engine_base_geometry_Point(cos * (x - cx) - sin * (y - cy) + cx, cos * (y - cy) + sin * (x - cx) + cy);
     };
-    game_engine_MathUtils.lineToLineIntersection = function (lineA, lineB) {
+    game_engine_base_MathUtils.lineToLineIntersection = function (lineA, lineB) {
         var numA = (lineB.x2 - lineB.x1) * (lineA.y1 - lineB.y1) - (lineB.y2 - lineB.y1) * (lineA.x1 - lineB.x1);
         var numB = (lineA.x2 - lineA.x1) * (lineA.y1 - lineB.y1) - (lineA.y2 - lineA.y1) * (lineA.x1 - lineB.x1);
         var deNom = (lineB.y2 - lineB.y1) * (lineA.x2 - lineA.x1) - (lineB.x2 - lineB.x1) * (lineA.y2 - lineA.y1);
@@ -568,33 +292,214 @@
             return false;
         }
     };
-    var game_engine_entity_GameEntityCustomUpdate = function () { };
-    game_engine_entity_GameEntityCustomUpdate.__name__ = true;
-    game_engine_entity_GameEntityCustomUpdate.__isInterface__ = true;
-    game_engine_entity_GameEntityCustomUpdate.prototype = {
-        __class__: game_engine_entity_GameEntityCustomUpdate
+    game_engine_base_MathUtils.differ = function (a, b, error) {
+        return Math.abs(a - b) > (error == 0 ? 1 : error);
     };
-    var game_engine_entity_GameEntityCustomCollide = function () { };
-    game_engine_entity_GameEntityCustomCollide.__name__ = true;
-    game_engine_entity_GameEntityCustomCollide.__isInterface__ = true;
-    game_engine_entity_GameEntityCustomCollide.prototype = {
-        __class__: game_engine_entity_GameEntityCustomCollide
+    var game_engine_base_core_EngineMode = $hxEnums["game.engine.base.core.EngineMode"] = {
+        __ename__: true, __constructs__: null
+        , Client: { _hx_name: "Client", _hx_index: 0, __enum__: "game.engine.base.core.EngineMode", toString: $estr }
+        , Server: { _hx_name: "Server", _hx_index: 1, __enum__: "game.engine.base.core.EngineMode", toString: $estr }
     };
-    var game_engine_entity_EngineBaseGameEntity = function (entityType, baseObjectEntity) {
-        this.canMove = true;
-        this.currentSpeed = 0.0;
+    game_engine_base_core_EngineMode.__constructs__ = [game_engine_base_core_EngineMode.Client, game_engine_base_core_EngineMode.Server];
+    var game_engine_base_core_EngineGameMode = $hxEnums["game.engine.base.core.EngineGameMode"] = {
+        __ename__: true, __constructs__: null
+        , Island: { _hx_name: "Island", _hx_index: 0, __enum__: "game.engine.base.core.EngineGameMode", toString: $estr }
+        , Sea: { _hx_name: "Sea", _hx_index: 1, __enum__: "game.engine.base.core.EngineGameMode", toString: $estr }
+    };
+    game_engine_base_core_EngineGameMode.__constructs__ = [game_engine_base_core_EngineGameMode.Island, game_engine_base_core_EngineGameMode.Sea];
+    var game_engine_base_core_BaseEngine = $hx_exports["game"]["engine"]["base"]["core"]["BaseEngine"] = function (engineMode, engineGameMode, mainEntityManager) {
+        if (engineMode == null) {
+            engineMode = game_engine_base_core_EngineMode.Server;
+        }
+        this.coldInputCommands = [];
+        this.coldInputCommandsTreshhold = 10;
+        this.ticksSinceLastPop = 0;
+        this.hotInputCommands = [];
+        this.removeMainEntityQueue = [];
+        this.addMainEntityQueue = [];
+        this.validatedInputCommands = [];
+        this.playerEntityMap = new haxe_ds_StringMap();
+        var _gthis = this;
+        this.engineMode = engineMode;
+        this.engineGameMode = engineGameMode;
+        this.mainEntityManager = mainEntityManager;
+        var loop = function (dt, tick) {
+            _gthis.tick = tick;
+            if (_gthis.ticksSinceLastPop == _gthis.coldInputCommandsTreshhold) {
+                _gthis.ticksSinceLastPop = 0;
+                _gthis.coldInputCommands.shift();
+            }
+            _gthis.ticksSinceLastPop++;
+            _gthis.processCreateEntityQueue();
+            _gthis.processRemoveEntityQueue();
+            _gthis.processInputCommands(_gthis.hotInputCommands);
+            _gthis.hotInputCommands = [];
+            _gthis.engineLoopUpdate(dt);
+            if (_gthis.postLoopCallback != null) {
+                _gthis.postLoopCallback();
+            }
+            _gthis.validatedInputCommands = [];
+        };
+        this.gameLoop = new game_engine_base_core_GameLoop(loop);
+        this.okLoopTime = 1000 / this.gameLoop.targetFps | 0;
+    };
+    game_engine_base_core_BaseEngine.__name__ = true;
+    game_engine_base_core_BaseEngine.prototype = {
+        createMainEntity: function (entity, fireCallback) {
+            if (fireCallback == null) {
+                fireCallback = false;
+            }
+            this.addMainEntityQueue.push({ entity: entity, fireCallback: fireCallback });
+        }
+        , removeMainEntity: function (entityId) {
+            this.removeMainEntityQueue.push(entityId);
+        }
+        , getMainEntityById: function (id) {
+            return this.mainEntityManager.getEntityById(id);
+        }
+        , getMainEntityIdByOwnerId: function (id) {
+            return this.playerEntityMap.h[id];
+        }
+        , getMainEntityByOwnerId: function (id) {
+            return this.mainEntityManager.getEntityById(this.playerEntityMap.h[id]);
+        }
+        , getMainEntities: function () {
+            return this.mainEntityManager.entities;
+        }
+        , processCreateEntityQueue: function () {
+            var _g = 0;
+            var _g1 = this.addMainEntityQueue;
+            while (_g < _g1.length) {
+                var queueTask = _g1[_g];
+                ++_g;
+                this.mainEntityManager.add(queueTask.entity);
+                var this1 = this.playerEntityMap;
+                var key = queueTask.entity.getOwnerId();
+                var value = queueTask.entity.getId();
+                this1.h[key] = value;
+                if (queueTask.fireCallback) {
+                    if (this.createMainEntityCallback != null) {
+                        this.createMainEntityCallback(queueTask.entity);
+                    }
+                }
+            }
+            this.addMainEntityQueue = [];
+        }
+        , processRemoveEntityQueue: function () {
+            var _g = 0;
+            var _g1 = this.removeMainEntityQueue;
+            while (_g < _g1.length) {
+                var entityId = _g1[_g];
+                ++_g;
+                var entity = this.mainEntityManager.getEntityById(entityId);
+                if (entity != null) {
+                    if (this.deleteMainEntityCallback != null) {
+                        this.deleteMainEntityCallback(entity);
+                    }
+                    var this1 = this.playerEntityMap;
+                    var key = entity.getOwnerId();
+                    var _this = this1;
+                    if (Object.prototype.hasOwnProperty.call(_this.h, key)) {
+                        delete (_this.h[key]);
+                    }
+                    this.mainEntityManager.remove(entity.getId());
+                }
+            }
+            this.removeMainEntityQueue = [];
+        }
+        , checkLocalMovementInputAllowance: function (entityId, playerInputType) {
+            var entity = this.mainEntityManager.getEntityById(entityId);
+            if (entity == null) {
+                return false;
+            } else if (entity.checkLocalMovementInput()) {
+                return entity.canMove(playerInputType);
+            } else {
+                return false;
+            }
+        }
+        , addInputCommand: function (playerInputCommand) {
+            if (playerInputCommand.inputType != null && playerInputCommand.playerId != null) {
+                var wrappedCommand = new game_engine_base_InputCommandEngineWrapped(playerInputCommand, this.tick);
+                this.hotInputCommands.push(wrappedCommand);
+                this.coldInputCommands.push(wrappedCommand);
+            }
+        }
+        , destroy: function () {
+            this.gameLoop.stopLoop();
+            this.mainEntityManager.destroy();
+            this.postLoopCallback = null;
+            this.createMainEntityCallback = null;
+            this.deleteMainEntityCallback = null;
+            this.customDestroy();
+        }
+        , __class__: game_engine_base_core_BaseEngine
+    };
+    var game_engine_base_core_Loop = function () { };
+    game_engine_base_core_Loop.__name__ = true;
+    game_engine_base_core_Loop.__isInterface__ = true;
+    game_engine_base_core_Loop.prototype = {
+        __class__: game_engine_base_core_Loop
+    };
+    var game_engine_base_core_GameLoop = $hx_exports["game"]["engine"]["base"]["core"]["GameLoop"] = function (update) {
+        this.targetFps = 10;
+        this.gameLoop = new game_engine_base_core_DummyJsLoop(update, this.targetFps);
+    };
+    game_engine_base_core_GameLoop.__name__ = true;
+    game_engine_base_core_GameLoop.prototype = {
+        stopLoop: function () {
+            this.gameLoop.stopLoop();
+        }
+        , __class__: game_engine_base_core_GameLoop
+    };
+    var game_engine_base_core_DummyJsLoop = function (update, targetFps) {
+        this.active = true;
+        this.delta = 0.0;
+        this.previous = Date.now();
+        this.tick = 0;
+        this.targetFPSMillis = Math.floor(1000 / targetFps);
+        this.update = update;
+        this.loop();
+    };
+    game_engine_base_core_DummyJsLoop.__name__ = true;
+    game_engine_base_core_DummyJsLoop.__interfaces__ = [game_engine_base_core_Loop];
+    game_engine_base_core_DummyJsLoop.prototype = {
+        stopLoop: function () {
+            this.active = false;
+        }
+        , loop: function () {
+            if (this.active) {
+                haxe_Timer.delay($bind(this, this.loop), this.targetFPSMillis);
+                var now = Date.now();
+                this.delta = (now - this.previous) / 1000;
+                this.update(this.delta, this.tick);
+                this.previous = now;
+                this.tick++;
+            }
+        }
+        , __class__: game_engine_base_core_DummyJsLoop
+    };
+    var game_engine_base_entity_GameEntityCustomUpdate = function () { };
+    game_engine_base_entity_GameEntityCustomUpdate.__name__ = true;
+    game_engine_base_entity_GameEntityCustomUpdate.__isInterface__ = true;
+    game_engine_base_entity_GameEntityCustomUpdate.prototype = {
+        __class__: game_engine_base_entity_GameEntityCustomUpdate
+    };
+    var game_engine_base_entity_GameEntityCustomCollide = function () { };
+    game_engine_base_entity_GameEntityCustomCollide.__name__ = true;
+    game_engine_base_entity_GameEntityCustomCollide.__isInterface__ = true;
+    game_engine_base_entity_GameEntityCustomCollide.prototype = {
+        __class__: game_engine_base_entity_GameEntityCustomCollide
+    };
+    var game_engine_base_entity_EngineBaseGameEntity = function (baseObjectEntity, shape) {
         this.dy = 0.0;
         this.dx = 0.0;
-        this.rotation = 0.0;
-        this.inputMovementCheckDelayMS = 0.1;
         this.lastLocalMovementInputCheck = 0.0;
         this.lastMovementInputCheck = 0.0;
-        this.serverSide = true;
+        this.isMovable = true;
         this.isCollides = true;
         this.isAlive = true;
-        this.entityType = entityType;
         this.baseObjectEntity = baseObjectEntity;
-        this.shape = game_engine_entity_EngineShipEntityConfig.EntityShapeByType.h[entityType];
+        this.shape = shape;
         if (baseObjectEntity.id == null) {
             this.baseObjectEntity.id = uuid_Uuid.short();
         }
@@ -602,19 +507,18 @@
             this.baseObjectEntity.ownerId = uuid_Uuid.short();
         }
     };
-    game_engine_entity_EngineBaseGameEntity.__name__ = true;
-    game_engine_entity_EngineBaseGameEntity.prototype = {
+    game_engine_base_entity_EngineBaseGameEntity.__name__ = true;
+    game_engine_base_entity_EngineBaseGameEntity.prototype = {
         update: function (dt) {
             this.lastDeltaTime = dt;
             if (this.customUpdate != null) {
                 this.customUpdate.onUpdate();
             }
-            if (this.canMove) {
-                this.move();
-            }
+            this.move();
             if (this.customUpdate != null) {
                 this.customUpdate.postUpdate();
             }
+            this.updateHash();
         }
         , getBodyRectangle: function () {
             var shapeWidth = this.shape.width;
@@ -624,7 +528,7 @@
             var x = this.baseObjectEntity.x;
             var y = this.baseObjectEntity.y;
             var direction = this.baseObjectEntity.direction;
-            return new game_engine_geometry_Rectangle(x + rectOffsetX, y + rectOffsetY, shapeWidth, shapeHeight, game_engine_MathUtils.dirToRad(direction) + this.shape.angle);
+            return new game_engine_base_geometry_Rectangle(x + rectOffsetX, y + rectOffsetY, shapeWidth, shapeHeight, game_engine_base_MathUtils.dirToRad(direction) + this.shape.rotation);
         }
         , getVirtualBodyRectangleInFuture: function (ticks) {
             var cachedPositionX = this.baseObjectEntity.x;
@@ -644,7 +548,7 @@
             var rect = this.getBodyRectangle();
             var x = rect.getCenter().x;
             var y = rect.getCenter().y;
-            return { p1: rect.getCenter(), p2: game_engine_MathUtils.rotatePointAroundCenter(x + lineLength, y, x, y, this.rotation) };
+            return { p1: rect.getCenter(), p2: game_engine_base_MathUtils.rotatePointAroundCenter(x + lineLength, y, x, y, this.baseObjectEntity.rotation) };
         }
         , collides: function (isCollides) {
             this.isCollides = isCollides;
@@ -652,15 +556,22 @@
                 this.customCollide.onCollide();
             }
         }
-        , move: function () {
-            this.dx = this.currentSpeed * Math.cos(this.rotation) * this.lastDeltaTime;
-            this.dy = this.currentSpeed * Math.sin(this.rotation) * this.lastDeltaTime;
-            this.baseObjectEntity.x += this.dx;
-            this.baseObjectEntity.y += this.dy;
+        , isChanged: function () {
+            return this.previousTickHash != this.currentTickHash;
+        }
+        , updateHash: function () {
+            var hash = this.updateHashImpl();
+            if (this.previousTickHash == null && this.currentTickHash == null) {
+                this.previousTickHash = hash;
+                this.currentTickHash = hash;
+            } else {
+                this.previousTickHash = this.currentTickHash;
+                this.currentTickHash = hash;
+            }
         }
         , checkMovementInput: function () {
             var now = HxOverrides.now() / 1000;
-            if (this.lastMovementInputCheck == 0 || this.lastMovementInputCheck + this.inputMovementCheckDelayMS < now) {
+            if (this.lastMovementInputCheck == 0 || this.lastMovementInputCheck + this.baseObjectEntity.movementDelay < now) {
                 this.lastMovementInputCheck = now;
                 return true;
             } else {
@@ -669,24 +580,36 @@
         }
         , checkLocalMovementInput: function () {
             var now = HxOverrides.now() / 1000;
-            if (this.lastLocalMovementInputCheck == 0 || this.lastLocalMovementInputCheck + this.inputMovementCheckDelayMS < now) {
+            if (this.lastLocalMovementInputCheck == 0 || this.lastLocalMovementInputCheck + this.baseObjectEntity.movementDelay < now) {
                 this.lastLocalMovementInputCheck = now;
                 return true;
             } else {
                 return false;
             }
         }
-        , accelerateLeft: function () {
-            this.baseObjectEntity.x += this.baseObjectEntity.acceleration;
+        , moveStepInDirection: function (plainDirection) {
+            switch (plainDirection) {
+                case 1:
+                    this.baseObjectEntity.y -= this.baseObjectEntity.acceleration * this.lastDeltaTime;
+                    break;
+                case 2:
+                    this.baseObjectEntity.y += this.baseObjectEntity.acceleration * this.lastDeltaTime;
+                    break;
+                case 3:
+                    this.baseObjectEntity.x -= this.baseObjectEntity.acceleration * this.lastDeltaTime;
+                    break;
+                case 4:
+                    this.baseObjectEntity.x += this.baseObjectEntity.acceleration * this.lastDeltaTime;
+                    break;
+            }
         }
-        , accelerateRight: function () {
-            this.baseObjectEntity.x -= this.baseObjectEntity.acceleration;
-        }
-        , accelerateUp: function () {
-            this.baseObjectEntity.y += this.baseObjectEntity.acceleration;
-        }
-        , accelerateDown: function () {
-            this.baseObjectEntity.y -= this.baseObjectEntity.acceleration;
+        , move: function () {
+            if (this.baseObjectEntity.currentSpeed != 0) {
+                this.dx = this.baseObjectEntity.currentSpeed * Math.cos(this.baseObjectEntity.rotation) * this.lastDeltaTime;
+                this.dy = this.baseObjectEntity.currentSpeed * Math.sin(this.baseObjectEntity.rotation) * this.lastDeltaTime;
+                this.baseObjectEntity.x += this.dx;
+                this.baseObjectEntity.y += this.dy;
+            }
         }
         , getX: function () {
             return this.baseObjectEntity.x;
@@ -709,550 +632,49 @@
         , getMinSpeed: function () {
             return this.baseObjectEntity.minSpeed;
         }
+        , getRotation: function () {
+            return this.baseObjectEntity.rotation;
+        }
+        , getCurrentSpeed: function () {
+            return this.baseObjectEntity.currentSpeed;
+        }
         , setX: function (x) {
             this.baseObjectEntity.x = x;
         }
         , setY: function (y) {
             this.baseObjectEntity.y = y;
         }
-        , __class__: game_engine_entity_EngineBaseGameEntity
+        , setRotation: function (r) {
+            this.baseObjectEntity.rotation = r;
+        }
+        , incrementRotation: function (r) {
+            this.baseObjectEntity.rotation += r;
+        }
+        , decrementRotation: function (r) {
+            this.baseObjectEntity.rotation -= r;
+        }
+        , setCurrentSpeed: function (speed) {
+            return this.baseObjectEntity.currentSpeed = speed;
+        }
+        , __class__: game_engine_base_entity_EngineBaseGameEntity
     };
-    var game_engine_entity_DieEffect = $hxEnums["game.engine.entity.DieEffect"] = {
-        __ename__: true, __constructs__: null
-        , Splash: { _hx_name: "Splash", _hx_index: 0, __enum__: "game.engine.entity.DieEffect", toString: $estr }
-        , Explosion: { _hx_name: "Explosion", _hx_index: 1, __enum__: "game.engine.entity.DieEffect", toString: $estr }
-    };
-    game_engine_entity_DieEffect.__constructs__ = [game_engine_entity_DieEffect.Splash, game_engine_entity_DieEffect.Explosion];
-    var game_engine_entity_EngineShellEntity = function (shellObjectEntity) {
-        this.dieEffect = game_engine_entity_DieEffect.Splash;
-        this.preUpdatePos = new game_engine_geometry_Point();
-        this.distanceTraveled = 0.0;
-        game_engine_entity_EngineBaseGameEntity.call(this, 4, shellObjectEntity);
-        this.shellObjectEntity = shellObjectEntity;
-        this.rotation = shellObjectEntity.rotation;
-        this.customUpdate = this;
-        this.customCollide = this;
-        if (this.shellObjectEntity.shellRnd == null) {
-            var tmp = Std.random(game_engine_GameEngineConfig.ShellRandomSpeedFactor);
-            var tmp1 = Std.random(2);
-            var tmp2 = Std.random(game_engine_GameEngineConfig.ShellRandomAngleSpreadDegree);
-            this.shellObjectEntity.shellRnd = { speed: tmp, dir: tmp1, rotation: tmp2 };
-        }
-        this.currentSpeed = game_engine_GameEngineConfig.ShellDefaultSpeed;
-        this.currentSpeed += this.shellObjectEntity.shellRnd.speed;
-        var shellRndRotation = this.shellObjectEntity.shellRnd.rotation;
-        this.rotation += game_engine_MathUtils.degreeToRads(this.shellObjectEntity.shellRnd.dir == 1 ? shellRndRotation : -shellRndRotation);
-    };
-    game_engine_entity_EngineShellEntity.__name__ = true;
-    game_engine_entity_EngineShellEntity.__interfaces__ = [game_engine_entity_GameEntityCustomCollide, game_engine_entity_GameEntityCustomUpdate];
-    game_engine_entity_EngineShellEntity.__super__ = game_engine_entity_EngineBaseGameEntity;
-    game_engine_entity_EngineShellEntity.prototype = $extend(game_engine_entity_EngineBaseGameEntity.prototype, {
-        onUpdate: function () {
-            this.preUpdatePos.x = this.getX();
-            this.preUpdatePos.y = this.getY();
-        }
-        , postUpdate: function () {
-            var newPos = new game_engine_geometry_Point(this.getX(), this.getY());
-            var p = this.preUpdatePos;
-            var dx = newPos.x - p.x;
-            var dy = newPos.y - p.y;
-            this.distanceTraveled += Math.sqrt(dx * dx + dy * dy);
-            if (this.distanceTraveled >= this.shellObjectEntity.range) {
-                this.isAlive = false;
-            }
-        }
-        , onCollide: function () {
-            this.isAlive = false;
-            this.dieEffect = game_engine_entity_DieEffect.Explosion;
-        }
-        , getSide: function () {
-            return this.shellObjectEntity.side;
-        }
-        , getPos: function () {
-            return this.shellObjectEntity.pos;
-        }
-        , getDamage: function () {
-            return this.shellObjectEntity.damage;
-        }
-        , getShellRnd: function () {
-            return this.shellObjectEntity.shellRnd;
-        }
-        , __class__: game_engine_entity_EngineShellEntity
-    });
-    var game_engine_entity_EngineShipEntity = function (shipObjectEntity) {
-        this.allowShoot = false;
-        this.lastRightShootInputCheck = 0.0;
-        this.lastLeftShootInputCheck = 0.0;
-        this.lastRotationInputCheck = 0.0;
-        this.currentArmor = 0;
-        this.currentHull = 0;
-        game_engine_entity_EngineBaseGameEntity.call(this, game_engine_entity_EngineShipEntity.getShipTypeBySize(shipObjectEntity.shipHullSize), shipObjectEntity);
-        this.shipObjectEntity = shipObjectEntity;
-        this.currentHull = this.shipObjectEntity.hull;
-        this.currentArmor = this.shipObjectEntity.armor;
-        switch (this.shipObjectEntity.direction) {
-            case 1:
-                this.rotation = game_engine_MathUtils.degreeToRads(0);
-                break;
-            case 2:
-                this.rotation = game_engine_MathUtils.degreeToRads(-90);
-                break;
-            case 3:
-                this.rotation = game_engine_MathUtils.degreeToRads(-45);
-                break;
-            case 4:
-                this.rotation -= game_engine_MathUtils.degreeToRads(135);
-                break;
-            case 5:
-                this.rotation -= game_engine_MathUtils.degreeToRads(-90);
-                break;
-            case 6:
-                this.rotation -= game_engine_MathUtils.degreeToRads(-45);
-                break;
-            case 7:
-                this.rotation -= game_engine_MathUtils.degreeToRads(-135);
-                break;
-            case 8:
-                this.rotation -= game_engine_MathUtils.degreeToRads(180);
-                break;
-        }
-    };
-    game_engine_entity_EngineShipEntity.__name__ = true;
-    game_engine_entity_EngineShipEntity.getShipTypeBySize = function (size) {
-        switch (size) {
-            case 1:
-                return 1;
-            case 2:
-                return 2;
-            case 3:
-                return 3;
-        }
-    };
-    game_engine_entity_EngineShipEntity.__super__ = game_engine_entity_EngineBaseGameEntity;
-    game_engine_entity_EngineShipEntity.prototype = $extend(game_engine_entity_EngineBaseGameEntity.prototype, {
-        checkRotationInput: function () {
-            var now = HxOverrides.now() / 1000;
-            if (this.lastRotationInputCheck == 0 || this.lastRotationInputCheck + this.shipObjectEntity.turnDelay < now) {
-                this.lastRotationInputCheck = now;
-                return true;
-            } else {
-                return false;
-            }
-        }
-        , accelerate: function () {
-            if (this.checkMovementInput()) {
-                console.log("game/engine/entity/EngineShipEntity.hx:90:", "Accelerate");
-                this.currentSpeed += this.shipObjectEntity.acceleration;
-                if (this.currentSpeed > this.shipObjectEntity.maxSpeed) {
-                    this.currentSpeed = this.shipObjectEntity.maxSpeed;
-                }
-                if (this.speedChangeCallback != null) {
-                    this.speedChangeCallback(this.currentSpeed);
-                }
-            }
-        }
-        , decelerate: function () {
-            if (this.checkMovementInput()) {
-                this.currentSpeed -= this.shipObjectEntity.acceleration;
-                if (this.currentSpeed < this.shipObjectEntity.minSpeed) {
-                    this.currentSpeed = this.shipObjectEntity.minSpeed;
-                }
-                if (this.speedChangeCallback != null) {
-                    this.speedChangeCallback(this.currentSpeed);
-                }
-            }
-        }
-        , rotateLeft: function () {
-            if (this.checkRotationInput()) {
-                this.rotation -= game_engine_MathUtils.degreeToRads(45);
-                switch (this.shipObjectEntity.direction) {
-                    case 1:
-                        this.shipObjectEntity.direction = 3;
-                        break;
-                    case 2:
-                        this.shipObjectEntity.direction = 4;
-                        break;
-                    case 3:
-                        this.shipObjectEntity.direction = 2;
-                        break;
-                    case 4:
-                        this.shipObjectEntity.direction = 8;
-                        break;
-                    case 5:
-                        this.shipObjectEntity.direction = 6;
-                        break;
-                    case 6:
-                        this.shipObjectEntity.direction = 1;
-                        break;
-                    case 7:
-                        this.shipObjectEntity.direction = 5;
-                        break;
-                    case 8:
-                        this.shipObjectEntity.direction = 7;
-                        break;
-                }
-                if (this.directionChangeCallbackLeft != null) {
-                    this.directionChangeCallbackLeft(this.shipObjectEntity.direction);
-                }
-            }
-        }
-        , rotateRight: function () {
-            if (this.checkRotationInput()) {
-                this.rotation += game_engine_MathUtils.degreeToRads(45);
-                switch (this.shipObjectEntity.direction) {
-                    case 1:
-                        this.shipObjectEntity.direction = 6;
-                        break;
-                    case 2:
-                        this.shipObjectEntity.direction = 3;
-                        break;
-                    case 3:
-                        this.shipObjectEntity.direction = 1;
-                        break;
-                    case 4:
-                        this.shipObjectEntity.direction = 2;
-                        break;
-                    case 5:
-                        this.shipObjectEntity.direction = 7;
-                        break;
-                    case 6:
-                        this.shipObjectEntity.direction = 5;
-                        break;
-                    case 7:
-                        this.shipObjectEntity.direction = 8;
-                        break;
-                    case 8:
-                        this.shipObjectEntity.direction = 4;
-                        break;
-                }
-                if (this.directionChangeCallbackRight != null) {
-                    this.directionChangeCallbackRight(this.shipObjectEntity.direction);
-                }
-            }
-        }
-        , shootAllowanceBySide: function (side) {
-            var now = HxOverrides.now() / 1000;
-            if (side == 2) {
-                if (this.lastRightShootInputCheck != 0) {
-                    return this.lastRightShootInputCheck + this.shipObjectEntity.fireDelay < now;
-                } else {
-                    return true;
-                }
-            } else if (this.lastLeftShootInputCheck != 0) {
-                return this.lastLeftShootInputCheck + this.shipObjectEntity.fireDelay < now;
-            } else {
-                return true;
-            }
-        }
-        , tryShoot: function (side) {
-            var now = HxOverrides.now() / 1000;
-            if (side == 2) {
-                if (this.lastRightShootInputCheck == 0 || this.lastRightShootInputCheck + this.shipObjectEntity.fireDelay < now) {
-                    this.lastRightShootInputCheck = now;
-                    if (this.shootRightCallback != null) {
-                        this.shootRightCallback();
-                    }
-                    return true;
-                } else {
-                    return false;
-                }
-            } else if (this.lastLeftShootInputCheck == 0 || this.lastLeftShootInputCheck + this.shipObjectEntity.fireDelay < now) {
-                this.lastLeftShootInputCheck = now;
-                if (this.shootLeftCallback != null) {
-                    this.shootLeftCallback();
-                }
-                return true;
-            } else {
-                return false;
-            }
-        }
-        , inflictDamage: function (damage) {
-            if (this.currentArmor > 0) {
-                var damageDiff = Math.round(Math.abs(this.currentArmor - damage));
-                if (this.currentArmor - damage < 0) {
-                    this.currentArmor = 0;
-                    this.currentHull -= damageDiff;
-                } else {
-                    this.currentArmor -= damage;
-                }
-            } else {
-                this.currentHull -= damage;
-                if (this.currentHull <= 0) {
-                    this.isAlive = false;
-                }
-            }
-        }
-        , getCannonsPositionBySide: function (side) {
-            var result = [];
-            var cannonsTotal = 0;
-            switch (this.shipObjectEntity.shipCannons) {
-                case 1:
-                    cannonsTotal = 1;
-                    break;
-                case 2:
-                    cannonsTotal = 2;
-                    break;
-                case 3:
-                    cannonsTotal = 3;
-                    break;
-                case 4:
-                    cannonsTotal = 4;
-                    break;
-                default:
-            }
-            var _g = 0;
-            var _g1 = cannonsTotal;
-            while (_g < _g1) {
-                var i = _g++;
-                var cannonPosition = this.getCannonPositionBySideAndIndex(side, i);
-                result.push(cannonPosition);
-            }
-            return result;
-        }
-        , getCannonsFiringAreaBySide: function (side) {
-            var result = [];
-            var cannonsTotal = 0;
-            switch (this.shipObjectEntity.shipCannons) {
-                case 1:
-                    cannonsTotal = 1;
-                    break;
-                case 2:
-                    cannonsTotal = 2;
-                    break;
-                case 3:
-                    cannonsTotal = 3;
-                    break;
-                case 4:
-                    cannonsTotal = 4;
-                    break;
-                default:
-            }
-            var _g = 0;
-            var _g1 = cannonsTotal;
-            while (_g < _g1) {
-                var i = _g++;
-                var cannonPosition = this.getCannonPositionBySideAndIndex(side, i);
-                var x = cannonPosition.x;
-                var y = cannonPosition.y;
-                var spreadDegree = game_engine_MathUtils.degreeToRads(this.shipObjectEntity.cannonsAngleSpread / 2);
-                var lineHorizontalLength = x + (side == 2 ? this.shipObjectEntity.cannonsRange : -this.shipObjectEntity.cannonsRange);
-                var centralLineEndPoint = game_engine_MathUtils.rotatePointAroundCenter(lineHorizontalLength, y, x, y, game_engine_MathUtils.getGunRadByDir(this.shipObjectEntity.direction));
-                var leftLineEndPoint = game_engine_MathUtils.rotatePointAroundCenter(centralLineEndPoint.x, centralLineEndPoint.y, x, y, spreadDegree);
-                var rightLineEndPoint = game_engine_MathUtils.rotatePointAroundCenter(centralLineEndPoint.x, centralLineEndPoint.y, x, y, -spreadDegree);
-                result.push({ origin: cannonPosition, center: centralLineEndPoint, left: leftLineEndPoint, right: rightLineEndPoint });
-            }
-            return result;
-        }
-        , getCannonPositionBySideAndIndex: function (side, index) {
-            var offset;
-            var additionalOffsetX = 0;
-            var additionalOffsetY = 0;
-            var direction = this.shipObjectEntity.direction;
-            if (side == 1) {
-                if (direction == 1) {
-                    additionalOffsetX = 0;
-                    additionalOffsetY = 20;
-                }
-                if (direction == 3) {
-                    additionalOffsetX = 14;
-                    additionalOffsetY = 8;
-                }
-                if (direction == 2) {
-                    additionalOffsetX = 20;
-                    additionalOffsetY = 0;
-                }
-                if (direction == 4) {
-                    additionalOffsetX = 14;
-                    additionalOffsetY = -8;
-                }
-                if (direction == 8) {
-                    additionalOffsetX = 0;
-                    additionalOffsetY = -20;
-                }
-                if (direction == 7) {
-                    additionalOffsetX = -14;
-                    additionalOffsetY = -8;
-                }
-                if (direction == 6) {
-                    additionalOffsetX = -14;
-                    additionalOffsetY = 8;
-                }
-                if (direction == 5) {
-                    additionalOffsetX = -20;
-                    additionalOffsetY = 0;
-                }
-            } else {
-                if (direction == 1) {
-                    additionalOffsetX = 0;
-                    additionalOffsetY = -20;
-                }
-                if (direction == 3) {
-                    additionalOffsetX = -14;
-                    additionalOffsetY = -8;
-                }
-                if (direction == 2) {
-                    additionalOffsetX = -20;
-                    additionalOffsetY = 0;
-                }
-                if (direction == 4) {
-                    additionalOffsetX = -14;
-                    additionalOffsetY = 8;
-                }
-                if (direction == 8) {
-                    additionalOffsetX = 0;
-                    additionalOffsetY = 20;
-                }
-                if (direction == 7) {
-                    additionalOffsetX = 14;
-                    additionalOffsetY = 8;
-                }
-                if (direction == 6) {
-                    additionalOffsetX = 14;
-                    additionalOffsetY = -8;
-                }
-                if (direction == 5) {
-                    additionalOffsetX = 20;
-                    additionalOffsetY = 0;
-                }
-            }
-            if (this.shipObjectEntity.shipHullSize == 2) {
-                offset = side == 1 ? game_engine_entity_EngineShipEntityConfig.LeftCannonsOffsetByDirMid.h[direction] : game_engine_entity_EngineShipEntityConfig.RightCannonsOffsetByDirMid.h[direction];
-            } else {
-                offset = side == 1 ? game_engine_entity_EngineShipEntityConfig.LeftCannonsOffsetByDirSm.h[direction] : game_engine_entity_EngineShipEntityConfig.RightCannonsOffsetByDirSm.h[direction];
-            }
-            var offsetX = offset.positions[index].x - additionalOffsetX;
-            var offsetY = offset.positions[index].y - additionalOffsetY;
-            return new game_engine_geometry_Point(this.shipObjectEntity.x + offsetX, this.shipObjectEntity.y + offsetY);
-        }
-        , getShipHullSize: function () {
-            return this.shipObjectEntity.shipHullSize;
-        }
-        , getHull: function () {
-            return this.shipObjectEntity.hull;
-        }
-        , getArmor: function () {
-            return this.shipObjectEntity.armor;
-        }
-        , getShipWindows: function () {
-            return this.shipObjectEntity.shipWindows;
-        }
-        , getShipCannons: function () {
-            return this.shipObjectEntity.shipCannons;
-        }
-        , getCannonsDamage: function () {
-            return this.shipObjectEntity.cannonsDamage;
-        }
-        , getCannonsRange: function () {
-            return this.shipObjectEntity.cannonsRange;
-        }
-        , __class__: game_engine_entity_EngineShipEntity
-    });
-    var game_engine_entity_EntityShape = function (width, height, rectOffsetX, rectOffsetY) {
-        if (rectOffsetY == null) {
-            rectOffsetY = 0;
-        }
-        if (rectOffsetX == null) {
-            rectOffsetX = 0;
-        }
-        this.angle = 0.0;
-        this.width = width;
-        this.height = height;
-        this.rectOffsetX = rectOffsetX;
-        this.rectOffsetY = rectOffsetY;
-    };
-    game_engine_entity_EntityShape.__name__ = true;
-    game_engine_entity_EntityShape.prototype = {
-        __class__: game_engine_entity_EntityShape
-    };
-    var game_engine_entity_PosOffset = function (x, y, r) {
-        if (r == null) {
-            r = 0;
-        }
-        this.x = x;
-        this.y = y;
-        this.r = r;
-    };
-    game_engine_entity_PosOffset.__name__ = true;
-    game_engine_entity_PosOffset.prototype = {
-        __class__: game_engine_entity_PosOffset
-    };
-    var game_engine_entity_PosOffsetArray = function (positions) {
-        this.positions = [];
-        this.positions = positions;
-    };
-    game_engine_entity_PosOffsetArray.__name__ = true;
-    game_engine_entity_PosOffsetArray.prototype = {
-        __class__: game_engine_entity_PosOffsetArray
-    };
-    var game_engine_entity_EngineShipEntityConfig = function () { };
-    game_engine_entity_EngineShipEntityConfig.__name__ = true;
-    var game_engine_entity_BaseObjectEntity = function (struct) {
-        this.x = struct.x;
-        this.y = struct.y;
-        this.acceleration = struct.acceleration;
-        this.minSpeed = struct.minSpeed;
-        this.maxSpeed = struct.maxSpeed;
-        this.direction = struct.direction;
-        this.id = struct.id;
-        this.ownerId = struct.ownerId;
-    };
-    game_engine_entity_BaseObjectEntity.__name__ = true;
-    game_engine_entity_BaseObjectEntity.prototype = {
-        __class__: game_engine_entity_BaseObjectEntity
-    };
-    var game_engine_entity_ShipObjectEntity = function (struct) {
-        game_engine_entity_BaseObjectEntity.call(this, struct);
-        this.serverShipRef = struct.serverShipRef;
-        this.free = struct.free;
-        this.role = struct.role;
-        this.shipHullSize = struct.shipHullSize;
-        this.shipWindows = struct.shipWindows;
-        this.shipCannons = struct.shipCannons;
-        this.cannonsRange = struct.cannonsRange;
-        this.cannonsDamage = struct.cannonsDamage;
-        this.cannonsAngleSpread = struct.cannonsAngleSpread;
-        this.armor = struct.armor;
-        this.hull = struct.hull;
-        this.accDelay = struct.accDelay;
-        this.turnDelay = struct.turnDelay;
-        this.fireDelay = struct.fireDelay;
-    };
-    game_engine_entity_ShipObjectEntity.__name__ = true;
-    game_engine_entity_ShipObjectEntity.__super__ = game_engine_entity_BaseObjectEntity;
-    game_engine_entity_ShipObjectEntity.prototype = $extend(game_engine_entity_BaseObjectEntity.prototype, {
-        __class__: game_engine_entity_ShipObjectEntity
-    });
-    var game_engine_entity_ShellObjectEntity = function (struct) {
-        game_engine_entity_BaseObjectEntity.call(this, struct);
-        this.rotation = struct.rotation;
-        this.side = struct.side;
-        this.pos = struct.pos;
-        this.damage = struct.damage;
-        this.range = struct.range;
-        this.shellRnd = struct.shellRnd;
-    };
-    game_engine_entity_ShellObjectEntity.__name__ = true;
-    game_engine_entity_ShellObjectEntity.__super__ = game_engine_entity_BaseObjectEntity;
-    game_engine_entity_ShellObjectEntity.prototype = $extend(game_engine_entity_BaseObjectEntity.prototype, {
-        __class__: game_engine_entity_ShellObjectEntity
-    });
-    var game_engine_entity_PlayerInputType = $hxEnums["game.engine.entity.PlayerInputType"] = {
-        __ename__: true, __constructs__: null
-        , MOVE_UP: { _hx_name: "MOVE_UP", _hx_index: 0, __enum__: "game.engine.entity.PlayerInputType", toString: $estr }
-        , MOVE_DOWN: { _hx_name: "MOVE_DOWN", _hx_index: 1, __enum__: "game.engine.entity.PlayerInputType", toString: $estr }
-        , MOVE_LEFT: { _hx_name: "MOVE_LEFT", _hx_index: 2, __enum__: "game.engine.entity.PlayerInputType", toString: $estr }
-        , MOVE_RIGHT: { _hx_name: "MOVE_RIGHT", _hx_index: 3, __enum__: "game.engine.entity.PlayerInputType", toString: $estr }
-        , SHOOT: { _hx_name: "SHOOT", _hx_index: 4, __enum__: "game.engine.entity.PlayerInputType", toString: $estr }
-    };
-    game_engine_entity_PlayerInputType.__constructs__ = [game_engine_entity_PlayerInputType.MOVE_UP, game_engine_entity_PlayerInputType.MOVE_DOWN, game_engine_entity_PlayerInputType.MOVE_LEFT, game_engine_entity_PlayerInputType.MOVE_RIGHT, game_engine_entity_PlayerInputType.SHOOT];
-    var game_engine_entity_manager_BaseEntityManager = function () {
+    var game_engine_base_entity_manager_BaseEntityManager = function () {
         this.entities = new Map();
     };
-    game_engine_entity_manager_BaseEntityManager.__name__ = true;
-    game_engine_entity_manager_BaseEntityManager.prototype = {
+    game_engine_base_entity_manager_BaseEntityManager.__name__ = true;
+    game_engine_base_entity_manager_BaseEntityManager.prototype = {
         destroy: function () {
             this.entities.clear();
             this.updateCallback = null;
+        }
+        , getChangedEntities: function () {
+            var result = [];
+            this.entities.forEach(function (value, key, map) {
+                if (value.isChanged()) {
+                    result.push(value);
+                }
+            });
+            return result;
         }
         , add: function (entity) {
             this.entities.set(entity.getId(), entity);
@@ -1263,25 +685,9 @@
         , getEntityById: function (id) {
             return this.entities.get(id);
         }
-        , __class__: game_engine_entity_manager_BaseEntityManager
+        , __class__: game_engine_base_entity_manager_BaseEntityManager
     };
-    var game_engine_entity_manager_ShellManager = function () {
-        game_engine_entity_manager_BaseEntityManager.call(this);
-    };
-    game_engine_entity_manager_ShellManager.__name__ = true;
-    game_engine_entity_manager_ShellManager.__super__ = game_engine_entity_manager_BaseEntityManager;
-    game_engine_entity_manager_ShellManager.prototype = $extend(game_engine_entity_manager_BaseEntityManager.prototype, {
-        __class__: game_engine_entity_manager_ShellManager
-    });
-    var game_engine_entity_manager_ShipManager = function () {
-        game_engine_entity_manager_BaseEntityManager.call(this);
-    };
-    game_engine_entity_manager_ShipManager.__name__ = true;
-    game_engine_entity_manager_ShipManager.__super__ = game_engine_entity_manager_BaseEntityManager;
-    game_engine_entity_manager_ShipManager.prototype = $extend(game_engine_entity_manager_BaseEntityManager.prototype, {
-        __class__: game_engine_entity_manager_ShipManager
-    });
-    var game_engine_geometry_Line = function (x1, y1, x2, y2) {
+    var game_engine_base_geometry_Line = function (x1, y1, x2, y2) {
         if (y2 == null) {
             y2 = 0;
         }
@@ -1299,14 +705,17 @@
         this.x2 = x2;
         this.y2 = y2;
     };
-    game_engine_geometry_Line.__name__ = true;
-    game_engine_geometry_Line.prototype = {
-        intersectsWithLine: function (line) {
-            return game_engine_MathUtils.lineToLineIntersection(this, line);
+    game_engine_base_geometry_Line.__name__ = true;
+    game_engine_base_geometry_Line.prototype = {
+        getMidPoint: function () {
+            return new game_engine_base_geometry_Point((this.x1 + this.x2) / 2, (this.y1 + this.y2) / 2);
         }
-        , __class__: game_engine_geometry_Line
+        , intersectsWithLine: function (line) {
+            return game_engine_base_MathUtils.lineToLineIntersection(this, line);
+        }
+        , __class__: game_engine_base_geometry_Line
     };
-    var game_engine_geometry_Point = function (x, y) {
+    var game_engine_base_geometry_Point = function (x, y) {
         if (y == null) {
             y = 0;
         }
@@ -1316,8 +725,8 @@
         this.x = x;
         this.y = y;
     };
-    game_engine_geometry_Point.__name__ = true;
-    game_engine_geometry_Point.prototype = {
+    game_engine_base_geometry_Point.__name__ = true;
+    game_engine_base_geometry_Point.prototype = {
         distanceSq: function (p) {
             var dx = this.x - p.x;
             var dy = this.y - p.y;
@@ -1328,19 +737,26 @@
             var dy = this.y - p.y;
             return Math.sqrt(dx * dx + dy * dy);
         }
-        , __class__: game_engine_geometry_Point
+        , __class__: game_engine_base_geometry_Point
     };
-    var game_engine_geometry_Rectangle = function (x, y, w, h, r) {
+    var game_engine_base_geometry_Rectangle = function (x, y, w, h, r) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.r = r;
     };
-    game_engine_geometry_Rectangle.__name__ = true;
-    game_engine_geometry_Rectangle.prototype = {
+    game_engine_base_geometry_Rectangle.__name__ = true;
+    game_engine_base_geometry_Rectangle.prototype = {
         getCenter: function () {
-            return new game_engine_geometry_Point(this.x, this.y);
+            return new game_engine_base_geometry_Point(this.x, this.y);
+        }
+        , getMaxSide: function () {
+            if (this.w > this.h) {
+                return this.w;
+            } else {
+                return this.h;
+            }
         }
         , getLeft: function () {
             return this.x - this.w / 2;
@@ -1355,27 +771,27 @@
             return this.y + this.h / 2;
         }
         , getTopLeftPoint: function () {
-            var rotatedCoords = game_engine_MathUtils.rotatePointAroundCenter(this.getLeft(), this.getTop(), this.x, this.y, this.r);
-            return new game_engine_geometry_Point(rotatedCoords.x, rotatedCoords.y);
+            var rotatedCoords = game_engine_base_MathUtils.rotatePointAroundCenter(this.getLeft(), this.getTop(), this.x, this.y, this.r);
+            return new game_engine_base_geometry_Point(rotatedCoords.x, rotatedCoords.y);
         }
         , getBottomLeftPoint: function () {
-            var rotatedCoords = game_engine_MathUtils.rotatePointAroundCenter(this.getLeft(), this.getBottom(), this.x, this.y, this.r);
-            return new game_engine_geometry_Point(rotatedCoords.x, rotatedCoords.y);
+            var rotatedCoords = game_engine_base_MathUtils.rotatePointAroundCenter(this.getLeft(), this.getBottom(), this.x, this.y, this.r);
+            return new game_engine_base_geometry_Point(rotatedCoords.x, rotatedCoords.y);
         }
         , getTopRightPoint: function () {
-            var rotatedCoords = game_engine_MathUtils.rotatePointAroundCenter(this.getRight(), this.getTop(), this.x, this.y, this.r);
-            return new game_engine_geometry_Point(rotatedCoords.x, rotatedCoords.y);
+            var rotatedCoords = game_engine_base_MathUtils.rotatePointAroundCenter(this.getRight(), this.getTop(), this.x, this.y, this.r);
+            return new game_engine_base_geometry_Point(rotatedCoords.x, rotatedCoords.y);
         }
         , getBottomRightPoint: function () {
-            var rotatedCoords = game_engine_MathUtils.rotatePointAroundCenter(this.getRight(), this.getBottom(), this.x, this.y, this.r);
-            return new game_engine_geometry_Point(rotatedCoords.x, rotatedCoords.y);
+            var rotatedCoords = game_engine_base_MathUtils.rotatePointAroundCenter(this.getRight(), this.getBottom(), this.x, this.y, this.r);
+            return new game_engine_base_geometry_Point(rotatedCoords.x, rotatedCoords.y);
         }
         , getLines: function () {
             var topLeftPoint = this.getTopLeftPoint();
             var bottomLeftPoint = this.getBottomLeftPoint();
             var topRightPoint = this.getTopRightPoint();
             var bottomRightPoint = this.getBottomRightPoint();
-            return { lineA: new game_engine_geometry_Line(topLeftPoint.x, topLeftPoint.y, topRightPoint.x, topRightPoint.y), lineB: new game_engine_geometry_Line(topRightPoint.x, topRightPoint.y, bottomRightPoint.x, bottomRightPoint.y), lineC: new game_engine_geometry_Line(bottomRightPoint.x, bottomRightPoint.y, bottomLeftPoint.x, bottomLeftPoint.y), lineD: new game_engine_geometry_Line(bottomLeftPoint.x, bottomLeftPoint.y, topLeftPoint.x, topLeftPoint.y) };
+            return { lineA: new game_engine_base_geometry_Line(topLeftPoint.x, topLeftPoint.y, topRightPoint.x, topRightPoint.y), lineB: new game_engine_base_geometry_Line(topRightPoint.x, topRightPoint.y, bottomRightPoint.x, bottomRightPoint.y), lineC: new game_engine_base_geometry_Line(bottomRightPoint.x, bottomRightPoint.y, bottomLeftPoint.x, bottomLeftPoint.y), lineD: new game_engine_base_geometry_Line(bottomLeftPoint.x, bottomLeftPoint.y, topLeftPoint.x, topLeftPoint.y) };
         }
         , contains: function (b) {
             var result = true;
@@ -1439,8 +855,249 @@
                 return false;
             }
         }
-        , __class__: game_engine_geometry_Rectangle
+        , __class__: game_engine_base_geometry_Rectangle
     };
+    var game_engine_navy_NavyIslandEngine = $hx_exports["game"]["engine"]["navy"]["NavyIslandEngine"] = function (engineMode) {
+        if (engineMode == null) {
+            engineMode = game_engine_base_core_EngineMode.Server;
+        }
+        this.lineColliders = [];
+        game_engine_base_core_BaseEngine.call(this, engineMode, game_engine_base_core_EngineGameMode.Island, new game_engine_navy_entity_manager_CharacterManager());
+        this.addLineCollider(1462, 132, 1293, 115);
+        this.addLineCollider(1293, 115, 1274, 62);
+        this.addLineCollider(1274, 62, 1207, 52);
+        this.addLineCollider(1207, 52, 1206, -8);
+        this.addLineCollider(1206, -8, 1070, -14);
+        this.addLineCollider(1070, -14, 1065, -78);
+        this.addLineCollider(1065, -78, 823, -88);
+        this.addLineCollider(823, -88, 718, -9);
+        this.addLineCollider(718, -9, 465, -15);
+        this.addLineCollider(465, -15, 303, 146);
+        this.addLineCollider(303, 146, 289, 202);
+        this.addLineCollider(289, 202, 96, 204);
+        this.addLineCollider(1463, 134, 1620, -15);
+        this.addLineCollider(1620, -15, 1692, -15);
+        this.addLineCollider(1692, -15, 1836, -12);
+        this.addLineCollider(1836, -12, 2002, 151);
+        this.addLineCollider(2002, 151, 2000, 309);
+        this.addLineCollider(2000, 309, 1921, 317);
+        this.addLineCollider(1921, 317, 1918, 346);
+        this.addLineCollider(1918, 346, 1909, 479);
+        this.addLineCollider(1909, 479, 1915, 592);
+        this.addLineCollider(1915, 592, 1905, 667);
+        this.addLineCollider(1905, 667, 1425, 670);
+        this.addLineCollider(1425, 670, 1412, 675);
+        this.addLineCollider(1412, 675, 1404, 742);
+        this.addLineCollider(1404, 742, 1046, 746);
+        this.addLineCollider(1046, 746, 1041, 667);
+        this.addLineCollider(1041, 667, 835, 668);
+        this.addLineCollider(835, 668, 829, 813);
+        this.addLineCollider(829, 813, 619, 813);
+        this.addLineCollider(619, 813, 613, 739);
+        this.addLineCollider(613, 739, 464, 736);
+        this.addLineCollider(464, 736, 465, 663);
+        this.addLineCollider(465, 663, 180, 660);
+        this.addLineCollider(180, 660, 174, 596);
+        this.addLineCollider(174, 596, 114, 590);
+        this.addLineCollider(114, 590, 112, 537);
+        this.addLineCollider(112, 537, 347, 530);
+        this.addLineCollider(347, 530, 345, 287);
+        this.addLineCollider(345, 287, 109, 281);
+        this.addLineCollider(109, 281, 96, 206);
+    };
+    game_engine_navy_NavyIslandEngine.__name__ = true;
+    game_engine_navy_NavyIslandEngine.main = function () {
+    };
+    game_engine_navy_NavyIslandEngine.__super__ = game_engine_base_core_BaseEngine;
+    game_engine_navy_NavyIslandEngine.prototype = $extend(game_engine_base_core_BaseEngine.prototype, {
+        processInputCommands: function (inputs) {
+            var _g = 0;
+            while (_g < inputs.length) {
+                var i = inputs[_g];
+                ++_g;
+                var input = js_Boot.__cast(i.playerInputCommand, game_engine_navy_NavyInputCommand);
+                var inputInitiator = input.playerId;
+                var entityId = this.playerEntityMap.h[inputInitiator];
+                var character = js_Boot.__cast(this.mainEntityManager.getEntityById(entityId), game_engine_navy_entity_NavyCharacterEntity);
+                if (character == null || character.getOwnerId() != inputInitiator) {
+                    continue;
+                }
+                switch (input.inputType) {
+                    case 1:
+                        if (character.moveInDirection(1)) {
+                            this.validatedInputCommands.push(input);
+                        }
+                        break;
+                    case 2:
+                        if (character.moveInDirection(2)) {
+                            this.validatedInputCommands.push(input);
+                        }
+                        break;
+                    case 3:
+                        if (character.moveInDirection(3)) {
+                            this.validatedInputCommands.push(input);
+                        }
+                        break;
+                    case 4:
+                        if (character.moveInDirection(4)) {
+                            this.validatedInputCommands.push(input);
+                        }
+                        break;
+                    default:
+                }
+            }
+        }
+        , engineLoopUpdate: function (dt) {
+            var jsIterator = this.mainEntityManager.entities.values();
+            var _g_jsIterator = jsIterator;
+            var _g_lastStep = jsIterator.next();
+            while (!_g_lastStep.done) {
+                var v = _g_lastStep.value;
+                _g_lastStep = _g_jsIterator.next();
+                var character = v;
+                var char = js_Boot.__cast(character, game_engine_navy_entity_NavyCharacterEntity);
+                char.resetMovementBlock();
+                character.collides(false);
+                character.update(dt);
+                var _g = 0;
+                var _g1 = this.lineColliders;
+                while (_g < _g1.length) {
+                    var lineCollider = _g1[_g];
+                    ++_g;
+                    var charRect = character.getBodyRectangle();
+                    var _this = lineCollider.getMidPoint();
+                    var p = charRect.getCenter();
+                    var dx = _this.x - p.x;
+                    var dy = _this.y - p.y;
+                    if (Math.sqrt(dx * dx + dy * dy) < charRect.getMaxSide() * 3) {
+                        if (charRect.intersectsWithLine(lineCollider)) {
+                            character.collides(true);
+                            char.blockMovement();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        , customDestroy: function () {
+        }
+        , buildEngineEntity: function (struct) {
+            return new game_engine_navy_entity_NavyCharacterEntity(new game_engine_base_BaseObjectEntity(struct));
+        }
+        , addLineCollider: function (x1, y1, x2, y2) {
+            this.lineColliders.push(new game_engine_base_geometry_Line(x1, y1, x2, y2));
+        }
+        , applyPlayerInput: function (inputType, playerId, index, shootDetails) {
+            this.addInputCommand(new game_engine_navy_NavyInputCommand(inputType, playerId, index, shootDetails));
+        }
+        , __class__: game_engine_navy_NavyIslandEngine
+    });
+    var game_engine_navy_ShipObjectEntity = function (struct) {
+        game_engine_base_BaseObjectEntity.call(this, struct);
+        this.serverShipRef = struct.serverShipRef;
+        this.free = struct.free;
+        this.role = struct.role;
+        this.shipHullSize = struct.shipHullSize;
+        this.shipWindows = struct.shipWindows;
+        this.shipCannons = struct.shipCannons;
+        this.cannonsRange = struct.cannonsRange;
+        this.cannonsDamage = struct.cannonsDamage;
+        this.cannonsAngleSpread = struct.cannonsAngleSpread;
+        this.cannonsShellSpeed = struct.cannonsShellSpeed;
+        this.armor = struct.armor;
+        this.hull = struct.hull;
+        this.movementDelay = struct.movementDelay;
+        this.turnDelay = struct.turnDelay;
+        this.fireDelay = struct.fireDelay;
+    };
+    game_engine_navy_ShipObjectEntity.__name__ = true;
+    game_engine_navy_ShipObjectEntity.__super__ = game_engine_base_BaseObjectEntity;
+    game_engine_navy_ShipObjectEntity.prototype = $extend(game_engine_base_BaseObjectEntity.prototype, {
+        __class__: game_engine_navy_ShipObjectEntity
+    });
+    var game_engine_navy_ShellObjectEntity = function (struct) {
+        game_engine_base_BaseObjectEntity.call(this, struct);
+        this.rotation = struct.rotation;
+        this.side = struct.side;
+        this.pos = struct.pos;
+        this.damage = struct.damage;
+        this.range = struct.range;
+    };
+    game_engine_navy_ShellObjectEntity.__name__ = true;
+    game_engine_navy_ShellObjectEntity.__super__ = game_engine_base_BaseObjectEntity;
+    game_engine_navy_ShellObjectEntity.prototype = $extend(game_engine_base_BaseObjectEntity.prototype, {
+        __class__: game_engine_navy_ShellObjectEntity
+    });
+    var game_engine_navy_NavyInputCommand = function (inputType, playerId, index, shootDetails) {
+        game_engine_base_PlayerInputCommand.call(this, inputType, playerId, index);
+        this.shootDetails = shootDetails;
+    };
+    game_engine_navy_NavyInputCommand.__name__ = true;
+    game_engine_navy_NavyInputCommand.__super__ = game_engine_base_PlayerInputCommand;
+    game_engine_navy_NavyInputCommand.prototype = $extend(game_engine_base_PlayerInputCommand.prototype, {
+        __class__: game_engine_navy_NavyInputCommand
+    });
+    var game_engine_navy_entity_CurrentState = $hxEnums["game.engine.navy.entity.CurrentState"] = {
+        __ename__: true, __constructs__: null
+        , Idle: { _hx_name: "Idle", _hx_index: 0, __enum__: "game.engine.navy.entity.CurrentState", toString: $estr }
+        , Moving: { _hx_name: "Moving", _hx_index: 1, __enum__: "game.engine.navy.entity.CurrentState", toString: $estr }
+    };
+    game_engine_navy_entity_CurrentState.__constructs__ = [game_engine_navy_entity_CurrentState.Idle, game_engine_navy_entity_CurrentState.Moving];
+    var game_engine_navy_entity_NavyCharacterEntity = function (baseObjectEntity) {
+        game_engine_base_entity_EngineBaseGameEntity.call(this, baseObjectEntity, game_engine_navy_entity_NavyEntitiesConfig.EntityShapeByType.h[5]);
+        this.shape.rectOffsetX = 60;
+        this.shape.rectOffsetY = 60;
+    };
+    game_engine_navy_entity_NavyCharacterEntity.__name__ = true;
+    game_engine_navy_entity_NavyCharacterEntity.__super__ = game_engine_base_entity_EngineBaseGameEntity;
+    game_engine_navy_entity_NavyCharacterEntity.prototype = $extend(game_engine_base_entity_EngineBaseGameEntity.prototype, {
+        canMove: function (playerInputType) {
+            return this.isMovable;
+        }
+        , updateHashImpl: function () {
+            return 0;
+        }
+        , moveInDirection: function (plainDirection) {
+            var stateChanged = false;
+            if (this.checkMovementInput() && this.canMoveIfBlocked(plainDirection)) {
+                stateChanged = true;
+                this.moveStepInDirection(plainDirection);
+                this.lastMovementDirection = plainDirection;
+            }
+            return stateChanged;
+        }
+        , blockMovement: function () {
+            this.blockedMovementDirection = this.lastMovementDirection;
+        }
+        , resetMovementBlock: function () {
+            this.blockedMovementDirection = null;
+        }
+        , canMoveIfBlocked: function (newDirection) {
+            if (this.blockedMovementDirection != null) {
+                if (!(this.blockedMovementDirection == 3 && newDirection == 4 || this.blockedMovementDirection == 4 && newDirection == 3 || this.blockedMovementDirection == 1 && newDirection == 2)) {
+                    if (this.blockedMovementDirection == 2) {
+                        return newDirection == 1;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            }
+            return true;
+        }
+        , __class__: game_engine_navy_entity_NavyCharacterEntity
+    });
+    var game_engine_navy_entity_NavyEntitiesConfig = function () { };
+    game_engine_navy_entity_NavyEntitiesConfig.__name__ = true;
+    var game_engine_navy_entity_manager_CharacterManager = function () {
+        game_engine_base_entity_manager_BaseEntityManager.call(this);
+    };
+    game_engine_navy_entity_manager_CharacterManager.__name__ = true;
+    game_engine_navy_entity_manager_CharacterManager.__super__ = game_engine_base_entity_manager_BaseEntityManager;
+    game_engine_navy_entity_manager_CharacterManager.prototype = $extend(game_engine_base_entity_manager_BaseEntityManager.prototype, {
+        __class__: game_engine_navy_entity_manager_CharacterManager
+    });
     var haxe_IMap = function () { };
     haxe_IMap.__name__ = true;
     haxe_IMap.__isInterface__ = true;
@@ -2975,261 +2632,251 @@
     var Class = {};
     var Enum = {};
     js_Boot.__toStr = ({}).toString;
-    game_engine_GameEngineConfig.ShellRandomSpeedFactor = 0;
-    game_engine_GameEngineConfig.ShellRandomAngleSpreadDegree = 0;
-    game_engine_GameEngineConfig.ShellDefaultSpeed = 380;
-    game_engine_GameEngineConfig.ShipHull = 1000;
-    game_engine_GameEngineConfig.ShipArmor = 1000;
-    game_engine_GameEngineConfig.ShipCannonsRange = 600;
-    game_engine_GameEngineConfig.ShipCannonsDamage = 50;
-    game_engine_GameEngineConfig.ShipCccDelay = 1.0;
-    game_engine_GameEngineConfig.ShipTurnDelay = 1.0;
-    game_engine_GameEngineConfig.ShipFireDelay = 0.200;
-    game_engine_entity_EngineShipEntityConfig.EntityShapeByType = (function ($this) {
+    game_engine_navy_entity_NavyEntitiesConfig.EntityShapeByType = (function ($this) {
         var $r;
         var _g = new haxe_ds_IntMap();
         {
-            var value = new game_engine_entity_EntityShape(200, 80);
+            var value = new game_engine_base_EntityShape(200, 80);
             _g.h[1] = value;
         }
         {
-            var value = new game_engine_entity_EntityShape(300, 120);
+            var value = new game_engine_base_EntityShape(300, 120);
             _g.h[2] = value;
         }
         {
-            var value = new game_engine_entity_EntityShape(10, 10);
+            var value = new game_engine_base_EntityShape(10, 10);
             _g.h[4] = value;
         }
         {
-            var value = new game_engine_entity_EntityShape(60, 60);
+            var value = new game_engine_base_EntityShape(60, 60);
             _g.h[5] = value;
         }
         $r = _g;
         return $r;
     }(this));
-    game_engine_entity_EngineShipEntityConfig.ShapeOffsetByDir = (function ($this) {
+    game_engine_navy_entity_NavyEntitiesConfig.ShapeOffsetByDir = (function ($this) {
         var $r;
         var _g = new haxe_ds_IntMap();
         {
-            var value = new game_engine_entity_PosOffset(0, -100, -40);
+            var value = new game_engine_base_PosOffset(0, -100, -40);
             _g.h[1] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(-90, -50, 110);
+            var value = new game_engine_base_PosOffset(-90, -50, 110);
             _g.h[2] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(-26, -110, 19);
+            var value = new game_engine_base_PosOffset(-26, -110, 19);
             _g.h[3] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(-155, -65, 87);
+            var value = new game_engine_base_PosOffset(-155, -65, 87);
             _g.h[4] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(90, 26, 72);
+            var value = new game_engine_base_PosOffset(90, 26, 72);
             _g.h[5] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(26, -80, -6);
+            var value = new game_engine_base_PosOffset(26, -80, -6);
             _g.h[6] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(-23, -113, 19);
+            var value = new game_engine_base_PosOffset(-23, -113, 19);
             _g.h[7] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(0, -110, -42);
+            var value = new game_engine_base_PosOffset(0, -110, -42);
             _g.h[8] = value;
         }
         $r = _g;
         return $r;
     }(this));
-    game_engine_entity_EngineShipEntityConfig.RightCannonsOffsetByDirSm = (function ($this) {
+    game_engine_navy_entity_NavyEntitiesConfig.RightCannonsOffsetByDirSm = (function ($this) {
         var $r;
         var _g = new haxe_ds_IntMap();
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-28, 26), new game_engine_entity_PosOffset(0, 26), new game_engine_entity_PosOffset(28, 26)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-28, 26), new game_engine_base_PosOffset(0, 26), new game_engine_base_PosOffset(28, 26)]);
             _g.h[1] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(17, 31), new game_engine_entity_PosOffset(36, 21), new game_engine_entity_PosOffset(55, 13)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(17, 31), new game_engine_base_PosOffset(36, 21), new game_engine_base_PosOffset(55, 13)]);
             _g.h[3] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(50, 10), new game_engine_entity_PosOffset(50, -13), new game_engine_entity_PosOffset(50, 33)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(50, 10), new game_engine_base_PosOffset(50, -13), new game_engine_base_PosOffset(50, 33)]);
             _g.h[2] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(50, -16), new game_engine_entity_PosOffset(28, -26), new game_engine_entity_PosOffset(7, -33)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(50, -16), new game_engine_base_PosOffset(28, -26), new game_engine_base_PosOffset(7, -33)]);
             _g.h[4] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(50, -50), new game_engine_entity_PosOffset(21, -50), new game_engine_entity_PosOffset(-8, -50)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(50, -50), new game_engine_base_PosOffset(21, -50), new game_engine_base_PosOffset(-8, -50)]);
             _g.h[8] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-10, -41), new game_engine_entity_PosOffset(-27, -34), new game_engine_entity_PosOffset(-41, -27)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-10, -41), new game_engine_base_PosOffset(-27, -34), new game_engine_base_PosOffset(-41, -27)]);
             _g.h[7] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-50, -31), new game_engine_entity_PosOffset(-50, -11), new game_engine_entity_PosOffset(-50, 10)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-50, -31), new game_engine_base_PosOffset(-50, -11), new game_engine_base_PosOffset(-50, 10)]);
             _g.h[5] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-70, 10), new game_engine_entity_PosOffset(-50, 19), new game_engine_entity_PosOffset(-28, 29)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-70, 10), new game_engine_base_PosOffset(-50, 19), new game_engine_base_PosOffset(-28, 29)]);
             _g.h[6] = value;
         }
         $r = _g;
         return $r;
     }(this));
-    game_engine_entity_EngineShipEntityConfig.LeftCannonsOffsetByDirSm = (function ($this) {
+    game_engine_navy_entity_NavyEntitiesConfig.LeftCannonsOffsetByDirSm = (function ($this) {
         var $r;
         var _g = new haxe_ds_IntMap();
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-28, -52), new game_engine_entity_PosOffset(0, -52), new game_engine_entity_PosOffset(28, -52)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-28, -52), new game_engine_base_PosOffset(0, -52), new game_engine_base_PosOffset(28, -52)]);
             _g.h[1] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-55, -16), new game_engine_entity_PosOffset(-35, -24), new game_engine_entity_PosOffset(-16, -32)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-55, -16), new game_engine_base_PosOffset(-35, -24), new game_engine_base_PosOffset(-16, -32)]);
             _g.h[3] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-50, 10), new game_engine_entity_PosOffset(-50, -13), new game_engine_entity_PosOffset(-50, 33)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-50, 10), new game_engine_base_PosOffset(-50, -13), new game_engine_base_PosOffset(-50, 33)]);
             _g.h[2] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-13, 32), new game_engine_entity_PosOffset(-32, 22), new game_engine_entity_PosOffset(-52, 11)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-13, 32), new game_engine_base_PosOffset(-32, 22), new game_engine_base_PosOffset(-52, 11)]);
             _g.h[4] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(50, 27), new game_engine_entity_PosOffset(21, 27), new game_engine_entity_PosOffset(-8, 27)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(50, 27), new game_engine_base_PosOffset(21, 27), new game_engine_base_PosOffset(-8, 27)]);
             _g.h[8] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(70, 5), new game_engine_entity_PosOffset(50, 15), new game_engine_entity_PosOffset(31, 25)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(70, 5), new game_engine_base_PosOffset(50, 15), new game_engine_base_PosOffset(31, 25)]);
             _g.h[7] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(50, -31), new game_engine_entity_PosOffset(50, -11), new game_engine_entity_PosOffset(50, 10)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(50, -31), new game_engine_base_PosOffset(50, -11), new game_engine_base_PosOffset(50, 10)]);
             _g.h[5] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(11, -32), new game_engine_entity_PosOffset(27, -25), new game_engine_entity_PosOffset(46, -15)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(11, -32), new game_engine_base_PosOffset(27, -25), new game_engine_base_PosOffset(46, -15)]);
             _g.h[6] = value;
         }
         $r = _g;
         return $r;
     }(this));
-    game_engine_entity_EngineShipEntityConfig.RightCannonsOffsetByDirMid = (function ($this) {
+    game_engine_navy_entity_NavyEntitiesConfig.RightCannonsOffsetByDirMid = (function ($this) {
         var $r;
         var _g = new haxe_ds_IntMap();
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-49, 54), new game_engine_entity_PosOffset(-19, 54), new game_engine_entity_PosOffset(11, 54), new game_engine_entity_PosOffset(41, 54)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-49, 54), new game_engine_base_PosOffset(-19, 54), new game_engine_base_PosOffset(11, 54), new game_engine_base_PosOffset(41, 54)]);
             _g.h[1] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(21, 51), new game_engine_entity_PosOffset(47, 38), new game_engine_entity_PosOffset(72, 25), new game_engine_entity_PosOffset(96, 12)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(21, 51), new game_engine_base_PosOffset(47, 38), new game_engine_base_PosOffset(72, 25), new game_engine_base_PosOffset(96, 12)]);
             _g.h[3] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(47, 8), new game_engine_entity_PosOffset(47, -13), new game_engine_entity_PosOffset(47, -34), new game_engine_entity_PosOffset(47, -55)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(47, 8), new game_engine_base_PosOffset(47, -13), new game_engine_base_PosOffset(47, -34), new game_engine_base_PosOffset(47, -55)]);
             _g.h[2] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(27, -17), new game_engine_entity_PosOffset(5, -28), new game_engine_entity_PosOffset(-19, -40), new game_engine_entity_PosOffset(-42, -51)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(27, -17), new game_engine_base_PosOffset(5, -28), new game_engine_base_PosOffset(-19, -40), new game_engine_base_PosOffset(-42, -51)]);
             _g.h[4] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(0, -59), new game_engine_entity_PosOffset(-24, -59), new game_engine_entity_PosOffset(-51, -59), new game_engine_entity_PosOffset(-78, -59)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(0, -59), new game_engine_base_PosOffset(-24, -59), new game_engine_base_PosOffset(-51, -59), new game_engine_base_PosOffset(-78, -59)]);
             _g.h[8] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-61, -28), new game_engine_entity_PosOffset(-82, -17), new game_engine_entity_PosOffset(-103, -6), new game_engine_entity_PosOffset(-125, 5)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-61, -28), new game_engine_base_PosOffset(-82, -17), new game_engine_base_PosOffset(-103, -6), new game_engine_base_PosOffset(-125, 5)]);
             _g.h[7] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-87, -10), new game_engine_entity_PosOffset(-87, 10), new game_engine_entity_PosOffset(-87, 30), new game_engine_entity_PosOffset(-87, 50)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-87, -10), new game_engine_base_PosOffset(-87, 10), new game_engine_base_PosOffset(-87, 30), new game_engine_base_PosOffset(-87, 50)]);
             _g.h[5] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-82, 33), new game_engine_entity_PosOffset(-60, 44), new game_engine_entity_PosOffset(-39, 54), new game_engine_entity_PosOffset(-18, 64)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-82, 33), new game_engine_base_PosOffset(-60, 44), new game_engine_base_PosOffset(-39, 54), new game_engine_base_PosOffset(-18, 64)]);
             _g.h[6] = value;
         }
         $r = _g;
         return $r;
     }(this));
-    game_engine_entity_EngineShipEntityConfig.LeftCannonsOffsetByDirMid = (function ($this) {
+    game_engine_navy_entity_NavyEntitiesConfig.LeftCannonsOffsetByDirMid = (function ($this) {
         var $r;
         var _g = new haxe_ds_IntMap();
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-43, -59), new game_engine_entity_PosOffset(-15, -59), new game_engine_entity_PosOffset(13, -59), new game_engine_entity_PosOffset(41, -59)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-43, -59), new game_engine_base_PosOffset(-15, -59), new game_engine_base_PosOffset(13, -59), new game_engine_base_PosOffset(41, -59)]);
             _g.h[1] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-63, -20), new game_engine_entity_PosOffset(-43, -30), new game_engine_entity_PosOffset(-23, -40), new game_engine_entity_PosOffset(-3, -50)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-63, -20), new game_engine_base_PosOffset(-43, -30), new game_engine_base_PosOffset(-23, -40), new game_engine_base_PosOffset(-3, -50)]);
             _g.h[3] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-87, 8), new game_engine_entity_PosOffset(-87, -13), new game_engine_entity_PosOffset(-87, -34), new game_engine_entity_PosOffset(-87, -55)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-87, 8), new game_engine_base_PosOffset(-87, -13), new game_engine_base_PosOffset(-87, -34), new game_engine_base_PosOffset(-87, -55)]);
             _g.h[2] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(-60, 48), new game_engine_entity_PosOffset(-81, 38), new game_engine_entity_PosOffset(-102, 28), new game_engine_entity_PosOffset(-123, 18)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(-60, 48), new game_engine_base_PosOffset(-81, 38), new game_engine_base_PosOffset(-102, 28), new game_engine_base_PosOffset(-123, 18)]);
             _g.h[4] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(0, 54), new game_engine_entity_PosOffset(-24, 54), new game_engine_entity_PosOffset(-51, 54), new game_engine_entity_PosOffset(-78, 54)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(0, 54), new game_engine_base_PosOffset(-24, 54), new game_engine_base_PosOffset(-51, 54), new game_engine_base_PosOffset(-78, 54)]);
             _g.h[8] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(42, 36), new game_engine_entity_PosOffset(24, 44), new game_engine_entity_PosOffset(-3, 59), new game_engine_entity_PosOffset(-26, 70)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(42, 36), new game_engine_base_PosOffset(24, 44), new game_engine_base_PosOffset(-3, 59), new game_engine_base_PosOffset(-26, 70)]);
             _g.h[7] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(48, -10), new game_engine_entity_PosOffset(48, 10), new game_engine_entity_PosOffset(48, 30), new game_engine_entity_PosOffset(48, 50)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(48, -10), new game_engine_base_PosOffset(48, 10), new game_engine_base_PosOffset(48, 30), new game_engine_base_PosOffset(48, 50)]);
             _g.h[5] = value;
         }
         {
-            var value = new game_engine_entity_PosOffsetArray([new game_engine_entity_PosOffset(25, -26), new game_engine_entity_PosOffset(47, -16), new game_engine_entity_PosOffset(70, -4), new game_engine_entity_PosOffset(93, 6)]);
+            var value = new game_engine_base_PosOffsetArray([new game_engine_base_PosOffset(25, -26), new game_engine_base_PosOffset(47, -16), new game_engine_base_PosOffset(70, -4), new game_engine_base_PosOffset(93, 6)]);
             _g.h[6] = value;
         }
         $r = _g;
         return $r;
     }(this));
-    game_engine_entity_EngineShipEntityConfig.RightSideRectOffsetByDir = (function ($this) {
+    game_engine_navy_entity_NavyEntitiesConfig.RightSideRectOffsetByDir = (function ($this) {
         var $r;
         var _g = new haxe_ds_IntMap();
         {
-            var value = new game_engine_entity_PosOffset(0, 0, 0);
+            var value = new game_engine_base_PosOffset(0, 0, 0);
             _g.h[1] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(0, 0, 0);
+            var value = new game_engine_base_PosOffset(0, 0, 0);
             _g.h[2] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(0, 0, 0);
+            var value = new game_engine_base_PosOffset(0, 0, 0);
             _g.h[3] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(0, 0, 0);
+            var value = new game_engine_base_PosOffset(0, 0, 0);
             _g.h[4] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(0, 0, 0);
+            var value = new game_engine_base_PosOffset(0, 0, 0);
             _g.h[5] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(0, 0, 0);
+            var value = new game_engine_base_PosOffset(0, 0, 0);
             _g.h[6] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(0, 0, 0);
+            var value = new game_engine_base_PosOffset(0, 0, 0);
             _g.h[7] = value;
         }
         {
-            var value = new game_engine_entity_PosOffset(0, 0, 0);
+            var value = new game_engine_base_PosOffset(0, 0, 0);
             _g.h[8] = value;
         }
         $r = _g;
@@ -3293,5 +2940,5 @@
         $r = this1;
         return $r;
     }(this));
-    game_engine_GameEngine.main();
+    game_engine_navy_NavyIslandEngine.main();
 })(typeof exports != "undefined" ? exports : typeof window != "undefined" ? window : typeof self != "undefined" ? self : this, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

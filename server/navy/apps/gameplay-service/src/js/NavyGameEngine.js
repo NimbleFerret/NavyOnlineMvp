@@ -133,6 +133,7 @@
         this.minSpeed = struct.minSpeed;
         this.maxSpeed = struct.maxSpeed;
         this.currentSpeed = struct.currentSpeed;
+        this.movementDelay = struct.movementDelay;
         this.direction = struct.direction;
         this.rotation = struct.rotation;
         this.id = struct.id;
@@ -308,7 +309,7 @@
         }
     };
     game_engine_base_MathUtils.differ = function (a, b, error) {
-        return Math.abs(a - b) > (error == 0 ? 0.1 : error);
+        return Math.abs(a - b) > (error == 0 ? 1 : error);
     };
     var game_engine_base_core_EngineMode = $hxEnums["game.engine.base.core.EngineMode"] = {
         __ename__: true, __constructs__: null
@@ -510,6 +511,7 @@
         this.dx = 0.0;
         this.lastLocalMovementInputCheck = 0.0;
         this.lastMovementInputCheck = 0.0;
+        this.isMovable = true;
         this.isCollides = true;
         this.isAlive = true;
         this.baseObjectEntity = baseObjectEntity;
@@ -721,7 +723,10 @@
     };
     game_engine_base_geometry_Line.__name__ = true;
     game_engine_base_geometry_Line.prototype = {
-        intersectsWithLine: function (line) {
+        getMidPoint: function () {
+            return new game_engine_base_geometry_Point((this.x1 + this.x2) / 2, (this.y1 + this.y2) / 2);
+        }
+        , intersectsWithLine: function (line) {
             return game_engine_base_MathUtils.lineToLineIntersection(this, line);
         }
         , __class__: game_engine_base_geometry_Line
@@ -761,6 +766,13 @@
     game_engine_base_geometry_Rectangle.prototype = {
         getCenter: function () {
             return new game_engine_base_geometry_Point(this.x, this.y);
+        }
+        , getMaxSide: function () {
+            if (this.w > this.h) {
+                return this.w;
+            } else {
+                return this.h;
+            }
         }
         , getLeft: function () {
             return this.x - this.w / 2;
@@ -945,7 +957,7 @@
                                 while (_g1 < _g2) {
                                     var i1 = _g1++;
                                     var cannonPosition = ship.getCannonPositionBySideAndIndex(side, i1);
-                                    var shell = this.addShell({ x: cannonPosition.x, y: cannonPosition.y, ownerId: inputInitiator, rotation: shipSideRadRotation, side: side, pos: i1, damage: ship.getCannonsDamage(), range: ship.getCannonsRange() });
+                                    var shell = this.addShell({ x: cannonPosition.x, y: cannonPosition.y, ownerId: inputInitiator, rotation: shipSideRadRotation, side: side, pos: i1, currentSpeed: ship.getCannonsShellSpeed(), damage: ship.getCannonsDamage(), range: ship.getCannonsRange() });
                                     shells.push(shell);
                                 }
                                 this.validatedInputCommands.push(input);
@@ -981,7 +993,7 @@
                     ship.collides(false);
                     ship.update(dt);
                     var engineShipEntity = js_Boot.__cast(ship, game_engine_navy_entity_NavyShipEntity);
-                    if (engineShipEntity.shipObjectEntity.role == 1 && this.botsAllowShoot) {
+                    if (engineShipEntity.getRole() == 1 && this.botsAllowShoot) {
                         this.addInputCommand(new game_engine_navy_NavyInputCommand(5, engineShipEntity.getOwnerId(), 0, { side: 2, aimAngleRads: game_engine_base_MathUtils.getGunRadByDir(engineShipEntity.getDirection()) }));
                     }
                     if (this.enableCollisions) {
@@ -1105,6 +1117,7 @@
         this.cannonsRange = struct.cannonsRange;
         this.cannonsDamage = struct.cannonsDamage;
         this.cannonsAngleSpread = struct.cannonsAngleSpread;
+        this.cannonsShellSpeed = struct.cannonsShellSpeed;
         this.armor = struct.armor;
         this.hull = struct.hull;
         this.movementDelay = struct.movementDelay;
@@ -1203,10 +1216,9 @@
         this.currentHull = 0;
         var key = game_engine_navy_entity_NavyShipEntity.getShipTypeBySize(shipObjectEntity.shipHullSize);
         game_engine_base_entity_EngineBaseGameEntity.call(this, shipObjectEntity, game_engine_navy_entity_NavyEntitiesConfig.EntityShapeByType.h[key]);
-        this.shipObjectEntity = shipObjectEntity;
-        this.currentHull = this.shipObjectEntity.hull;
-        this.currentArmor = this.shipObjectEntity.armor;
-        switch (this.shipObjectEntity.direction) {
+        this.currentHull = shipObjectEntity.hull;
+        this.currentArmor = shipObjectEntity.armor;
+        switch (this.baseObjectEntity.direction) {
             case 1:
                 this.setRotation(game_engine_base_MathUtils.degreeToRads(0));
                 break;
@@ -1250,12 +1262,12 @@
             var result = true;
             switch (playerInputType) {
                 case 1:
-                    if (this.baseObjectEntity.currentSpeed + this.shipObjectEntity.acceleration > this.shipObjectEntity.maxSpeed) {
+                    if (this.baseObjectEntity.currentSpeed + this.baseObjectEntity.acceleration > this.baseObjectEntity.maxSpeed) {
                         result = false;
                     }
                     break;
                 case 2:
-                    if (this.baseObjectEntity.currentSpeed - this.shipObjectEntity.acceleration < this.shipObjectEntity.minSpeed) {
+                    if (this.baseObjectEntity.currentSpeed - this.baseObjectEntity.acceleration < this.baseObjectEntity.minSpeed) {
                         result = false;
                     }
                     break;
@@ -1271,7 +1283,7 @@
         }
         , checkRotationInput: function () {
             var now = HxOverrides.now() / 1000;
-            if (this.lastRotationInputCheck == 0 || this.lastRotationInputCheck + this.shipObjectEntity.turnDelay < now) {
+            if (this.lastRotationInputCheck == 0 || this.lastRotationInputCheck + this.getShipObjectEntity().turnDelay < now) {
                 this.lastRotationInputCheck = now;
                 return true;
             } else {
@@ -1280,11 +1292,11 @@
         }
         , accelerate: function () {
             var stateChanged = false;
-            if (this.checkMovementInput() && this.baseObjectEntity.currentSpeed != this.shipObjectEntity.maxSpeed) {
+            if (this.checkMovementInput() && this.baseObjectEntity.currentSpeed != this.baseObjectEntity.maxSpeed) {
                 stateChanged = true;
-                this.baseObjectEntity.currentSpeed += this.shipObjectEntity.acceleration;
-                if (this.baseObjectEntity.currentSpeed > this.shipObjectEntity.maxSpeed) {
-                    this.baseObjectEntity.currentSpeed = this.shipObjectEntity.maxSpeed;
+                this.baseObjectEntity.currentSpeed += this.baseObjectEntity.acceleration;
+                if (this.baseObjectEntity.currentSpeed > this.baseObjectEntity.maxSpeed) {
+                    this.baseObjectEntity.currentSpeed = this.baseObjectEntity.maxSpeed;
                 }
                 if (this.speedChangeCallback != null) {
                     this.speedChangeCallback(this.baseObjectEntity.currentSpeed);
@@ -1294,11 +1306,11 @@
         }
         , decelerate: function () {
             var stateChanged = false;
-            if (this.checkMovementInput() && this.baseObjectEntity.currentSpeed != this.shipObjectEntity.minSpeed) {
+            if (this.checkMovementInput() && this.baseObjectEntity.currentSpeed != this.baseObjectEntity.minSpeed) {
                 stateChanged = true;
-                this.baseObjectEntity.currentSpeed -= this.shipObjectEntity.acceleration;
-                if (this.baseObjectEntity.currentSpeed < this.shipObjectEntity.minSpeed) {
-                    this.baseObjectEntity.currentSpeed = this.shipObjectEntity.minSpeed;
+                this.baseObjectEntity.currentSpeed -= this.baseObjectEntity.acceleration;
+                if (this.baseObjectEntity.currentSpeed < this.baseObjectEntity.minSpeed) {
+                    this.baseObjectEntity.currentSpeed = this.baseObjectEntity.minSpeed;
                 }
                 if (this.speedChangeCallback != null) {
                     this.speedChangeCallback(this.baseObjectEntity.currentSpeed);
@@ -1311,34 +1323,34 @@
             if (this.checkRotationInput()) {
                 stateChanged = true;
                 this.decrementRotation(game_engine_base_MathUtils.degreeToRads(45));
-                switch (this.shipObjectEntity.direction) {
+                switch (this.getShipObjectEntity().direction) {
                     case 1:
-                        this.shipObjectEntity.direction = 3;
+                        this.getShipObjectEntity().direction = 3;
                         break;
                     case 2:
-                        this.shipObjectEntity.direction = 4;
+                        this.getShipObjectEntity().direction = 4;
                         break;
                     case 3:
-                        this.shipObjectEntity.direction = 2;
+                        this.getShipObjectEntity().direction = 2;
                         break;
                     case 4:
-                        this.shipObjectEntity.direction = 8;
+                        this.getShipObjectEntity().direction = 8;
                         break;
                     case 5:
-                        this.shipObjectEntity.direction = 6;
+                        this.getShipObjectEntity().direction = 6;
                         break;
                     case 6:
-                        this.shipObjectEntity.direction = 1;
+                        this.getShipObjectEntity().direction = 1;
                         break;
                     case 7:
-                        this.shipObjectEntity.direction = 5;
+                        this.getShipObjectEntity().direction = 5;
                         break;
                     case 8:
-                        this.shipObjectEntity.direction = 7;
+                        this.getShipObjectEntity().direction = 7;
                         break;
                 }
                 if (this.directionChangeCallbackLeft != null) {
-                    this.directionChangeCallbackLeft(this.shipObjectEntity.direction);
+                    this.directionChangeCallbackLeft(this.getShipObjectEntity().direction);
                 }
             }
             return stateChanged;
@@ -1348,34 +1360,34 @@
             if (this.checkRotationInput()) {
                 stateChanged = true;
                 this.incrementRotation(game_engine_base_MathUtils.degreeToRads(45));
-                switch (this.shipObjectEntity.direction) {
+                switch (this.getShipObjectEntity().direction) {
                     case 1:
-                        this.shipObjectEntity.direction = 6;
+                        this.getShipObjectEntity().direction = 6;
                         break;
                     case 2:
-                        this.shipObjectEntity.direction = 3;
+                        this.getShipObjectEntity().direction = 3;
                         break;
                     case 3:
-                        this.shipObjectEntity.direction = 1;
+                        this.getShipObjectEntity().direction = 1;
                         break;
                     case 4:
-                        this.shipObjectEntity.direction = 2;
+                        this.getShipObjectEntity().direction = 2;
                         break;
                     case 5:
-                        this.shipObjectEntity.direction = 7;
+                        this.getShipObjectEntity().direction = 7;
                         break;
                     case 6:
-                        this.shipObjectEntity.direction = 5;
+                        this.getShipObjectEntity().direction = 5;
                         break;
                     case 7:
-                        this.shipObjectEntity.direction = 8;
+                        this.getShipObjectEntity().direction = 8;
                         break;
                     case 8:
-                        this.shipObjectEntity.direction = 4;
+                        this.getShipObjectEntity().direction = 4;
                         break;
                 }
                 if (this.directionChangeCallbackRight != null) {
-                    this.directionChangeCallbackRight(this.shipObjectEntity.direction);
+                    this.directionChangeCallbackRight(this.getShipObjectEntity().direction);
                 }
             }
             return stateChanged;
@@ -1384,12 +1396,12 @@
             var now = HxOverrides.now() / 1000;
             if (side == 2) {
                 if (this.lastRightShootInputCheck != 0) {
-                    return this.lastRightShootInputCheck + this.shipObjectEntity.fireDelay < now;
+                    return this.lastRightShootInputCheck + this.getShipObjectEntity().fireDelay < now;
                 } else {
                     return true;
                 }
             } else if (this.lastLeftShootInputCheck != 0) {
-                return this.lastLeftShootInputCheck + this.shipObjectEntity.fireDelay < now;
+                return this.lastLeftShootInputCheck + this.getShipObjectEntity().fireDelay < now;
             } else {
                 return true;
             }
@@ -1397,7 +1409,7 @@
         , tryShoot: function (side) {
             var now = HxOverrides.now() / 1000;
             if (side == 2) {
-                if (this.lastRightShootInputCheck == 0 || this.lastRightShootInputCheck + this.shipObjectEntity.fireDelay < now) {
+                if (this.lastRightShootInputCheck == 0 || this.lastRightShootInputCheck + this.getShipObjectEntity().fireDelay < now) {
                     this.lastRightShootInputCheck = now;
                     if (this.shootRightCallback != null) {
                         this.shootRightCallback();
@@ -1406,7 +1418,7 @@
                 } else {
                     return false;
                 }
-            } else if (this.lastLeftShootInputCheck == 0 || this.lastLeftShootInputCheck + this.shipObjectEntity.fireDelay < now) {
+            } else if (this.lastLeftShootInputCheck == 0 || this.lastLeftShootInputCheck + this.getShipObjectEntity().fireDelay < now) {
                 this.lastLeftShootInputCheck = now;
                 if (this.shootLeftCallback != null) {
                     this.shootLeftCallback();
@@ -1435,7 +1447,7 @@
         , getCannonsPositionBySide: function (side) {
             var result = [];
             var cannonsTotal = 0;
-            switch (this.shipObjectEntity.shipCannons) {
+            switch (this.getShipObjectEntity().shipCannons) {
                 case 1:
                     cannonsTotal = 1;
                     break;
@@ -1462,7 +1474,7 @@
         , getCannonsFiringAreaBySide: function (side) {
             var result = [];
             var cannonsTotal = 0;
-            switch (this.shipObjectEntity.shipCannons) {
+            switch (this.getShipObjectEntity().shipCannons) {
                 case 1:
                     cannonsTotal = 1;
                     break;
@@ -1484,9 +1496,9 @@
                 var cannonPosition = this.getCannonPositionBySideAndIndex(side, i);
                 var x = cannonPosition.x;
                 var y = cannonPosition.y;
-                var spreadDegree = game_engine_base_MathUtils.degreeToRads(this.shipObjectEntity.cannonsAngleSpread / 2);
-                var lineHorizontalLength = x + (side == 2 ? this.shipObjectEntity.cannonsRange : -this.shipObjectEntity.cannonsRange);
-                var centralLineEndPoint = game_engine_base_MathUtils.rotatePointAroundCenter(lineHorizontalLength, y, x, y, game_engine_base_MathUtils.getGunRadByDir(this.shipObjectEntity.direction));
+                var spreadDegree = game_engine_base_MathUtils.degreeToRads(this.getShipObjectEntity().cannonsAngleSpread / 2);
+                var lineHorizontalLength = x + (side == 2 ? this.getShipObjectEntity().cannonsRange : -this.getShipObjectEntity().cannonsRange);
+                var centralLineEndPoint = game_engine_base_MathUtils.rotatePointAroundCenter(lineHorizontalLength, y, x, y, game_engine_base_MathUtils.getGunRadByDir(this.baseObjectEntity.direction));
                 var leftLineEndPoint = game_engine_base_MathUtils.rotatePointAroundCenter(centralLineEndPoint.x, centralLineEndPoint.y, x, y, spreadDegree);
                 var rightLineEndPoint = game_engine_base_MathUtils.rotatePointAroundCenter(centralLineEndPoint.x, centralLineEndPoint.y, x, y, -spreadDegree);
                 result.push({ origin: cannonPosition, center: centralLineEndPoint, left: leftLineEndPoint, right: rightLineEndPoint });
@@ -1497,7 +1509,7 @@
             var offset;
             var additionalOffsetX = 0;
             var additionalOffsetY = 0;
-            var direction = this.shipObjectEntity.direction;
+            var direction = this.baseObjectEntity.direction;
             if (side == 1) {
                 if (direction == 1) {
                     additionalOffsetX = 0;
@@ -1565,35 +1577,44 @@
                     additionalOffsetY = 0;
                 }
             }
-            if (this.shipObjectEntity.shipHullSize == 2) {
+            if (this.getShipObjectEntity().shipHullSize == 2) {
                 offset = side == 1 ? game_engine_navy_entity_NavyEntitiesConfig.LeftCannonsOffsetByDirMid.h[direction] : game_engine_navy_entity_NavyEntitiesConfig.RightCannonsOffsetByDirMid.h[direction];
             } else {
                 offset = side == 1 ? game_engine_navy_entity_NavyEntitiesConfig.LeftCannonsOffsetByDirSm.h[direction] : game_engine_navy_entity_NavyEntitiesConfig.RightCannonsOffsetByDirSm.h[direction];
             }
             var offsetX = offset.positions[index].x - additionalOffsetX;
             var offsetY = offset.positions[index].y - additionalOffsetY;
-            return new game_engine_base_geometry_Point(this.shipObjectEntity.x + offsetX, this.shipObjectEntity.y + offsetY);
+            return new game_engine_base_geometry_Point(this.baseObjectEntity.x + offsetX, this.baseObjectEntity.y + offsetY);
+        }
+        , getShipObjectEntity: function () {
+            return js_Boot.__cast(this.baseObjectEntity, game_engine_navy_ShipObjectEntity);
         }
         , getShipHullSize: function () {
-            return this.shipObjectEntity.shipHullSize;
+            return this.getShipObjectEntity().shipHullSize;
         }
         , getHull: function () {
-            return this.shipObjectEntity.hull;
+            return this.getShipObjectEntity().hull;
         }
         , getArmor: function () {
-            return this.shipObjectEntity.armor;
+            return this.getShipObjectEntity().armor;
         }
         , getShipWindows: function () {
-            return this.shipObjectEntity.shipWindows;
+            return this.getShipObjectEntity().shipWindows;
         }
         , getShipCannons: function () {
-            return this.shipObjectEntity.shipCannons;
+            return this.getShipObjectEntity().shipCannons;
         }
         , getCannonsDamage: function () {
-            return this.shipObjectEntity.cannonsDamage;
+            return this.getShipObjectEntity().cannonsDamage;
         }
         , getCannonsRange: function () {
-            return this.shipObjectEntity.cannonsRange;
+            return this.getShipObjectEntity().cannonsRange;
+        }
+        , getCannonsShellSpeed: function () {
+            return this.getShipObjectEntity().cannonsShellSpeed;
+        }
+        , getRole: function () {
+            return this.getShipObjectEntity().role;
         }
         , __class__: game_engine_navy_entity_NavyShipEntity
     });

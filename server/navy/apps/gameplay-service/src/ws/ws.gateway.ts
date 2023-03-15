@@ -103,7 +103,7 @@ export class WsGateway implements OnModuleInit {
 
     @SubscribeMessage(WsProtocol.SocketClientEventInput)
     async input(@MessageBody() data: SocketClientMessageInput) {
-        // Logger.log(`Got input request. ${JSON.stringify(data)}`);
+        Logger.log(`Got input request. ${JSON.stringify(data)}`);
         this.eventEmitter.emit(AppEvents.PlayerInput, data);
     }
 

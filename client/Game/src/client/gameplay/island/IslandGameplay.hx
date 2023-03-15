@@ -61,11 +61,23 @@ class IslandGameplay extends BasicGameplay {
 			}
 		};
 
-		islandEngine.postLoopCallback = function callback() {};
+		islandEngine.postLoopCallback = function callback() {
+			for (input in islandEngine.validatedInputCommands) {
+				if (input.playerId == Player.instance.playerId) {
+					final playerInput = cast(input, NavyInputCommand);
+					Socket.instance.input({
+						index: Player.instance.getInputIndex(),
+						playerId: playerInput.playerId,
+						playerInputType: playerInput.inputType
+					});
+				}
+			}
+		};
 
 		for (lineCollider in islandEngine.lineColliders) {
 			addLineCollider(scene, lineCollider.x1, lineCollider.y1, lineCollider.x2, lineCollider.y2);
 		}
+
 		hud = new IslandHud(islandId, islandOwner, function callback() {
 			destroy();
 			Socket.instance.leaveGame({playerId: playerId});
@@ -73,6 +85,7 @@ class IslandGameplay extends BasicGameplay {
 				leaveCallback();
 			}
 		});
+
 		maxDragX = 200;
 		maxDragY = 100;
 	}
@@ -191,7 +204,12 @@ class IslandGameplay extends BasicGameplay {
 			x: message.x,
 			y: message.y,
 			id: message.id,
-			ownerId: message.ownerId
+			ownerId: message.ownerId,
+			acceleration: message.acceleration,
+			currentSpeed: message.currentSpeed,
+			minSpeed: message.minSpeed,
+			maxSpeed: message.maxSpeed,
+			movementDelay: message.movementDelay
 		});
 	}
 }

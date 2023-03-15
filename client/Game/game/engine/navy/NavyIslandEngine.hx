@@ -1,7 +1,5 @@
 package game.engine.navy;
 
-import game.engine.base.MathUtils;
-import game.engine.navy.entity.NavyCharacterEntity;
 import game.engine.base.BaseTypesAndClasses;
 import game.engine.base.core.BaseEngine;
 import game.engine.base.core.BaseEngine.EngineGameMode;
@@ -9,7 +7,6 @@ import game.engine.base.core.BaseEngine.EngineMode;
 import game.engine.base.geometry.Line;
 import game.engine.navy.NavyTypesAndClasses;
 import game.engine.navy.entity.NavyCharacterEntity;
-import game.engine.navy.entity.NavyShipEntity;
 import game.engine.navy.entity.manager.CharacterManager;
 
 @:expose
@@ -120,12 +117,20 @@ class NavyIslandEngine extends BaseEngine {
 	public function customDestroy() {}
 
 	public function buildEngineEntity(struct:Dynamic) {
-		return new NavyCharacterEntity(cast(struct, BaseObjectEntity));
+		return new NavyCharacterEntity(new BaseObjectEntity(struct));
 	}
 
 	// ------------------------------------
 
 	public function addLineCollider(x1:Int, y1:Int, x2:Int, y2:Int) {
 		lineColliders.push(new Line(x1, y1, x2, y2));
+	}
+
+	// -------------------------------------
+	// Input wrappers
+	// -------------------------------------
+	// TODO interface that
+	public function applyPlayerInput(inputType:PlayerInputType, playerId:String, ?index:Int, ?shootDetails:ShootInputDetails) {
+		addInputCommand(new NavyInputCommand(inputType, playerId, index, shootDetails));
 	}
 }

@@ -8,8 +8,8 @@ import {
 import { game } from "../../js/NavyIslandEngine.js"
 import { BaseGameObject } from "@app/shared-library/entities/entity.base";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
-import { Logger } from "@nestjs/common";
-import { CaptainEntity, CaptainObjectEntity } from "@app/shared-library/entities/entity.captain";
+import { Logger } from "@nestjs/common"
+import { CharacterEntity, CharacterObjectEntity } from "@app/shared-library/entities/entity.character";
 
 export class GameplayIslandInstance extends BaseGameplayInstance {
 
@@ -56,7 +56,7 @@ export class GameplayIslandInstance extends BaseGameplayInstance {
     // --------------------------
 
     public initiateEngineEntity(playerId: string, entityid: string) {
-        const captain = CaptainEntity.GetFreeCaptainStats(entityid, playerId);
+        const captain = CharacterEntity.GetFreeCharacterStats(entityid, playerId);
         // captain.x = this.playerX;
         // this.playerX += 250;
         const engineEntity = this.gameEngine.buildEngineEntity(captain);
@@ -66,23 +66,19 @@ export class GameplayIslandInstance extends BaseGameplayInstance {
 
     public converJsEntityToTypeScript(jsEntity: any, full: boolean) {
         const objectEntity = {
-            // x: jsEntity.shipObjectEntity.x,
-            // y: jsEntity.shipObjectEntity.y,
-            // id: jsEntity.shipObjectEntity.id,
-            // direction: jsEntity.shipObjectEntity.direction,
-            // currentSpeed: jsEntity.shipObjectEntity.currentSpeed,
-            // armor: jsEntity.shipObjectEntity.armor,
-            // hull: jsEntity.shipObjectEntity.hull,
-        } as CaptainObjectEntity;
-
-        return {} as BaseGameObject;
-        // const result = {
-        //     y: jsEntity.y,
-        //     x: jsEntity.x,
-        //     id: jsEntity.id,
-        //     owner: jsEntity.ownerId
-        // } as BaseGameObject;
-        // return result;
+            y: jsEntity.baseObjectEntity.y,
+            x: jsEntity.baseObjectEntity.x,
+            id: jsEntity.baseObjectEntity.id,
+            currentSpeed: jsEntity.baseObjectEntity.currentSpeed
+        } as CharacterObjectEntity;
+        if (full) {
+            objectEntity.ownerId = jsEntity.baseObjectEntity.ownerId;
+            objectEntity.acceleration = jsEntity.baseObjectEntity.acceleration;
+            objectEntity.minSpeed = jsEntity.baseObjectEntity.minSpeed;
+            objectEntity.maxSpeed = jsEntity.baseObjectEntity.maxSpeed;
+            objectEntity.movementDelay = jsEntity.baseObjectEntity.movementDelay;
+        }
+        return objectEntity;
     }
 
 }

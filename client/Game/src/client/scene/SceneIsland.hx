@@ -33,17 +33,23 @@ class SceneIsland extends Scene implements EventListener {
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventAddEntity, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityInput, this);
+				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventEntityInputs, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
 				EventManager.instance.unsubscribe(SocketProtocol.SocketServerEventSync, this);
 				leaveCallback();
 			}
 		}, Player.instance.SinglePlayer ? EngineMode.Client : EngineMode.Server);
 		if (game.baseEngine.engineMode == EngineMode.Server) {
-			Socket.instance.joinGame({playerId: Player.instance.playerId, instanceId: instanceId});
+			Socket.instance.joinGame({
+				playerId: Player.instance.playerId,
+				instanceId: instanceId,
+				entityId: Player.instance.playerEntityId
+			});
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventGameInit, this);
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventAddEntity, this);
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventRemoveEntity, this);
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityInput, this);
+			EventManager.instance.subscribe(SocketProtocol.SocketServerEventEntityInputs, this);
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventUpdateWorldState, this);
 			EventManager.instance.subscribe(SocketProtocol.SocketServerEventSync, this);
 		} else {
@@ -84,15 +90,17 @@ class SceneIsland extends Scene implements EventListener {
 	public function notify(event:String, message:Dynamic) {
 		switch (event) {
 			case SocketProtocol.SocketServerEventGameInit:
-				game.startGameMultiplayer(Player.instance.playerData.ethAddress.toLowerCase(), message);
+				game.startGameMultiplayer(Player.instance.playerId.toLowerCase(), message);
 			case SocketProtocol.SocketServerEventAddEntity:
 				game.addEntity(message);
 			case SocketProtocol.SocketServerEventRemoveEntity:
 				game.removeEntity(message);
 			case SocketProtocol.SocketServerEventUpdateWorldState:
 				game.updateWorldState(message);
-			// case SocketProtocol.SocketServerEventEntityInput:
-			// game.entityMove(message);
+			case SocketProtocol.SocketServerEventEntityInputs:
+				game.entityInputs(message);
+			case SocketProtocol.SocketServerEventEntityInput:
+				game.entityInput(message);
 			case SocketProtocol.SocketServerEventSync:
 				game.sync(message);
 			default:

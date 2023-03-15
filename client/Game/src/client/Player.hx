@@ -13,7 +13,7 @@ class Player {
 	public var playerEntityId:String;
 	public var isCurrentShipIsFree = true;
 
-	public final SinglePlayer = true;
+	public final SinglePlayer = false;
 	public final TestGameplayInstanceId = "9fd5b610-93a3-45cf-9d38-311775a33ec5";
 	public final TestIslandInstanceId = "88601987-c5f8-4076-b51b-d64845334210";
 

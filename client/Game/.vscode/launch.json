@@ -3,7 +3,8 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            // "type": "chrome",
+            "type": "msedge",
             "request": "launch",
             "name": "Launch Chrome against localhost",
             "url": "file://${workspaceFolder}/index.html",
