@@ -12,7 +12,9 @@
         "lastUpdated": 1677702695,
         "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 0,
-        "chainId": "338"
+        "chainId": "338",
+        "chainName": "Cronos",
+        "coinSymbol": "CRO"
     },
     {
         "needUpdate": false,
@@ -27,7 +29,9 @@
         "lastUpdated": 1677772998,
         "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 0,
-        "chainId": "338"
+        "chainId": "338",
+        "chainName": "Cronos",
+        "coinSymbol": "CRO"
     },
     {
         "needUpdate": false,
@@ -42,7 +46,9 @@
         "lastUpdated": 1677773030,
         "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 0,
-        "chainId": "338"
+        "chainId": "338",
+        "chainName": "Cronos",
+        "coinSymbol": "CRO"
     },
     {
         "needUpdate": false,

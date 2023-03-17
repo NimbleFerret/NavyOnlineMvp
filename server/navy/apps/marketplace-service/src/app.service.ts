@@ -139,6 +139,8 @@ export class AppService implements OnModuleInit {
           collectionItem.needUpdate = fixtures[i].needUpdate;
           collectionItem.nftContract = fixtures[i].nftContract;
           collectionItem.chainId = fixtures[i].chainId;
+          collectionItem.chainName = fixtures[i].chainName;
+          collectionItem.coinSymbol = fixtures[i].coinSymbol;
           collectionItem.marketplaceState = fixtures[i].marketplaceState;
           await collectionItem.save();
         }
