@@ -38,6 +38,9 @@ export class CollectionItem {
     image: string;
 
     @Prop()
+    rarity: string;
+
+    @Prop()
     lastUpdated: number;
 
     @Prop({ default: false })
