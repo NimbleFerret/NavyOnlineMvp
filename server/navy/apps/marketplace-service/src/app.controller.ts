@@ -6,8 +6,6 @@ import { NotificationsReadDto } from './dto/dto.notifications.read';
 @Controller('marketplace')
 export class AppController {
 
-  private static readonly DefaultPaginationSize = 1;
-
   constructor(private readonly appService: AppService) { }
 
   @Get('cronosUsdPrice')
@@ -28,25 +26,22 @@ export class AppController {
   @Get('collection/:address/listed')
   getCollectionListedItems(
     @Param('address') address: string,
-    @Query('page') page: number = 1,
-    @Query('size') size: number = AppController.DefaultPaginationSize) {
-    return this.appService.getCollectionItems(MarketplaceNftsType.LISTED, address, page, size);
+    @Query('page') page?: number) {
+    return this.appService.getCollectionItems(MarketplaceNftsType.LISTED, address, page);
   }
 
   @Get('collection/:address/sold')
   getCollectionSoldItems(
     @Param('address') address: string,
-    @Query('page') page: number = 1,
-    @Query('size') size: number = AppController.DefaultPaginationSize) {
-    return this.appService.getCollectionItems(MarketplaceNftsType.SOLD, address, page, size);
+    @Query('page') page?: number) {
+    return this.appService.getCollectionItems(MarketplaceNftsType.SOLD, address, page);
   }
 
   @Get('collection/:address/all')
   getCollectionAllItems(
     @Param('address') address: string,
-    @Query('page') page: number = 1,
-    @Query('size') size: number = AppController.DefaultPaginationSize) {
-    return this.appService.getCollectionItems(MarketplaceNftsType.ALL, address, page, size);
+    @Query('page') page?: number) {
+    return this.appService.getCollectionItems(MarketplaceNftsType.ALL, address, page);
   }
 
   @Get('collection/:address/owner/:owner')

@@ -21,6 +21,8 @@ const fs = require('fs');
 @Injectable()
 export class AppService implements OnModuleInit {
 
+  private static readonly DefaultPaginationSize = 10;
+
   private web3Service: Web3Service;
   private notificationService: NotificationService;
 
@@ -121,6 +123,25 @@ export class AppService implements OnModuleInit {
           });
         });
       });
+
+      loadFixture('4_collection_items.json', async (fixtures: any) => {
+        for (let i = 0; i < fixtures.length; i++) {
+          const collectionItem = new this.collectionItemModel();
+          collectionItem.id = fixtures[i].id;
+          collectionItem.tokenId = fixtures[i].tokenId;
+          collectionItem.tokenUri = fixtures[i].tokenUri;
+          collectionItem.seller = fixtures[i].seller;
+          collectionItem.owner = fixtures[i].owner;
+          collectionItem.price = fixtures[i].price;
+          collectionItem.image = fixtures[i].image;
+          collectionItem.lastUpdated = fixtures[i].lastUpdated;
+          collectionItem.needUpdate = fixtures[i].needUpdate;
+          collectionItem.nftContract = fixtures[i].nftContract;
+          collectionItem.chainId = fixtures[i].chainId;
+          collectionItem.marketplaceState = fixtures[i].marketplaceState;
+          await collectionItem.save();
+        }
+      });
     }
 
     this.web3Service = this.web3ServiceGrpcClient.getService<Web3Service>(Web3ServiceName);
@@ -174,21 +195,64 @@ export class AppService implements OnModuleInit {
     return this.collectionModel.findOne({ address: address }).select(['-_id', '-__v']);
   }
 
-  async getCollectionItems(marketplaceNftsType: MarketplaceNftsType, address: string, page: number, size: number) {
+  async getCollectionItems(marketplaceNftsType: MarketplaceNftsType, address: string, page?: number) {
+    let initialPage = page;
+    if (!page) {
+      page = 1;
+      initialPage = 1;
+    }
+    const pageSize = AppService.DefaultPaginationSize;
+
     const query = {
       nftContract: address.toLowerCase(),
       marketplaceState: marketplaceNftsType
     };
     const count = await this.collectionItemModel.countDocuments(query);
+
+    let nftType = 'all';
+    if (marketplaceNftsType == MarketplaceNftsType.LISTED) {
+      nftType = 'listed';
+    } else if (marketplaceNftsType == MarketplaceNftsType.SOLD) {
+      nftType = 'sold';
+    }
+    const getUrl = (p: number) => `https://navy.online/marketplace/collection/${address}/${nftType}?page=${p}`;
+
+    const self = this;
+    async function databaseQuery(marketplaceState: MarketplaceNftsType, sortCriteria: string) {
+      return await self.collectionItemModel
+        .find({
+          nftContract: address
+        })
+        .select(['-_id', '-__v', '-id', '-needUpdate'])
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .sort([['marketplaceState', 1], [sortCriteria, -1]]);
+    }
+
+    const result = await databaseQuery(marketplaceNftsType, marketplaceNftsType == MarketplaceNftsType.ALL ? 'tokenId' : 'lastUpdated');
+
+    let pages = Math.ceil(count / pageSize);
+    let next = null;
+    let prev = null;
+
+    if (pages < 1) {
+      pages = 1;
+    }
+    if (pages > 1) {
+      next = ((page - 1) * pageSize) + result.length < (count) ? getUrl(Number(initialPage) + 1) : null;
+      prev = page > 1 ? getUrl(page - 1) : null;
+    }
+
     const response = {
-      pages: Number(Math.round(count / size).toFixed(0))
+      info: {
+        count,
+        pages,
+        next,
+        prev
+      },
+      result
     };
-    response['data'] = await this.collectionItemModel
-      .find(query)
-      .select(['-_id', '-__v', '-id', '-needUpdate'])
-      .skip((page - 1) * size)
-      .limit(size)
-      .sort([['lastUpdated', -1]]);
+
     return response;
   }
 
