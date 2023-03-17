@@ -134,6 +134,7 @@ export class AppService implements OnModuleInit {
           collectionItem.owner = fixtures[i].owner;
           collectionItem.price = fixtures[i].price;
           collectionItem.image = fixtures[i].image;
+          collectionItem.rarity = fixtures[i].rarity;
           collectionItem.lastUpdated = fixtures[i].lastUpdated;
           collectionItem.needUpdate = fixtures[i].needUpdate;
           collectionItem.nftContract = fixtures[i].nftContract;
@@ -230,6 +231,13 @@ export class AppService implements OnModuleInit {
     }
 
     const result = await databaseQuery(marketplaceNftsType, marketplaceNftsType == MarketplaceNftsType.ALL ? 'tokenId' : 'lastUpdated');
+
+    result.forEach(r => {
+      if (r.seller) {
+        r.owner = r.seller;
+        r.seller = undefined;
+      }
+    });
 
     let pages = Math.ceil(count / pageSize);
     let next = null;
