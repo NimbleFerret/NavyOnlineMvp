@@ -52,6 +52,12 @@ export class CollectionItem {
     @Prop()
     chainId: string;
 
+    @Prop()
+    chainName: string;
+
+    @Prop()
+    coinSymbol: string;
+
     @Prop({
         type: Number,
         required: true,
