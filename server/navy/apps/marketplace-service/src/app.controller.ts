@@ -40,8 +40,9 @@ export class AppController {
   @Get('collection/:address/all')
   getCollectionAllItems(
     @Param('address') address: string,
-    @Query('page') page?: number) {
-    return this.appService.getCollectionItems(MarketplaceNftsType.ALL, address, page);
+    @Query('page') page?: number,
+    @Query('size') size?: number) {
+    return this.appService.getCollectionItems(MarketplaceNftsType.ALL, address, page, size);
   }
 
   @Get('collection/:address/owner/:owner')

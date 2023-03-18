@@ -3,7 +3,7 @@ import { NotificationService, NotificationServiceGrpcClientName, NotificationSer
 import { Project, ProjectDocument, ProjectState } from '@app/shared-library/schemas/marketplace/schema.project';
 import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
 import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { BadGatewayException, Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { caching, MemoryCache } from 'cache-manager';
 import { ClientGrpc } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
@@ -21,7 +21,7 @@ const fs = require('fs');
 @Injectable()
 export class AppService implements OnModuleInit {
 
-  private static readonly DefaultPaginationSize = 10;
+  private static readonly DefaultPaginationSize = 24;
 
   private web3Service: Web3Service;
   private notificationService: NotificationService;
@@ -191,20 +191,28 @@ export class AppService implements OnModuleInit {
       result.push(project);
     }
 
+    if (result.length == 0) {
+      throw new BadGatewayException();
+    }
+
     return result;
   }
 
   async getCollection(address: string) {
-    return this.collectionModel.findOne({ address: address }).select(['-_id', '-__v']);
+    const collection = await this.collectionModel.findOne({ address: address }).select(['-_id', '-__v']);
+    if (!collection) {
+      throw new BadGatewayException();
+    }
+    return collection;
   }
 
-  async getCollectionItems(marketplaceNftsType: MarketplaceNftsType, address: string, page?: number) {
+  async getCollectionItems(marketplaceNftsType: MarketplaceNftsType, address: string, page?: number, size?: number) {
     let initialPage = page;
     if (!page) {
       page = 1;
       initialPage = 1;
     }
-    const pageSize = AppService.DefaultPaginationSize;
+    const pageSize = size ? size : AppService.DefaultPaginationSize;
 
     const query = {
       nftContract: address.toLowerCase(),
@@ -293,7 +301,14 @@ export class AppService implements OnModuleInit {
 
   async getMintByCollection(collectionAddress: string) {
     const collection = await this.getCollection(collectionAddress);
-    return this.mintModel.findOne({ _id: collection.mint }).select(['-_id', '-__v']);
+    if (!collection) {
+      throw new BadGatewayException();
+    }
+    const mint = await this.mintModel.findOne({ _id: collection.mint }).select(['-_id', '-__v']);
+    if (!mint) {
+      throw new BadGatewayException();
+    }
+    return mint;
   }
 
   async getNotifications(walletAddress: string) {
