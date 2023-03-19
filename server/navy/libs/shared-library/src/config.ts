@@ -25,6 +25,6 @@ export class Config {
     }
 
     public static GetMongoHost() {
-        return `mongodb://${Config.TestEnv ? 'localhost' : 'navy-mongodb'}/navy`;
+        return `mongodb://${Config.TestEnv ? 'localhost' : 'navyuser:jhassct872hbJGFJgkcva2s@navy-mongodb'}/navy`;
     }
 }

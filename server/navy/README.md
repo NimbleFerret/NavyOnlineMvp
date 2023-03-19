@@ -11,7 +11,7 @@
 * docker network create navy-online
 
 Запустить Mongo:
-* docker run --rm --net navy-online --name navy-mongodb -v ~/mongo/data:/data/db -d -p 27017:27017 mongo
+* docker run --rm --net navy-online --name navy-mongodb -e MONGO_INITDB_ROOT_USERNAME=navyuser -e MONGO_INITDB_ROOT_PASSWORD=jhassct872hbJGFJgkcva2s -v ~/mongo/data:/data/db -d -p 27017:27017 mongo:4.4.6
 
 Запустить Redis:
 * docker run --rm --net navy-online --name navy-redis -d -p 6379:6379 redis
