@@ -40,7 +40,9 @@ import { WsModule } from './ws/ws.module';
         ...GameplayBalancerServiceGrpcClientOptions,
       },
     ]),
-    MongooseModule.forRoot(Config.GetMongoHost()),
+    MongooseModule.forRoot(Config.GetMongoHost(), {
+      dbName: 'navy'
+    }),
     GameplayModule,
     WsModule,
     MetricsModule

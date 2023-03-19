@@ -22,7 +22,9 @@ import { QueueMintProcessor } from './queue/queue.mint.processor';
     BullModule.registerQueue({
       name: WorkersMint.MintQueue
     }),
-    MongooseModule.forRoot(Config.GetMongoHost()),
+    MongooseModule.forRoot(Config.GetMongoHost(), {
+      dbName: 'navy'
+    }),
     MongooseModule.forFeature([
       { name: BlockchainTransaction.name, schema: BlockchainTransactionSchema },
       { name: Mint.name, schema: MintSchema },

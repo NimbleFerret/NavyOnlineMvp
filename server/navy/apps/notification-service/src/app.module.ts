@@ -9,7 +9,9 @@ import { NotificationModule } from './notification/notification.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(Config.GetMongoHost()),
+    MongooseModule.forRoot(Config.GetMongoHost(), {
+      dbName: 'navy'
+    }),
     EmailModule,
     NotificationModule
   ],

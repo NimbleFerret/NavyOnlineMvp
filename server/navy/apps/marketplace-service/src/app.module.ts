@@ -29,7 +29,9 @@ import { ScheduleModule } from '@nestjs/schedule';
       { name: CollectionItem.name, schema: CollectionItemSchema },
       { name: Notification.name, schema: NotificationSchema }
     ]),
-    MongooseModule.forRoot(Config.GetMongoHost()),
+    MongooseModule.forRoot(Config.GetMongoHost(), {
+      dbName: 'navy'
+    }),
     ClientsModule.register([
       {
         name: Web3ServiceGrpcClientName,

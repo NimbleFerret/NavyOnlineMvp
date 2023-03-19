@@ -14,7 +14,9 @@ import { Config } from '@app/shared-library/config';
     BullModule.forRoot({
       redis: Config.GetRedisHost(),
     }),
-    MongooseModule.forRoot(Config.GetMongoHost()),
+    MongooseModule.forRoot(Config.GetMongoHost(), {
+      dbName: 'navy'
+    }),
     ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
