@@ -1,11 +1,15 @@
-<vbox style="padding: 5px;">
+<vbox style="padding: 50px;">
     <style>
         .button {
-            font-size: 20px;
+            font-size: 50px;
         }
     </style>
-    <hbox>
-        <button text="Stop snowflake 1!" id="button1" style="color: red;" />
-        <button text="Teleport player 2!" id="button2" onclick="this.text='Thanks!'"  style="color: green;" />
-    </hbox>    
+    <vbox>
+        <button text="Singleplayer ships" id="sp_ships_btn" style="color: black;" />
+        <button text="Singleplayer island" id="sp_island_btn" style="color: black;" />
+        <button text="Multiplayer ships" id="mp_ships_btn" style="color: black;" />
+        <button text="Multiplayer island" id="mp_island_btn" style="color: black;" />
+        <button text="Ship config" id="ship_config_btn" style="color: black;" />
+        <button text="Geom test" id="geom_test_btn" style="color: black;" />
+    </vbox>    
 </vbox>

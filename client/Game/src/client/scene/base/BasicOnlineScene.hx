@@ -28,7 +28,9 @@ abstract class BasicOnlineScene extends BasicScene implements EventListener {
 	public function start(?joinSectorResponse:JoinSectorResponse) {}
 
 	public function update(dt:Float, fps:Float) {
-		game.update(dt, fps);
+		if (game != null) {
+			game.update(dt, fps);
+		}
 	}
 
 	public function notify(event:String, message:Dynamic) {

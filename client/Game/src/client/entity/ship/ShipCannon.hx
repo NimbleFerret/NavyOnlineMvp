@@ -2,9 +2,8 @@ package client.entity.ship;
 
 import h2d.col.Point;
 import client.entity.ship.ShipCannonConfig.ShipCannonsConfig;
-import game.engine.base.MathUtils;
-import game.engine.base.geometry.Line;
 import game.engine.base.BaseTypesAndClasses;
+import game.engine.base.geometry.Line;
 import game.engine.navy.NavyTypesAndClasses;
 
 using tweenxcore.Tools;
