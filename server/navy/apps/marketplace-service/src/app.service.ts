@@ -15,6 +15,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
 import fetch from 'node-fetch';
 import { lastValueFrom } from 'rxjs';
+import { Rarity } from '@app/shared-library/shared-library.main';
 
 const fs = require('fs');
 
@@ -206,7 +207,7 @@ export class AppService implements OnModuleInit {
     return collection;
   }
 
-  async getCollectionItems(marketplaceNftsType: MarketplaceNftsType, address: string, page?: number, size?: number) {
+  async getCollectionItems(marketplaceNftsType: MarketplaceNftsType, address: string, page?: number, size?: number, rarity?: string) {
     let initialPage = page;
     if (!page) {
       page = 1;
@@ -215,25 +216,35 @@ export class AppService implements OnModuleInit {
     const pageSize = size ? size : AppService.DefaultPaginationSize;
 
     const query = {
-      nftContract: address.toLowerCase(),
-      marketplaceState: marketplaceNftsType
+      nftContract: address.toLowerCase()
     };
-    const count = await this.collectionItemModel.countDocuments(query);
+    const rarityCheck = rarity && (rarity == 'Legendary' || rarity == 'Epic' || rarity == 'Rare' || rarity == 'Common');
+    if (rarityCheck) {
+      query['rarity'] = rarity;
+    }
 
     let nftType = 'all';
     if (marketplaceNftsType == MarketplaceNftsType.LISTED) {
       nftType = 'listed';
+      query['marketplaceState'] = marketplaceNftsType;
     } else if (marketplaceNftsType == MarketplaceNftsType.SOLD) {
       nftType = 'sold';
+      query['marketplaceState'] = marketplaceNftsType;
     }
+
+    const count = await this.collectionItemModel.countDocuments(query);
     const getUrl = (p: number) => `https://navy.online/marketplace/collection/${address}/${nftType}?page=${p}`;
 
     const self = this;
     async function databaseQuery(marketplaceState: MarketplaceNftsType, sortCriteria: string) {
+      const criteria = {
+        nftContract: address
+      };
+      if (rarityCheck) {
+        criteria['rarity'] = rarity;
+      }
       return await self.collectionItemModel
-        .find({
-          nftContract: address
-        })
+        .find(criteria)
         .select(['-_id', '-__v', '-id', '-needUpdate'])
         .skip((page - 1) * pageSize)
         .limit(pageSize)

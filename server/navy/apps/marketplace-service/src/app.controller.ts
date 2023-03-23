@@ -41,8 +41,9 @@ export class AppController {
   getCollectionAllItems(
     @Param('address') address: string,
     @Query('page') page?: number,
-    @Query('size') size?: number) {
-    return this.appService.getCollectionItems(MarketplaceNftsType.ALL, address, page, size);
+    @Query('size') size?: number,
+    @Query('rarity') rarity?: string) {
+    return this.appService.getCollectionItems(MarketplaceNftsType.ALL, address, page, size, rarity);
   }
 
   @Get('collection/:address/owner/:owner')
