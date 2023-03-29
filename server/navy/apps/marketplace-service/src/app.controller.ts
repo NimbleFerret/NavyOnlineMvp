@@ -18,6 +18,16 @@ export class AppController {
     return this.appService.getProjects()
   }
 
+  @Get('dashboard/:project/:days')
+  dashboard(@Param('project') project?: string, @Param('days') days?: string) {
+    return this.appService.dashboard(project, days);
+  }
+
+  @Get('topSales/:project/:days')
+  topSales(@Param('project') project?: string, @Param('days') days?: string) {
+    return this.appService.topSales(project, days);
+  }
+
   @Get('collection/:address')
   getCollection(@Param('address') address: string) {
     return this.appService.getCollection(address);

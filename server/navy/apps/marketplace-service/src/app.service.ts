@@ -10,12 +10,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { join } from 'path';
 import { ProjectCollection, ProjectDto } from './dto/dto.projects';
-import { CollectionItem, CollectionItemDocument } from '@app/shared-library/schemas/marketplace/schema.collection.item';
+import { CollectionItem, CollectionItemDocument, MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
 import fetch from 'node-fetch';
 import { lastValueFrom } from 'rxjs';
-import { Rarity } from '@app/shared-library/shared-library.main';
+import { EthersConstants } from '@app/shared-library/ethers/ethers.constants';
 
 const fs = require('fs');
 
@@ -148,6 +148,70 @@ export class AppService implements OnModuleInit {
       });
     }
 
+    // ------------------------------
+    // Top sales dummy data
+    // ------------------------------
+
+    await this.collectionItemModel.deleteMany({
+      marketplaceState: MarketplaceState.SOLD
+    });
+
+    const nowTimeSeconds = Number(Number(Date.now() / 1000).toFixed(0));
+    const daySeconds = 24 * 60 * 60;
+    let nextId = 54;
+    let nextTimeSeconds = nowTimeSeconds;
+    const defaultCollectionItem = {
+      needUpdate: false,
+      id: "0x61a03eed4c0220bb6ee89b0cda10dc171f772577_",
+      tokenId: 0,
+      tokenUri: "https://ipfs.moralis.io:2053/ipfs/QmQmRiVEaAbBnF7rnGNfaTMya2UH7NyRu2HCjc8HvN88R5/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.json",
+      seller: "0xe6193b058bbd559e8e0df3a48202a3cdec852ab6",
+      owner: "0xac256b90b14465c37f789e16eb5efe0233bafe87",
+      price: "15.5",
+      image: "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
+      rarity: "Common",
+      lastUpdated: 0,
+      nftContract: "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+      marketplaceState: 1,
+      chainId: "338"
+    };
+
+    // 24h 
+    for (let i = 0; i < 10; i++) {
+      defaultCollectionItem.id += nextId;
+      defaultCollectionItem.tokenId = nextId;
+      defaultCollectionItem.lastUpdated = nextTimeSeconds;
+      await new this.collectionItemModel(defaultCollectionItem).save();
+      nextId++;
+      nextTimeSeconds += 60 * 5;
+    }
+    nextTimeSeconds = nowTimeSeconds + (daySeconds * 7);
+
+    // 7d 
+    for (let i = 0; i < 10; i++) {
+      defaultCollectionItem.id += nextId;
+      defaultCollectionItem.tokenId = nextId;
+      defaultCollectionItem.lastUpdated = nextTimeSeconds;
+      await new this.collectionItemModel(defaultCollectionItem).save();
+      nextId++;
+      nextTimeSeconds += 60 * 5;
+    }
+    nextTimeSeconds = nowTimeSeconds + (daySeconds * 30);
+
+    // 30d 
+    for (let i = 0; i < 10; i++) {
+      defaultCollectionItem.id += nextId;
+      defaultCollectionItem.tokenId = nextId;
+      defaultCollectionItem.lastUpdated = nextTimeSeconds;
+      await new this.collectionItemModel(defaultCollectionItem).save();
+      nextId++;
+      nextTimeSeconds += 60 * 5;
+    }
+
+    // ------------------------------
+    // Services initalization
+    // ------------------------------
+
     this.web3Service = this.web3ServiceGrpcClient.getService<Web3Service>(Web3ServiceName);
     this.notificationService = this.notificationServiceGrpcClient.getService<NotificationService>(NotificationServiceName);
 
@@ -197,6 +261,59 @@ export class AppService implements OnModuleInit {
     }
 
     return result;
+  }
+
+  async dashboard(project?: string, days?: string) {
+    const topSales = await this.topSales(project, days);
+
+    let cronosTotal = 0;
+    let captainsSold = 0;
+    let islandsSold = 0;
+    let shipsSold = 0;
+
+    if (topSales) {
+      topSales.forEach(sale => {
+        cronosTotal += Number(sale.price);
+
+        if (EthersConstants.CaptainContractAddress == sale.nftContract) {
+          captainsSold++;
+        }
+        if (EthersConstants.ShipContractAddress == sale.nftContract) {
+          shipsSold++;
+        }
+        if (EthersConstants.IslandContractAddress == sale.nftContract) {
+          islandsSold++;
+        }
+      });
+    }
+
+    return {
+      cronosTotal,
+      captainsSold,
+      islandsSold,
+      shipsSold
+    }
+  }
+
+  async topSales(project?: string, days?: string) {
+    const projects = await this.getProjects();
+    if (projects) {
+      const query = {
+        nftContract: [],
+        marketplaceNftsType: MarketplaceNftsType.SOLD,
+        lastUpdated: { $lte: this.getDaysSeconds(days) }
+      };
+      console.log(query);
+      projects[0].collections.forEach(collection => {
+        query.nftContract.push(collection.address);
+      });
+      const topSaleResult = await this.collectionItemModel
+        .find(query)
+        .select(['-_id', '-__v', '-id', '-needUpdate'])
+        .limit(9)
+        .sort([['lastUpdated', -1]]);
+      return topSaleResult;
+    }
   }
 
   async getCollection(address: string) {
@@ -354,4 +471,18 @@ export class AppService implements OnModuleInit {
     }
   }
 
+
+  private getDaysSeconds(days?: string) {
+    const nowTimeSeconds = Number(Number(Date.now() / 1000).toFixed(0));
+    const daySeconds = 24 * 60 * 60;
+    let seconds = nowTimeSeconds + daySeconds;
+    if (days) {
+      if (days == '7d') {
+        seconds = nowTimeSeconds + daySeconds * 7;
+      } else if (days == '30d') {
+        seconds = nowTimeSeconds + daySeconds * 30;
+      }
+    }
+    return seconds;
+  }
 }
