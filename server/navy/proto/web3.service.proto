@@ -72,7 +72,7 @@ message Island {
 }
 
 message ListedNFT {
-  string nftContract = 1;
+  string contractAddress = 1;
   int32 tokenId = 2;
   string seller = 3;
   string owner = 4;

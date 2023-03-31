@@ -15,7 +15,7 @@ export class Collection {
     description: string;
 
     @Prop()
-    address: string;
+    contractAddress: string;
 
     @Prop()
     chainId: string;

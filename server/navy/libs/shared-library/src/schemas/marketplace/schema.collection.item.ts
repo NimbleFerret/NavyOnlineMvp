@@ -47,7 +47,7 @@ export class CollectionItem {
     needUpdate: boolean;
 
     @Prop()
-    nftContract: string;
+    contractAddress: string;
 
     @Prop()
     chainId: string;
