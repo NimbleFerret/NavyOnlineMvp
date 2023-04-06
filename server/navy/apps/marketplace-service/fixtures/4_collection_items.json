@@ -10,7 +10,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmZyp3phhxZuVMhwqUH1ZHNdtPVmnc6EfPHV75pcZsVA6d/nvy/3700cf45-4f8a-49e9-a6c6-cb99d95e8b36.png",
         "rarity": "Legendary",
         "lastUpdated": 1677702695,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 0,
         "chainId": "338",
         "chainName": "Cronos",
@@ -27,7 +27,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/Qma1X2vdaxcosaVqzS3YTjqzjg6BST4qiuuhHLV1fhtVa9/nvy/a1b78aee-ebf2-49b4-903f-c366798d27d3.png",
         "rarity": "Epic",
         "lastUpdated": 1677772998,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 0,
         "chainId": "338",
         "chainName": "Cronos",
@@ -44,7 +44,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Rare",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 0,
         "chainId": "338",
         "chainName": "Cronos",
@@ -61,7 +61,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmZyp3phhxZuVMhwqUH1ZHNdtPVmnc6EfPHV75pcZsVA6d/nvy/3700cf45-4f8a-49e9-a6c6-cb99d95e8b36.png",
         "rarity": "Common",
         "lastUpdated": 1677702695,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -76,7 +76,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/Qma1X2vdaxcosaVqzS3YTjqzjg6BST4qiuuhHLV1fhtVa9/nvy/a1b78aee-ebf2-49b4-903f-c366798d27d3.png",
         "rarity": "Common",
         "lastUpdated": 1677772998,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -91,7 +91,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -106,7 +106,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -121,7 +121,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -136,7 +136,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -151,7 +151,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -166,7 +166,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -181,7 +181,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -196,7 +196,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -211,7 +211,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -226,7 +226,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -241,7 +241,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -256,7 +256,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -271,7 +271,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -286,7 +286,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -301,7 +301,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -316,7 +316,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -331,7 +331,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -346,7 +346,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -361,7 +361,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -376,7 +376,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -391,7 +391,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -406,7 +406,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -421,7 +421,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -436,7 +436,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -451,7 +451,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -466,7 +466,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -481,7 +481,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -496,7 +496,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -511,7 +511,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -526,7 +526,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -541,7 +541,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -556,7 +556,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -571,7 +571,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -586,7 +586,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -601,7 +601,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -616,7 +616,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -631,7 +631,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -646,7 +646,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -661,7 +661,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -676,7 +676,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -691,7 +691,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -706,7 +706,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -721,7 +721,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -736,7 +736,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -751,7 +751,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -766,7 +766,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     },
@@ -781,7 +781,7 @@
         "image": "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
         "rarity": "Common",
         "lastUpdated": 1677773030,
-        "nftContract": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+        "contractAddress": "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
         "marketplaceState": 2,
         "chainId": "338"
     }

@@ -1,5 +1,5 @@
 export interface MarketplaceNFT {
-    nftContract: string;
+    contractAddress: string;
     tokenId: number;
     tokenUri: string;
     seller: string;

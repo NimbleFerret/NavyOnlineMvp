@@ -1,5 +1,5 @@
 export interface ProjectCollection {
-    address: string;
+    contractAddress: string;
     chainId: string;
     name: string;
 }

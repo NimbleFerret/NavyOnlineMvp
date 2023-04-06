@@ -5,6 +5,7 @@ import { Collection, CollectionSchema } from '@app/shared-library/schemas/market
 import { Mint, MintSchema } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { CollectionItem, CollectionItemSchema } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { Notification, NotificationSchema } from '@app/shared-library/schemas/marketplace/schema.notification';
+import { Bid, BidSchema } from '@app/shared-library/schemas/marketplace/schema.bid';
 import { Module } from '@nestjs/common';
 import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -15,6 +16,7 @@ import { AppService } from './app.service';
 import { MintModule } from './mint/mint.module';
 import { Config } from '@app/shared-library/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AppControllerAuth } from './app.controller.auth';
 
 @Module({
   imports: [
@@ -27,7 +29,8 @@ import { ScheduleModule } from '@nestjs/schedule';
       { name: Mint.name, schema: MintSchema },
       { name: Collection.name, schema: CollectionSchema },
       { name: CollectionItem.name, schema: CollectionItemSchema },
-      { name: Notification.name, schema: NotificationSchema }
+      { name: Notification.name, schema: NotificationSchema },
+      { name: Bid.name, schema: BidSchema }
     ]),
     MongooseModule.forRoot(Config.GetMongoHost(), {
       dbName: 'navy'
@@ -44,7 +47,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ]),
     ScheduleModule.forRoot()
   ],
-  controllers: [AppController],
+  controllers: [AppController, AppControllerAuth],
   providers: [AppService],
 })
 export class AppModule { }

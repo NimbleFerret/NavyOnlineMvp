@@ -84,7 +84,7 @@ export abstract class NftGenerator {
 
     abstract generateNftMetadata(index: number, maxIndex: number, imagePathOnMoralis: string, nftPartsToDraw: NftSubPartDetails[]);
 
-    abstract mintNft(owner: string, nftContract: Contract, tokenUri: string);
+    abstract mintNft(owner: string, contract: Contract, tokenUri: string);
 
     private initiateNftPartsImagePath() {
         this.nftPartDetails.forEach(nftPart => {
