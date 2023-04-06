@@ -78,7 +78,7 @@ export class AppService implements OnModuleInit {
             collections[i].name = fixtures[i].name;
             collections[i].description = fixtures[i].description;
             collections[i].chainId = fixtures[i].chainId;
-            collections[i].address = fixtures[i].address.toLowerCase();
+            collections[i].contractAddress = fixtures[i].contractAddress.toLowerCase();
             collections[i].collectionSize = fixtures[i].collectionSize;
             collections[i].collectionItemsLeft = fixtures[i].collectionItemsLeft;
             collections[i].preview = fixtures[i].preview;
@@ -320,8 +320,8 @@ export class AppService implements OnModuleInit {
     }
   }
 
-  async getCollection(address: string) {
-    const collection = await this.collectionModel.findOne({ address: address }).select(['-_id', '-__v']);
+  async getCollection(contractAddress: string) {
+    const collection = await this.collectionModel.findOne({ contractAddress }).select(['-_id', '-__v']);
     if (!collection) {
       throw new BadGatewayException();
     }
