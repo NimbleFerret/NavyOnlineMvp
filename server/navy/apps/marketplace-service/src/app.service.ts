@@ -78,7 +78,7 @@ export class AppService implements OnModuleInit {
             collections[i].name = fixtures[i].name;
             collections[i].description = fixtures[i].description;
             collections[i].chainId = fixtures[i].chainId;
-            collections[i].contractAddress = fixtures[i].contractAddress.toLowerCase();
+            collections[i].address = fixtures[i].address.toLowerCase();
             collections[i].collectionSize = fixtures[i].collectionSize;
             collections[i].collectionItemsLeft = fixtures[i].collectionItemsLeft;
             collections[i].preview = fixtures[i].preview;
