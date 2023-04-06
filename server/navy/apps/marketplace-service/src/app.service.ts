@@ -2,7 +2,9 @@ import { Web3Service, Web3ServiceGrpcClientName, Web3ServiceName } from '@app/sh
 import { NotificationService, NotificationServiceGrpcClientName, NotificationServiceName } from '@app/shared-library/gprc/grpc.notification.service';
 import { Project, ProjectDocument, ProjectState } from '@app/shared-library/schemas/marketplace/schema.project';
 import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
+import { CollectionItem, CollectionItemDocument, MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
+import { Bid, BidDocument } from '@app/shared-library/schemas/marketplace/schema.bid';
 import { BadGatewayException, Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { caching, MemoryCache } from 'cache-manager';
 import { ClientGrpc } from '@nestjs/microservices';
@@ -10,12 +12,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { join } from 'path';
 import { ProjectCollection, ProjectDto } from './dto/dto.projects';
-import { CollectionItem, CollectionItemDocument } from '@app/shared-library/schemas/marketplace/schema.collection.item';
+import { BidPlaceDto, BidDeleteDto } from './dto/dto.bids';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
-import fetch from 'node-fetch';
 import { lastValueFrom } from 'rxjs';
-import { Rarity } from '@app/shared-library/shared-library.main';
+import { EthersConstants } from '@app/shared-library/ethers/ethers.constants';
+
+import fetch from 'node-fetch';
 
 const fs = require('fs');
 
@@ -36,6 +39,7 @@ export class AppService implements OnModuleInit {
     @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
     @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
     @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
+    @InjectModel(Bid.name) private bidModel: Model<BidDocument>,
     @Inject(Web3ServiceGrpcClientName) private readonly web3ServiceGrpcClient: ClientGrpc,
     @Inject(NotificationServiceGrpcClientName) private readonly notificationServiceGrpcClient: ClientGrpc) {
   }
@@ -74,7 +78,7 @@ export class AppService implements OnModuleInit {
             collections[i].name = fixtures[i].name;
             collections[i].description = fixtures[i].description;
             collections[i].chainId = fixtures[i].chainId;
-            collections[i].address = fixtures[i].address.toLowerCase();
+            collections[i].contractAddress = fixtures[i].contractAddress.toLowerCase();
             collections[i].collectionSize = fixtures[i].collectionSize;
             collections[i].collectionItemsLeft = fixtures[i].collectionItemsLeft;
             collections[i].preview = fixtures[i].preview;
@@ -138,7 +142,7 @@ export class AppService implements OnModuleInit {
           collectionItem.rarity = fixtures[i].rarity;
           collectionItem.lastUpdated = fixtures[i].lastUpdated;
           collectionItem.needUpdate = fixtures[i].needUpdate;
-          collectionItem.nftContract = fixtures[i].nftContract;
+          collectionItem.contractAddress = fixtures[i].contractAddress;
           collectionItem.chainId = fixtures[i].chainId;
           collectionItem.chainName = fixtures[i].chainName;
           collectionItem.coinSymbol = fixtures[i].coinSymbol;
@@ -147,6 +151,70 @@ export class AppService implements OnModuleInit {
         }
       });
     }
+
+    // ------------------------------
+    // Top sales dummy data
+    // ------------------------------
+
+    await this.collectionItemModel.deleteMany({
+      marketplaceState: MarketplaceState.SOLD
+    });
+
+    const nowTimeSeconds = Number(Number(Date.now() / 1000).toFixed(0));
+    const daySeconds = 24 * 60 * 60;
+    let nextId = 54;
+    let nextTimeSeconds = nowTimeSeconds;
+    const defaultCollectionItem = {
+      needUpdate: false,
+      id: "0x61a03eed4c0220bb6ee89b0cda10dc171f772577_",
+      tokenId: 0,
+      tokenUri: "https://ipfs.moralis.io:2053/ipfs/QmQmRiVEaAbBnF7rnGNfaTMya2UH7NyRu2HCjc8HvN88R5/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.json",
+      seller: "0xe6193b058bbd559e8e0df3a48202a3cdec852ab6",
+      owner: "0xac256b90b14465c37f789e16eb5efe0233bafe87",
+      price: "15.5",
+      image: "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
+      rarity: "Common",
+      lastUpdated: 0,
+      contractAddress: "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+      marketplaceState: 1,
+      chainId: "338"
+    };
+
+    // 24h 
+    for (let i = 0; i < 10; i++) {
+      defaultCollectionItem.id += nextId;
+      defaultCollectionItem.tokenId = nextId;
+      defaultCollectionItem.lastUpdated = nextTimeSeconds;
+      await new this.collectionItemModel(defaultCollectionItem).save();
+      nextId++;
+      nextTimeSeconds += 60 * 5;
+    }
+    nextTimeSeconds = nowTimeSeconds + (daySeconds * 7);
+
+    // 7d 
+    for (let i = 0; i < 10; i++) {
+      defaultCollectionItem.id += nextId;
+      defaultCollectionItem.tokenId = nextId;
+      defaultCollectionItem.lastUpdated = nextTimeSeconds;
+      await new this.collectionItemModel(defaultCollectionItem).save();
+      nextId++;
+      nextTimeSeconds += 60 * 5;
+    }
+    nextTimeSeconds = nowTimeSeconds + (daySeconds * 30);
+
+    // 30d 
+    for (let i = 0; i < 10; i++) {
+      defaultCollectionItem.id += nextId;
+      defaultCollectionItem.tokenId = nextId;
+      defaultCollectionItem.lastUpdated = nextTimeSeconds;
+      await new this.collectionItemModel(defaultCollectionItem).save();
+      nextId++;
+      nextTimeSeconds += 60 * 5;
+    }
+
+    // ------------------------------
+    // Services initalization
+    // ------------------------------
 
     this.web3Service = this.web3ServiceGrpcClient.getService<Web3Service>(Web3ServiceName);
     this.notificationService = this.notificationServiceGrpcClient.getService<NotificationService>(NotificationServiceName);
@@ -184,7 +252,7 @@ export class AppService implements OnModuleInit {
         const collection = await this.collectionModel.findById(c);
         project.collections.push({
           name: collection.name,
-          address: collection.address,
+          contractAddress: collection.contractAddress,
           chainId: collection.chainId,
         } as ProjectCollection);
       }
@@ -197,6 +265,59 @@ export class AppService implements OnModuleInit {
     }
 
     return result;
+  }
+
+  async dashboard(project?: string, days?: string) {
+    const topSales = await this.topSales(project, days);
+
+    let cronosTotal = 0;
+    let captainsSold = 0;
+    let islandsSold = 0;
+    let shipsSold = 0;
+
+    if (topSales) {
+      topSales.forEach(sale => {
+        cronosTotal += Number(sale.price);
+
+        if (EthersConstants.CaptainContractAddress == sale.contractAddress) {
+          captainsSold++;
+        }
+        if (EthersConstants.ShipContractAddress == sale.contractAddress) {
+          shipsSold++;
+        }
+        if (EthersConstants.IslandContractAddress == sale.contractAddress) {
+          islandsSold++;
+        }
+      });
+    }
+
+    return {
+      cronosTotal,
+      captainsSold,
+      islandsSold,
+      shipsSold
+    }
+  }
+
+  async topSales(project?: string, days?: string) {
+    const projects = await this.getProjects();
+    if (projects) {
+      const query = {
+        contractAddress: [],
+        marketplaceNftsType: MarketplaceNftsType.SOLD,
+        lastUpdated: { $lte: this.getDaysSeconds(days) }
+      };
+      console.log(query);
+      projects[0].collections.forEach(collection => {
+        query.contractAddress.push(collection.contractAddress);
+      });
+      const topSaleResult = await this.collectionItemModel
+        .find(query)
+        .select(['-_id', '-__v', '-id', '-needUpdate'])
+        .limit(9)
+        .sort([['lastUpdated', -1]]);
+      return topSaleResult;
+    }
   }
 
   async getCollection(address: string) {
@@ -216,7 +337,7 @@ export class AppService implements OnModuleInit {
     const pageSize = size ? size : AppService.DefaultPaginationSize;
 
     const query = {
-      nftContract: address.toLowerCase()
+      contractAddress: address.toLowerCase()
     };
     const rarityCheck = rarity && (rarity == 'Legendary' || rarity == 'Epic' || rarity == 'Rare' || rarity == 'Common');
     if (rarityCheck) {
@@ -238,7 +359,7 @@ export class AppService implements OnModuleInit {
     const self = this;
     async function databaseQuery(marketplaceState: MarketplaceNftsType, sortCriteria: string) {
       const criteria = {
-        nftContract: address
+        contractAddress: address
       };
       if (rarityCheck) {
         criteria['rarity'] = rarity;
@@ -293,7 +414,7 @@ export class AppService implements OnModuleInit {
 
     result.push(...(await this.collectionItemModel
       .find({
-        nftContract: address.toLowerCase(),
+        contractAddress: address.toLowerCase(),
         marketplaceState: MarketplaceNftsType.LISTED,
         seller: owner
       })
@@ -301,7 +422,7 @@ export class AppService implements OnModuleInit {
 
     result.push(...await this.collectionItemModel
       .find({
-        nftContract: address.toLowerCase(),
+        contractAddress: address.toLowerCase(),
         marketplaceState: MarketplaceNftsType.ALL,
         owner: owner.toLocaleLowerCase()
       })
@@ -320,6 +441,56 @@ export class AppService implements OnModuleInit {
       throw new BadGatewayException();
     }
     return mint;
+  }
+
+  async bidPlace(dto: BidPlaceDto) {
+    const contractAddress = dto.contractAddress;
+    const tokenId = dto.tokenId;
+
+    // Check if such collection and token exists
+    if (await this.collectionModel.findOne({ contractAddress }) &&
+      await this.collectionItemModel.findOne({ contractAddress, tokenId })) {
+      // Check if there is no the same bid
+      if (!await this.bidModel.findOne({
+        contractAddress,
+        tokenId,
+        price: { $gte: dto.price }
+      })) {
+        const bid = new this.bidModel();
+        bid.contractAddress = dto.contractAddress;
+        bid.tokenId = dto.tokenId;
+        bid.price = dto.price;
+        bid.bidInitiatorAddress = dto.bidInitiatorAddress;
+        const newBid = await bid.save();
+        return {
+          bidId: newBid.id
+        }
+      } else {
+        throw new BadGatewayException('Ubale to place a bid');
+      }
+    } else {
+      throw new BadGatewayException('No such collection or token');
+    }
+  }
+
+  async bidDelete(dto: BidDeleteDto) {
+    const bid = await this.bidModel.deleteOne({ id: dto.bidId });
+    if (bid) {
+      return {
+        success: true
+      }
+    } else {
+      return {
+        success: false
+      }
+    }
+  }
+
+  async bids(contractAddress: string, tokenId: string) {
+    return await this.bidModel.find({
+      contractAddress,
+      tokenId
+    }).select(['-_id', '-__v']);
   }
 
   async getNotifications(walletAddress: string) {
@@ -354,4 +525,18 @@ export class AppService implements OnModuleInit {
     }
   }
 
+
+  private getDaysSeconds(days?: string) {
+    const nowTimeSeconds = Number(Number(Date.now() / 1000).toFixed(0));
+    const daySeconds = 24 * 60 * 60;
+    let seconds = nowTimeSeconds + daySeconds;
+    if (days) {
+      if (days == '7d') {
+        seconds = nowTimeSeconds + daySeconds * 7;
+      } else if (days == '30d') {
+        seconds = nowTimeSeconds + daySeconds * 30;
+      }
+    }
+    return seconds;
+  }
 }

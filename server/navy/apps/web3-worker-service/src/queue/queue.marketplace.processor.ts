@@ -48,23 +48,23 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
     @Process()
     async process(job: Job<UpdateMarketplaceJob>) {
         let marketplaceContract = this.ethersProvider.captainMarketplaceContract;
-        let nftContractAddress = this.ethersProvider.captainContract.address;
+        let contractAddressAddress = this.ethersProvider.captainContract.address;
 
         switch (job.data.nftType) {
             case NftType.SHIP:
                 marketplaceContract = this.ethersProvider.shipMarketplaceContract;
-                nftContractAddress = this.ethersProvider.shipContract.address;
+                contractAddressAddress = this.ethersProvider.shipContract.address;
                 break;
             case NftType.ISLAND:
                 marketplaceContract = this.ethersProvider.islandMarketplaceContract;
-                nftContractAddress = this.ethersProvider.islandContract.address;
+                contractAddressAddress = this.ethersProvider.islandContract.address;
                 break;
         }
 
         if (job.data.marketplaceNftsType == MarketplaceNftsType.ALL) {
-            await this.updateNfts(nftContractAddress);
+            await this.updateNfts(contractAddressAddress);
         } else {
-            await this.updateSaleCollections(nftContractAddress);
+            await this.updateSaleCollections(contractAddressAddress);
             await this.getMarketplaceNfts(marketplaceContract, MarketplaceNftsType.LISTED);
             await this.getMarketplaceNfts(marketplaceContract, MarketplaceNftsType.SOLD);
         }
@@ -116,7 +116,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                             model.tokenUri = nftUri;
                             model.owner = nftOwner;
                             model.image = body.image;
-                            model.nftContract = contractAddress;
+                            model.contractAddress = contractAddress;
                             model.marketplaceState = MarketplaceState.NONE;
                             model.chainId = '338';
                             await model.save();
@@ -133,7 +133,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
 
         const marketplaceNFTs: MarketplaceNFT[] = nfts.map(nft => {
             const marketplaceNFT: MarketplaceNFT = {
-                nftContract: nft.nftContract.toLowerCase(),
+                contractAddress: nft.contractAddress.toLowerCase(),
                 tokenId: nft.tokenId.toNumber(),
                 tokenUri: nft.tokenUri,
                 seller: nft.seller.toLowerCase(),
@@ -146,7 +146,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
         });
 
         if (marketplaceNFTs.length > 0) {
-            const contractAddress = marketplaceNFTs[0].nftContract;
+            const contractAddress = marketplaceNFTs[0].contractAddress;
 
             // Skip nfts that we have already
             const collectionItems = await this.collectionItemModel.find({
@@ -168,7 +168,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
             // Save result into the database
             for (const nft of nfts) {
                 const model = new this.collectionItemModel();
-                model.id = nft.nftContract + '_' + nft.tokenId;
+                model.id = nft.contractAddress + '_' + nft.tokenId;
                 model.tokenId = nft.tokenId;
                 model.tokenUri = nft.tokenUri;
                 model.seller = nft.seller;
@@ -176,7 +176,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                 model.price = nft.price;
                 model.image = nft.image;
                 model.lastUpdated = nft.lastUpdated;
-                model.nftContract = nft.nftContract;
+                model.contractAddress = nft.contractAddress;
                 model.marketplaceState = marketplaceNftsType == MarketplaceNftsType.LISTED ? MarketplaceState.LISTED : MarketplaceState.SOLD;
                 model.chainId = '338';
                 await model.save();

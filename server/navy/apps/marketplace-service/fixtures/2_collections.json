@@ -3,7 +3,11 @@
         "name": "Captains",
         "description": "Captains collection",
         "chainId": "25",
+<<<<<<< HEAD
         "address1": "0x61A03eed4C0220Bb6Ee89b0cda10Dc171f772577",
+=======
+        "contractAddress": "0x61A03eed4C0220Bb6Ee89b0cda10Dc171f772577",
+>>>>>>> master
         "collectionSize": 200,
         "collectionItemsLeft": 200,
         "preview": [
@@ -18,7 +22,11 @@
         "name": "Ships",
         "description": "Ships collection",
         "chainId": "25",
+<<<<<<< HEAD
         "address1": "0xe0329c20d37d05806f73912b28f5434bcc56a8b7",
+=======
+        "contractAddress": "0xe0329c20d37d05806f73912b28f5434bcc56a8b7",
+>>>>>>> master
         "collectionSize": 200,
         "collectionItemsLeft": 200,
         "preview": [

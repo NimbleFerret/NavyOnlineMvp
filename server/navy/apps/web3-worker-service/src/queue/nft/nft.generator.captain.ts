@@ -53,8 +53,8 @@ export class NftCaptainGenerator extends NftGenerator {
         });
     }
 
-    async mintNft(owner: string, nftContract: Contract, metadata: string) {
-        await nftContract.grantCaptain(owner, metadata);
+    async mintNft(owner: string, contract: Contract, metadata: string) {
+        await contract.grantCaptain(owner, metadata);
     }
 
 }
