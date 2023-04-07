@@ -334,14 +334,10 @@ export class AppService implements OnModuleInit {
           contractAddress: f.contractAddress,
           chainId: f.chainId,
           marketplaceState: f.marketplaceState,
-          coinDetails: {
-            chainId: 25,
-            chainName: 'Cronos',
-            coinSymbol: 'CRO'
-          }
+          chainName: 'Cronos',
+          coinSymbol: 'CRO'
         });
       });
-
       return response;
     }
   }
