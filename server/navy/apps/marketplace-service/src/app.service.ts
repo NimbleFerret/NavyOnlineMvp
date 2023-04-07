@@ -320,8 +320,8 @@ export class AppService implements OnModuleInit {
     }
   }
 
-  async getCollection(address: string) {
-    const collection = await this.collectionModel.findOne({ address: address }).select(['-_id', '-__v']);
+  async getCollection(contractAddress: string) {
+    const collection = await this.collectionModel.findOne({ contractAddress }).select(['-_id', '-__v']);
     if (!collection) {
       throw new BadGatewayException();
     }
