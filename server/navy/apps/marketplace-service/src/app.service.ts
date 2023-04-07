@@ -321,6 +321,11 @@ export class AppService implements OnModuleInit {
         .select(['-_id', '-__v', '-id', '-needUpdate'])
         .limit(9)
         .sort([['lastUpdated', -1]]);
+      topSaleResult['coinDetails'] = {
+        chainId: 25,
+        chainName: 'Cronos',
+        coinSymbol: 'CRO'
+      };
       return topSaleResult;
     }
   }
