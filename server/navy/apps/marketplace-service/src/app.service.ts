@@ -305,6 +305,7 @@ export class AppService implements OnModuleInit {
   }
 
   async topSales(project?: string, days?: string) {
+    const response = [];
     const projects = await this.getProjects();
     if (projects) {
       const query = {
@@ -312,7 +313,6 @@ export class AppService implements OnModuleInit {
         marketplaceNftsType: MarketplaceNftsType.SOLD,
         lastUpdated: { $lte: this.getDaysSeconds(days) }
       };
-      console.log(query);
       projects[0].collections.forEach(collection => {
         query.contractAddress.push(collection.contractAddress);
       });
@@ -321,12 +321,28 @@ export class AppService implements OnModuleInit {
         .select(['-_id', '-__v', '-id', '-needUpdate'])
         .limit(9)
         .sort([['lastUpdated', -1]]);
-      topSaleResult['coinDetails'] = {
-        chainId: 25,
-        chainName: 'Cronos',
-        coinSymbol: 'CRO'
-      };
-      return topSaleResult;
+      topSaleResult.forEach(f => {
+        response.push({
+          tokenId: f.tokenId,
+          tokenUri: f.tokenUri,
+          seller: f.seller,
+          owner: f.owner,
+          price: f.price,
+          image: f.image,
+          rarity: f.rarity,
+          lastUpdated: f.lastUpdated,
+          contractAddress: f.contractAddress,
+          chainId: f.chainId,
+          marketplaceState: f.marketplaceState,
+          coinDetails: {
+            chainId: 25,
+            chainName: 'Cronos',
+            coinSymbol: 'CRO'
+          }
+        });
+      });
+
+      return response;
     }
   }
 
