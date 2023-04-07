@@ -292,7 +292,12 @@ export class AppService implements OnModuleInit {
     }
 
     return {
-      cronosTotal,
+      tokenPerformance: {
+        chainId: 25,
+        chainName: 'Cronos',
+        coinSymbol: 'CRO',
+        performance: cronosTotal
+      },
       captainsSold,
       islandsSold,
       shipsSold
