@@ -32,7 +32,7 @@ export class CollectionItem {
     owner: string;
 
     @Prop()
-    price: string;
+    price: number;
 
     @Prop()
     image: string;

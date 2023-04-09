@@ -19,6 +19,7 @@ import { lastValueFrom } from 'rxjs';
 import { EthersConstants } from '@app/shared-library/ethers/ethers.constants';
 
 import fetch from 'node-fetch';
+import { SharedLibraryService } from '@app/shared-library';
 
 const fs = require('fs');
 
@@ -171,7 +172,7 @@ export class AppService implements OnModuleInit {
       tokenUri: "https://ipfs.moralis.io:2053/ipfs/QmQmRiVEaAbBnF7rnGNfaTMya2UH7NyRu2HCjc8HvN88R5/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.json",
       seller: "0xe6193b058bbd559e8e0df3a48202a3cdec852ab6",
       owner: "0xac256b90b14465c37f789e16eb5efe0233bafe87",
-      price: "15.5",
+      price: 10,
       image: "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
       rarity: "Common",
       lastUpdated: 0,
@@ -180,36 +181,63 @@ export class AppService implements OnModuleInit {
       chainId: "338"
     };
 
-    // 24h 
-    for (let i = 0; i < 10; i++) {
+    // Today sells
+    for (let i = 0; i < 20; i++) {
       defaultCollectionItem.id += nextId;
       defaultCollectionItem.tokenId = nextId;
       defaultCollectionItem.lastUpdated = nextTimeSeconds;
-      await new this.collectionItemModel(defaultCollectionItem).save();
-      nextId++;
-      nextTimeSeconds += 60 * 5;
-    }
-    nextTimeSeconds = nowTimeSeconds + (daySeconds * 7);
 
-    // 7d 
-    for (let i = 0; i < 10; i++) {
+      let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
+      let priceFloat = SharedLibraryService.GetRandomIntInRange(0, 1);
+      let finalPrice = String(price);
+      if (priceFloat == 1) {
+        finalPrice += '.' + SharedLibraryService.GetRandomIntInRange(1, 200);
+      }
+      defaultCollectionItem.price = Number(finalPrice);
+
+      await new this.collectionItemModel(defaultCollectionItem).save();
+      nextId++;
+      nextTimeSeconds -= 60 * 30;
+    }
+    nextTimeSeconds = nowTimeSeconds;
+
+    // 7d
+    for (let i = 0; i < 20; i++) {
       defaultCollectionItem.id += nextId;
       defaultCollectionItem.tokenId = nextId;
       defaultCollectionItem.lastUpdated = nextTimeSeconds;
+
+      let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
+      let priceFloat = SharedLibraryService.GetRandomIntInRange(0, 1);
+      let finalPrice = String(price);
+      if (priceFloat == 1) {
+        finalPrice += '.' + SharedLibraryService.GetRandomIntInRange(1, 200);
+      }
+      defaultCollectionItem.price = Number(finalPrice);
+
       await new this.collectionItemModel(defaultCollectionItem).save();
       nextId++;
-      nextTimeSeconds += 60 * 5;
+      nextTimeSeconds -= (60 * 60) * 10;
     }
-    nextTimeSeconds = nowTimeSeconds + (daySeconds * 30);
+    nextTimeSeconds = nowTimeSeconds;
 
     // 30d 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 20; i++) {
       defaultCollectionItem.id += nextId;
       defaultCollectionItem.tokenId = nextId;
       defaultCollectionItem.lastUpdated = nextTimeSeconds;
+
+      let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
+      let priceFloat = SharedLibraryService.GetRandomIntInRange(0, 1);
+      let finalPrice = String(price);
+      if (priceFloat == 1) {
+        finalPrice += '.' + SharedLibraryService.GetRandomIntInRange(1, 200);
+      }
+      defaultCollectionItem.price = Number(finalPrice);
+
       await new this.collectionItemModel(defaultCollectionItem).save();
       nextId++;
-      nextTimeSeconds += 60 * 5;
+      nextTimeSeconds -= daySeconds;
     }
 
     // ------------------------------
@@ -311,7 +339,7 @@ export class AppService implements OnModuleInit {
       const query = {
         contractAddress: [],
         marketplaceNftsType: MarketplaceNftsType.SOLD,
-        lastUpdated: { $lte: this.getDaysSeconds(days) }
+        lastUpdated: { $gte: this.getDaysSeconds(days) }
       };
       projects[0].collections.forEach(collection => {
         query.contractAddress.push(collection.contractAddress);
@@ -320,7 +348,7 @@ export class AppService implements OnModuleInit {
         .find(query)
         .select(['-_id', '-__v', '-id', '-needUpdate'])
         .limit(9)
-        .sort([['lastUpdated', -1]]);
+        .sort([['price', -1], ['lastUpdated', 1]]);
       topSaleResult.forEach(f => {
         response.push({
           tokenId: f.tokenId,
@@ -552,12 +580,14 @@ export class AppService implements OnModuleInit {
   private getDaysSeconds(days?: string) {
     const nowTimeSeconds = Number(Number(Date.now() / 1000).toFixed(0));
     const daySeconds = 24 * 60 * 60;
-    let seconds = nowTimeSeconds + daySeconds;
+    let seconds = nowTimeSeconds;
     if (days) {
-      if (days == '7d') {
-        seconds = nowTimeSeconds + daySeconds * 7;
-      } else if (days == '30d') {
-        seconds = nowTimeSeconds + daySeconds * 30;
+      if (days == '7') {
+        seconds = nowTimeSeconds - (daySeconds * 7);
+      } else if (days == '30') {
+        seconds = nowTimeSeconds - (daySeconds * 30);
+      } else {
+        seconds = nowTimeSeconds - daySeconds;
       }
     }
     return seconds;
