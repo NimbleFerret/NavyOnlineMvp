@@ -9,6 +9,7 @@ export class Config {
     public static readonly AUTH_SERVICE_PORT = 3026;
     public static readonly MARKETPLACE_SERVICE_PORT = 3027;
     public static readonly NOTIFICATION_SERVICE_PORT = 3028;
+    public static readonly ENTITY_SERVICE_PORT = 3029;
 
     public static readonly GAMEPLAY_SERVICE_DEFAULT_PORT = 4020;
     public static readonly GAMEPLAY_SERVICE_DEFAULT_REGION = 'EU';

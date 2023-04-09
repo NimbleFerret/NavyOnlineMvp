@@ -1,0 +1,10 @@
+[
+    {
+        "name": "Navy.online",
+        "active": true,
+        "state": 4,
+        "supportedChains": [
+            "Cronos"
+        ]
+    }
+]

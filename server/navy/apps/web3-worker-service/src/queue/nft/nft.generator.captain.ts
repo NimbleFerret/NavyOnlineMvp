@@ -1,4 +1,4 @@
-import { NftType } from "@app/shared-library/shared-library.main";
+import { NftType, Rarity } from "@app/shared-library/shared-library.main";
 import { NftPartDetails, NftSubPartDetails } from "@app/shared-library/workers/workers.marketplace";
 import { Contract } from "ethers";
 import { NftGenerator } from "./nft.generator";
@@ -32,6 +32,8 @@ export class NftCaptainGenerator extends NftGenerator {
             stakingDurationSeconds: 120,
         } as CaptainStats;
 
+        // generate trait
+
         this.metadata = JSON.stringify({
             name: `Founders captain (${index}/${maxIndex})`,
             description: 'Founders captain collection of Navy.online.',
@@ -55,6 +57,19 @@ export class NftCaptainGenerator extends NftGenerator {
 
     async mintNft(owner: string, contract: Contract, metadata: string) {
         await contract.grantCaptain(owner, metadata);
+    }
+
+    private generateTraits() {
+        let traitsCount = 0;
+        switch (this.rarity) {
+            case Rarity.COMMON:
+                traitsCount = 1;
+            case Rarity.RARE:
+            case Rarity.EPIC:
+                traitsCount = 2;
+            case Rarity.LEGENDARY:
+                traitsCount = 3;
+        }
     }
 
 }
