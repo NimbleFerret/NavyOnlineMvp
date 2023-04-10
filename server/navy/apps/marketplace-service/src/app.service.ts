@@ -392,7 +392,7 @@ export class AppService implements OnModuleInit {
       });
       const topSaleResult = await this.collectionItemModel
         .find(query)
-        .select(['-_id', '-__v', '-id', '-needUpdate', 'visuals', 'traits'])
+        .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
         .limit(9)
         .sort([['price', -1], ['lastUpdated', 1]]);
       topSaleResult.forEach(f => {
@@ -463,7 +463,7 @@ export class AppService implements OnModuleInit {
       }
       return await self.collectionItemModel
         .find(criteria)
-        .select(['-_id', '-__v', '-id', '-needUpdate', 'visuals', 'traits'])
+        .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
         .skip((page - 1) * pageSize)
         .limit(pageSize)
         .sort([['marketplaceState', 1], [sortCriteria, -1]]);
@@ -515,7 +515,7 @@ export class AppService implements OnModuleInit {
         marketplaceState: MarketplaceNftsType.LISTED,
         seller: owner
       })
-      .select(['-_id', '-__v', '-id', '-needUpdate', 'visuals', 'traits'])));
+      .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])));
 
     result.push(...await this.collectionItemModel
       .find({
@@ -523,7 +523,7 @@ export class AppService implements OnModuleInit {
         marketplaceState: MarketplaceNftsType.ALL,
         owner: owner.toLocaleLowerCase()
       })
-      .select(['-_id', '-__v', '-id', '-needUpdate', 'visuals', 'traits']));
+      .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']));
 
     return result;
   }
