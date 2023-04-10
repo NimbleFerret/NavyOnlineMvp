@@ -67,10 +67,18 @@ export class AppController {
   }
 
   @Get('collection/:address/owner/:owner')
-  getCollectionMyItems(
+  getCollectionByOwner(
     @Param('address') address: string,
     @Param('owner') owner: string) {
     return this.appService.getCollectionItemsByOwner(address, owner);
+  }
+
+  @Get('collection/:address/item/:tokenId')
+  getCollectionItem(
+    @Param('address') address: string,
+    @Param('tokenId') tokenId: string
+  ) {
+    return this.appService.getCollectionItem(address, tokenId);
   }
 
   // --------------------------------

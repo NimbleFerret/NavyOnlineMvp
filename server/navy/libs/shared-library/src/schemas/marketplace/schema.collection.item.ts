@@ -37,6 +37,12 @@ export class CollectionItem {
     @Prop()
     image: string;
 
+    @Prop({ type: Object })
+    visuals: object;
+
+    @Prop({ type: Object })
+    traits: object;
+
     @Prop()
     rarity: string;
 

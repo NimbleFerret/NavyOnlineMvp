@@ -176,22 +176,64 @@ export class AppService implements OnModuleInit {
       image: "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
       rarity: "Common",
       lastUpdated: 0,
+      visuals: [],
+      traits: [],
       contractAddress: "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
       marketplaceState: 1,
       chainId: "338"
     };
+
+    function generateCaptainVisuals() {
+      return [
+        {
+          trait_type: 'Accessories',
+          value: 'Scarf'
+        },
+        {
+          trait_type: 'Background',
+          value: 'Purple'
+        },
+        {
+          trait_type: 'Body',
+          value: 'Body 1'
+        },
+        {
+          trait_type: 'Clothes',
+          value: 'Jacket'
+        },
+        {
+          trait_type: 'Head',
+          value: 'Hair 1'
+        },
+        {
+          trait_type: 'Face',
+          value: 'Upset'
+        }
+      ]
+    }
+
+    function generateCaptainTraits() {
+      return [
+        {
+          trait_type: 'Ship bonus 1',
+          value: '1'
+        }
+      ]
+    }
 
     // Today sells
     for (let i = 0; i < 20; i++) {
       defaultCollectionItem.id += nextId;
       defaultCollectionItem.tokenId = nextId;
       defaultCollectionItem.lastUpdated = nextTimeSeconds;
+      defaultCollectionItem.visuals = generateCaptainVisuals();
+      defaultCollectionItem.traits = generateCaptainTraits();
 
       let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
       let priceFloat = SharedLibraryService.GetRandomIntInRange(0, 1);
       let finalPrice = String(price);
       if (priceFloat == 1) {
-        finalPrice += '.' + SharedLibraryService.GetRandomIntInRange(1, 200);
+        finalPrice += '.' + SharedLibraryService.GetRandomIntInRange(1, 99);
       }
       defaultCollectionItem.price = Number(finalPrice);
 
@@ -206,12 +248,14 @@ export class AppService implements OnModuleInit {
       defaultCollectionItem.id += nextId;
       defaultCollectionItem.tokenId = nextId;
       defaultCollectionItem.lastUpdated = nextTimeSeconds;
+      defaultCollectionItem.visuals = generateCaptainVisuals();
+      defaultCollectionItem.traits = generateCaptainTraits();
 
       let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
       let priceFloat = SharedLibraryService.GetRandomIntInRange(0, 1);
       let finalPrice = String(price);
       if (priceFloat == 1) {
-        finalPrice += '.' + SharedLibraryService.GetRandomIntInRange(1, 200);
+        finalPrice += '.' + SharedLibraryService.GetRandomIntInRange(1, 99);
       }
       defaultCollectionItem.price = Number(finalPrice);
 
@@ -226,12 +270,14 @@ export class AppService implements OnModuleInit {
       defaultCollectionItem.id += nextId;
       defaultCollectionItem.tokenId = nextId;
       defaultCollectionItem.lastUpdated = nextTimeSeconds;
+      defaultCollectionItem.visuals = generateCaptainVisuals();
+      defaultCollectionItem.traits = generateCaptainTraits();
 
       let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
       let priceFloat = SharedLibraryService.GetRandomIntInRange(0, 1);
       let finalPrice = String(price);
       if (priceFloat == 1) {
-        finalPrice += '.' + SharedLibraryService.GetRandomIntInRange(1, 200);
+        finalPrice += '.' + SharedLibraryService.GetRandomIntInRange(1, 99);
       }
       defaultCollectionItem.price = Number(finalPrice);
 
@@ -346,7 +392,7 @@ export class AppService implements OnModuleInit {
       });
       const topSaleResult = await this.collectionItemModel
         .find(query)
-        .select(['-_id', '-__v', '-id', '-needUpdate'])
+        .select(['-_id', '-__v', '-id', '-needUpdate', 'visuals', 'traits'])
         .limit(9)
         .sort([['price', -1], ['lastUpdated', 1]]);
       topSaleResult.forEach(f => {
@@ -417,7 +463,7 @@ export class AppService implements OnModuleInit {
       }
       return await self.collectionItemModel
         .find(criteria)
-        .select(['-_id', '-__v', '-id', '-needUpdate'])
+        .select(['-_id', '-__v', '-id', '-needUpdate', 'visuals', 'traits'])
         .skip((page - 1) * pageSize)
         .limit(pageSize)
         .sort([['marketplaceState', 1], [sortCriteria, -1]]);
@@ -469,7 +515,7 @@ export class AppService implements OnModuleInit {
         marketplaceState: MarketplaceNftsType.LISTED,
         seller: owner
       })
-      .select(['-_id', '-__v', '-id', '-needUpdate'])));
+      .select(['-_id', '-__v', '-id', '-needUpdate', 'visuals', 'traits'])));
 
     result.push(...await this.collectionItemModel
       .find({
@@ -477,9 +523,42 @@ export class AppService implements OnModuleInit {
         marketplaceState: MarketplaceNftsType.ALL,
         owner: owner.toLocaleLowerCase()
       })
-      .select(['-_id', '-__v', '-id', '-needUpdate']));
+      .select(['-_id', '-__v', '-id', '-needUpdate', 'visuals', 'traits']));
 
     return result;
+  }
+
+  async getCollectionItem(address: string, tokenId: string) {
+    const collectionItem = await this.collectionItemModel.findOne({
+      contractAddress: address,
+      tokenId
+    }).select(['-_id', '-__v', '-needUpdate']);
+
+    const traits = (collectionItem.traits as any).map(f => {
+      if (f.value == '1') {
+        f.value = 'Ship damage bonus'
+      }
+      return {
+        trait_type: f.trait_type,
+        value: f.value
+      };
+    });
+
+    return {
+      tokenId: collectionItem.tokenId,
+      tokenUri: collectionItem.tokenUri,
+      owner: collectionItem.owner,
+      price: collectionItem.price,
+      image: collectionItem.image,
+      rarity: collectionItem.rarity,
+      contractAddress: collectionItem.contractAddress,
+      chainId: collectionItem.chainId,
+      chainName: 'Cronos',
+      coinSymbol: 'CRO',
+      visuals: collectionItem.visuals,
+      traits,
+      showPrice: true
+    }
   }
 
   async getMintByCollection(collectionAddress: string) {
