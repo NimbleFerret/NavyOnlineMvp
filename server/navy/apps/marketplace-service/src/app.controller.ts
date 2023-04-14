@@ -1,9 +1,7 @@
 import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { Delete } from '@nestjs/common/decorators/http/request-mapping.decorator';
 import { AppService } from './app.service';
-import { BidPlaceDto, BidDeleteDto } from './dto/dto.bids';
-import { NotificationsReadDto } from './dto/dto.notifications.read';
+import { FeedbackDto } from './dto/dto.feedback';
 
 @Controller('marketplace')
 export class AppController {
@@ -98,4 +96,19 @@ export class AppController {
   bids(@Param('contractAddress') contractAddress: string, @Param('tokenId') tokenId: string) {
     return this.appService.bids(contractAddress, tokenId);
   }
+
+  // --------------------------------
+  // General
+  // --------------------------------
+
+  @Get('faq')
+  faq() {
+    return this.appService.faq();
+  }
+
+  @Post('feedback')
+  feedback(@Body() dto: FeedbackDto) {
+    return this.appService.feedback(dto);
+  }
+
 }

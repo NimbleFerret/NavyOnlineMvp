@@ -17,6 +17,8 @@ import { MintModule } from './mint/mint.module';
 import { Config } from '@app/shared-library/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppControllerAuth } from './app.controller.auth';
+import { Faq, FaqSchema } from '@app/shared-library/schemas/marketplace/schema.faq';
+import { Feedback, FeedbackSchema } from '@app/shared-library/schemas/marketplace/schema.feedback';
 
 @Module({
   imports: [
@@ -30,7 +32,9 @@ import { AppControllerAuth } from './app.controller.auth';
       { name: Collection.name, schema: CollectionSchema },
       { name: CollectionItem.name, schema: CollectionItemSchema },
       { name: Notification.name, schema: NotificationSchema },
-      { name: Bid.name, schema: BidSchema }
+      { name: Bid.name, schema: BidSchema },
+      { name: Faq.name, schema: FaqSchema },
+      { name: Feedback.name, schema: FeedbackSchema }
     ]),
     MongooseModule.forRoot(Config.GetMongoHost(), {
       dbName: 'navy'
