@@ -1,5 +1,10 @@
+import { SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { AppService } from './app.service';
+import { AuthUpdateDto } from 'apps/gateway-service/src/dto/app.dto';
+import { AuthApiService } from './api/api.auth';
+import { BidApiService } from './api/api.bid';
+import { FavouriteApiService } from './api/api.favourite';
+import { NotificationApiService } from './api/api.notification';
 import { BidPlaceDto, BidDeleteDto } from './dto/dto.bids';
 import { FavouriteDto } from './dto/dto.favourite';
 import { NotificationsReadDto } from './dto/dto.notifications.read';
@@ -7,7 +12,31 @@ import { NotificationsReadDto } from './dto/dto.notifications.read';
 @Controller('marketplace/auth')
 export class AppControllerAuth {
 
-  constructor(private readonly appService: AppService) { }
+  constructor(
+    private readonly authService: AuthApiService,
+    private readonly favouriteService: FavouriteApiService,
+    private readonly bidService: BidApiService,
+    private readonly notificationService: NotificationApiService
+  ) { }
+
+  // --------------------------------
+  // Auth
+  // --------------------------------
+
+  @Post('auth/signUp')
+  async authSignUp(@Body() request: SignUpRequest) {
+    return this.authService.authSignUp(request);
+  }
+
+  @Post('auth/signIn')
+  async authSignIn(@Body() request: SignUpRequest) {
+    return this.authService.authSignIn(request);
+  }
+
+  @Post('auth/update')
+  async authUpdate(@Body() request: AuthUpdateDto) {
+    return this.authService.authUpdate(request);
+  }
 
   // --------------------------------
   // Collection
@@ -15,26 +44,31 @@ export class AppControllerAuth {
 
   @Post('favourite/add')
   favouriteAdd(@Body() dto: FavouriteDto) {
-    return this.appService.favouriteAdd(dto);
+    return this.favouriteService.favouriteAdd(dto);
   }
 
   @Post('favourite/remove')
   favouriteRemove(@Body() dto: FavouriteDto) {
-    return this.appService.favouriteRemove(dto);
+    return this.favouriteService.favouriteRemove(dto);
   }
 
   // --------------------------------
-  // Bids
+  // Bids api
   // --------------------------------
 
-  @Post('bid')
+  @Get('bid/:contractAddress/:tokenId')
+  bid(@Param('contractAddress') contractAddress: string, @Param('tokenId') tokenId: string) {
+    return this.bidService.bids(contractAddress, tokenId);
+  }
+
+  @Post('bid/place')
   bidPlace(@Body() dto: BidPlaceDto) {
-    return this.appService.bidPlace(dto);
+    return this.bidService.bidPlace(dto);
   }
 
-  @Delete('bid')
+  @Delete('bid/delete')
   bidDelete(@Body() dto: BidDeleteDto) {
-    return this.appService.bidDelete(dto);
+    return this.bidService.bidDelete(dto);
   }
 
   // --------------------------------
@@ -43,11 +77,11 @@ export class AppControllerAuth {
 
   @Get('notifications/:walletAddress')
   getNotifications(@Param('walletAddress') walletAddress: string) {
-    return this.appService.getNotifications(walletAddress);
+    return this.notificationService.getNotifications(walletAddress);
   }
 
   @Post('notifications/read')
   readNotifications(@Body() dto: NotificationsReadDto) {
-    return this.appService.readNotifications(dto.walletAddress);
+    return this.notificationService.readNotifications(dto.walletAddress);
   }
 }

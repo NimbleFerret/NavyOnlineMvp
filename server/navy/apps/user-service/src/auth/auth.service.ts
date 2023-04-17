@@ -27,6 +27,7 @@ export class AuthService {
 
     private readonly logger = new Logger(AuthService.name);
     private readonly emailCodeConfirmationActive = true;
+    private readonly defaultNavySenderEmail = 'hello@navy.online';
     private readonly signUpConfirmationEmailSubject = 'Navy.online authentication';
     private readonly signUpConfirmationEmailText = 'Please enter following code in order to sign up: @';
 
@@ -87,7 +88,8 @@ export class AuthService {
                         const sendEmailResult = await lastValueFrom(this.notificationService.SendEmail({
                             recipient: request.email,
                             subject: this.signUpConfirmationEmailSubject,
-                            message: this.signUpConfirmationEmailText.replace('@', generatedCode.code)
+                            message: this.signUpConfirmationEmailText.replace('@', generatedCode.code),
+                            sender: this.defaultNavySenderEmail
                         }));
 
                         if (sendEmailResult.success) {

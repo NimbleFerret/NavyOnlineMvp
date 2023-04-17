@@ -19,6 +19,12 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AppControllerAuth } from './app.controller.auth';
 import { Faq, FaqSchema } from '@app/shared-library/schemas/marketplace/schema.faq';
 import { Feedback, FeedbackSchema } from '@app/shared-library/schemas/marketplace/schema.feedback';
+import { BidApiService } from './api/api.bid';
+import { NotificationApiService } from './api/api.notification';
+import { CollectionApiService } from './api/api.collection';
+import { DashboardApiService } from './api/api.dashboard';
+import { GeneralApiService } from './api/api.general';
+import { FavouriteApiService } from './api/api.favourite';
 
 @Module({
   imports: [
@@ -52,6 +58,14 @@ import { Feedback, FeedbackSchema } from '@app/shared-library/schemas/marketplac
     ScheduleModule.forRoot()
   ],
   controllers: [AppController, AppControllerAuth],
-  providers: [AppService],
+  providers: [
+    AppService,
+    BidApiService,
+    CollectionApiService,
+    DashboardApiService,
+    GeneralApiService,
+    NotificationApiService,
+    FavouriteApiService
+  ],
 })
 export class AppModule { }
