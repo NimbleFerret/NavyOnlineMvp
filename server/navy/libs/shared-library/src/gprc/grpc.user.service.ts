@@ -16,6 +16,7 @@ export enum SignUpState {
 export interface SignUpRequest {
     email: string;
     password: string;
+    password2: string;
     confirmationCode: string;
     ethAddress: string;
     signedMessage: string;
