@@ -6,11 +6,13 @@ import { BadGatewayException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AppService } from "../app.service";
+import { FavouriteApiService } from "./api.favourite";
 
 @Injectable()
 export class CollectionApiService {
 
     constructor(
+        private readonly favouriteService: FavouriteApiService,
         @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
         @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
         @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
@@ -25,7 +27,7 @@ export class CollectionApiService {
         return collection;
     }
 
-    async getCollectionItems(marketplaceNftsType: MarketplaceNftsType, address: string, page?: number, size?: number, rarity?: string) {
+    async getCollectionItems(authToken: string | undefined, marketplaceNftsType: MarketplaceNftsType, address: string, page?: number, size?: number, rarity?: string) {
         let initialPage = page;
         if (!page) {
             page = 1;
@@ -70,13 +72,7 @@ export class CollectionApiService {
         }
 
         const result = await databaseQuery(marketplaceNftsType, marketplaceNftsType == MarketplaceNftsType.ALL ? 'tokenId' : 'lastUpdated');
-
-        result.forEach(r => {
-            if (r.seller) {
-                r.owner = r.seller;
-                r.seller = undefined;
-            }
-        });
+        const resultItems = this.convertCollectionItems(result, true);
 
         let pages = Math.ceil(count / pageSize);
         let next = null;
@@ -97,13 +93,15 @@ export class CollectionApiService {
                 next,
                 prev
             },
-            result
+            result: resultItems
         };
+
+        await this.fillFavouritesIfNeeded(response.result, authToken);
 
         return response;
     }
 
-    async getCollectionItemsByOwner(address: string, owner: string) {
+    async getCollectionItemsByOwner(authToken: string | undefined, address: string, owner: string) {
         const result = [];
 
         address = address.toLowerCase();
@@ -125,10 +123,13 @@ export class CollectionApiService {
             })
             .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']));
 
-        return result;
+        const resultItems = this.convertCollectionItems(result, true);
+        await this.fillFavouritesIfNeeded(resultItems, authToken);
+
+        return resultItems;
     }
 
-    async getCollectionItem(address: string, tokenId: string) {
+    async getCollectionItem(authToken: string | undefined, address: string, tokenId: string) {
         const collectionItem = await this.collectionItemModel.findOne({
             contractAddress: address,
             tokenId
@@ -144,7 +145,7 @@ export class CollectionApiService {
             };
         });
 
-        return {
+        const collectionItemResult = {
             tokenId: collectionItem.tokenId,
             tokenUri: collectionItem.tokenUri,
             owner: collectionItem.owner,
@@ -158,7 +159,14 @@ export class CollectionApiService {
             visuals: collectionItem.visuals,
             traits,
             showPrice: true
+        };
+
+        if (authToken) {
+            const userFavourites = await this.favouriteService.favoutires(authToken);
+            collectionItemResult['favourite'] = userFavourites.filter(f => f.tokenId == collectionItemResult.tokenId).length > 0;
         }
+
+        return collectionItemResult;
     }
 
     async getMintByCollection(collectionAddress: string) {
@@ -171,5 +179,45 @@ export class CollectionApiService {
             throw new BadGatewayException();
         }
         return mint;
+    }
+
+    private convertCollectionItems(collectionItems: any, swapSeller = false) {
+        const resultItems = [];
+        collectionItems.forEach(r => {
+            const resultItem = {
+                tokenId: r.tokenId,
+                tokenUri: r.tokenUri,
+                owner: r.owner,
+                price: r.price,
+                image: r.image,
+                rarity: r.rarity,
+                lastUpdated: r.lastUpdated,
+                contractAddress: r.contractAddress,
+                chainId: r.chainId,
+                marketplaceState: r.marketplaceState
+            };
+            if (r.seller && swapSeller) {
+                resultItem.owner = r.seller;
+            }
+            resultItems.push(resultItem);
+        });
+        return resultItems;
+    }
+
+    private async fillFavouritesIfNeeded(collectionItems: any, authToken: string) {
+        if (authToken) {
+            const userFavourites = await this.favouriteService.favoutires(authToken);
+            const favouriteCollectionItemsIds = new Set<number>();
+            userFavourites.forEach(f => {
+                favouriteCollectionItemsIds.add(f.tokenId);
+            });
+            collectionItems.forEach(f => {
+                if (favouriteCollectionItemsIds.has(f.tokenId)) {
+                    f['favourite'] = true;
+                } else {
+                    f['favourite'] = false;
+                }
+            });
+        }
     }
 }

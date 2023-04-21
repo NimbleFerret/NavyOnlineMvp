@@ -6,4 +6,12 @@ export class Utils {
         });
     }
 
+    public static GetBearerTokenFromRequest(request: Request) {
+        if (request.headers['authorization']) {
+            return request.headers['authorization'].split(' ')[1] as string;
+        } else {
+            return undefined;
+        }
+    }
+
 }
