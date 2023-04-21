@@ -6,7 +6,7 @@ import { Mint, MintSchema } from '@app/shared-library/schemas/marketplace/schema
 import { CollectionItem, CollectionItemSchema } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { Notification, NotificationSchema } from '@app/shared-library/schemas/marketplace/schema.notification';
 import { Bid, BidSchema } from '@app/shared-library/schemas/marketplace/schema.bid';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -25,6 +25,7 @@ import { CollectionApiService } from './api/api.collection';
 import { DashboardApiService } from './api/api.dashboard';
 import { GeneralApiService } from './api/api.general';
 import { FavouriteApiService } from './api/api.favourite';
+import { AuthMiddleware } from './middleware/auth.middleware';
 
 @Module({
   imports: [
@@ -68,4 +69,10 @@ import { FavouriteApiService } from './api/api.favourite';
     FavouriteApiService
   ],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes({ path: 'auth/update', method: RequestMethod.POST });
+  }
+}
