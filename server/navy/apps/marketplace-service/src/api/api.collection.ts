@@ -1,25 +1,20 @@
-import { CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
+import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Mint, MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
 import { MarketplaceNftsType } from "@app/shared-library/workers/workers.marketplace";
-import { BadGatewayException, Injectable, OnModuleInit } from "@nestjs/common";
+import { BadGatewayException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Collection } from "mongoose";
+import { Model } from "mongoose";
 import { AppService } from "../app.service";
 
 @Injectable()
-export class CollectionApiService implements OnModuleInit {
+export class CollectionApiService {
 
     constructor(
         @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
         @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
         @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
     ) {
-
-    }
-
-    onModuleInit() {
-        throw new Error("Method not implemented.");
     }
 
     async getCollection(contractAddress: string) {

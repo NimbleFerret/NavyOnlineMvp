@@ -1,23 +1,18 @@
 import { EthersConstants } from "@app/shared-library/ethers/ethers.constants";
 import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { MarketplaceNftsType } from "@app/shared-library/workers/workers.marketplace";
-import { Injectable, OnModuleInit } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { GeneralApiService } from "./api.general";
 
 @Injectable()
-export class DashboardApiService implements OnModuleInit {
+export class DashboardApiService {
 
     constructor(
         @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
         private readonly generalApiService: GeneralApiService
     ) {
-
-    }
-
-    onModuleInit() {
-        throw new Error("Method not implemented.");
     }
 
     async dashboard(days?: string) {

@@ -3,7 +3,7 @@ import {
     NotificationServiceGrpcClientName,
     NotificationServiceName
 } from "@app/shared-library/gprc/grpc.notification.service";
-import { CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
+import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { Faq, FaqDocument } from "@app/shared-library/schemas/marketplace/schema.faq";
 import { Feedback, FeedbackDocument } from "@app/shared-library/schemas/marketplace/schema.feedback";
 import { Project, ProjectDocument, ProjectState } from "@app/shared-library/schemas/marketplace/schema.project";
@@ -11,7 +11,7 @@ import { BadGatewayException, Inject, Injectable, Logger, OnModuleInit } from "@
 import { ClientGrpc } from "@nestjs/microservices";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron, CronExpression } from "@nestjs/schedule";
-import { Collection, Model } from "mongoose";
+import { Model } from "mongoose";
 import { lastValueFrom } from "rxjs";
 import { FeedbackDto } from "../dto/dto.feedback";
 import { ProjectDto, ProjectCollection } from "../dto/dto.projects";

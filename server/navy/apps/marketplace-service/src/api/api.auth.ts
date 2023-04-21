@@ -1,5 +1,5 @@
 import { SharedLibraryService } from "@app/shared-library";
-import { IssueTokenResponse } from "@app/shared-library/gprc/grpc.auth.service";
+import { IssueTokenResponse, VerifyTokenRequest } from "@app/shared-library/gprc/grpc.auth.service";
 import {
     AttachEmailOrEthAddressRequest,
     AttachEmailOrEthAddressResponse,
@@ -26,6 +26,7 @@ const jwt = require('jsonwebtoken');
 export class AuthApiService {
 
     private readonly logger = new Logger(AuthApiService.name);
+    private readonly jwtSecret = 'replace_me_asap';
 
     constructor(@InjectModel(UserProfile.name) private userProfileModel: Model<UserProfileDocument>) {
     }
@@ -107,6 +108,19 @@ export class AuthApiService {
         }
 
         return response;
+    }
+
+    async verifyToken(request: VerifyTokenRequest) {
+        try {
+            jwt.verify(request.token, this.jwtSecret);
+            return {
+                success: true
+            }
+        } catch (err) {
+            return {
+                success: false
+            }
+        }
     }
 
     // ------------------------------------------------
@@ -210,7 +224,7 @@ export class AuthApiService {
     private issueToken(userId: string) {
         const data = { userId };
         return {
-            token: jwt.sign({ data }, 'replace_me_asap', { expiresIn: '1h' })
+            token: jwt.sign({ data }, this.jwtSecret, { expiresIn: '1h' })
         } as IssueTokenResponse;
     }
 

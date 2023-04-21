@@ -26,6 +26,8 @@ import { DashboardApiService } from './api/api.dashboard';
 import { GeneralApiService } from './api/api.general';
 import { FavouriteApiService } from './api/api.favourite';
 import { AuthMiddleware } from './middleware/auth.middleware';
+import { AuthApiService } from './api/api.auth';
+import { UserProfile, UserProfileSchema } from '@app/shared-library/schemas/schema.user.profile';
 
 @Module({
   imports: [
@@ -41,7 +43,8 @@ import { AuthMiddleware } from './middleware/auth.middleware';
       { name: Notification.name, schema: NotificationSchema },
       { name: Bid.name, schema: BidSchema },
       { name: Faq.name, schema: FaqSchema },
-      { name: Feedback.name, schema: FeedbackSchema }
+      { name: Feedback.name, schema: FeedbackSchema },
+      { name: UserProfile.name, schema: UserProfileSchema }
     ]),
     MongooseModule.forRoot(Config.GetMongoHost(), {
       dbName: 'navy'
@@ -61,6 +64,7 @@ import { AuthMiddleware } from './middleware/auth.middleware';
   controllers: [AppController, AppControllerAuth],
   providers: [
     AppService,
+    AuthApiService,
     BidApiService,
     CollectionApiService,
     DashboardApiService,

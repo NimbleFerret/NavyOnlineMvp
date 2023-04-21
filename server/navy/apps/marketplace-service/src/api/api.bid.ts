@@ -1,9 +1,9 @@
 import { Bid, BidDocument } from "@app/shared-library/schemas/marketplace/schema.bid";
-import { CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
+import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { BadGatewayException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Collection } from "mongoose";
+import { Model } from "mongoose";
 import { BidPlaceDto, BidDeleteDto } from "../dto/dto.bids";
 
 @Injectable()
