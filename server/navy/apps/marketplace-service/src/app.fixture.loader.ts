@@ -12,6 +12,8 @@ const fs = require('fs');
 
 export class FixtureLoader {
 
+    private readonly dropTopSalesOnRestart = false;
+
     constructor(
         private projectModel: Model<ProjectDocument>,
         private collectionModel: Model<CollectionDocument>,
@@ -22,8 +24,10 @@ export class FixtureLoader {
 
     async loadFixtures() {
         await this.loadProjects();
-        await this.loadTopSales();
         await this.loadFaq();
+        if (this.dropTopSalesOnRestart) {
+            await this.loadTopSales();
+        }
     }
 
     private async loadProjects() {

@@ -1,5 +1,5 @@
 import { SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
 import { AuthUpdateDto } from 'apps/gateway-service/src/dto/app.dto';
 import { AuthApiService } from './api/api.auth';
 import { BidApiService } from './api/api.bid';
@@ -7,7 +7,6 @@ import { FavouriteApiService } from './api/api.favourite';
 import { NotificationApiService } from './api/api.notification';
 import { BidPlaceDto, BidDeleteDto } from './dto/dto.bids';
 import { FavouriteDto } from './dto/dto.favourite';
-import { NotificationsReadDto } from './dto/dto.notifications.read';
 
 @Controller('marketplace/auth')
 export class AppControllerAuth {
@@ -23,17 +22,17 @@ export class AppControllerAuth {
   // Auth
   // --------------------------------
 
-  @Post('auth/signUp')
+  @Post('signUp')
   async authSignUp(@Body() request: SignUpRequest) {
     return this.authService.authSignUp(request);
   }
 
-  @Post('auth/signIn')
+  @Post('signIn')
   async authSignIn(@Body() request: SignUpRequest) {
     return this.authService.authSignIn(request);
   }
 
-  @Post('auth/update')
+  @Post('update')
   async authUpdate(@Body() request: AuthUpdateDto) {
     return this.authService.authUpdate(request);
   }
@@ -42,14 +41,19 @@ export class AppControllerAuth {
   // Collection
   // --------------------------------
 
-  @Post('favourite/add')
-  favouriteAdd(@Body() dto: FavouriteDto) {
-    return this.favouriteService.favouriteAdd(dto);
+  @Get('favourites')
+  favourites(@Req() request: Request) {
+    return this.favouriteService.favoutires(request.headers['authorization'].split(' ')[1]);
   }
 
-  @Post('favourite/remove')
-  favouriteRemove(@Body() dto: FavouriteDto) {
-    return this.favouriteService.favouriteRemove(dto);
+  @Post('favourites/add')
+  favouritesAdd(@Req() request: Request, @Body() dto: FavouriteDto) {
+    return this.favouriteService.favouritesAdd(request.headers['authorization'].split(' ')[1], dto);
+  }
+
+  @Post('favourites/remove')
+  favouritesRemove(@Req() request: Request, @Body() dto: FavouriteDto) {
+    return this.favouriteService.favouritesRemove(request.headers['authorization'].split(' ')[1], dto);
   }
 
   // --------------------------------
@@ -75,13 +79,13 @@ export class AppControllerAuth {
   // Notifications
   // --------------------------------
 
-  @Get('notifications/:walletAddress')
-  getNotifications(@Param('walletAddress') walletAddress: string) {
-    return this.notificationService.getNotifications(walletAddress);
+  @Get('notifications')
+  getNotifications(@Req() request: Request) {
+    return this.notificationService.getNotifications(request.headers['authorization'].split(' ')[1]);
   }
 
   @Post('notifications/read')
-  readNotifications(@Body() dto: NotificationsReadDto) {
-    return this.notificationService.readNotifications(dto.walletAddress);
+  readNotifications(@Req() request: Request) {
+    return this.notificationService.readNotifications(request.headers['authorization'].split(' ')[1]);
   }
 }

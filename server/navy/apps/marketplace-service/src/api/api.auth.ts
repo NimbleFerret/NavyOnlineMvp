@@ -11,10 +11,10 @@ import {
     SignUpState
 } from "@app/shared-library/gprc/grpc.user.service";
 import { CheckEthersAuthSignatureResponse } from "@app/shared-library/gprc/grpc.web3.service";
-import { Injectable, Logger } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ethers } from 'ethers';
 import { Constants } from "apps/web3-service/src/app.constants";
-import { UserProfile, UserProfileDocument } from "@app/shared-library/schemas/schema.user.profile";
+import { EmailState, UserProfile, UserProfileDocument } from "@app/shared-library/schemas/schema.user.profile";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AuthUpdateDto } from "apps/gateway-service/src/dto/app.dto";
@@ -39,15 +39,16 @@ export class AuthApiService {
         const response = {
             success: false
         };
-
         if (await this.checkEthersAuthSignatureIfNeeded(request)) {
             const signUpResult = await this.signUp(request);
             if (!signUpResult.success) {
-                response['reasonCode'] = signUpResult.reasonCode;
+                if (!response.success) {
+                    throw new HttpException('Reason: ' + signUpResult.reasonCode, HttpStatus.UNAUTHORIZED);
+                }
             } else {
                 response.success = true;
                 if (signUpResult.signUpState == SignUpState.DONE) {
-                    const issueTokenResult = this.issueToken(signUpResult.userId);
+                    const issueTokenResult = await this.issueToken(signUpResult.userId);
                     response['token'] = issueTokenResult.token;
                     response['userId'] = signUpResult.userId
                 } else {
@@ -55,7 +56,6 @@ export class AuthApiService {
                 }
             }
         }
-
         return response;
     }
 
@@ -63,19 +63,19 @@ export class AuthApiService {
         const response = {
             success: false
         };
-
         if (await this.checkEthersAuthSignatureIfNeeded(request)) {
             const findUserResult = await this.findUser({ email: request.email, ethAddress: request.ethAddress });
-
             if (findUserResult.success) {
                 if (request.email && findUserResult.password == request.password || request.ethAddress) {
-                    const issueTokenResult = this.issueToken(findUserResult.id);
+                    const issueTokenResult = await this.issueToken(findUserResult.id);
                     response.success = true;
                     response['token'] = issueTokenResult.token;
                 }
             }
         }
-
+        if (!response.success) {
+            throw new HttpException('Bad auth', HttpStatus.UNAUTHORIZED);
+        }
         return response;
     }
 
@@ -196,7 +196,8 @@ export class AuthApiService {
                 } else {
                     const userModel = new this.userProfileModel({
                         email: request.email,
-                        password: request.password
+                        password: request.password,
+                        emailState: EmailState.CONFIRMED
                     });
 
                     await userModel.save();
@@ -227,11 +228,17 @@ export class AuthApiService {
         return response;
     }
 
-    private issueToken(userId: string) {
+    private async issueToken(userId: string) {
         const data = { userId };
-        return {
+        const tokenResult = {
             token: jwt.sign({ data }, this.jwtSecret, { expiresIn: '1h' })
         } as IssueTokenResponse;
+
+        const userPorfile = await this.userProfileModel.findById(userId);
+        userPorfile.authToken = tokenResult.token;
+        userPorfile.save();
+
+        return tokenResult;
     }
 
     private async findUser(request: FindUserRequest) {

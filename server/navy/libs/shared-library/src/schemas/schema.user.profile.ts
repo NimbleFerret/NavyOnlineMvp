@@ -24,6 +24,9 @@ export class UserProfile {
     })
     emailState: EmailState;
 
+    @Prop()
+    authToken: string;
+
     // TODO hash it
     @Prop()
     password: string;

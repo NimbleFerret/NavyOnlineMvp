@@ -1,15 +1,16 @@
 /* eslint-disable prettier/prettier */
 import { NotificationType } from '@app/shared-library/gprc/grpc.notification.service';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
+import { UserProfileDocument } from '../schema.user.profile';
 
 export type NotificationDocument = Notification & Document;
 
 @Schema()
 export class Notification {
 
-    @Prop()
-    walletAddress: string;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' })
+    userProfile: UserProfileDocument;
 
     @Prop({
         type: Number,

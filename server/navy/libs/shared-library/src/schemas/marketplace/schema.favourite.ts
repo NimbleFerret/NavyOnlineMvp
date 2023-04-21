@@ -2,6 +2,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { UserProfile } from '../schema.user.profile';
+import { CollectionItem } from './schema.collection.item';
 
 export type FavouriteDocument = Favourite & Document;
 
@@ -11,11 +12,8 @@ export class Favourite {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' })
     userProfile: UserProfile;
 
-    @Prop()
-    tokenId: string;
-
-    @Prop()
-    contractAddress: number;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'CollectionItem' })
+    collectionItem: CollectionItem;
 
 }
 

@@ -28,6 +28,7 @@ import { FavouriteApiService } from './api/api.favourite';
 import { AuthMiddleware } from './middleware/auth.middleware';
 import { AuthApiService } from './api/api.auth';
 import { UserProfile, UserProfileSchema } from '@app/shared-library/schemas/schema.user.profile';
+import { Favourite, FavouriteSchema } from '@app/shared-library/schemas/marketplace/schema.favourite';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { UserProfile, UserProfileSchema } from '@app/shared-library/schemas/sche
       { name: Bid.name, schema: BidSchema },
       { name: Faq.name, schema: FaqSchema },
       { name: Feedback.name, schema: FeedbackSchema },
+      { name: Favourite.name, schema: FavouriteSchema },
       { name: UserProfile.name, schema: UserProfileSchema }
     ]),
     MongooseModule.forRoot(Config.GetMongoHost(), {
@@ -77,6 +79,9 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes({ path: 'auth/update', method: RequestMethod.POST });
+      .forRoutes(
+        { path: 'marketplace/auth/notifications', method: RequestMethod.GET },
+        { path: 'marketplace/auth/notifications', method: RequestMethod.POST }
+      );
   }
 }
