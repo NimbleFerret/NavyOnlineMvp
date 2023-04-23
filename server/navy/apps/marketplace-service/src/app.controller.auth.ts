@@ -1,4 +1,5 @@
 import { SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
+import { Utils } from '@app/shared-library/utils';
 import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
 import { AuthUpdateDto } from 'apps/gateway-service/src/dto/app.dto';
 import { AuthApiService } from './api/api.auth';
@@ -43,17 +44,17 @@ export class AppControllerAuth {
 
   @Get('favourites')
   favourites(@Req() request: Request) {
-    return this.favouriteService.favoutires(request.headers['authorization'].split(' ')[1]);
+    return this.favouriteService.favoutires(Utils.GetBearerTokenFromRequest(request));
   }
 
   @Post('favourites/add')
   favouritesAdd(@Req() request: Request, @Body() dto: FavouriteDto) {
-    return this.favouriteService.favouritesAdd(request.headers['authorization'].split(' ')[1], dto);
+    return this.favouriteService.favouritesAdd(Utils.GetBearerTokenFromRequest(request), dto);
   }
 
   @Post('favourites/remove')
   favouritesRemove(@Req() request: Request, @Body() dto: FavouriteDto) {
-    return this.favouriteService.favouritesRemove(request.headers['authorization'].split(' ')[1], dto);
+    return this.favouriteService.favouritesRemove(Utils.GetBearerTokenFromRequest(request), dto);
   }
 
   // --------------------------------
@@ -81,11 +82,11 @@ export class AppControllerAuth {
 
   @Get('notifications')
   getNotifications(@Req() request: Request) {
-    return this.notificationService.getNotifications(request.headers['authorization'].split(' ')[1]);
+    return this.notificationService.getNotifications(Utils.GetBearerTokenFromRequest(request));
   }
 
   @Post('notifications/read')
   readNotifications(@Req() request: Request) {
-    return this.notificationService.readNotifications(request.headers['authorization'].split(' ')[1]);
+    return this.notificationService.readNotifications(Utils.GetBearerTokenFromRequest(request));
   }
 }

@@ -231,7 +231,7 @@ export class AuthApiService {
     private async issueToken(userId: string) {
         const data = { userId };
         const tokenResult = {
-            token: jwt.sign({ data }, this.jwtSecret, { expiresIn: '1h' })
+            token: jwt.sign({ data }, this.jwtSecret)
         } as IssueTokenResponse;
 
         const userPorfile = await this.userProfileModel.findById(userId);
