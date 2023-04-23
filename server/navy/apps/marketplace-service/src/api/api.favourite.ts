@@ -1,34 +1,30 @@
 import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Favourite, FavouriteDocument } from "@app/shared-library/schemas/marketplace/schema.favourite";
-import { UserProfile, UserProfileDocument } from "@app/shared-library/schemas/schema.user.profile";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { FavouriteDto } from "../dto/dto.favourite";
+import { AuthApiService } from "./api.auth";
 
 @Injectable()
 export class FavouriteApiService {
 
     constructor(
-        @InjectModel(UserProfile.name) private userProfileModel: Model<UserProfileDocument>,
+        private readonly authService: AuthApiService,
         @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
-        @InjectModel(Favourite.name) private favouriteModel: Model<FavouriteDocument>,) {
+        @InjectModel(Favourite.name) private favouriteModel: Model<FavouriteDocument>) {
     }
 
     async favoutires(authToken: string) {
-        const userProfile = await this.getUserProfileByAuthToken(authToken);
-        if (userProfile) {
-            const favourites = await this.favouriteModel.find({ userProfile });
-            const collectionItems = favourites.map(f => {
-                return f.collectionItem;
-            });
-            return await this.collectionItemModel
-                .find({ '_id': { $in: collectionItems } })
-                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
-                .sort([['marketplaceState', 1], ['tokenId', -1]]);;
-        } else {
-            throw new HttpException('Bad auth', HttpStatus.UNAUTHORIZED);
-        }
+        const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
+        const favourites = await this.favouriteModel.find({ userProfile });
+        const collectionItems = favourites.map(f => {
+            return f.collectionItem;
+        });
+        return await this.collectionItemModel
+            .find({ '_id': { $in: collectionItems } })
+            .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
+            .sort([['marketplaceState', 1], ['tokenId', -1]]);
     }
 
     async favouritesAdd(authToken: string, dto: FavouriteDto) {
@@ -53,21 +49,17 @@ export class FavouriteApiService {
     }
 
     private async findFavourite(authToken: string, dto: FavouriteDto) {
-        const userProfile = await this.getUserProfileByAuthToken(authToken);
-        if (userProfile) {
-            const collectionItem = await this.getCollectionItemById(dto);
-            if (collectionItem) {
-                const favourite = await this.favouriteModel.findOne({ collectionItem });
-                return {
-                    userProfile,
-                    favourite,
-                    collectionItem
-                }
-            } else {
-                throw new HttpException('No such collection item', HttpStatus.BAD_GATEWAY);
+        const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
+        const collectionItem = await this.getCollectionItemById(dto);
+        if (collectionItem) {
+            const favourite = await this.favouriteModel.findOne({ collectionItem });
+            return {
+                userProfile,
+                favourite,
+                collectionItem
             }
         } else {
-            throw new HttpException('Bad auth', HttpStatus.UNAUTHORIZED);
+            throw new HttpException('No such collection item', HttpStatus.BAD_GATEWAY);
         }
     }
 
@@ -78,9 +70,4 @@ export class FavouriteApiService {
         });
     }
 
-    private async getUserProfileByAuthToken(authToken: string) {
-        return await this.userProfileModel.findOne({
-            authToken
-        });
-    }
 }

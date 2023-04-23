@@ -1,20 +1,20 @@
 import { UserNotification, GetUserNotificationsResponse } from "@app/shared-library/gprc/grpc.notification.service";
 import { Notification, NotificationDocument } from "@app/shared-library/schemas/marketplace/schema.notification";
-import { UserProfile, UserProfileDocument } from "@app/shared-library/schemas/schema.user.profile";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { AuthApiService } from "./api.auth";
 
 @Injectable()
 export class NotificationApiService {
 
     constructor(
-        @InjectModel(UserProfile.name) private userProfileModel: Model<UserProfileDocument>,
+        private readonly authService: AuthApiService,
         @InjectModel(Notification.name) private notificationModel: Model<NotificationDocument>) {
     }
 
     async getNotifications(authToken: string) {
-        const userProfile = await this.getUserProfileByAuthToken(authToken);
+        const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
         const notifications = (await this.notificationModel.find({
             userProfile
         }).select(['-_id', '-__v']).sort([['date', -1]])).map(notification => {
@@ -31,7 +31,7 @@ export class NotificationApiService {
     }
 
     async readNotifications(authToken: string) {
-        const userProfile = await this.getUserProfileByAuthToken(authToken);
+        const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
         const userNotifications = await this.notificationModel.find({
             userProfile,
             read: false
@@ -42,9 +42,4 @@ export class NotificationApiService {
         }
     }
 
-    private async getUserProfileByAuthToken(authToken: string) {
-        return await this.userProfileModel.findOne({
-            authToken
-        });
-    }
 }

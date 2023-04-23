@@ -38,6 +38,12 @@ export class AppControllerAuth {
     return this.authService.authUpdate(request);
   }
 
+  @Post('logout')
+  async logout(@Req() request: Request) {
+    return this.authService.logout(Utils.GetBearerTokenFromRequest(request));
+  }
+
+
   // --------------------------------
   // Collection
   // --------------------------------

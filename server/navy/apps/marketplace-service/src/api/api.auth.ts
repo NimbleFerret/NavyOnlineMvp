@@ -110,16 +110,48 @@ export class AuthApiService {
         return response;
     }
 
-    async verifyToken(request: VerifyTokenRequest) {
+    async logout(authToken: string) {
+        const userProfile = await this.getUserProfileByAuthToken(authToken);
+        if (userProfile) {
+            userProfile.authToken = '';
+            await userProfile.save();
+        } else {
+            throw new HttpException('Bad auth', HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    async verifyToken(request: VerifyTokenRequest, profileToken?: string) {
         try {
-            jwt.verify(request.token, this.jwtSecret);
-            return {
-                success: true
+            let authToken = '';
+            if (profileToken) {
+                authToken = profileToken;
+            } else {
+                const userProfile = await this.getUserProfileByAuthToken(request.token);
+                authToken = userProfile.authToken;
+            }
+            if (authToken && authToken.length > 0) {
+                jwt.verify(authToken, this.jwtSecret);
+                return {
+                    success: true
+                }
+            } else {
+                return {
+                    success: false
+                }
             }
         } catch (err) {
             return {
                 success: false
             }
+        }
+    }
+
+    public async checkTokenAndGetProfile(authToken: string) {
+        const userProfile = await this.getUserProfileByAuthToken(authToken);
+        if (userProfile && this.verifyToken({ token: userProfile.authToken })) {
+            return userProfile;
+        } else {
+            throw new HttpException('Bad auth', HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -256,6 +288,12 @@ export class AuthApiService {
             response.nickname = user.ethAddress;
         }
         return response;
+    }
+
+    private async getUserProfileByAuthToken(authToken: string) {
+        return await this.userProfileModel.findOne({
+            authToken
+        });
     }
 
 }

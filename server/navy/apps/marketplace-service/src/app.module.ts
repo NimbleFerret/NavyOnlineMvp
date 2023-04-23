@@ -81,7 +81,9 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         { path: 'marketplace/auth/notifications', method: RequestMethod.GET },
-        { path: 'marketplace/auth/notifications', method: RequestMethod.POST }
+        { path: 'marketplace/auth/notifications', method: RequestMethod.POST },
+        { path: 'marketplace/auth/update', method: RequestMethod.POST },
+        { path: 'marketplace/auth/logout', method: RequestMethod.POST }
       );
   }
 }
