@@ -12,7 +12,7 @@ const fs = require('fs');
 
 export class FixtureLoader {
 
-    private readonly dropTopSalesOnRestart = false;
+    private readonly dropTopSalesOnRestart = true;
 
     constructor(
         private projectModel: Model<ProjectDocument>,
