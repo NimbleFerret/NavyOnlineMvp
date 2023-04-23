@@ -178,11 +178,11 @@ export class AuthApiService {
                     response.userId = userModel._id;
                 }
             } else if (request.email && request.password && EmailValidator.validate(request.email)) {
-                if (request.password != request.password2) {
-                    this.logger.error(`signUp failed. Passwords does not match`);
-                    response.reasonCode = SharedLibraryService.BAD_PARAMS;
-                    return response;
-                }
+                // if (request.password != request.password2) {
+                //     this.logger.error(`signUp failed. Passwords does not match`);
+                //     response.reasonCode = SharedLibraryService.BAD_PARAMS;
+                //     return response;
+                // }
 
                 request.email = request.email.toLowerCase();
 
