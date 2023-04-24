@@ -4,6 +4,7 @@ import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common'
 import { AuthUpdateDto } from 'apps/gateway-service/src/dto/app.dto';
 import { AuthApiService } from './api/api.auth';
 import { BidApiService } from './api/api.bid';
+import { CollectionApiService } from './api/api.collection';
 import { FavouriteApiService } from './api/api.favourite';
 import { NotificationApiService } from './api/api.notification';
 import { BidPlaceDto, BidDeleteDto } from './dto/dto.bids';
@@ -16,7 +17,8 @@ export class AppControllerAuth {
     private readonly authService: AuthApiService,
     private readonly favouriteService: FavouriteApiService,
     private readonly bidService: BidApiService,
-    private readonly notificationService: NotificationApiService
+    private readonly notificationService: NotificationApiService,
+    private readonly collectionService: CollectionApiService
   ) { }
 
   // --------------------------------
@@ -61,6 +63,11 @@ export class AppControllerAuth {
   @Post('favourites/remove')
   favouritesRemove(@Req() request: Request, @Body() dto: FavouriteDto) {
     return this.favouriteService.favouritesRemove(Utils.GetBearerTokenFromRequest(request), dto);
+  }
+
+  @Get('myNft')
+  myNFT(@Req() request: Request) {
+    return this.collectionService.getCollectionItemsByOwner(Utils.GetBearerTokenFromRequest(request));
   }
 
   // --------------------------------

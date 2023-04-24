@@ -6,6 +6,7 @@ import { BadGatewayException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AppService } from "../app.service";
+import { AuthApiService } from "./api.auth";
 import { FavouriteApiService } from "./api.favourite";
 
 @Injectable()
@@ -13,6 +14,7 @@ export class CollectionApiService {
 
     constructor(
         private readonly favouriteService: FavouriteApiService,
+        private readonly authService: AuthApiService,
         @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
         @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
         @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
@@ -101,32 +103,34 @@ export class CollectionApiService {
         return response;
     }
 
-    async getCollectionItemsByOwner(authToken: string | undefined, address: string, owner: string) {
+    async getCollectionItemsByOwner(authToken: string) {
+        const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
         const result = [];
 
-        address = address.toLowerCase();
-        owner = owner.toLowerCase();
+        if (userProfile.ethAddress && userProfile.ethAddress.length > 0) {
+            const owner = userProfile.ethAddress.toLowerCase();
 
-        result.push(...(await this.collectionItemModel
-            .find({
-                contractAddress: address.toLowerCase(),
-                marketplaceState: MarketplaceNftsType.LISTED,
-                seller: owner
-            })
-            .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])));
+            result.push(...(await this.collectionItemModel
+                .find({
+                    marketplaceState: MarketplaceNftsType.LISTED,
+                    seller: owner
+                })
+                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])));
 
-        result.push(...await this.collectionItemModel
-            .find({
-                contractAddress: address.toLowerCase(),
-                marketplaceState: MarketplaceNftsType.ALL,
-                owner: owner.toLocaleLowerCase()
-            })
-            .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']));
+            result.push(...await this.collectionItemModel
+                .find({
+                    marketplaceState: MarketplaceNftsType.ALL,
+                    owner: owner.toLocaleLowerCase()
+                })
+                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']));
 
-        const resultItems = this.convertCollectionItems(result, true);
-        await this.fillFavouritesIfNeeded(resultItems, authToken);
+            const resultItems = this.convertCollectionItems(result.sort(function (a, b) { return b.collectionAddress - a.collectionAddress }), true);
+            await this.fillFavouritesIfNeeded(resultItems, authToken);
 
-        return resultItems;
+            return resultItems;
+        } else {
+            return [];
+        }
     }
 
     async getCollectionItem(authToken: string | undefined, address: string, tokenId: string) {

@@ -88,14 +88,6 @@ export class AppController {
     return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceNftsType.ALL, address, page, size, rarity);
   }
 
-  @Get('collection/:address/owner/:owner')
-  getCollectionByOwner(
-    @Req() request: Request,
-    @Param('address') address: string,
-    @Param('owner') owner: string) {
-    return this.collectionService.getCollectionItemsByOwner(Utils.GetBearerTokenFromRequest(request), address, owner);
-  }
-
   @Get('collection/:address/item/:tokenId')
   getCollectionItem(
     @Req() request: Request,
