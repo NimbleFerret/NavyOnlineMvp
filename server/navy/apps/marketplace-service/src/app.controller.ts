@@ -67,7 +67,7 @@ export class AppController {
     @Req() request: Request,
     @Param('address') address: string,
     @Query('page') page?: number) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceNftsType.LISTED, address, page);
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), false, MarketplaceNftsType.LISTED, address, page);
   }
 
   @Get('collection/:address/sold')
@@ -75,7 +75,7 @@ export class AppController {
     @Req() request: Request,
     @Param('address') address: string,
     @Query('page') page?: number) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceNftsType.SOLD, address, page);
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), false, MarketplaceNftsType.SOLD, address, page);
   }
 
   @Get('collection/:address/all')
@@ -85,7 +85,7 @@ export class AppController {
     @Query('page') page?: number,
     @Query('size') size?: number,
     @Query('rarity') rarity?: string) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceNftsType.ALL, address, page, size, rarity);
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), false, MarketplaceNftsType.ALL, address, page, size, rarity);
   }
 
   @Get('collection/:address/item/:tokenId')

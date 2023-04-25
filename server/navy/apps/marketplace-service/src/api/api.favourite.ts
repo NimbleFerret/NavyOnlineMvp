@@ -1,8 +1,9 @@
 import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Favourite, FavouriteDocument } from "@app/shared-library/schemas/marketplace/schema.favourite";
+import { UserProfile } from "@app/shared-library/schemas/schema.user.profile";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Document } from "mongoose";
 import { FavouriteDto } from "../dto/dto.favourite";
 import { AuthApiService } from "./api.auth";
 
@@ -15,8 +16,12 @@ export class FavouriteApiService {
         @InjectModel(Favourite.name) private favouriteModel: Model<FavouriteDocument>) {
     }
 
-    async favoutires(authToken: string) {
+    async favouritesByAuthToken(authToken: string) {
         const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
+        return await this.favoutires(userProfile);
+    }
+
+    async favoutires(userProfile: UserProfile & Document) {
         const favourites = await this.favouriteModel.find({ userProfile });
         const collectionItems = favourites.map(f => {
             return f.collectionItem;

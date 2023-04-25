@@ -1,6 +1,7 @@
 import { SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
 import { Utils } from '@app/shared-library/utils';
-import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
+import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
+import { Body, Controller, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { AuthUpdateDto } from 'apps/gateway-service/src/dto/app.dto';
 import { AuthApiService } from './api/api.auth';
 import { BidApiService } from './api/api.bid';
@@ -52,7 +53,7 @@ export class AppControllerAuth {
 
   @Get('favourites')
   favourites(@Req() request: Request) {
-    return this.favouriteService.favoutires(Utils.GetBearerTokenFromRequest(request));
+    return this.favouriteService.favouritesByAuthToken(Utils.GetBearerTokenFromRequest(request));
   }
 
   @Post('favourites/add')
@@ -66,8 +67,11 @@ export class AppControllerAuth {
   }
 
   @Get('myNft')
-  myNFT(@Req() request: Request) {
-    return this.collectionService.getCollectionItemsByOwner(Utils.GetBearerTokenFromRequest(request));
+  myNFT(
+    @Req() request: Request,
+    @Query('page') page?: number,
+    @Query('size') size?: number) {
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), true, MarketplaceNftsType.ALL, undefined, page, size);
   }
 
   // --------------------------------

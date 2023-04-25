@@ -1,10 +1,11 @@
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Mint, MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
+import { UserProfile } from "@app/shared-library/schemas/schema.user.profile";
 import { MarketplaceNftsType } from "@app/shared-library/workers/workers.marketplace";
 import { BadGatewayException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Document } from "mongoose";
 import { AppService } from "../app.service";
 import { AuthApiService } from "./api.auth";
 import { FavouriteApiService } from "./api.favourite";
@@ -29,7 +30,20 @@ export class CollectionApiService {
         return collection;
     }
 
-    async getCollectionItems(authToken: string | undefined, marketplaceNftsType: MarketplaceNftsType, address: string, page?: number, size?: number, rarity?: string) {
+    async getCollectionItems(
+        authToken: string | undefined,
+        onlyOwner: boolean,
+        marketplaceNftsType: MarketplaceNftsType,
+        contractAddress?: string,
+        page?: number,
+        size?: number,
+        rarity?: string
+    ) {
+        let userProfile = undefined;
+        if (authToken) {
+            userProfile = await this.authService.checkTokenAndGetProfile(authToken);
+        }
+
         let initialPage = page;
         if (!page) {
             page = 1;
@@ -38,8 +52,12 @@ export class CollectionApiService {
         const pageSize = size ? size : AppService.DefaultPaginationSize;
 
         const query = {
-            contractAddress: address.toLowerCase()
         };
+
+        if (contractAddress) {
+            query['contractAddress'] = contractAddress.toLowerCase()
+        }
+
         const rarityCheck = rarity && (rarity == 'Legendary' || rarity == 'Epic' || rarity == 'Rare' || rarity == 'Common');
         if (rarityCheck) {
             query['rarity'] = rarity;
@@ -49,19 +67,41 @@ export class CollectionApiService {
         if (marketplaceNftsType == MarketplaceNftsType.LISTED) {
             nftType = 'listed';
             query['marketplaceState'] = marketplaceNftsType;
+            if (onlyOwner && userProfile) {
+                query['seller'] = userProfile.ethAddress;
+            }
         } else if (marketplaceNftsType == MarketplaceNftsType.SOLD) {
             nftType = 'sold';
             query['marketplaceState'] = marketplaceNftsType;
+            if (onlyOwner && userProfile) {
+                query['owner'] = userProfile.ethAddress;
+            }
         }
 
         const count = await this.collectionItemModel.countDocuments(query);
-        const getUrl = (p: number) => `https://navy.online/marketplace/collection/${address}/${nftType}?page=${p}`;
+        const getUrl = (p: number) => {
+            let url = '';
+            if (!onlyOwner) {
+                url = `https://navy.online/marketplace/collection/${contractAddress}/${nftType}?page=${p}`;
+            } else {
+                url = `https://navy.online/marketplace/myNft?page=${p}`;
+            }
+            if (size) {
+                url += '&size=' + size;
+            }
+            if (rarity) {
+                url += '&rarity=' + size;
+            }
+            return url;
+        };
 
         const self = this;
-        async function databaseQuery(marketplaceState: MarketplaceNftsType, sortCriteria: string) {
+        async function databaseQuery(sortCriteria: string) {
             const criteria = {
-                contractAddress: address
             };
+            if (contractAddress) {
+                query['contractAddress'] = contractAddress.toLowerCase()
+            }
             if (rarityCheck) {
                 criteria['rarity'] = rarity;
             }
@@ -73,7 +113,7 @@ export class CollectionApiService {
                 .sort([['marketplaceState', 1], [sortCriteria, -1]]);
         }
 
-        const result = await databaseQuery(marketplaceNftsType, marketplaceNftsType == MarketplaceNftsType.ALL ? 'tokenId' : 'lastUpdated');
+        const result = await databaseQuery(marketplaceNftsType == MarketplaceNftsType.ALL ? 'tokenId' : 'lastUpdated');
         const resultItems = this.convertCollectionItems(result, true);
 
         let pages = Math.ceil(count / pageSize);
@@ -98,39 +138,11 @@ export class CollectionApiService {
             result: resultItems
         };
 
-        await this.fillFavouritesIfNeeded(response.result, authToken);
+        if (userProfile) {
+            await this.fillCollectionItemsFavourites(response.result, userProfile);
+        }
 
         return response;
-    }
-
-    async getCollectionItemsByOwner(authToken: string) {
-        const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
-        const result = [];
-
-        if (userProfile.ethAddress && userProfile.ethAddress.length > 0) {
-            const owner = userProfile.ethAddress.toLowerCase();
-
-            result.push(...(await this.collectionItemModel
-                .find({
-                    marketplaceState: MarketplaceNftsType.LISTED,
-                    seller: owner
-                })
-                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])));
-
-            result.push(...await this.collectionItemModel
-                .find({
-                    marketplaceState: MarketplaceNftsType.ALL,
-                    owner: owner.toLocaleLowerCase()
-                })
-                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']));
-
-            const resultItems = this.convertCollectionItems(result.sort(function (a, b) { return b.collectionAddress - a.collectionAddress }), true);
-            await this.fillFavouritesIfNeeded(resultItems, authToken);
-
-            return resultItems;
-        } else {
-            return [];
-        }
     }
 
     async getCollectionItem(authToken: string | undefined, address: string, tokenId: string) {
@@ -166,7 +178,8 @@ export class CollectionApiService {
         };
 
         if (authToken) {
-            const userFavourites = await this.favouriteService.favoutires(authToken);
+            const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
+            const userFavourites = await this.favouriteService.favoutires(userProfile);
             collectionItemResult['favourite'] = userFavourites.filter(f => f.tokenId == collectionItemResult.tokenId).length > 0;
         }
 
@@ -208,20 +221,18 @@ export class CollectionApiService {
         return resultItems;
     }
 
-    private async fillFavouritesIfNeeded(collectionItems: any, authToken: string) {
-        if (authToken) {
-            const userFavourites = await this.favouriteService.favoutires(authToken);
-            const favouriteCollectionItemsIds = new Set<number>();
-            userFavourites.forEach(f => {
-                favouriteCollectionItemsIds.add(f.tokenId);
-            });
-            collectionItems.forEach(f => {
-                if (favouriteCollectionItemsIds.has(f.tokenId)) {
-                    f['favourite'] = true;
-                } else {
-                    f['favourite'] = false;
-                }
-            });
-        }
+    private async fillCollectionItemsFavourites(collectionItems: any, userProfile: UserProfile & Document) {
+        const userFavourites = await this.favouriteService.favoutires(userProfile);
+        const favouriteCollectionItemsIds = new Set<number>();
+        userFavourites.forEach(f => {
+            favouriteCollectionItemsIds.add(f.tokenId);
+        });
+        collectionItems.forEach(f => {
+            if (favouriteCollectionItemsIds.has(f.tokenId)) {
+                f['favourite'] = true;
+            } else {
+                f['favourite'] = false;
+            }
+        });
     }
 }
