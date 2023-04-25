@@ -67,11 +67,8 @@ export class AppControllerAuth {
   }
 
   @Get('myNft')
-  myNFT(
-    @Req() request: Request,
-    @Query('page') page?: number,
-    @Query('size') size?: number) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), true, MarketplaceNftsType.ALL, undefined, page, size);
+  myNFT(@Req() request: Request) {
+    return this.collectionService.getCollectionItemsByOwner(Utils.GetBearerTokenFromRequest(request));
   }
 
   // --------------------------------

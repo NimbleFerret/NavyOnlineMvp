@@ -1,3 +1,4 @@
+import { EthersConstants } from "@app/shared-library/ethers/ethers.constants";
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Mint, MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
@@ -32,9 +33,8 @@ export class CollectionApiService {
 
     async getCollectionItems(
         authToken: string | undefined,
-        onlyOwner: boolean,
         marketplaceNftsType: MarketplaceNftsType,
-        contractAddress?: string,
+        contractAddress: string,
         page?: number,
         size?: number,
         rarity?: string
@@ -50,6 +50,10 @@ export class CollectionApiService {
             initialPage = 1;
         }
         const pageSize = size ? size : AppService.DefaultPaginationSize;
+
+        // ----------------------------------
+        // Query collection items count
+        // ----------------------------------
 
         const query = {
         };
@@ -67,33 +71,16 @@ export class CollectionApiService {
         if (marketplaceNftsType == MarketplaceNftsType.LISTED) {
             nftType = 'listed';
             query['marketplaceState'] = marketplaceNftsType;
-            if (onlyOwner && userProfile) {
-                query['seller'] = userProfile.ethAddress;
-            }
         } else if (marketplaceNftsType == MarketplaceNftsType.SOLD) {
             nftType = 'sold';
             query['marketplaceState'] = marketplaceNftsType;
-            if (onlyOwner && userProfile) {
-                query['owner'] = userProfile.ethAddress;
-            }
         }
 
         const count = await this.collectionItemModel.countDocuments(query);
-        const getUrl = (p: number) => {
-            let url = '';
-            if (!onlyOwner) {
-                url = `https://navy.online/marketplace/collection/${contractAddress}/${nftType}?page=${p}`;
-            } else {
-                url = `https://navy.online/marketplace/myNft?page=${p}`;
-            }
-            if (size) {
-                url += '&size=' + size;
-            }
-            if (rarity) {
-                url += '&rarity=' + size;
-            }
-            return url;
-        };
+
+        // ----------------------------------
+        // Query collection items
+        // ----------------------------------
 
         const self = this;
         async function databaseQuery(sortCriteria: string) {
@@ -114,6 +101,11 @@ export class CollectionApiService {
         }
 
         const result = await databaseQuery(marketplaceNftsType == MarketplaceNftsType.ALL ? 'tokenId' : 'lastUpdated');
+
+        // ----------------------------------
+        // Prepare paginated response
+        // ----------------------------------
+
         const resultItems = this.convertCollectionItems(result, true);
 
         let pages = Math.ceil(count / pageSize);
@@ -124,6 +116,18 @@ export class CollectionApiService {
             pages = 1;
         }
         if (pages > 1) {
+            const getUrl = (p: number) => {
+                let url = '';
+                url = `https://navy.online/marketplace/collection/${contractAddress}/${nftType}?page=${p}`;
+                if (size) {
+                    url += '&size=' + size;
+                }
+                if (rarity) {
+                    url += '&rarity=' + size;
+                }
+                return url;
+            };
+
             next = ((page - 1) * pageSize) + result.length < (count) ? getUrl(Number(initialPage) + 1) : null;
             prev = page > 1 ? getUrl(page - 1) : null;
         }
@@ -138,11 +142,77 @@ export class CollectionApiService {
             result: resultItems
         };
 
+        // ----------------------------------
+        // Fill user favourite items 
+        // ----------------------------------
+
         if (userProfile) {
             await this.fillCollectionItemsFavourites(response.result, userProfile);
         }
 
         return response;
+    }
+
+    async getCollectionItemsByOwner(authToken: string) {
+        const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
+
+        if (userProfile.ethAddress && userProfile.ethAddress.length > 0) {
+            const owner = userProfile.ethAddress.toLowerCase();
+            const collectionItems = [];
+
+            collectionItems.push(...(await this.collectionItemModel
+                .find({
+                    marketplaceState: MarketplaceNftsType.LISTED,
+                    seller: owner
+                })
+                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])));
+
+            collectionItems.push(...await this.collectionItemModel
+                .find({
+                    marketplaceState: MarketplaceNftsType.ALL,
+                    owner: owner.toLocaleLowerCase()
+                })
+                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']));
+
+            const resultItems = this.convertCollectionItems(collectionItems.sort(function (a, b) { return b.collectionAddress - a.collectionAddress }), true);
+            await this.fillCollectionItemsFavourites(resultItems, userProfile);
+
+            const result = {
+                captains: {
+                    total: 0,
+                    items: []
+                },
+                ships: {
+                    total: 0,
+                    items: []
+                },
+                islands: {
+                    total: 0,
+                    items: []
+                },
+            };
+
+            resultItems.forEach(f => {
+                switch (f.collectionAddress) {
+                    case EthersConstants.CaptainContractAddress:
+                        result.captains.total++;
+                        result.captains.items.push(f);
+                        break;
+                    case EthersConstants.ShipContractAddress:
+                        result.ships.total++;
+                        result.ships.items.push(f);
+                        break;
+                    case EthersConstants.IslandContractAddress:
+                        result.islands.total++;
+                        result.islands.items.push(f);
+                        break;
+                }
+            });
+
+            return result;
+        } else {
+            return {};
+        }
     }
 
     async getCollectionItem(authToken: string | undefined, address: string, tokenId: string) {
