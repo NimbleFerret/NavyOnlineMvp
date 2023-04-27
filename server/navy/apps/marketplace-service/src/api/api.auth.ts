@@ -81,6 +81,11 @@ export class AuthApiService {
 
     async attachEmail(authToken: string, dto: AttachEmailDto) {
         const userProfile = await this.checkTokenAndGetProfile(authToken);
+
+        if (await this.emailExists(dto.email)) {
+            throw new HttpException('Email already exists', HttpStatus.BAD_GATEWAY);
+        }
+
         if ((!userProfile.email || userProfile.email.length == 0) && dto.password.length > 5) {
             userProfile.email = dto.email;
             userProfile.emailState = EmailState.CONFIRMED;
@@ -197,7 +202,7 @@ export class AuthApiService {
                 });
                 if (user) {
                     this.logger.error(`signUp failed for ${request.ethAddress}, user already exists!`);
-                    response.reasonCode = SharedLibraryService.ALREADY_EXISTS_ERROR;
+                    throw new HttpException('Wallet already exists', HttpStatus.BAD_GATEWAY);
                 } else {
                     const userModel = new this.userProfileModel({
                         ethAddress: request.ethAddress
@@ -205,7 +210,6 @@ export class AuthApiService {
                     await userModel.save();
                     response.success = true;
                     response.signUpState = SignUpState.DONE;
-                    response.userId = userModel._id;
                 }
             } else if (request.email && request.password && EmailValidator.validate(request.email)) {
                 // if (request.password != request.password2) {
@@ -222,7 +226,7 @@ export class AuthApiService {
 
                 if (user) {
                     this.logger.error(`signUp failed for ${request.email}, user already exists!`);
-                    response.reasonCode = SharedLibraryService.ALREADY_EXISTS_ERROR;
+                    throw new HttpException('Email already exists', HttpStatus.BAD_GATEWAY);
                 } else {
                     const userModel = new this.userProfileModel({
                         email: request.email,
@@ -233,11 +237,10 @@ export class AuthApiService {
                     await userModel.save();
                     response.success = true;
                     response.signUpState = SignUpState.DONE;
-                    response.userId = userModel._id;
                 }
             } else {
                 this.logger.error(`signUp failed. Bad params: ${request.ethAddress} | (${request.email} / ${request.password})`);
-                response.reasonCode = SharedLibraryService.BAD_PARAMS;
+                throw new HttpException('Bad paramss', HttpStatus.BAD_REQUEST);
             }
         }
 
@@ -278,6 +281,13 @@ export class AuthApiService {
         return await this.userProfileModel.findOne({
             authToken
         });
+    }
+
+    private async emailExists(email: string) {
+        const profiles = await this.userProfileModel.count({
+            email
+        });
+        return profiles > 0;
     }
 
 }

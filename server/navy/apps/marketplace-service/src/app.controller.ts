@@ -1,6 +1,6 @@
 import { Utils } from '@app/shared-library/utils';
 import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
-import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, Query, Req } from '@nestjs/common';
 import { CollectionApiService } from './api/api.collection';
 import { DashboardApiService } from './api/api.dashboard';
 import { GeneralApiService } from './api/api.general';
