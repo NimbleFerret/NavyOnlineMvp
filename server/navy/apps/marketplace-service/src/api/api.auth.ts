@@ -19,6 +19,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AttachEmailDto, AttachWalletDto, UpdatePasswordDto } from "apps/gateway-service/src/dto/app.dto";
 import * as EmailValidator from 'email-validator';
+import { Utils } from "@app/shared-library/utils";
 
 const jwt = require('jsonwebtoken');
 
@@ -37,25 +38,52 @@ export class AuthApiService {
 
     async signUp(request: SignUpRequest) {
         const response = {
-            success: false
+            success: true
         };
-        if (await this.checkEthersAuthSignatureIfNeeded(request)) {
-            const signUpResult = await this.trySignUp(request);
-            if (!signUpResult.success) {
-                if (!response.success) {
-                    throw new HttpException('Reason: ' + signUpResult.reasonCode, HttpStatus.UNAUTHORIZED);
-                }
+
+        let reason = undefined;
+        let httpStatus = undefined;
+
+        if (request.ethAddress && request.signedMessage) {
+            const checkSignatureResult = await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
+            if (!checkSignatureResult) {
+                response.success = false;
+                reason = Utils.ERROR_BAD_SIGNATURE;
+                httpStatus = HttpStatus.BAD_REQUEST;
             } else {
-                response.success = true;
-                if (signUpResult.signUpState == SignUpState.DONE) {
+                const signUpResult = await this.trySignUp(request);
+                if (!signUpResult) {
+                    response.success = false;
+                    reason = signUpResult.reason;
+                    httpStatus = HttpStatus.BAD_REQUEST;
+                } else {
                     const issueTokenResult = await this.issueToken(signUpResult.userId);
                     response['token'] = issueTokenResult.token;
-                    response['userId'] = signUpResult.userId
-                } else {
-                    response['signUpState'] = SignUpState.WAITING_FOR_EMAIL_CONFIRMATION;
                 }
             }
+        } else if (request.email && request.password) {
+            const signUpResult = await this.trySignUp(request);
+            if (!signUpResult.success) {
+                response.success = false;
+                reason = signUpResult.reason;
+                httpStatus = HttpStatus.BAD_REQUEST;
+            } else {
+                const issueTokenResult = await this.issueToken(signUpResult.userId);
+                response['token'] = issueTokenResult.token;
+            }
+        } else {
+            response.success = false;
+            reason = Utils.ERROR_BAD_PARAMS;
+            httpStatus = HttpStatus.BAD_REQUEST;
         }
+
+        if (!response.success) {
+            throw new HttpException({
+                success: false,
+                reason
+            }, httpStatus);
+        }
+
         return response;
     }
 
@@ -63,47 +91,126 @@ export class AuthApiService {
         const response = {
             success: false
         };
-        if (await this.checkEthersAuthSignatureIfNeeded(request)) {
-            const findUserResult = await this.findUser({ email: request.email, ethAddress: request.ethAddress });
-            if (findUserResult.success) {
-                if (request.email && findUserResult.password == request.password || request.ethAddress) {
-                    const issueTokenResult = await this.issueToken(findUserResult.id);
+
+        let reason = undefined;
+        let httpStatus = undefined;
+
+        if (request.ethAddress && request.signedMessage) {
+            const checkSignatureResult = await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
+            if (!checkSignatureResult) {
+                response.success = false;
+                reason = Utils.ERROR_BAD_SIGNATURE;
+                httpStatus = HttpStatus.BAD_REQUEST;
+            } else {
+                const userProfile = await this.userProfileModel.findOne({ ethAddress: request.ethAddress });
+                if (userProfile) {
+                    const issueTokenResult = await this.issueToken(userProfile.id);
                     response.success = true;
                     response['token'] = issueTokenResult.token;
+                } else {
+                    response.success = false;
+                    reason = Utils.ERROR_WALLET_NOT_FOUND;
+                    httpStatus = HttpStatus.BAD_REQUEST;
                 }
             }
+        } else if (request.email && request.password) {
+            const userProfile = await this.userProfileModel.findOne({ email: request.email });
+            if (userProfile) {
+                if (userProfile.password == request.password) {
+                    const issueTokenResult = await this.issueToken(userProfile.id);
+                    response.success = true;
+                    response['token'] = issueTokenResult.token;
+                } else {
+                    response.success = false;
+                    reason = Utils.ERROR_BAD_EMAIL_OR_PASSWORD;
+                    httpStatus = HttpStatus.BAD_REQUEST;
+                }
+            } else {
+                response.success = false;
+                reason = Utils.ERROR_EMAIL_NOT_FOUND;
+                httpStatus = HttpStatus.BAD_REQUEST;
+            }
+        } else {
+            response.success = false;
+            reason = Utils.ERROR_BAD_PARAMS;
+            httpStatus = HttpStatus.BAD_REQUEST;
         }
+
         if (!response.success) {
-            throw new HttpException('Bad auth', HttpStatus.UNAUTHORIZED);
+            throw new HttpException({
+                success: false,
+                reason
+            }, httpStatus);
         }
+
         return response;
     }
 
     async attachEmail(authToken: string, dto: AttachEmailDto) {
         const userProfile = await this.checkTokenAndGetProfile(authToken);
 
+        let success = true;
+        let reason = undefined;
+        let httpStatus = undefined;
+
         if (await this.emailExists(dto.email)) {
-            throw new HttpException('Email already exists', HttpStatus.BAD_GATEWAY);
+            success = false;
+            reason = Utils.ERROR_EMAIL_EXISTS;
+            httpStatus = HttpStatus.BAD_GATEWAY;
+        }
+        if ((!userProfile.email || userProfile.email.length == 0) && dto.password.length < 6) {
+            success = false;
+            reason = Utils.ERROR_BAD_EMAIL_OR_PASSWORD;
+            httpStatus = HttpStatus.BAD_REQUEST;
+        }
+        if (!success) {
+            throw new HttpException({
+                success,
+                reason
+            }, httpStatus);
         }
 
-        if ((!userProfile.email || userProfile.email.length == 0) && dto.password.length > 5) {
+        if ((!userProfile.email || userProfile.email.length == 0) && dto.password.length < 6) {
             userProfile.email = dto.email;
             userProfile.emailState = EmailState.CONFIRMED;
             userProfile.password = dto.password;
             await userProfile.save();
-        } else {
-            throw new HttpException('Unable to attach email', HttpStatus.BAD_GATEWAY);
+            return {
+                success: true
+            }
         }
     }
 
     async attachWallet(authToken: string, dto: AttachWalletDto) {
         const userProfile = await this.checkTokenAndGetProfile(authToken);
         const checkSignatureResult = await this.checkEthersAuthSignature(dto.ethAddress, dto.signedMessage);
-        if (checkSignatureResult) {
-            userProfile.ethAddress = dto.ethAddress;
-            await userProfile.save();
-        } else {
-            throw new HttpException('Bad signature', HttpStatus.BAD_REQUEST);
+
+        let success = true;
+        let reason = undefined;
+        let httpStatus = undefined;
+
+        if (await this.walletExists(dto.ethAddress)) {
+            success = false;
+            reason = Utils.ERROR_EMAIL_EXISTS;
+            httpStatus = HttpStatus.BAD_GATEWAY;
+        }
+        if (!checkSignatureResult) {
+            success = false;
+            reason = Utils.ERROR_BAD_SIGNATURE;
+            httpStatus = HttpStatus.BAD_REQUEST;
+        }
+        if (!success) {
+            throw new HttpException({
+                success,
+                reason
+            }, httpStatus);
+        }
+
+        userProfile.ethAddress = dto.ethAddress;
+        await userProfile.save();
+
+        return {
+            success: true
         }
     }
 
@@ -112,8 +219,14 @@ export class AuthApiService {
         if (userProfile.password != dto.password && dto.password.length > 5) {
             userProfile.password = dto.password;
             await userProfile.save();
+            return {
+                success: true
+            }
         } else {
-            throw new HttpException('Bad params', HttpStatus.BAD_REQUEST);
+            throw new HttpException({
+                success: false,
+                reason: Utils.ERROR_BAD_EMAIL_OR_PASSWORD
+            }, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -162,24 +275,6 @@ export class AuthApiService {
     // Common
     // ------------------------------------------------
 
-    private async checkEthersAuthSignatureIfNeeded(request: SignUpRequest) {
-        const response = {
-            success: false
-        };
-        let continueAuth = true;
-
-        if (request.ethAddress && request.signedMessage && !request.email && !request.password) {
-            const isMessageSignOk = await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
-            if (!isMessageSignOk.success) {
-                continueAuth = false;
-                response['reasonCode'] = SharedLibraryService.GENERAL_ERROR;
-                this.logger.error(`signUp failed for ${request.ethAddress}, bad signature!`);
-            }
-        }
-
-        return continueAuth;
-    }
-
     private async checkEthersAuthSignature(address: string, signedMessage: string) {
         const signerAddr = ethers.utils.verifyMessage(Constants.AuthSignatureTemplate.replace('@', address), signedMessage)
         return {
@@ -190,11 +285,13 @@ export class AuthApiService {
     private async trySignUp(request: SignUpRequest) {
         const response = {
             success: false,
-        } as SignUpResponse;
+            reason: '',
+            userId: ''
+        }
 
         if (request.email && request.ethAddress) {
             this.logger.error(`signUp failed for ${request.email} / ${request.ethAddress}, impossible to signUp by both identifiers!`);
-            response.reasonCode = SharedLibraryService.BAD_PARAMS;
+            response.reason = Utils.ERROR_BAD_PARAMS;
         } else {
             if (request.ethAddress) {
                 const user = await this.userProfileModel.findOne({
@@ -202,22 +299,16 @@ export class AuthApiService {
                 });
                 if (user) {
                     this.logger.error(`signUp failed for ${request.ethAddress}, user already exists!`);
-                    throw new HttpException('Wallet already exists', HttpStatus.BAD_GATEWAY);
+                    response.reason = Utils.ERROR_WALLET_EXISTS;
                 } else {
                     const userModel = new this.userProfileModel({
                         ethAddress: request.ethAddress
                     });
                     await userModel.save();
                     response.success = true;
-                    response.signUpState = SignUpState.DONE;
+                    response.userId = userModel.id;
                 }
             } else if (request.email && request.password && EmailValidator.validate(request.email)) {
-                // if (request.password != request.password2) {
-                //     this.logger.error(`signUp failed. Passwords does not match`);
-                //     response.reasonCode = SharedLibraryService.BAD_PARAMS;
-                //     return response;
-                // }
-
                 request.email = request.email.toLowerCase();
 
                 const user = await this.userProfileModel.findOne({
@@ -226,7 +317,7 @@ export class AuthApiService {
 
                 if (user) {
                     this.logger.error(`signUp failed for ${request.email}, user already exists!`);
-                    throw new HttpException('Email already exists', HttpStatus.BAD_GATEWAY);
+                    response.reason = Utils.ERROR_EMAIL_EXISTS;
                 } else {
                     const userModel = new this.userProfileModel({
                         email: request.email,
@@ -236,11 +327,11 @@ export class AuthApiService {
 
                     await userModel.save();
                     response.success = true;
-                    response.signUpState = SignUpState.DONE;
+                    response.userId = userModel.id;
                 }
             } else {
                 this.logger.error(`signUp failed. Bad params: ${request.ethAddress} | (${request.email} / ${request.password})`);
-                throw new HttpException('Bad paramss', HttpStatus.BAD_REQUEST);
+                response.reason = Utils.ERROR_BAD_PARAMS;
             }
         }
 
@@ -286,6 +377,13 @@ export class AuthApiService {
     private async emailExists(email: string) {
         const profiles = await this.userProfileModel.count({
             email
+        });
+        return profiles > 0;
+    }
+
+    private async walletExists(ethAddress: string) {
+        const profiles = await this.userProfileModel.count({
+            ethAddress
         });
         return profiles > 0;
     }
