@@ -30,6 +30,7 @@ export class AppController {
   }
 
   @Post('feedback')
+  @HttpCode(200)
   feedback(@Body() dto: FeedbackDto) {
     return this.generalService.feedback(dto);
   }

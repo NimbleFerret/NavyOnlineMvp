@@ -104,7 +104,7 @@ export class AuthApiService {
 
     async updatePassword(authToken: string, dto: UpdatePasswordDto) {
         const userProfile = await this.checkTokenAndGetProfile(authToken)
-        if (dto.email == userProfile.email && userProfile.email.length > 0) {
+        if (userProfile.password != dto.password && dto.password.length > 5) {
             userProfile.password = dto.password;
             await userProfile.save();
         } else {
