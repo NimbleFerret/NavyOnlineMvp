@@ -56,11 +56,8 @@ export class CollectionApiService {
         // ----------------------------------
 
         const query = {
+            contractAddress: contractAddress.toLowerCase()
         };
-
-        if (contractAddress) {
-            query['contractAddress'] = contractAddress.toLowerCase()
-        }
 
         const rarityCheck = rarity && (rarity == 'Legendary' || rarity == 'Epic' || rarity == 'Rare' || rarity == 'Common');
         if (rarityCheck) {
@@ -85,10 +82,8 @@ export class CollectionApiService {
         const self = this;
         async function databaseQuery(sortCriteria: string) {
             const criteria = {
+                contractAddress: contractAddress.toLowerCase()
             };
-            if (contractAddress) {
-                query['contractAddress'] = contractAddress.toLowerCase()
-            }
             if (rarityCheck) {
                 criteria['rarity'] = rarity;
             }

@@ -17,7 +17,7 @@ import { Constants } from "apps/web3-service/src/app.constants";
 import { EmailState, UserProfile, UserProfileDocument } from "@app/shared-library/schemas/schema.user.profile";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { AuthUpdateDto } from "apps/gateway-service/src/dto/app.dto";
+import { AttachEmailDto, AttachWalletDto, UpdatePasswordDto } from "apps/gateway-service/src/dto/app.dto";
 import * as EmailValidator from 'email-validator';
 
 const jwt = require('jsonwebtoken');
@@ -35,12 +35,12 @@ export class AuthApiService {
     // Public api
     // ------------------------------------------------
 
-    async authSignUp(request: SignUpRequest) {
+    async signUp(request: SignUpRequest) {
         const response = {
             success: false
         };
         if (await this.checkEthersAuthSignatureIfNeeded(request)) {
-            const signUpResult = await this.signUp(request);
+            const signUpResult = await this.trySignUp(request);
             if (!signUpResult.success) {
                 if (!response.success) {
                     throw new HttpException('Reason: ' + signUpResult.reasonCode, HttpStatus.UNAUTHORIZED);
@@ -59,7 +59,7 @@ export class AuthApiService {
         return response;
     }
 
-    async authSignIn(request: SignUpRequest) {
+    async signIn(request: SignUpRequest) {
         const response = {
             success: false
         };
@@ -79,45 +79,43 @@ export class AuthApiService {
         return response;
     }
 
-    async authUpdate(request: AuthUpdateDto) {
-        const response = {
-            success: false
-        };
-
-        let continueAuthUpdate = true;
-
-        if (request.operation == AttachOperation.ATTACH_ETH_ADDRESS && request.ethAddress && request.signedMessage && request.email) {
-            const checkSignatureResult = await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
-            if (!checkSignatureResult.success) {
-                continueAuthUpdate = false;
-                response['reasonCode'] = SharedLibraryService.GENERAL_ERROR;
-                this.logger.error(`signUp failed for ${request.ethAddress}, bad signature!`);
-            }
-        }
-
-        const attachResult = await this.attachEmailOrEthAddress({
-            operation: request.operation,
-            email: request.email,
-            ethAddress: request.ethAddress
-        });
-
-        if (attachResult.success) {
-            response.success = true;
+    async attachEmail(authToken: string, dto: AttachEmailDto) {
+        const userProfile = await this.checkTokenAndGetProfile(authToken);
+        if ((!userProfile.email || userProfile.email.length == 0) && dto.password.length > 5) {
+            userProfile.email = dto.email;
+            userProfile.emailState = EmailState.CONFIRMED;
+            userProfile.password = dto.password;
+            await userProfile.save();
         } else {
-            response['reasonCode'] = attachResult.reasonCode;
+            throw new HttpException('Unable to attach email', HttpStatus.BAD_GATEWAY);
         }
+    }
 
-        return response;
+    async attachWallet(authToken: string, dto: AttachWalletDto) {
+        const userProfile = await this.checkTokenAndGetProfile(authToken);
+        const checkSignatureResult = await this.checkEthersAuthSignature(dto.ethAddress, dto.signedMessage);
+        if (checkSignatureResult) {
+            userProfile.ethAddress = dto.ethAddress;
+            await userProfile.save();
+        } else {
+            throw new HttpException('Bad signature', HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    async updatePassword(authToken: string, dto: UpdatePasswordDto) {
+        const userProfile = await this.checkTokenAndGetProfile(authToken)
+        if (dto.email == userProfile.email && userProfile.email.length > 0) {
+            userProfile.password = dto.password;
+            await userProfile.save();
+        } else {
+            throw new HttpException('Bad params', HttpStatus.BAD_REQUEST);
+        }
     }
 
     async logout(authToken: string) {
-        const userProfile = await this.getUserProfileByAuthToken(authToken);
-        if (userProfile) {
-            userProfile.authToken = '';
-            await userProfile.save();
-        } else {
-            throw new HttpException('Bad auth', HttpStatus.UNAUTHORIZED);
-        }
+        const userProfile = await this.checkTokenAndGetProfile(authToken)
+        userProfile.authToken = '';
+        await userProfile.save();
     }
 
     async verifyToken(request: VerifyTokenRequest, profileToken?: string) {
@@ -184,7 +182,7 @@ export class AuthApiService {
         } as CheckEthersAuthSignatureResponse;
     }
 
-    private async signUp(request: SignUpRequest) {
+    private async trySignUp(request: SignUpRequest) {
         const response = {
             success: false,
         } as SignUpResponse;
@@ -243,20 +241,6 @@ export class AuthApiService {
             }
         }
 
-        return response;
-    }
-
-    private async attachEmailOrEthAddress(request: AttachEmailOrEthAddressRequest) {
-        const response = {
-            success: false
-        } as AttachEmailOrEthAddressResponse;
-        const findQuery = request.email ? { email: request.email } : { ethAddress: request.ethAddress };
-        const user = await this.userProfileModel.findOne(findQuery);
-        if (user) {
-            response.success = true;
-        } else {
-            response.reasonCode = SharedLibraryService.GENERAL_ERROR;
-        }
         return response;
     }
 

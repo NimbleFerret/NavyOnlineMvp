@@ -1,8 +1,7 @@
 import { SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
 import { Utils } from '@app/shared-library/utils';
-import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
-import { Body, Controller, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
-import { AuthUpdateDto } from 'apps/gateway-service/src/dto/app.dto';
+import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
+import { AttachEmailDto, AttachWalletDto, UpdatePasswordDto } from 'apps/gateway-service/src/dto/app.dto';
 import { AuthApiService } from './api/api.auth';
 import { BidApiService } from './api/api.bid';
 import { CollectionApiService } from './api/api.collection';
@@ -27,18 +26,28 @@ export class AppControllerAuth {
   // --------------------------------
 
   @Post('signUp')
-  async authSignUp(@Body() request: SignUpRequest) {
-    return this.authService.authSignUp(request);
+  async signUp(@Body() request: SignUpRequest) {
+    return this.authService.signUp(request);
   }
 
   @Post('signIn')
-  async authSignIn(@Body() request: SignUpRequest) {
-    return this.authService.authSignIn(request);
+  async signIn(@Body() request: SignUpRequest) {
+    return this.authService.signIn(request);
   }
 
-  @Post('update')
-  async authUpdate(@Body() request: AuthUpdateDto) {
-    return this.authService.authUpdate(request);
+  @Post('attachEmail')
+  async attachEmail(@Req() request: Request, @Body() dto: AttachEmailDto) {
+    return this.authService.attachEmail(Utils.GetBearerTokenFromRequest(request), dto);
+  }
+
+  @Post('attachWallet')
+  async attachWallet(@Req() request: Request, @Body() dto: AttachWalletDto) {
+    return this.authService.attachWallet(Utils.GetBearerTokenFromRequest(request), dto);
+  }
+
+  @Post('updatePassword')
+  async updatePassword(@Req() request: Request, @Body() dto: UpdatePasswordDto) {
+    return this.authService.updatePassword(Utils.GetBearerTokenFromRequest(request), dto);
   }
 
   @Post('logout')
