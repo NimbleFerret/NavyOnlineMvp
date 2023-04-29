@@ -171,7 +171,9 @@ export class AuthApiService {
             userProfile.password = dto.password;
             await userProfile.save();
             return {
-                success: true
+                success: true,
+                ethAddress: userProfile.ethAddress,
+                email: userProfile.email
             }
         }
     }
@@ -188,6 +190,11 @@ export class AuthApiService {
 
         userProfile.ethAddress = dto.ethAddress;
         await userProfile.save();
+        return {
+            success: true,
+            ethAddress: userProfile.ethAddress,
+            email: userProfile.email
+        }
     }
 
     async updatePassword(authToken: string, dto: UpdatePasswordDto) {
