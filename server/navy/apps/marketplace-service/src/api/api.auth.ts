@@ -10,7 +10,6 @@ import {
     SignUpResponse,
     SignUpState
 } from "@app/shared-library/gprc/grpc.user.service";
-import { CheckEthersAuthSignatureResponse } from "@app/shared-library/gprc/grpc.web3.service";
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ethers } from 'ethers';
 import { Constants } from "apps/web3-service/src/app.constants";
@@ -45,21 +44,15 @@ export class AuthApiService {
         let httpStatus = undefined;
 
         if (request.ethAddress && request.signedMessage) {
-            const checkSignatureResult = await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
-            if (!checkSignatureResult) {
+            await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
+            const signUpResult = await this.trySignUp(request);
+            if (!signUpResult) {
                 response.success = false;
-                reason = Utils.ERROR_BAD_SIGNATURE;
+                reason = signUpResult.reason;
                 httpStatus = HttpStatus.BAD_REQUEST;
             } else {
-                const signUpResult = await this.trySignUp(request);
-                if (!signUpResult) {
-                    response.success = false;
-                    reason = signUpResult.reason;
-                    httpStatus = HttpStatus.BAD_REQUEST;
-                } else {
-                    const issueTokenResult = await this.issueToken(signUpResult.userId);
-                    response['token'] = issueTokenResult.token;
-                }
+                const issueTokenResult = await this.issueToken(signUpResult.userId);
+                response['token'] = issueTokenResult.token;
             }
         } else if (request.email && request.password) {
             const signUpResult = await this.trySignUp(request);
@@ -96,22 +89,16 @@ export class AuthApiService {
         let httpStatus = undefined;
 
         if (request.ethAddress && request.signedMessage) {
-            const checkSignatureResult = await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
-            if (!checkSignatureResult) {
-                response.success = false;
-                reason = Utils.ERROR_BAD_SIGNATURE;
-                httpStatus = HttpStatus.BAD_REQUEST;
+            await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
+            const userProfile = await this.userProfileModel.findOne({ ethAddress: request.ethAddress });
+            if (userProfile) {
+                const issueTokenResult = await this.issueToken(userProfile.id);
+                response.success = true;
+                response['token'] = issueTokenResult.token;
             } else {
-                const userProfile = await this.userProfileModel.findOne({ ethAddress: request.ethAddress });
-                if (userProfile) {
-                    const issueTokenResult = await this.issueToken(userProfile.id);
-                    response.success = true;
-                    response['token'] = issueTokenResult.token;
-                } else {
-                    response.success = false;
-                    reason = Utils.ERROR_WALLET_NOT_FOUND;
-                    httpStatus = HttpStatus.BAD_REQUEST;
-                }
+                response.success = false;
+                reason = Utils.ERROR_WALLET_NOT_FOUND;
+                httpStatus = HttpStatus.BAD_REQUEST;
             }
         } else if (request.email && request.password) {
             const userProfile = await this.userProfileModel.findOne({ email: request.email });
@@ -183,35 +170,16 @@ export class AuthApiService {
 
     async attachWallet(authToken: string, dto: AttachWalletDto) {
         const userProfile = await this.checkTokenAndGetProfile(authToken);
-        const checkSignatureResult = await this.checkEthersAuthSignature(dto.ethAddress, dto.signedMessage);
-
-        let success = true;
-        let reason = undefined;
-        let httpStatus = undefined;
+        await this.checkEthersAuthSignature(dto.ethAddress, dto.signedMessage);
 
         if (await this.walletExists(dto.ethAddress)) {
-            success = false;
-            reason = Utils.ERROR_EMAIL_EXISTS;
-            httpStatus = HttpStatus.BAD_GATEWAY;
-        }
-        if (!checkSignatureResult) {
-            success = false;
-            reason = Utils.ERROR_BAD_SIGNATURE;
-            httpStatus = HttpStatus.BAD_REQUEST;
-        }
-        if (!success) {
             throw new HttpException({
-                success,
-                reason
-            }, httpStatus);
+                reason: Utils.ERROR_WALLET_EXISTS
+            }, HttpStatus.BAD_GATEWAY);
         }
 
         userProfile.ethAddress = dto.ethAddress;
         await userProfile.save();
-
-        return {
-            success: true
-        }
     }
 
     async updatePassword(authToken: string, dto: UpdatePasswordDto) {
@@ -276,10 +244,13 @@ export class AuthApiService {
     // ------------------------------------------------
 
     private async checkEthersAuthSignature(address: string, signedMessage: string) {
-        const signerAddr = ethers.utils.verifyMessage(Constants.AuthSignatureTemplate.replace('@', address), signedMessage)
-        return {
-            success: signerAddr == address
-        } as CheckEthersAuthSignatureResponse;
+        const signerAddr = ethers.utils.verifyMessage(Constants.AuthSignatureTemplate.replace('@', address), signedMessage);
+        if (signerAddr != address) {
+            throw new HttpException({
+                success: false,
+                reason: Utils.ERROR_BAD_SIGNATURE
+            }, HttpStatus.BAD_REQUEST);
+        }
     }
 
     private async trySignUp(request: SignUpRequest) {
@@ -302,7 +273,8 @@ export class AuthApiService {
                     response.reason = Utils.ERROR_WALLET_EXISTS;
                 } else {
                     const userModel = new this.userProfileModel({
-                        ethAddress: request.ethAddress
+                        ethAddress: request.ethAddress,
+                        emailState: EmailState.CONFIRMED
                     });
                     await userModel.save();
                     response.success = true;
