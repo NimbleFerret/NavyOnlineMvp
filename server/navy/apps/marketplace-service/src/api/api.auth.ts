@@ -95,6 +95,10 @@ export class AuthApiService {
                 const issueTokenResult = await this.issueToken(userProfile.id);
                 response.success = true;
                 response['token'] = issueTokenResult.token;
+                response['ethAddress'] = request.ethAddress;
+                if (userProfile.email) {
+                    response['email'] = userProfile.email;
+                }
             } else {
                 response.success = false;
                 reason = Utils.ERROR_WALLET_NOT_FOUND;
@@ -107,6 +111,10 @@ export class AuthApiService {
                     const issueTokenResult = await this.issueToken(userProfile.id);
                     response.success = true;
                     response['token'] = issueTokenResult.token;
+                    response['email'] = request.email;
+                    if (userProfile.email) {
+                        response['ethAddress'] = userProfile.ethAddress;
+                    }
                 } else {
                     response.success = false;
                     reason = Utils.ERROR_BAD_EMAIL_OR_PASSWORD;
