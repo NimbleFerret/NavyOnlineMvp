@@ -48,6 +48,7 @@ export class AuthApiService {
             const signUpResult = await this.trySignUp(request);
             if (!signUpResult) {
                 response.success = false;
+                response['ethAddress'] = request.ethAddress;
                 reason = signUpResult.reason;
                 httpStatus = HttpStatus.BAD_REQUEST;
             } else {
@@ -58,6 +59,7 @@ export class AuthApiService {
             const signUpResult = await this.trySignUp(request);
             if (!signUpResult.success) {
                 response.success = false;
+                response['email'] = request.email;
                 reason = signUpResult.reason;
                 httpStatus = HttpStatus.BAD_REQUEST;
             } else {
