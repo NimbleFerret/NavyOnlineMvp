@@ -46,7 +46,7 @@ export class AuthApiService {
         if (request.ethAddress && request.signedMessage) {
             await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
             const signUpResult = await this.trySignUp(request);
-            if (!signUpResult) {
+            if (!signUpResult.success) {
                 response.success = false;
                 response['ethAddress'] = request.ethAddress;
                 reason = signUpResult.reason;
