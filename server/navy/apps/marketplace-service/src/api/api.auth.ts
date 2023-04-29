@@ -200,18 +200,22 @@ export class AuthApiService {
     }
 
     async updatePassword(authToken: string, dto: UpdatePasswordDto) {
-        const userProfile = await this.checkTokenAndGetProfile(authToken)
-        if (userProfile.password != dto.password && dto.password.length > 5) {
-            userProfile.password = dto.password;
-            await userProfile.save();
-            return {
-                success: true
-            }
-        } else {
+        const userProfile = await this.checkTokenAndGetProfile(authToken);
+
+        if (userProfile.password == dto.newPassword ||
+            userProfile.password != dto.oldPassword ||
+            dto.oldPassword == dto.newPassword ||
+            dto.newPassword.length < 5) {
             throw new HttpException({
                 success: false,
                 reason: Utils.ERROR_BAD_EMAIL_OR_PASSWORD
             }, HttpStatus.BAD_REQUEST);
+        }
+
+        userProfile.password = dto.newPassword;
+        await userProfile.save();
+        return {
+            success: true
         }
     }
 
