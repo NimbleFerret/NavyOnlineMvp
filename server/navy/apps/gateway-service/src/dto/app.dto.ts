@@ -1,5 +1,6 @@
 export class UpdatePasswordDto {
-    password: string;
+    currentPassword: string;
+    newPassword: string;
 }
 
 export class AttachEmailDto {

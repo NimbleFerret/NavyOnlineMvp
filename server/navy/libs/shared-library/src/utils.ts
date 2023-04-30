@@ -8,6 +8,7 @@ export class Utils {
     public static readonly ERROR_BAD_AUTH = 'BAD_AUTH';
     public static readonly ERROR_BAD_PARAMS = 'BAD_PARAMS';
     public static readonly ERROR_BAD_EMAIL_OR_PASSWORD = 'BAD_EMAIL_OR_PASSWORD';
+    public static readonly ERROR_PASSWORDS_DOES_NOT_MATCH = 'PASSWORDS_DOES_NOT_MATCH';
 
     public static DeleteKeysFromMap(map: Map<String, any>, keys: String[]) {
         keys.forEach(key => {
