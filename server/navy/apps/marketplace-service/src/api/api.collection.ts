@@ -95,7 +95,7 @@ export class CollectionApiService {
                 .sort([['marketplaceState', 1], [sortCriteria, -1]]);
         }
 
-        const result = await databaseQuery(marketplaceNftsType == MarketplaceNftsType.ALL ? 'tokenId' : 'lastUpdated');
+        const result = await databaseQuery(marketplaceNftsType == MarketplaceNftsType.NONE ? 'tokenId' : 'lastUpdated');
 
         // ----------------------------------
         // Prepare paginated response
@@ -164,8 +164,8 @@ export class CollectionApiService {
 
             collectionItems.push(...await this.collectionItemModel
                 .find({
-                    marketplaceState: MarketplaceNftsType.ALL,
-                    owner: owner.toLocaleLowerCase()
+                    marketplaceState: MarketplaceNftsType.NONE,
+                    owner: owner
                 })
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']));
 
@@ -188,7 +188,7 @@ export class CollectionApiService {
             };
 
             resultItems.forEach(f => {
-                switch (f.collectionAddress) {
+                switch (f.contractAddress) {
                     case EthersConstants.CaptainContractAddress:
                         result.captains.total++;
                         result.captains.items.push(f);

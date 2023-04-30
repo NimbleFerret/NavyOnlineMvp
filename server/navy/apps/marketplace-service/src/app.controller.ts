@@ -86,7 +86,7 @@ export class AppController {
     @Query('page') page?: number,
     @Query('size') size?: number,
     @Query('rarity') rarity?: string) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceNftsType.ALL, address, page, size, rarity);
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceNftsType.NONE, address, page, size, rarity);
   }
 
   @Get('collection/:address/item/:tokenId')

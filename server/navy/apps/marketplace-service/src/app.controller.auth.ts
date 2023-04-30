@@ -1,6 +1,6 @@
 import { SignUpRequest } from '@app/shared-library/gprc/grpc.user.service';
 import { Utils } from '@app/shared-library/utils';
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Req } from '@nestjs/common';
 import { AttachEmailDto, AttachWalletDto, UpdatePasswordDto } from 'apps/gateway-service/src/dto/app.dto';
 import { AuthApiService } from './api/api.auth';
 import { BidApiService } from './api/api.bid';
@@ -49,7 +49,7 @@ export class AppControllerAuth {
     return this.authService.attachWallet(Utils.GetBearerTokenFromRequest(request), dto);
   }
 
-  @Post('updatePassword')
+  @Patch('updatePassword')
   @HttpCode(200)
   async updatePassword(@Req() request: Request, @Body() dto: UpdatePasswordDto) {
     return this.authService.updatePassword(Utils.GetBearerTokenFromRequest(request), dto);

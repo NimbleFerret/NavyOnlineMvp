@@ -203,8 +203,8 @@ export class AuthApiService {
         const userProfile = await this.checkTokenAndGetProfile(authToken);
 
         if (userProfile.password == dto.newPassword ||
-            userProfile.password != dto.oldPassword ||
-            dto.oldPassword == dto.newPassword ||
+            userProfile.password != dto.currentPassword ||
+            dto.currentPassword == dto.newPassword ||
             dto.newPassword.length < 5) {
             throw new HttpException({
                 success: false,

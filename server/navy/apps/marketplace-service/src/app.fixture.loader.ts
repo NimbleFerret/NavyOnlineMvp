@@ -12,7 +12,7 @@ const fs = require('fs');
 
 export class FixtureLoader {
 
-    private readonly dropTopSalesOnRestart = true;
+    private readonly reloadCollectionItems = true;
 
     constructor(
         private projectModel: Model<ProjectDocument>,
@@ -25,7 +25,8 @@ export class FixtureLoader {
     async loadFixtures() {
         await this.loadProjects();
         await this.loadFaq();
-        if (this.dropTopSalesOnRestart) {
+        if (this.reloadCollectionItems) {
+            await this.collectionItemModel.deleteMany();
             await this.loadTopSales();
         }
     }
@@ -124,10 +125,6 @@ export class FixtureLoader {
     }
 
     private async loadTopSales() {
-        await this.collectionItemModel.deleteMany({
-            marketplaceState: MarketplaceState.SOLD
-        });
-
         const nowTimeSeconds = Number(Number(Date.now() / 1000).toFixed(0));
         const daySeconds = 24 * 60 * 60;
         let nextId = 54;
@@ -138,7 +135,7 @@ export class FixtureLoader {
             tokenId: 0,
             tokenUri: "https://ipfs.moralis.io:2053/ipfs/QmQmRiVEaAbBnF7rnGNfaTMya2UH7NyRu2HCjc8HvN88R5/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.json",
             seller: "0xe6193b058bbd559e8e0df3a48202a3cdec852ab6",
-            owner: "0xac256b90b14465c37f789e16eb5efe0233bafe87",
+            owner: "0x89DBad2C15A2fCEd932aEf71C2F798fD86B1349F".toLowerCase(),
             price: 10,
             image: "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
             rarity: "Common",
@@ -188,8 +185,7 @@ export class FixtureLoader {
             ]
         }
 
-        // Today sells
-        for (let i = 0; i < 20; i++) {
+        function newCollectionItem() {
             defaultCollectionItem.id += nextId;
             defaultCollectionItem.tokenId = nextId;
             defaultCollectionItem.lastUpdated = nextTimeSeconds;
@@ -204,7 +200,19 @@ export class FixtureLoader {
             }
             defaultCollectionItem.price = Number(finalPrice);
 
-            await new this.collectionItemModel(defaultCollectionItem).save();
+            return defaultCollectionItem;
+        }
+
+        // Today sells
+        for (let i = 0; i < 20; i++) {
+            const soldCollectionItem = newCollectionItem();
+            soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
+            await new this.collectionItemModel(soldCollectionItem).save();
+
+            const ownedCollectionItem = newCollectionItem();
+            ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
+            await new this.collectionItemModel(ownedCollectionItem).save();
+
             nextId++;
             nextTimeSeconds -= 60 * 30;
         }
@@ -212,21 +220,14 @@ export class FixtureLoader {
 
         // 7d
         for (let i = 0; i < 20; i++) {
-            defaultCollectionItem.id += nextId;
-            defaultCollectionItem.tokenId = nextId;
-            defaultCollectionItem.lastUpdated = nextTimeSeconds;
-            defaultCollectionItem.visuals = generateCaptainVisuals();
-            defaultCollectionItem.traits = generateCaptainTraits();
+            const soldCollectionItem = newCollectionItem();
+            soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
+            await new this.collectionItemModel(soldCollectionItem).save();
 
-            let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
-            let priceFloat = SharedLibraryService.GetRandomIntInRange(0, 1);
-            let finalPrice = String(price);
-            if (priceFloat == 1) {
-                finalPrice += '.' + SharedLibraryService.GetRandomIntInRange(1, 99);
-            }
-            defaultCollectionItem.price = Number(finalPrice);
+            const ownedCollectionItem = newCollectionItem();
+            ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
+            await new this.collectionItemModel(ownedCollectionItem).save();
 
-            await new this.collectionItemModel(defaultCollectionItem).save();
             nextId++;
             nextTimeSeconds -= (60 * 60) * 10;
         }
@@ -234,21 +235,14 @@ export class FixtureLoader {
 
         // 30d 
         for (let i = 0; i < 20; i++) {
-            defaultCollectionItem.id += nextId;
-            defaultCollectionItem.tokenId = nextId;
-            defaultCollectionItem.lastUpdated = nextTimeSeconds;
-            defaultCollectionItem.visuals = generateCaptainVisuals();
-            defaultCollectionItem.traits = generateCaptainTraits();
+            const soldCollectionItem = newCollectionItem();
+            soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
+            await new this.collectionItemModel(soldCollectionItem).save();
 
-            let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
-            let priceFloat = SharedLibraryService.GetRandomIntInRange(0, 1);
-            let finalPrice = String(price);
-            if (priceFloat == 1) {
-                finalPrice += '.' + SharedLibraryService.GetRandomIntInRange(1, 99);
-            }
-            defaultCollectionItem.price = Number(finalPrice);
+            const ownedCollectionItem = newCollectionItem();
+            ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
+            await new this.collectionItemModel(ownedCollectionItem).save();
 
-            await new this.collectionItemModel(defaultCollectionItem).save();
             nextId++;
             nextTimeSeconds -= daySeconds;
         }
