@@ -3,7 +3,7 @@ import { NftType, Rarity } from "../shared-library.main";
 export enum MarketplaceNftsType {
     LISTED,
     SOLD,
-    ALL
+    NONE
 }
 
 export interface NftSubPartDetails {
