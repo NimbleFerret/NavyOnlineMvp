@@ -56,6 +56,9 @@ export class CollectionItem {
     contractAddress: string;
 
     @Prop()
+    collectionName: string;
+
+    @Prop()
     chainId: string;
 
     @Prop()

@@ -202,8 +202,13 @@
                 "categorySingle": "acc",
                 "categoryDetails": [
                     {
+                        "imageUrl": "",
+                        "chancePercent": 70,
+                        "rarity": "Common"
+                    },
+                    {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/accessories/acc_1.png",
-                        "chancePercent": 100,
+                        "chancePercent": 30,
                         "rarity": "Common"
                     },
                     {

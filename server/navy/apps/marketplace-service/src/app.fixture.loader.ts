@@ -143,6 +143,7 @@ export class FixtureLoader {
             visuals: [],
             traits: [],
             contractAddress: "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
+            collectionName: "captains",
             marketplaceState: 1,
             chainId: "338"
         };
