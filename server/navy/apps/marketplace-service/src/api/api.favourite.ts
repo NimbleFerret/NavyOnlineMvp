@@ -1,4 +1,4 @@
-import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
+import { CollectionItem, CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Favourite, FavouriteDocument } from "@app/shared-library/schemas/marketplace/schema.favourite";
 import { UserProfile } from "@app/shared-library/schemas/schema.user.profile";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
@@ -38,7 +38,22 @@ export class FavouriteApiService {
             const newFavouriteItem = new this.favouriteModel();
             newFavouriteItem.userProfile = favouriteResult.userProfile;
             newFavouriteItem.collectionItem = favouriteResult.collectionItem;
-            newFavouriteItem.save();
+            await newFavouriteItem.save();
+            return {
+                tokenId: favouriteResult.collectionItem.tokenId,
+                tokenUri: favouriteResult.collectionItem.tokenUri,
+                seller: favouriteResult.collectionItem.seller,
+                owner: favouriteResult.collectionItem.owner,
+                price: favouriteResult.collectionItem.price,
+                image: favouriteResult.collectionItem.image,
+                visuals: favouriteResult.collectionItem.visuals,
+                traits: favouriteResult.collectionItem.traits,
+                rarity: favouriteResult.collectionItem.rarity,
+                contractAddress: favouriteResult.collectionItem.contractAddress,
+                collectionName: favouriteResult.collectionItem.collectionName,
+                chainId: favouriteResult.collectionItem.chainId,
+                marketplaceState: favouriteResult.collectionItem.marketplaceState
+            }
         } else {
             throw new HttpException('Already favourite', HttpStatus.BAD_GATEWAY);
         }
@@ -71,7 +86,10 @@ export class FavouriteApiService {
     private async getCollectionItemById(dto: FavouriteDto) {
         return await this.collectionItemModel.findOne({
             contractAddress: dto.contractAddress,
-            tokenId: dto.tokenId
+            tokenId: dto.tokenId,
+            marketplaceState: {
+                "$ne": MarketplaceState.SOLD
+            }
         });
     }
 
