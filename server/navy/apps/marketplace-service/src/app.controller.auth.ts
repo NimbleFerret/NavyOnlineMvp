@@ -77,7 +77,7 @@ export class AppControllerAuth {
     return this.favouriteService.favouritesAdd(Utils.GetBearerTokenFromRequest(request), dto);
   }
 
-  @Post('favourites/remove')
+  @Delete('favourites/remove')
   @HttpCode(200)
   favouritesRemove(@Req() request: Request, @Body() dto: FavouriteDto) {
     return this.favouriteService.favouritesRemove(Utils.GetBearerTokenFromRequest(request), dto);
