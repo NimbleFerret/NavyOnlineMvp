@@ -234,6 +234,7 @@ export class CollectionApiService {
             image: collectionItem.image,
             rarity: collectionItem.rarity,
             contractAddress: collectionItem.contractAddress,
+            collectionName: collectionItem.collectionName,
             chainId: collectionItem.chainId,
             chainName: 'Cronos',
             coinSymbol: 'CRO',
@@ -275,6 +276,7 @@ export class CollectionApiService {
                 rarity: r.rarity,
                 lastUpdated: r.lastUpdated,
                 contractAddress: r.contractAddress,
+                collectionName: r.collectionName,
                 chainId: r.chainId,
                 marketplaceState: r.marketplaceState
             };
