@@ -264,6 +264,21 @@ export class CollectionApiService {
         return mint;
     }
 
+    async fillCollectionItemsFavourites(collectionItems: any, userProfile: UserProfile & Document) {
+        const userFavourites = await this.favouriteService.favoutires(userProfile);
+        const favouriteCollectionItemsIds = new Set<number>();
+        userFavourites.forEach(f => {
+            favouriteCollectionItemsIds.add(f.tokenId);
+        });
+        collectionItems.forEach(f => {
+            if (favouriteCollectionItemsIds.has(f.tokenId)) {
+                f['favourite'] = true;
+            } else {
+                f['favourite'] = false;
+            }
+        });
+    }
+
     private convertCollectionItems(collectionItems: any, swapSeller = false) {
         const resultItems = [];
         collectionItems.forEach(r => {
@@ -288,18 +303,4 @@ export class CollectionApiService {
         return resultItems;
     }
 
-    private async fillCollectionItemsFavourites(collectionItems: any, userProfile: UserProfile & Document) {
-        const userFavourites = await this.favouriteService.favoutires(userProfile);
-        const favouriteCollectionItemsIds = new Set<number>();
-        userFavourites.forEach(f => {
-            favouriteCollectionItemsIds.add(f.tokenId);
-        });
-        collectionItems.forEach(f => {
-            if (favouriteCollectionItemsIds.has(f.tokenId)) {
-                f['favourite'] = true;
-            } else {
-                f['favourite'] = false;
-            }
-        });
-    }
 }

@@ -127,11 +127,12 @@ export class FixtureLoader {
     private async loadTopSales() {
         const nowTimeSeconds = Number(Number(Date.now() / 1000).toFixed(0));
         const daySeconds = 24 * 60 * 60;
+        const itemIdPrefix = '0x61a03eed4c0220bb6ee89b0cda10dc171f772577_';
         let nextId = 54;
         let nextTimeSeconds = nowTimeSeconds;
         const defaultCollectionItem = {
             needUpdate: false,
-            id: "0x61a03eed4c0220bb6ee89b0cda10dc171f772577_",
+            id: itemIdPrefix,
             tokenId: 0,
             tokenUri: "https://ipfs.moralis.io:2053/ipfs/QmQmRiVEaAbBnF7rnGNfaTMya2UH7NyRu2HCjc8HvN88R5/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.json",
             seller: "0xe6193b058bbd559e8e0df3a48202a3cdec852ab6",
@@ -187,7 +188,7 @@ export class FixtureLoader {
         }
 
         function newCollectionItem() {
-            defaultCollectionItem.id += nextId;
+            defaultCollectionItem.id = itemIdPrefix + nextId;
             defaultCollectionItem.tokenId = nextId;
             defaultCollectionItem.lastUpdated = nextTimeSeconds;
             defaultCollectionItem.visuals = generateCaptainVisuals();
