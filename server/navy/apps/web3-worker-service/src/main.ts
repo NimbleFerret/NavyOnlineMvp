@@ -5,7 +5,8 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(Config.WEB3_WORKER_SERVICE_PORT);
-  Logger.log(`Web3-Worker-Service started at port: ${Config.WEB3_WORKER_SERVICE_PORT}`);
+  app.enableCors();
+  await app.listen(Config.WEB3_WORKER_SERVICE_PORT_HTTP);
+  Logger.log(`Web3-Worker-Service started at port: ${Config.WEB3_WORKER_SERVICE_PORT_HTTP}`);
 }
 bootstrap();

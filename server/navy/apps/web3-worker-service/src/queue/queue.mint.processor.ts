@@ -7,8 +7,7 @@ import * as Island from '../abi/Island.json';
 import * as ShipTemplate from '../abi/ShipTemplate.json';
 import * as CollectionSale from '../abi/CollectionSale.json';
 import * as Marketplace from '../abi/Marketplace.json';
-
-import { NftType, Rarity } from "@app/shared-library/shared-library.main";
+import { NftType } from "@app/shared-library/shared-library.main";
 import { MintJob, WorkersMint } from "@app/shared-library/workers/workers.mint";
 import {
     OnQueueActive,
@@ -24,7 +23,6 @@ import { Job } from "bull";
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { NftPartDetails, NftSubPartDetails } from "@app/shared-library/workers/workers.marketplace";
 import { NftCaptainGenerator } from "./nft/nft.generator.captain";
 import { EthersProvider } from "@app/shared-library/ethers/ethers.provider";
 import { Contract } from 'ethers';
@@ -64,41 +62,8 @@ export class QueueMintProcessor implements OnModuleInit {
         });
 
         const captainsCollection = await this.collectionModel.findOne({ name: 'Captains' }).populate('mint');
-        if (captainsCollection) {
-            const captainsCollectionNftDetails = captainsCollection.mint.nftPartsItems.map(nftPartsItem => {
-                const nftPartDetails = {
-                    resPlural: nftPartsItem.categoryPlural,
-                    resSingle: nftPartsItem.categorySingle,
-                    subParts: []
-                } as NftPartDetails;
-
-                nftPartDetails.subParts = nftPartsItem.categoryDetails.map(categoryDetails => {
-                    let rarity = Rarity.COMMON;
-                    switch (categoryDetails.rarity) {
-                        case 'Rare':
-                            rarity = Rarity.RARE;
-                            break;
-                        case 'Epic':
-                            rarity = Rarity.EPIC;
-                            break;
-                        case 'Legendary':
-                            rarity = Rarity.LEGENDARY;
-                            break;
-                    }
-                    return {
-                        chance: categoryDetails.chancePercent,
-                        rarity
-                    } as NftSubPartDetails;
-                });
-
-                return nftPartDetails;
-            });
-
-            if (captainsCollectionNftDetails.length > 0) {
-                this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollectionNftDetails);
-                await this.nftCaptainGenerator.initMoralis();
-            }
-        }
+        this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection);
+        await this.nftCaptainGenerator.initMoralis();
     }
 
     @Process()

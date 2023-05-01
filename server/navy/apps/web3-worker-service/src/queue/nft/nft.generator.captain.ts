@@ -1,5 +1,6 @@
+import { Collection } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { NftType, Rarity } from "@app/shared-library/shared-library.main";
-import { NftPartDetails, NftSubPartDetails } from "@app/shared-library/workers/workers.marketplace";
+import { NftSubPartDetails } from "@app/shared-library/workers/workers.marketplace";
 import { Contract } from "ethers";
 import { NftGenerator } from "./nft.generator";
 
@@ -16,8 +17,8 @@ export interface CaptainStats {
 
 export class NftCaptainGenerator extends NftGenerator {
 
-    constructor(nftParts: NftPartDetails[]) {
-        super(NftType.CAPTAIN, nftParts);
+    constructor(collection: Collection) {
+        super(NftType.CAPTAIN, collection);
     }
 
     generateNftMetadata(index: number, maxIndex: number, imagePathOnMoralis: string, nftPartsToDraw: NftSubPartDetails[]) {

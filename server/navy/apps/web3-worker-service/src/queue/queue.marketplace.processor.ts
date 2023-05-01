@@ -61,7 +61,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                 break;
         }
 
-        if (job.data.marketplaceNftsType == MarketplaceNftsType.ALL) {
+        if (job.data.marketplaceNftsType == MarketplaceNftsType.NONE) {
             await this.updateNfts(contractAddressAddress);
         } else {
             await this.updateSaleCollections(contractAddressAddress);
@@ -173,7 +173,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                 model.tokenUri = nft.tokenUri;
                 model.seller = nft.seller;
                 model.owner = nft.owner;
-                model.price = nft.price;
+                model.price = Number(nft.price);
                 model.image = nft.image;
                 model.lastUpdated = nft.lastUpdated;
                 model.contractAddress = nft.contractAddress;

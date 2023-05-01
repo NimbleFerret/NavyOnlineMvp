@@ -1,5 +1,6 @@
 export class Config {
     public static readonly WEB3_WORKER_SERVICE_PORT = 3010;
+    public static readonly WEB3_WORKER_SERVICE_PORT_HTTP = 3009;
     public static readonly WEB3_SERVICE_PORT = 3020;
     public static readonly WORLD_SERVICE_PORT = 3021;
     public static readonly GATEWAY_SERVICE_PORT = 3022;

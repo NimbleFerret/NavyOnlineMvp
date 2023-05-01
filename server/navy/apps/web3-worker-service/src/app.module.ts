@@ -8,6 +8,8 @@ import { WorkersMint } from '@app/shared-library/workers/workers.mint';
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { QueueMarketplaceProcessor } from './queue/queue.marketplace.processor';
 import { QueueMintProcessor } from './queue/queue.mint.processor';
 
@@ -32,10 +34,13 @@ import { QueueMintProcessor } from './queue/queue.mint.processor';
       { name: CollectionItem.name, schema: CollectionItemSchema },
     ]),
   ],
-  controllers: [],
+  controllers: [
+    AppController
+  ],
   providers: [
     QueueMarketplaceProcessor,
-    QueueMintProcessor
+    QueueMintProcessor,
+    AppService
   ],
 })
 export class AppModule { }
