@@ -35,11 +35,7 @@ export class FavouriteApiService {
             .sort([['marketplaceState', 1], ['tokenId', -1]]);
         const collectionItems = result.map(f => {
             const collectionItem = Converter.ConvertCollectionItem(f);
-            if (favouriteCollectionItemsIds.has(f.tokenId)) {
-                f['favourite'] = true;
-            } else {
-                f['favourite'] = false;
-            }
+            collectionItem['favourite'] = true;
             return collectionItem;
         });
         return collectionItems;
