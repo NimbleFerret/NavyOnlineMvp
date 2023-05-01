@@ -1,6 +1,5 @@
 import { EthersConstants } from "@app/shared-library/ethers/ethers.constants";
-import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
-import { MarketplaceNftsType } from "@app/shared-library/workers/workers.marketplace";
+import { CollectionItem, CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
@@ -58,7 +57,7 @@ export class DashboardApiService {
         if (projects) {
             const query = {
                 contractAddress: [],
-                marketplaceNftsType: MarketplaceNftsType.SOLD,
+                marketplaceState: MarketplaceState.SOLD,
                 lastUpdated: { $gte: this.getDaysSeconds(days) }
             };
             projects[0].collections.forEach(collection => {
@@ -70,6 +69,7 @@ export class DashboardApiService {
                 .limit(9)
                 .sort([['price', -1], ['lastUpdated', 1]]);
             topSaleResult.forEach(f => {
+                console.log(f.marketplaceState);
                 response.push({
                     tokenId: f.tokenId,
                     tokenUri: f.tokenUri,

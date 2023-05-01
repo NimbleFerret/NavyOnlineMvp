@@ -1,9 +1,8 @@
 import { EthersConstants } from "@app/shared-library/ethers/ethers.constants";
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
-import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
+import { CollectionItem, CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Mint, MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
 import { UserProfile } from "@app/shared-library/schemas/schema.user.profile";
-import { MarketplaceNftsType } from "@app/shared-library/workers/workers.marketplace";
 import { BadGatewayException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Document } from "mongoose";
@@ -33,7 +32,7 @@ export class CollectionApiService {
 
     async getCollectionItems(
         authToken: string | undefined,
-        marketplaceNftsType: MarketplaceNftsType,
+        marketplaceState: MarketplaceState,
         contractAddress: string,
         page?: number,
         size?: number,
@@ -65,12 +64,12 @@ export class CollectionApiService {
         }
 
         let nftType = 'all';
-        if (marketplaceNftsType == MarketplaceNftsType.LISTED) {
+        if (marketplaceState == MarketplaceState.LISTED) {
             nftType = 'listed';
-            query['marketplaceState'] = marketplaceNftsType;
-        } else if (marketplaceNftsType == MarketplaceNftsType.SOLD) {
+            query['marketplaceState'] = marketplaceState;
+        } else if (marketplaceState == MarketplaceState.SOLD) {
             nftType = 'sold';
-            query['marketplaceState'] = marketplaceNftsType;
+            query['marketplaceState'] = marketplaceState;
         }
 
         const count = await this.collectionItemModel.countDocuments(query);
@@ -95,7 +94,7 @@ export class CollectionApiService {
                 .sort([['marketplaceState', 1], [sortCriteria, -1]]);
         }
 
-        const result = await databaseQuery(marketplaceNftsType == MarketplaceNftsType.NONE ? 'tokenId' : 'lastUpdated');
+        const result = await databaseQuery(marketplaceState == MarketplaceState.NONE ? 'tokenId' : 'lastUpdated');
 
         // ----------------------------------
         // Prepare paginated response
@@ -157,14 +156,14 @@ export class CollectionApiService {
 
             collectionItems.push(...(await this.collectionItemModel
                 .find({
-                    marketplaceState: MarketplaceNftsType.LISTED,
+                    marketplaceState: MarketplaceState.LISTED,
                     seller: owner
                 })
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])));
 
             collectionItems.push(...await this.collectionItemModel
                 .find({
-                    marketplaceState: MarketplaceNftsType.NONE,
+                    marketplaceState: MarketplaceState.NONE,
                     owner: owner
                 })
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']));

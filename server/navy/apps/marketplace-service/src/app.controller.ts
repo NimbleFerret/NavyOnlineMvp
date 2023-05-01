@@ -1,5 +1,5 @@
+import { MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { Utils } from '@app/shared-library/utils';
-import { MarketplaceNftsType } from '@app/shared-library/workers/workers.marketplace';
 import { Body, Controller, Get, HttpCode, Param, Post, Query, Req } from '@nestjs/common';
 import { CollectionApiService } from './api/api.collection';
 import { DashboardApiService } from './api/api.dashboard';
@@ -68,7 +68,7 @@ export class AppController {
     @Req() request: Request,
     @Param('address') address: string,
     @Query('page') page?: number) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceNftsType.LISTED, address, page);
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceState.LISTED, address, page);
   }
 
   @Get('collection/:address/sold')
@@ -76,7 +76,7 @@ export class AppController {
     @Req() request: Request,
     @Param('address') address: string,
     @Query('page') page?: number) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceNftsType.SOLD, address, page);
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceState.SOLD, address, page);
   }
 
   @Get('collection/:address/all')
@@ -86,7 +86,7 @@ export class AppController {
     @Query('page') page?: number,
     @Query('size') size?: number,
     @Query('rarity') rarity?: string) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceNftsType.NONE, address, page, size, rarity);
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceState.NONE, address, page, size, rarity);
   }
 
   @Get('collection/:address/item/:tokenId')
