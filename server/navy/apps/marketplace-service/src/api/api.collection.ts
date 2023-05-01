@@ -169,7 +169,7 @@ export class CollectionApiService {
                 })
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']));
 
-            const resultItems = this.convertCollectionItems(collectionItems.sort(function (a, b) { return b.collectionAddress - a.collectionAddress }), true);
+            const resultItems = this.convertCollectionItems(collectionItems.sort(function (a, b) { return b.collectionAddress - a.collectionAddress }), false);
             await this.fillCollectionItemsFavourites(resultItems, userProfile);
 
             const result = {
