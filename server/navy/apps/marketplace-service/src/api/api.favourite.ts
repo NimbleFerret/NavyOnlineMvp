@@ -17,28 +17,23 @@ export class FavouriteApiService {
         @InjectModel(Favourite.name) private favouriteModel: Model<FavouriteDocument>) {
     }
 
-    async favouritesByAuthToken(authToken: string) {
-        const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
-        return await this.favoutires(userProfile);
-    }
-
-    async favoutires(userProfile: UserProfile & Document) {
-        const favouriteCollectionItemsIds = new Set<number>();
+    async getFavoutireNftByUserProfile(userProfile: UserProfile & Document) {
         const favourites = await this.favouriteModel.find({ userProfile });
-        const favCollectionItems = favourites.map(f => {
-            favouriteCollectionItemsIds.add(f.collectionItem.tokenId);
+        return favourites.map(f => {
             return f.collectionItem;
         });
-        const result = await this.collectionItemModel
-            .find({ '_id': { $in: favCollectionItems } })
-            .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
-            .sort([['marketplaceState', 1], ['tokenId', -1]]);
-        const collectionItems = result.map(f => {
-            const collectionItem = Converter.ConvertCollectionItem(f);
-            collectionItem['favourite'] = true;
-            return collectionItem;
+    }
+
+    async getFavoutireNftIdsByAuthToken(authToken: string) {
+        const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
+        return await this.getFavoutireNftIdsByUserProfile(userProfile);
+    }
+
+    async getFavoutireNftIdsByUserProfile(userProfile: UserProfile & Document) {
+        const favourites = await this.favouriteModel.find({ userProfile });
+        return favourites.map(f => {
+            return f.collectionItem.tokenId;
         });
-        return collectionItems;
     }
 
     async favouritesAdd(authToken: string, dto: FavouriteDto) {
@@ -48,10 +43,7 @@ export class FavouriteApiService {
             newFavouriteItem.userProfile = favouriteResult.userProfile;
             newFavouriteItem.collectionItem = favouriteResult.collectionItem;
             await newFavouriteItem.save();
-
-            const collectionItem = Converter.ConvertCollectionItem(favouriteResult.collectionItem);
-            collectionItem['favourite'] = true;
-
+            const collectionItem = Converter.ConvertCollectionItem(favouriteResult.collectionItem, true);
             return collectionItem;
         } else {
             throw new HttpException('Already favourite', HttpStatus.BAD_GATEWAY);

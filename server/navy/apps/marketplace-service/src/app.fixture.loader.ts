@@ -2,6 +2,7 @@ import { SharedLibraryService } from "@app/shared-library";
 import { CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { FaqDocument } from "@app/shared-library/schemas/marketplace/schema.faq";
+import { FavouriteDocument } from "@app/shared-library/schemas/marketplace/schema.favourite";
 import { MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
 import { ProjectDocument } from "@app/shared-library/schemas/marketplace/schema.project";
 import { Logger } from "@nestjs/common";
@@ -12,14 +13,15 @@ const fs = require('fs');
 
 export class FixtureLoader {
 
-    private readonly reloadCollectionItems = true;
+    private readonly reloadCollectionItems = false;
 
     constructor(
         private projectModel: Model<ProjectDocument>,
         private collectionModel: Model<CollectionDocument>,
         private mintModel: Model<MintDocument>,
         private collectionItemModel: Model<CollectionItemDocument>,
-        private faqModel: Model<FaqDocument>) {
+        private faqModel: Model<FaqDocument>,
+        private favouriteModel: Model<FavouriteDocument>) {
     }
 
     async loadFixtures() {

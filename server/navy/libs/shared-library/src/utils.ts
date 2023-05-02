@@ -24,4 +24,20 @@ export class Utils {
         }
     }
 
+    public static GetDaysSeconds(days?: string) {
+        const nowTimeSeconds = Number(Number(Date.now() / 1000).toFixed(0));
+        const daySeconds = 24 * 60 * 60;
+        let seconds = nowTimeSeconds;
+        if (days) {
+            if (days == '7') {
+                seconds = nowTimeSeconds - (daySeconds * 7);
+            } else if (days == '30') {
+                seconds = nowTimeSeconds - (daySeconds * 30);
+            } else {
+                seconds = nowTimeSeconds - daySeconds;
+            }
+        }
+        return seconds;
+    }
+
 }

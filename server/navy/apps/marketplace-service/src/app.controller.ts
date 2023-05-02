@@ -51,7 +51,7 @@ export class AppController {
 
   @Get('topSales/:days')
   topSales(@Param('days') days?: string) {
-    return this.dashboardService.topSales(days);
+    return this.collectionService.topSales(days);
   }
 
   // --------------------------------

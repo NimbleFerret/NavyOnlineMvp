@@ -3,7 +3,7 @@ import { Document } from "mongoose";
 
 export class Converter {
 
-    public static ConvertCollectionItem(collectionItem: CollectionItem & Document) {
+    public static ConvertCollectionItem(collectionItem: CollectionItem & Document, favourite: boolean) {
         return {
             tokenId: collectionItem.tokenId,
             tokenUri: collectionItem.tokenUri,
@@ -17,7 +17,10 @@ export class Converter {
             contractAddress: collectionItem.contractAddress,
             collectionName: collectionItem.collectionName,
             chainId: collectionItem.chainId,
-            marketplaceState: collectionItem.marketplaceState
+            marketplaceState: collectionItem.marketplaceState,
+            chainName: 'Cronos',
+            coinSymbol: 'CRO',
+            favourite
         }
     }
 

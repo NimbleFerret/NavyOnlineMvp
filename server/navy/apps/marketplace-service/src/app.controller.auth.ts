@@ -61,14 +61,13 @@ export class AppControllerAuth {
     return this.authService.logout(Utils.GetBearerTokenFromRequest(request));
   }
 
-
   // --------------------------------
   // Collection
   // --------------------------------
 
   @Get('favourites')
   favourites(@Req() request: Request) {
-    return this.favouriteService.favouritesByAuthToken(Utils.GetBearerTokenFromRequest(request));
+    return this.collectionService.getFavouriteCollectionItemsByOwner(Utils.GetBearerTokenFromRequest(request));
   }
 
   @Post('favourites/add')

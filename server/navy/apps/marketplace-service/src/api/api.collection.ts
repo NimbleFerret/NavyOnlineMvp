@@ -3,17 +3,21 @@ import { Collection, CollectionDocument } from "@app/shared-library/schemas/mark
 import { CollectionItem, CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Mint, MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
 import { UserProfile } from "@app/shared-library/schemas/schema.user.profile";
+import { Converter } from "@app/shared-library/shared-library.converter";
+import { Utils } from "@app/shared-library/utils";
 import { BadGatewayException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Document } from "mongoose";
 import { AppService } from "../app.service";
 import { AuthApiService } from "./api.auth";
 import { FavouriteApiService } from "./api.favourite";
+import { GeneralApiService } from "./api.general";
 
 @Injectable()
 export class CollectionApiService {
 
     constructor(
+        private readonly generalApiService: GeneralApiService,
         private readonly favouriteService: FavouriteApiService,
         private readonly authService: AuthApiService,
         @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
@@ -147,6 +151,51 @@ export class CollectionApiService {
         return response;
     }
 
+    async getFavouriteCollectionItemsByOwner(authToken: string) {
+        const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
+        if (userProfile.ethAddress && userProfile.ethAddress.length > 0) {
+            const userFavourites = await this.favouriteService.getFavoutireNftByUserProfile(userProfile);
+            const result = await this.collectionItemModel
+                .find({ '_id': { $in: userFavourites } })
+                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
+                .sort([['marketplaceState', 1], ['tokenId', -1]]);
+            const collectionItems = result.map(f => {
+                const collectionItem = Converter.ConvertCollectionItem(f, true);
+                return collectionItem;
+            });
+            return collectionItems;
+        } else {
+            return [];
+        }
+    }
+
+    async topSales(days?: string) {
+        const response = [];
+        const projects = await this.generalApiService.getProjects();
+        if (projects) {
+            const query = {
+                contractAddress: [],
+                marketplaceState: MarketplaceState.SOLD,
+                lastUpdated: { $gte: Utils.GetDaysSeconds(days) }
+            };
+
+            projects[0].collections.forEach(collection => {
+                query.contractAddress.push(collection.contractAddress);
+            });
+
+            const topSaleResult = await this.collectionItemModel
+                .find(query)
+                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
+                .limit(9)
+                .sort([['price', -1], ['lastUpdated', 1]]);
+            topSaleResult.forEach(f => {
+                response.push(Converter.ConvertCollectionItem(f, false));
+            });
+            return response;
+        }
+    }
+
+
     async getCollectionItemsByOwner(authToken: string) {
         const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
 
@@ -225,30 +274,14 @@ export class CollectionApiService {
             };
         });
 
-        const collectionItemResult = {
-            tokenId: collectionItem.tokenId,
-            tokenUri: collectionItem.tokenUri,
-            owner: collectionItem.owner,
-            price: collectionItem.price,
-            image: collectionItem.image,
-            rarity: collectionItem.rarity,
-            contractAddress: collectionItem.contractAddress,
-            collectionName: collectionItem.collectionName,
-            chainId: collectionItem.chainId,
-            chainName: 'Cronos',
-            coinSymbol: 'CRO',
-            visuals: collectionItem.visuals,
-            traits,
-            showPrice: true
-        };
-
+        let favourite = false;
         if (authToken) {
             const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
-            const userFavourites = await this.favouriteService.favoutires(userProfile);
-            collectionItemResult['favourite'] = userFavourites.filter(f => f.tokenId == collectionItemResult.tokenId).length > 0;
+            const userFavourites = await this.favouriteService.getFavoutireNftIdsByUserProfile(userProfile);
+            favourite = userFavourites.filter(f => f == collectionItem.tokenId).length > 0;
         }
 
-        return collectionItemResult;
+        return Converter.ConvertCollectionItem(collectionItem, favourite);
     }
 
     async getMintByCollection(collectionAddress: string) {
@@ -264,10 +297,10 @@ export class CollectionApiService {
     }
 
     async fillCollectionItemsFavourites(collectionItems: any, userProfile: UserProfile & Document) {
-        const userFavourites = await this.favouriteService.favoutires(userProfile);
+        const userFavourites = await this.favouriteService.getFavoutireNftIdsByUserProfile(userProfile);
         const favouriteCollectionItemsIds = new Set<number>();
         userFavourites.forEach(f => {
-            favouriteCollectionItemsIds.add(f.tokenId);
+            favouriteCollectionItemsIds.add(f);
         });
         collectionItems.forEach(f => {
             if (favouriteCollectionItemsIds.has(f.tokenId)) {
