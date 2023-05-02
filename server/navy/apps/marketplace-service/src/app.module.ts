@@ -82,9 +82,14 @@ export class AppModule implements NestModule {
       .forRoutes(
         { path: 'marketplace/auth/notifications', method: RequestMethod.GET },
         { path: 'marketplace/auth/notifications', method: RequestMethod.POST },
+        { path: 'marketplace/auth/favourites', method: RequestMethod.GET },
+        { path: 'marketplace/auth/favourites', method: RequestMethod.POST },
         { path: 'marketplace/auth/update', method: RequestMethod.POST },
         { path: 'marketplace/auth/logout', method: RequestMethod.POST },
-        { path: 'marketplace/auth/myNft', method: RequestMethod.GET }
+        { path: 'marketplace/auth/myNft', method: RequestMethod.GET },
+        { path: 'marketplace/auth/attachEmail', method: RequestMethod.GET },
+        { path: 'marketplace/auth/attachWallet', method: RequestMethod.GET },
+        { path: 'marketplace/auth/updatePassword', method: RequestMethod.GET },
       );
   }
 }
