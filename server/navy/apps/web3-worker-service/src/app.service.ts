@@ -22,6 +22,7 @@ export class AppService implements OnModuleInit {
     async onModuleInit() {
         const captainsCollection = await this.collectionModel.findOne({ name: 'Captains' }).populate('mint');
         this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection);
+        // await this.generateCaptainImages();
     }
 
     async generateNftImage(dto: GenerateNftImageDto) {
@@ -34,4 +35,9 @@ export class AppService implements OnModuleInit {
         }
     }
 
+    async generateCaptainImages() {
+        for (let i = 1; i < 21; i++) {
+            await this.nftCaptainGenerator.generateNft(i, 100, GenerateNftBehaviour.SAVE_LOCALLY);
+        }
+    }
 }

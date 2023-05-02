@@ -1,10 +1,5 @@
+import { MarketplaceState } from "../schemas/marketplace/schema.collection.item";
 import { NftType, Rarity } from "../shared-library.main";
-
-export enum MarketplaceNftsType {
-    LISTED,
-    SOLD,
-    NONE
-}
 
 export interface NftSubPartDetails {
     index: number;
@@ -20,7 +15,7 @@ export interface NftPartDetails {
 }
 
 export interface UpdateMarketplaceJob {
-    marketplaceNftsType: MarketplaceNftsType;
+    marketplaceState: MarketplaceState;
     nftType: NftType;
 }
 

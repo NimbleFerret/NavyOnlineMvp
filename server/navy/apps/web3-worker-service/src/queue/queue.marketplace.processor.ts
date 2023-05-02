@@ -16,7 +16,7 @@ import { NftType } from '@app/shared-library/shared-library.main';
 import { InjectModel } from '@nestjs/mongoose';
 import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
 import { CollectionItem, CollectionItemDocument, MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
-import { MarketplaceNftsType, UpdateMarketplaceJob, WorkersMarketplace } from "@app/shared-library/workers/workers.marketplace";
+import { UpdateMarketplaceJob, WorkersMarketplace } from "@app/shared-library/workers/workers.marketplace";
 import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { Model } from 'mongoose';
 
@@ -61,12 +61,12 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                 break;
         }
 
-        if (job.data.marketplaceNftsType == MarketplaceNftsType.NONE) {
+        if (job.data.marketplaceState == MarketplaceState.NONE) {
             await this.updateNfts(contractAddressAddress);
         } else {
             await this.updateSaleCollections(contractAddressAddress);
-            await this.getMarketplaceNfts(marketplaceContract, MarketplaceNftsType.LISTED);
-            await this.getMarketplaceNfts(marketplaceContract, MarketplaceNftsType.SOLD);
+            await this.getMarketplaceNfts(marketplaceContract, MarketplaceState.LISTED);
+            await this.getMarketplaceNfts(marketplaceContract, MarketplaceState.SOLD);
         }
     }
 
@@ -127,8 +127,8 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
         }
     }
 
-    private async getMarketplaceNfts(marketpalceContract: Contract, marketplaceNftsType: MarketplaceNftsType) {
-        const nfts = marketplaceNftsType == MarketplaceNftsType.LISTED ?
+    private async getMarketplaceNfts(marketpalceContract: Contract, marketplaceState: MarketplaceState) {
+        const nfts = marketplaceState == MarketplaceState.LISTED ?
             await marketpalceContract.getNftsListed() : await marketpalceContract.getNftsSold();
 
         const marketplaceNFTs: MarketplaceNFT[] = nfts.map(nft => {
@@ -177,7 +177,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                 model.image = nft.image;
                 model.lastUpdated = nft.lastUpdated;
                 model.contractAddress = nft.contractAddress;
-                model.marketplaceState = marketplaceNftsType == MarketplaceNftsType.LISTED ? MarketplaceState.LISTED : MarketplaceState.SOLD;
+                model.marketplaceState = marketplaceState == MarketplaceState.LISTED ? MarketplaceState.LISTED : MarketplaceState.SOLD;
                 model.chainId = '338';
                 await model.save();
             }
@@ -219,6 +219,6 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
     }
 
     private jobInfo(job: Job<UpdateMarketplaceJob>) {
-        return `${job.id} ${MarketplaceNftsType[job.data.marketplaceNftsType]} ${NftType[job.data.nftType]}`
+        return `${job.id} ${MarketplaceState[job.data.marketplaceState]} ${NftType[job.data.nftType]}`
     }
 }

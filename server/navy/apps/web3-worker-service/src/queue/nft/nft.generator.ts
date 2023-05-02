@@ -27,6 +27,7 @@ export abstract class NftGenerator {
     private moralisClient = new MoralisClient();
 
     constructor(public nftType: NftType, collection: Collection) {
+        // Convert initial data
         this.nftPartDetails = collection.mint.nftPartsItems.map(nftPartsItem => {
             const nftPartDetails = {
                 resPlural: nftPartsItem.categoryPlural,
@@ -46,16 +47,19 @@ export abstract class NftGenerator {
                     case 'Legendary':
                         rarity = Rarity.LEGENDARY;
                         break;
+                    case 'All':
+                        rarity = Rarity.ALL;
+                        break;
                 }
                 return {
                     chance: categoryDetails.chancePercent,
                     rarity
                 } as NftSubPartDetails;
             });
-
             return nftPartDetails;
         });
 
+        // Load image paths
         switch (nftType) {
             case NftType.CAPTAIN:
                 this.nftTypeName = 'captain';
@@ -68,6 +72,11 @@ export abstract class NftGenerator {
                 break;
         }
         this.initiateNftPartsImagePath();
+
+        // Sort nft parts by rarity
+        this.nftPartDetails.forEach(nftPart => {
+            nftPart.subParts = nftPart.subParts.sort(function (a, b) { return b.rarity - a.rarity });
+        });
     }
 
     public async initMoralis() {
@@ -80,65 +89,60 @@ export abstract class NftGenerator {
         const resultCanvas = createCanvas(72 * 2, 72 * 2);
         const resultContext = resultCanvas.getContext('2d');
 
+        // this.rarity = 1;
         this.rarity = SharedLibraryService.GenerateRarity();
 
-        // Sort subparts by rarity
-        this.nftPartDetails.forEach(nftPart => {
-            nftPart.subParts = nftPart.subParts.map(subPart => {
-                if (this.rarity >= subPart.rarity) {
-                    return subPart;
+        async function drawScaledImage(imagePartPath: string) {
+            const image = await loadImage(imagePartPath);
+            basicContext.drawImage(image, 0, 0, 72, 72);
+
+            let tX = 0;
+            let tY = 0;
+
+            for (let x = 0; x < 72; x++) {
+                for (let y = 0; y < 72; y++) {
+                    const pixelData = basicContext.getImageData(x, y, 1, 1);
+
+                    if (y > 0) {
+                        tY += 2;
+                    }
+
+                    resultContext.putImageData(pixelData, tX, tY);
+                    resultContext.putImageData(pixelData, tX, tY + 1);
+                    resultContext.putImageData(pixelData, tX + 1, tY);
+                    resultContext.putImageData(pixelData, tX + 1, tY + 1);
                 }
-            }).filter(f => f).sort(function (a, b) { return b.rarity - a.rarity });
-        });
+                if (x > 0) {
+                    tX += 2;
+                }
+                tY = 0;
+            }
+        }
 
         if (!predefinedNftParts) {
             for (const nftPart of this.nftPartDetails) {
-                // Draw each part randomly
                 const selectPercentageOptions: SelectPercentageOptions<NftSubPartDetails>[] = [];
 
-                // Select subpart within rarity by random chance
                 for (let index = 0; index < nftPart.subParts.length; index++) {
-                    const value = nftPart.subParts[index];
-                    const percentage = value.chance;
-                    if (index == 0 || selectPercentageOptions[0].value.rarity == nftPart.subParts[index].rarity) {
+                    if (nftPart.subParts[index].rarity === this.rarity || nftPart.subParts[index].rarity == Rarity.ALL) {
+                        const value = nftPart.subParts[index];
+                        const percentage = value.chance;
                         selectPercentageOptions.push({ value, percentage });
                     }
                 }
+
                 const nftPartToDraw = SharedLibraryService.SelectItemByPercentage(selectPercentageOptions);
-                this.nftPartsToDraw.push(nftPartToDraw);
-                const image = await loadImage(nftPartToDraw.filePath);
-                basicContext.drawImage(image, 0, 0, 72, 72);
+
+                if (nftPartToDraw) {
+                    this.nftPartsToDraw.push(nftPartToDraw);
+                    await drawScaledImage(nftPartToDraw.filePath);
+                }
             }
         } else {
             for (const predefinedNftPart of predefinedNftParts) {
                 const imageFilePath = this.nftImagesMap.get(predefinedNftPart.name)[predefinedNftPart.index - 1];
-                console.log(predefinedNftPart.name, predefinedNftPart.index, imageFilePath);
-
-                const image = await loadImage(imageFilePath);
-                basicContext.drawImage(image, 0, 0, 72, 72);
-
-                let tX = 0;
-                let tY = 0;
-
-                for (let x = 0; x < 72; x++) {
-                    for (let y = 0; y < 72; y++) {
-                        const pixelData = basicContext.getImageData(x, y, 1, 1);
-
-                        if (y > 0) {
-                            tY += 2;
-                        }
-
-                        resultContext.putImageData(pixelData, tX, tY);
-                        resultContext.putImageData(pixelData, tX, tY + 1);
-                        resultContext.putImageData(pixelData, tX + 1, tY);
-                        resultContext.putImageData(pixelData, tX + 1, tY + 1);
-                    }
-                    if (x > 0) {
-                        tX += 2;
-                    }
-                    tY = 0;
-                }
-            };
+                await drawScaledImage(imageFilePath);
+            }
         }
 
         // Upload image to the ipfs
@@ -170,10 +174,11 @@ export abstract class NftGenerator {
 
     private initiateNftPartsImagePath() {
         this.nftPartDetails.forEach(nftPart => {
-            for (let i = 1; i < nftPart.subParts.length + 1; i++) {
-                const nftPartFilePath = __dirname + `\\assets\\${this.nftTypeName}\\${nftPart.resPlural}\\${nftPart.resSingle}_${i}.png`;
-                nftPart.subParts[i - 1].filePath = nftPartFilePath;
-                nftPart.subParts[i - 1].index = i - 1;
+            for (let i = 0; i < nftPart.subParts.length; i++) {
+                const nftPartFilePath = __dirname + `\\assets\\${this.nftTypeName}\\${nftPart.resPlural}\\${nftPart.resSingle}_${i + 1}.png`;
+
+                nftPart.subParts[i].filePath = nftPartFilePath;
+                nftPart.subParts[i].index = i;
 
                 if (this.nftImagesMap.has(nftPart.resSingle)) {
                     this.nftImagesMap.get(nftPart.resSingle).push(nftPartFilePath);
