@@ -304,19 +304,7 @@ export class CollectionApiService {
     private convertCollectionItems(collectionItems: any, swapSeller = false) {
         const resultItems = [];
         collectionItems.forEach(r => {
-            const resultItem = {
-                tokenId: r.tokenId,
-                tokenUri: r.tokenUri,
-                owner: r.owner,
-                price: r.price,
-                image: r.image,
-                rarity: r.rarity,
-                lastUpdated: r.lastUpdated,
-                contractAddress: r.contractAddress,
-                collectionName: r.collectionName,
-                chainId: r.chainId,
-                marketplaceState: r.marketplaceState
-            };
+            const resultItem = Converter.ConvertCollectionItem(r, false);
             if (r.seller && swapSeller) {
                 resultItem.owner = r.seller;
             }
