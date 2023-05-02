@@ -31,10 +31,13 @@ export class FavouriteApiService {
     }
 
     async getFavoutireNftIdsByUserProfile(userProfile: UserProfile & Document) {
-        const favourites = await this.favouriteModel.find({ userProfile });
-        return favourites.map(f => {
-            return f.collectionItem.tokenId;
-        });
+        const favs = await this.getFavoutireNftByUserProfile(userProfile);
+        const collectionItemIds = [];
+        for (const fav of favs) {
+            const collectionItem = await this.collectionItemModel.findById(fav);
+            collectionItemIds.push(collectionItem.tokenId);
+        }
+        return collectionItemIds;
     }
 
     async favouritesAdd(authToken: string, dto: FavouriteDto) {
