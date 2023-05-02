@@ -264,16 +264,6 @@ export class CollectionApiService {
             tokenId
         }).select(['-_id', '-__v', '-needUpdate']);
 
-        const traits = (collectionItem.traits as any).map(f => {
-            if (f.value == '1') {
-                f.value = 'Ship damage bonus'
-            }
-            return {
-                trait_type: f.trait_type,
-                value: f.value
-            };
-        });
-
         let favourite = false;
         if (authToken) {
             const userProfile = await this.authService.checkTokenAndGetProfile(authToken);

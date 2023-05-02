@@ -18,6 +18,7 @@ export class Converter {
             collectionName: collectionItem.collectionName,
             chainId: collectionItem.chainId,
             marketplaceState: collectionItem.marketplaceState,
+            lastUpdated: collectionItem.lastUpdated,
             chainName: 'Cronos',
             coinSymbol: 'CRO',
             favourite
