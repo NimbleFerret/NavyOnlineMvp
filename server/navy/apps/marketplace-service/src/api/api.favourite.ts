@@ -2,6 +2,7 @@ import { CollectionItem, CollectionItemDocument, MarketplaceState } from "@app/s
 import { Favourite, FavouriteDocument } from "@app/shared-library/schemas/marketplace/schema.favourite";
 import { UserProfile } from "@app/shared-library/schemas/schema.user.profile";
 import { Converter } from "@app/shared-library/shared-library.converter";
+import { Utils } from "@app/shared-library/utils";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Document } from "mongoose";
@@ -46,7 +47,10 @@ export class FavouriteApiService {
             const collectionItem = Converter.ConvertCollectionItem(favouriteResult.collectionItem, true);
             return collectionItem;
         } else {
-            throw new HttpException('Already favourite', HttpStatus.BAD_GATEWAY);
+            throw new HttpException({
+                success: false,
+                reason: Utils.ERROR_ALREADY_FAVOURITE
+            }, HttpStatus.BAD_GATEWAY);
         }
     }
 
@@ -55,7 +59,10 @@ export class FavouriteApiService {
         if (favouriteResult.favourite) {
             await favouriteResult.favourite.delete();
         } else {
-            throw new HttpException('Item is not a favourite', HttpStatus.BAD_GATEWAY);
+            throw new HttpException({
+                success: false,
+                reason: Utils.ERROR_NOT_A_FAVOURITE
+            }, HttpStatus.BAD_GATEWAY);
         }
     }
 
@@ -70,7 +77,10 @@ export class FavouriteApiService {
                 collectionItem
             }
         } else {
-            throw new HttpException('No such collection item', HttpStatus.BAD_GATEWAY);
+            throw new HttpException({
+                success: false,
+                reason: Utils.ERROR_BAD_SIGNATURE
+            }, HttpStatus.BAD_REQUEST);
         }
     }
 
