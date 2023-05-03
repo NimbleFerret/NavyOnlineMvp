@@ -14,8 +14,6 @@ export class AppService implements OnModuleInit {
 
   public static readonly DefaultPaginationSize = 24;
 
-  private fixtureLoader: FixtureLoader;
-
   constructor(
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
@@ -26,8 +24,8 @@ export class AppService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    this.fixtureLoader = new FixtureLoader(this.projectModel, this.collectionModel, this.mintModel, this.collectionItemModel, this.faqModel, this.favouriteModel);
-    await this.fixtureLoader.loadFixtures();
+    const fixtureLoader = new FixtureLoader(this.projectModel, this.collectionModel, this.mintModel, this.collectionItemModel, this.faqModel, this.favouriteModel);
+    await fixtureLoader.loadFixtures();
   }
 
 }

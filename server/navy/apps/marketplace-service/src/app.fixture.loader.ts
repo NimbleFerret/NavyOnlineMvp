@@ -2,26 +2,21 @@ import { SharedLibraryService } from "@app/shared-library";
 import { CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { FaqDocument } from "@app/shared-library/schemas/marketplace/schema.faq";
-import { FavouriteDocument } from "@app/shared-library/schemas/marketplace/schema.favourite";
 import { MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
 import { ProjectDocument } from "@app/shared-library/schemas/marketplace/schema.project";
-import { Logger } from "@nestjs/common";
+import { FileUtils } from "@app/shared-library/shared-library.file.utils";
 import { Model } from "mongoose";
-import { join } from "path";
-
-const fs = require('fs');
 
 export class FixtureLoader {
 
-    private readonly reloadCollectionItems = false;
+    private readonly reloadCollectionItems = true;
 
     constructor(
         private projectModel: Model<ProjectDocument>,
         private collectionModel: Model<CollectionDocument>,
         private mintModel: Model<MintDocument>,
         private collectionItemModel: Model<CollectionItemDocument>,
-        private faqModel: Model<FaqDocument>,
-        private favouriteModel: Model<FavouriteDocument>) {
+        private faqModel: Model<FaqDocument>) {
     }
 
     async loadFixtures() {
@@ -29,14 +24,16 @@ export class FixtureLoader {
         await this.loadFaq();
         if (this.reloadCollectionItems) {
             await this.collectionItemModel.deleteMany();
-            await this.loadTopSales();
+            await this.loadTopSales('captains', '0x61a03eed4c0220bb6ee89b0cda10dc171f772577');
+            await this.loadTopSales('ships', '0x61a03eed4c0220bb6ee89b0cda10dc171f772578');
+            await this.loadTopSales('islands', '0x61a03eed4c0220bb6ee89b0cda10dc171f772579');
         }
     }
 
     private async loadProjects() {
-        const projectDetails = await this.projectModel.findOne();
-        if (!projectDetails) {
-            this.loadFixture('1_projects.json', async (fixtures: any) => {
+        const projectCount = await this.projectModel.count();
+        if (projectCount == 0) {
+            FileUtils.LoadFixture('marketplace-service', '1_projects.json', async (fixtures: any) => {
                 const fixture = fixtures[0];
                 const project = new this.projectModel();
                 project.name = fixture.name;
@@ -44,7 +41,7 @@ export class FixtureLoader {
                 project.state = fixture.state;
                 project.supportedChains = fixture.supportedChains;
 
-                this.loadFixture('2_collections.json', async (fixtures: any) => {
+                FileUtils.LoadFixture('marketplace-service', '2_collections.json', async (fixtures: any) => {
                     const collections = [new this.collectionModel(), new this.collectionModel()];
 
                     for (let i = 0; i < fixtures.length; i++) {
@@ -57,7 +54,7 @@ export class FixtureLoader {
                         collections[i].preview = fixtures[i].preview;
                     }
 
-                    this.loadFixture('3_mints.json', async (fixtures: any) => {
+                    FileUtils.LoadFixture('marketplace-service', '3_mints.json', async (fixtures: any) => {
                         for (let i = 0; i < fixtures.length; i++) {
                             const mint = new this.mintModel();
 
@@ -102,7 +99,7 @@ export class FixtureLoader {
                 });
             });
 
-            this.loadFixture('4_collection_items.json', async (fixtures: any) => {
+            FileUtils.LoadFixture('marketplace-service', '4_collection_items.json', async (fixtures: any) => {
                 for (let i = 0; i < fixtures.length; i++) {
                     const collectionItem = new this.collectionItemModel();
                     collectionItem.id = fixtures[i].id;
@@ -126,12 +123,14 @@ export class FixtureLoader {
         }
     }
 
-    private async loadTopSales() {
+    private async loadTopSales(collectionName: string, contractAddress: string) {
         const nowTimeSeconds = Number(Number(Date.now() / 1000).toFixed(0));
         const daySeconds = 24 * 60 * 60;
         const itemIdPrefix = '0x61a03eed4c0220bb6ee89b0cda10dc171f772577_';
         let nextId = 54;
         let nextTimeSeconds = nowTimeSeconds;
+        let imageIndex = 1;
+
         const defaultCollectionItem = {
             needUpdate: false,
             id: itemIdPrefix,
@@ -140,13 +139,13 @@ export class FixtureLoader {
             seller: "0xe6193b058bbd559e8e0df3a48202a3cdec852ab6",
             owner: "0x89DBad2C15A2fCEd932aEf71C2F798fD86B1349F".toLowerCase(),
             price: 10,
-            image: "https://ipfs.moralis.io:2053/ipfs/QmVVqX2G1Rct5oCXqmCw3SeG3fzR6moJgtEVJs2QBoCbXX/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.png",
+            image: "https://navy.online/marketplace/static/assets/captain/captain" + imageIndex + ".png",
             rarity: "Common",
             lastUpdated: 0,
             visuals: [],
             traits: [],
-            contractAddress: "0x61a03eed4c0220bb6ee89b0cda10dc171f772577",
-            collectionName: "captains",
+            contractAddress,
+            collectionName,
             marketplaceState: 1,
             chainId: "338"
         };
@@ -195,6 +194,7 @@ export class FixtureLoader {
             defaultCollectionItem.lastUpdated = nextTimeSeconds;
             defaultCollectionItem.visuals = generateCaptainVisuals();
             defaultCollectionItem.traits = generateCaptainTraits();
+            defaultCollectionItem.image = "https://navy.online/marketplace/static/assets/captain/captain" + imageIndex + ".png";
 
             let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
             let priceFloat = SharedLibraryService.GetRandomIntInRange(0, 1);
@@ -217,6 +217,7 @@ export class FixtureLoader {
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
+            imageIndex++;
             nextId++;
             nextTimeSeconds -= 60 * 30;
         }
@@ -232,6 +233,7 @@ export class FixtureLoader {
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
+            imageIndex++;
             nextId++;
             nextTimeSeconds -= (60 * 60) * 10;
         }
@@ -247,6 +249,7 @@ export class FixtureLoader {
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
+            imageIndex++;
             nextId++;
             nextTimeSeconds -= daySeconds;
         }
@@ -255,7 +258,7 @@ export class FixtureLoader {
     private async loadFaq() {
         const faq = await this.faqModel.findOne();
         if (!faq) {
-            this.loadFixture('5_faq.json', async (fixtures: any) => {
+            FileUtils.LoadFixture('marketplace-service', '5_faq.json', async (fixtures: any) => {
                 const newFaq = new this.faqModel();
                 const questionsAndAnswers = [];
                 for (const fixture of fixtures) {
@@ -267,20 +270,6 @@ export class FixtureLoader {
         }
     }
 
-    private loadFixture(fixtureName: string, callback: Function) {
-        try {
-            fs.readFile(join(__dirname, '..', 'marketplace-service') + '/fixtures/' + fixtureName, async (error: any, data: any) => {
-                if (error) {
-                    Logger.error('Unable to load ' + fixtureName + ' fixture!', error);
-                } else {
-                    const fixture = JSON.parse(data);
-                    Logger.log(fixtureName + ' loaded!');
-                    callback(fixture);
-                }
-            });
-        } catch (error) {
-            Logger.error('Unable to load ' + fixtureName + ' fixture!', error);
-        }
-    }
+
 
 }

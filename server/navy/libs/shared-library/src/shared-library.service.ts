@@ -80,4 +80,13 @@ export class SharedLibraryService {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    public static GetRandomIntInRangeExcept(min: number, max: number, except: number[]) {
+        const result = SharedLibraryService.GetRandomIntInRange(min, max);
+        if (except.includes(result)) {
+            return SharedLibraryService.GetRandomIntInRangeExcept(min, max, except);
+        } else {
+            return result;
+        }
+    }
+
 }
