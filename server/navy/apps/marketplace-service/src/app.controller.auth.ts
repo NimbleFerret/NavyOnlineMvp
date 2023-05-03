@@ -28,13 +28,13 @@ export class AppControllerAuth {
   @Post('signUp')
   @HttpCode(200)
   async signUp(@Body() request: SignUpRequest) {
-    return this.authService.signUp(request);
+    return this.authService.signInOrUp(false, request);
   }
 
   @Post('signIn')
   @HttpCode(200)
   async signIn(@Body() request: SignUpRequest) {
-    return this.authService.signIn(request);
+    return this.authService.signInOrUp(true, request);
   }
 
   @Post('attachEmail')

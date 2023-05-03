@@ -35,7 +35,7 @@ export class AuthApiService {
     // Public api
     // ------------------------------------------------
 
-    async signUp(request: SignUpRequest) {
+    async signInOrUp(signIn: boolean, request: SignUpRequest) {
         const response = {
             success: true
         };
@@ -45,87 +45,66 @@ export class AuthApiService {
 
         if (request.ethAddress && request.signedMessage) {
             await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
-            const signUpResult = await this.trySignUp(request);
-            if (!signUpResult.success) {
-                response.success = false;
-                response['ethAddress'] = request.ethAddress;
-                reason = signUpResult.reason;
-                httpStatus = HttpStatus.BAD_REQUEST;
-            } else {
-                const issueTokenResult = await this.issueToken(signUpResult.userId);
-                response['token'] = issueTokenResult.token;
-            }
-        } else if (request.email && request.password) {
-            const signUpResult = await this.trySignUp(request);
-            if (!signUpResult.success) {
-                response.success = false;
-                response['email'] = request.email;
-                reason = signUpResult.reason;
-                httpStatus = HttpStatus.BAD_REQUEST;
-            } else {
-                const issueTokenResult = await this.issueToken(signUpResult.userId);
-                response['token'] = issueTokenResult.token;
-            }
-        } else {
-            response.success = false;
-            reason = Utils.ERROR_BAD_PARAMS;
-            httpStatus = HttpStatus.BAD_REQUEST;
-        }
-
-        if (!response.success) {
-            throw new HttpException({
-                success: false,
-                reason
-            }, httpStatus);
-        }
-
-        return response;
-    }
-
-    async signIn(request: SignUpRequest) {
-        const response = {
-            success: false
-        };
-
-        let reason = undefined;
-        let httpStatus = undefined;
-
-        if (request.ethAddress && request.signedMessage) {
-            await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
-            const userProfile = await this.userProfileModel.findOne({ ethAddress: request.ethAddress });
-            if (userProfile) {
-                const issueTokenResult = await this.issueToken(userProfile.id);
-                response.success = true;
-                response['token'] = issueTokenResult.token;
-                response['ethAddress'] = request.ethAddress;
-                if (userProfile.email) {
-                    response['email'] = userProfile.email;
-                }
-            } else {
-                response.success = false;
-                reason = Utils.ERROR_WALLET_NOT_FOUND;
-                httpStatus = HttpStatus.BAD_REQUEST;
-            }
-        } else if (request.email && request.password) {
-            const userProfile = await this.userProfileModel.findOne({ email: request.email });
-            if (userProfile) {
-                if (userProfile.password == request.password) {
+            if (signIn) {
+                const userProfile = await this.userProfileModel.findOne({ ethAddress: request.ethAddress });
+                if (userProfile) {
                     const issueTokenResult = await this.issueToken(userProfile.id);
                     response.success = true;
                     response['token'] = issueTokenResult.token;
-                    response['email'] = request.email;
+                    response['ethAddress'] = request.ethAddress;
                     if (userProfile.email) {
-                        response['ethAddress'] = userProfile.ethAddress;
+                        response['email'] = userProfile.email;
                     }
                 } else {
                     response.success = false;
-                    reason = Utils.ERROR_BAD_EMAIL_OR_PASSWORD;
+                    reason = Utils.ERROR_WALLET_NOT_FOUND;
                     httpStatus = HttpStatus.BAD_REQUEST;
                 }
             } else {
-                response.success = false;
-                reason = Utils.ERROR_EMAIL_NOT_FOUND;
-                httpStatus = HttpStatus.BAD_REQUEST;
+                const signUpResult = await this.trySignUp(request);
+                if (!signUpResult.success) {
+                    response.success = false;
+                    response['ethAddress'] = request.ethAddress;
+                    reason = signUpResult.reason;
+                    httpStatus = HttpStatus.BAD_REQUEST;
+                } else {
+                    const issueTokenResult = await this.issueToken(signUpResult.userId);
+                    response['token'] = issueTokenResult.token;
+                }
+            }
+        } else if (request.email && request.password) {
+            if (signIn) {
+                const userProfile = await this.userProfileModel.findOne({ email: request.email });
+                if (userProfile) {
+                    if (userProfile.password == request.password) {
+                        const issueTokenResult = await this.issueToken(userProfile.id);
+                        response.success = true;
+                        response['token'] = issueTokenResult.token;
+                        response['email'] = request.email;
+                        if (userProfile.email) {
+                            response['ethAddress'] = userProfile.ethAddress;
+                        }
+                    } else {
+                        response.success = false;
+                        reason = Utils.ERROR_BAD_EMAIL_OR_PASSWORD;
+                        httpStatus = HttpStatus.BAD_REQUEST;
+                    }
+                } else {
+                    response.success = false;
+                    reason = Utils.ERROR_EMAIL_NOT_FOUND;
+                    httpStatus = HttpStatus.BAD_REQUEST;
+                }
+            } else {
+                const signUpResult = await this.trySignUp(request);
+                if (!signUpResult.success) {
+                    response.success = false;
+                    response['email'] = request.email;
+                    reason = signUpResult.reason;
+                    httpStatus = HttpStatus.BAD_REQUEST;
+                } else {
+                    const issueTokenResult = await this.issueToken(signUpResult.userId);
+                    response['token'] = issueTokenResult.token;
+                }
             }
         } else {
             response.success = false;
@@ -214,6 +193,7 @@ export class AuthApiService {
 
         userProfile.password = dto.newPassword;
         await userProfile.save();
+
         return {
             success: true
         }
@@ -225,19 +205,15 @@ export class AuthApiService {
         await userProfile.save();
     }
 
-    async verifyToken(request: VerifyTokenRequest, profileToken?: string) {
+    async verifyToken(userAuthToken: string) {
         try {
-            let authToken = '';
-            if (profileToken) {
-                authToken = profileToken;
-            } else {
-                const userProfile = await this.getUserProfileByAuthToken(request.token);
-                authToken = userProfile.authToken;
-            }
+            const userProfile = await this.getUserProfileByAuthToken(userAuthToken);
+            const authToken = userProfile.authToken;
             if (authToken && authToken.length > 0) {
                 jwt.verify(authToken, this.jwtSecret);
                 return {
-                    success: true
+                    success: true,
+                    userProfile
                 }
             } else {
                 return {
@@ -252,9 +228,9 @@ export class AuthApiService {
     }
 
     public async checkTokenAndGetProfile(authToken: string) {
-        const userProfile = await this.getUserProfileByAuthToken(authToken);
-        if (userProfile && this.verifyToken({ token: userProfile.authToken })) {
-            return userProfile;
+        const result = await this.verifyToken(authToken);
+        if (result && result.success && result.userProfile) {
+            return result.userProfile;
         } else {
             throw new HttpException('Bad auth', HttpStatus.UNAUTHORIZED);
         }

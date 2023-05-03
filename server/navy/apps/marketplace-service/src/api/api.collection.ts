@@ -74,6 +74,10 @@ export class CollectionApiService {
         } else if (marketplaceState == MarketplaceState.SOLD) {
             nftType = 'sold';
             query['marketplaceState'] = marketplaceState;
+        } else {
+            query['marketplaceState'] = {
+                "$ne": MarketplaceState.SOLD
+            }
         }
 
         const count = await this.collectionItemModel.countDocuments(query);
