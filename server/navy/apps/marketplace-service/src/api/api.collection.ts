@@ -86,23 +86,11 @@ export class CollectionApiService {
         // Query collection items
         // ----------------------------------
 
-        const self = this;
-        async function databaseQuery(sortCriteria: string) {
-            const criteria = {
-                contractAddress: contractAddress.toLowerCase()
-            };
-            if (rarityCheck) {
-                criteria['rarity'] = rarity;
-            }
-            return await self.collectionItemModel
-                .find(criteria)
-                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
-                .skip((page - 1) * pageSize)
-                .limit(pageSize)
-                .sort([['marketplaceState', 1], [sortCriteria, -1]]);
-        }
-
-        const result = await databaseQuery(marketplaceState == MarketplaceState.NONE ? 'tokenId' : 'lastUpdated');
+        const result = await this.collectionItemModel.find(query)
+            .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
+            .skip((page - 1) * pageSize)
+            .limit(pageSize)
+            .sort([['marketplaceState', 1], [marketplaceState == MarketplaceState.NONE ? 'tokenId' : 'lastUpdated', -1]]);
 
         // ----------------------------------
         // Prepare paginated response
