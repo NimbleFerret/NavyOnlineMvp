@@ -17,7 +17,7 @@ export class AuthMiddleware implements NestMiddleware {
         if (req.headers.authorization) {
             const authHeader = req.headers.authorization.split(' ');
             if (authHeader.length == 2 && authHeader[0] == 'Bearer') {
-                const result2 = await this.authApiService.verifyToken({ token: authHeader[1] });
+                const result2 = await this.authApiService.verifyToken(authHeader[1]);
                 if (result2.success) {
                     res.statusCode = 200;
                 }
