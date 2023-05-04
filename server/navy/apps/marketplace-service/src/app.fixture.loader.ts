@@ -194,7 +194,16 @@ export class FixtureLoader {
             defaultCollectionItem.lastUpdated = nextTimeSeconds;
             defaultCollectionItem.visuals = generateCaptainVisuals();
             defaultCollectionItem.traits = generateCaptainTraits();
-            defaultCollectionItem.image = "https://navy.online/marketplace/static/assets/captain/captain" + imageIndex + ".png";
+
+            if (collectionName == 'captains') {
+                defaultCollectionItem.image = "https://navy.online/marketplace/static/assets/captain/captain" + imageIndex + ".png";
+            }
+            if (collectionName == 'ships') {
+                defaultCollectionItem.image = "https://navy.online/marketplace/static/assets/ship/ship" + imageIndex + ".png";
+            }
+            if (collectionName == 'islands') {
+                defaultCollectionItem.image = "https://navy.online/marketplace/static/assets/island/island" + imageIndex + ".png";
+            }
 
             let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
             let priceFloat = SharedLibraryService.GetRandomIntInRange(0, 1);
@@ -209,15 +218,22 @@ export class FixtureLoader {
 
         // Today sells
         for (let i = 0; i < 20; i++) {
-            const soldCollectionItem = newCollectionItem();
-            soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
-            await new this.collectionItemModel(soldCollectionItem).save();
+            if (collectionName == 'captains') {
+                const soldCollectionItem = newCollectionItem();
+                soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
+                await new this.collectionItemModel(soldCollectionItem).save();
+            }
 
             const ownedCollectionItem = newCollectionItem();
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
-            imageIndex++;
+            if (collectionName != 'islands') {
+                imageIndex++;
+            }
+            if (imageIndex == 4 && collectionName == 'ships') {
+                imageIndex = 1;
+            }
             nextId++;
             nextTimeSeconds -= 60 * 30;
         }
@@ -225,15 +241,22 @@ export class FixtureLoader {
 
         // 7d
         for (let i = 0; i < 20; i++) {
-            const soldCollectionItem = newCollectionItem();
-            soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
-            await new this.collectionItemModel(soldCollectionItem).save();
+            if (collectionName == 'captains') {
+                const soldCollectionItem = newCollectionItem();
+                soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
+                await new this.collectionItemModel(soldCollectionItem).save();
+            }
 
             const ownedCollectionItem = newCollectionItem();
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
-            imageIndex++;
+            if (collectionName != 'islands') {
+                imageIndex++;
+            }
+            if (imageIndex == 4 && collectionName == 'ships') {
+                imageIndex = 1;
+            }
             nextId++;
             nextTimeSeconds -= (60 * 60) * 10;
         }
@@ -241,15 +264,22 @@ export class FixtureLoader {
 
         // 30d 
         for (let i = 0; i < 20; i++) {
-            const soldCollectionItem = newCollectionItem();
-            soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
-            await new this.collectionItemModel(soldCollectionItem).save();
+            if (collectionName == 'captains') {
+                const soldCollectionItem = newCollectionItem();
+                soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
+                await new this.collectionItemModel(soldCollectionItem).save();
+            }
 
             const ownedCollectionItem = newCollectionItem();
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
-            imageIndex++;
+            if (collectionName != 'islands') {
+                imageIndex++;
+            }
+            if (imageIndex == 4 && collectionName == 'ships') {
+                imageIndex = 1;
+            }
             nextId++;
             nextTimeSeconds -= daySeconds;
         }
