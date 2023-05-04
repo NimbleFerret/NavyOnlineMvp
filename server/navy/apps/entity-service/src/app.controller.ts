@@ -1,12 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
+import { EntityServiceName, GetRandomCaptainTraitRequest } from '@app/shared-library/gprc/grpc.entity.service';
+import { Controller } from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
 import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @GrpcMethod(EntityServiceName)
+  getRandomCaptainTrait(request: GetRandomCaptainTraitRequest) {
+    return this.appService.getRandomCaptainTrait(request);
   }
 }

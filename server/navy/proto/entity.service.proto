@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package entityservice;
+
+service EntityService {
+  rpc GetRandomCaptainTrait (GetRandomCaptainTraitRequest) returns (GetRandomCaptainTraitResponse);
+}
+
+//-----------------------------
+// GetRandomCaptainTrait
+//-----------------------------
+
+message CaptainTrait {
+  int32 index = 1;
+  string description = 2;
+  string bonusType = 3;
+  repeated string shipStatsAffected = 4;
+}
+
+message GetRandomCaptainTraitRequest {
+    repeated int32 excludeIds = 1;
+    int32 count = 2;
+}
+
+message GetRandomCaptainTraitResponse {
+  repeated CaptainTrait traits = 1;
+}
