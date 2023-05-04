@@ -24,9 +24,9 @@ export class FixtureLoader {
         await this.loadFaq();
         if (this.reloadCollectionItems) {
             await this.collectionItemModel.deleteMany();
-            await this.loadTopSales('captains', '0x61a03eed4c0220bb6ee89b0cda10dc171f772577');
-            await this.loadTopSales('ships', '0x61a03eed4c0220bb6ee89b0cda10dc171f772578');
-            await this.loadTopSales('islands', '0x61a03eed4c0220bb6ee89b0cda10dc171f772579');
+            await this.loadTopSales('captains', '0x7e77efa1050aac8e12bee238c596d1561231e2ed');
+            await this.loadTopSales('ships', '0x7e77efa1050aac8e12bee238c596d1561231e2ee');
+            await this.loadTopSales('islands', '0x7e77efa1050aac8e12bee238c596d1561231e2ef');
         }
     }
 
