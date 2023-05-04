@@ -99,6 +99,9 @@ export abstract class NftGenerator {
             let tY = 0;
 
             for (let x = 0; x < 72; x++) {
+                if (x > 0) {
+                    tX += 2;
+                }
                 for (let y = 0; y < 72; y++) {
                     const pixelData = basicContext.getImageData(x, y, 1, 1);
 
@@ -110,9 +113,6 @@ export abstract class NftGenerator {
                     resultContext.putImageData(pixelData, tX, tY + 1);
                     resultContext.putImageData(pixelData, tX + 1, tY);
                     resultContext.putImageData(pixelData, tX + 1, tY + 1);
-                }
-                if (x > 0) {
-                    tX += 2;
                 }
                 tY = 0;
             }

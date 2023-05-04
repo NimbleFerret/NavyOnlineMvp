@@ -42,7 +42,7 @@ export class AppService implements OnModuleInit {
 
     async generateCaptainImages() {
         for (let i = 1; i < 2; i++) {
-            console.log(await this.nftCaptainGenerator.generateNft(i, 100, GenerateNftBehaviour.MORALIS_UPLOAD));
+            console.log(await this.nftCaptainGenerator.generateNft(i, 100, GenerateNftBehaviour.SAVE_LOCALLY));
         }
     }
 }
