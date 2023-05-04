@@ -248,10 +248,9 @@ export class FixtureLoader {
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
+            imageIndex++;
             if (imageIndex == 4 && collectionName == 'ships' || imageIndex == 7 && collectionName == 'islands') {
                 imageIndex = 1;
-            } else {
-                imageIndex++;
             }
             nextId++;
             nextTimeSeconds -= 60 * 30;
@@ -270,10 +269,9 @@ export class FixtureLoader {
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
+            imageIndex++;
             if (imageIndex == 4 && collectionName == 'ships' || imageIndex == 7 && collectionName == 'islands') {
                 imageIndex = 1;
-            } else {
-                imageIndex++;
             }
             nextId++;
             nextTimeSeconds -= (60 * 60) * 10;
@@ -292,10 +290,9 @@ export class FixtureLoader {
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
+            imageIndex++;
             if (imageIndex == 4 && collectionName == 'ships' || imageIndex == 7 && collectionName == 'islands') {
                 imageIndex = 1;
-            } else {
-                imageIndex++;
             }
             nextId++;
             nextTimeSeconds -= daySeconds;
