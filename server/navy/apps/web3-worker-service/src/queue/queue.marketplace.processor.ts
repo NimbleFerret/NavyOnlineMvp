@@ -116,6 +116,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                             model.tokenUri = nftUri;
                             model.owner = nftOwner;
                             model.image = body.image;
+                            model.traits = body.attributes[0];
                             model.contractAddress = contractAddress;
                             model.marketplaceState = MarketplaceState.NONE;
                             model.chainId = '338';
@@ -184,8 +185,8 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
         }
     }
 
-    private async updateSaleCollections(address: string) {
-        const collection = await this.collectionModel.findOne({ address }).populate('mint');
+    private async updateSaleCollections(contractAddress: string) {
+        const collection = await this.collectionModel.findOne({ contractAddress }).populate('mint');
         if (collection && collection.collectionItemsLeft > 0) {
             let tokensLeft = 0;
             if (collection.name == 'Captains') {
@@ -193,7 +194,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
             }
             if (tokensLeft > 0) {
                 collection.collectionItemsLeft = tokensLeft;
-                collection.save();
+                await collection.save();
 
                 const collectionMint = await this.mintModel.findById(collection.mint);
                 if (collectionMint) {
@@ -204,7 +205,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                 }
             }
         } else {
-            Logger.error('Unable to update collection tokens. Collection name: ' + address);
+            Logger.error('Unable to update collection tokens. Collection name: ' + contractAddress);
         }
     }
 

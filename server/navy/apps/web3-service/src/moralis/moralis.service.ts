@@ -9,9 +9,9 @@ import { IslandEntity } from "@app/shared-library/entities/entity.island";
 import { ShipEntity } from "@app/shared-library/entities/entity.ship";
 import { AssetType, IslandSize, Rarity, ShipSize, Terrain } from "@app/shared-library/shared-library.main";
 import { GetAndSyncUserAssetsResponse } from "@app/shared-library/gprc/grpc.web3.service";
-import { Ship, ShipDocument } from "@app/shared-library/schemas/schema.ship";
-import { Captain, CaptainDocument } from "@app/shared-library/schemas/schema.captain";
-import { Island, IslandDocument } from "@app/shared-library/schemas/schema.island";
+// import { Ship, ShipDocument } from "@app/shared-library/schemas/schema.ship";
+// import { Captain, CaptainDocument } from "@app/shared-library/schemas/schema.captain";
+// import { Island, IslandDocument } from "@app/shared-library/schemas/schema.island";
 import { WorldService, WorldServiceGrpcClientName, WorldServiceName } from "@app/shared-library/gprc/grpc.world.service";
 import { lastValueFrom } from "rxjs";
 import { UserAvatar, UserAvatarDocument } from "@app/shared-library/schemas/schema.user.avatar";
@@ -31,9 +31,9 @@ export class MoralisService implements OnModuleInit {
 
     constructor(
         @Inject(WorldServiceGrpcClientName) private readonly worldServiceGrpcClient: ClientGrpc,
-        @InjectModel(Captain.name) private captainModel: Model<CaptainDocument>,
-        @InjectModel(Ship.name) private shipModel: Model<ShipDocument>,
-        @InjectModel(Island.name) private islandModel: Model<IslandDocument>,
+        // @InjectModel(Captain.name) private captainModel: Model<CaptainDocument>,
+        // @InjectModel(Ship.name) private shipModel: Model<ShipDocument>,
+        // @InjectModel(Island.name) private islandModel: Model<IslandDocument>,
         @InjectModel(UserAvatar.name) private userAvatarModel: Model<UserAvatarDocument>,
         @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>
     ) {
