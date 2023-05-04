@@ -200,9 +200,29 @@ export class FixtureLoader {
             }
             if (collectionName == 'ships') {
                 defaultCollectionItem.image = "https://navy.online/marketplace/static/assets/ship/ship" + imageIndex + ".png";
+
+                if (imageIndex == 1) {
+                    defaultCollectionItem.rarity = 'Epic';
+                }
+                if (imageIndex == 2) {
+                    defaultCollectionItem.rarity = 'Rare';
+                }
+                if (imageIndex == 3) {
+                    defaultCollectionItem.rarity = 'Common';
+                }
             }
             if (collectionName == 'islands') {
                 defaultCollectionItem.image = "https://navy.online/marketplace/static/assets/island/island" + imageIndex + ".png";
+
+                if (imageIndex == 1) {
+                    defaultCollectionItem.rarity = 'Legendary';
+                } else if (imageIndex == 2) {
+                    defaultCollectionItem.rarity = 'Epic';
+                } else if (imageIndex == 3 || imageIndex == 6) {
+                    defaultCollectionItem.rarity = 'Rare';
+                } else if (imageIndex == 1) {
+                    defaultCollectionItem.rarity = 'Common';
+                }
             }
 
             let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
@@ -228,11 +248,10 @@ export class FixtureLoader {
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
-            if (collectionName != 'islands') {
-                imageIndex++;
-            }
-            if (imageIndex == 4 && collectionName == 'ships') {
+            if (imageIndex == 4 && collectionName == 'ships' || imageIndex == 7 && collectionName == 'islands') {
                 imageIndex = 1;
+            } else {
+                imageIndex++;
             }
             nextId++;
             nextTimeSeconds -= 60 * 30;
@@ -251,11 +270,10 @@ export class FixtureLoader {
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
-            if (collectionName != 'islands') {
-                imageIndex++;
-            }
-            if (imageIndex == 4 && collectionName == 'ships') {
+            if (imageIndex == 4 && collectionName == 'ships' || imageIndex == 7 && collectionName == 'islands') {
                 imageIndex = 1;
+            } else {
+                imageIndex++;
             }
             nextId++;
             nextTimeSeconds -= (60 * 60) * 10;
@@ -274,11 +292,10 @@ export class FixtureLoader {
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
-            if (collectionName != 'islands') {
-                imageIndex++;
-            }
-            if (imageIndex == 4 && collectionName == 'ships') {
+            if (imageIndex == 4 && collectionName == 'ships' || imageIndex == 7 && collectionName == 'islands') {
                 imageIndex = 1;
+            } else {
+                imageIndex++;
             }
             nextId++;
             nextTimeSeconds -= daySeconds;
