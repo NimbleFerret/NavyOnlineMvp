@@ -28,10 +28,10 @@ export class AppService implements OnModuleInit {
     await fixtureLoader.loadFixtures();
 
     const captainSettings = await this.captainSettingsModel.findOne();
-    this.commonCaptainTraits - captainSettings.commonCaptainDefaultTraits;
-    this.rareCaptainTraits - captainSettings.rareCaptainDefaultTraits;
-    this.epicCaptainTraits - captainSettings.epicCaptainDefaultTraits;
-    this.legendaryCaptainTraits - captainSettings.legendaryCaptainDefaultTraits;
+    this.commonCaptainTraits = captainSettings.commonCaptainDefaultTraits;
+    this.rareCaptainTraits = captainSettings.rareCaptainDefaultTraits;
+    this.epicCaptainTraits = captainSettings.epicCaptainDefaultTraits;
+    this.legendaryCaptainTraits = captainSettings.legendaryCaptainDefaultTraits;
 
     this.traitsCount = await this.captainTraitModel.count();
 
@@ -78,7 +78,6 @@ export class AppService implements OnModuleInit {
         traits = this.rareCaptainTraits;
         break;
     }
-
     return await this.getRandomCaptainTrait({
       count: traits,
       excludeIds: []

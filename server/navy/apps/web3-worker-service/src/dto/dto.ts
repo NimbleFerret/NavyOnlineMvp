@@ -5,6 +5,6 @@ export interface NftPart {
 
 export interface GenerateNftImageDto {
     collectionName: string,
-    index: number,
+    amount: number,
     nftParts?: NftPart[]
 }

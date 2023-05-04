@@ -8,6 +8,7 @@ import * as CollectionSale from '../abi/CollectionSale.json';
 import * as Marketplace from '../abi/Marketplace.json';
 import {
     Injectable,
+    Logger,
     OnModuleInit
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
@@ -21,12 +22,9 @@ import {
 } from '@app/shared-library/gprc/grpc.web3.service';
 import { EthersProvider } from '@app/shared-library/ethers/ethers.provider';
 import { MintJob, WorkersMint } from '@app/shared-library/workers/workers.mint';
-import { MarketplaceNftsType, UpdateMarketplaceJob, WorkersMarketplace } from '@app/shared-library/workers/workers.marketplace';
+import { UpdateMarketplaceJob, WorkersMarketplace } from '@app/shared-library/workers/workers.marketplace';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
-import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 
 @Injectable()
 export class BlockchainService implements OnModuleInit {
@@ -34,8 +32,6 @@ export class BlockchainService implements OnModuleInit {
     private readonly ethersProvider = new EthersProvider();
 
     constructor(
-        @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
-        @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
         @InjectQueue(WorkersMarketplace.UpdateMarketplaceQueue) private readonly updateMarketplaceQueue: Queue,
         @InjectQueue(WorkersMint.MintQueue) private readonly mintQueue: Queue) { }
 
@@ -55,6 +51,7 @@ export class BlockchainService implements OnModuleInit {
         await this.syncNftContracts();
 
         this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
+            Logger.log(`Captains mint occured! sender: ${sender}, contractAddress: ${contractAddress}`);
             this.mintQueue.add({
                 nftType: NftType.CAPTAIN,
                 sender,
@@ -75,7 +72,7 @@ export class BlockchainService implements OnModuleInit {
     async syncSaleContracts() {
         this.updateMarketplaceQueue.empty();
         this.updateMarketplaceQueue.add({
-            marketplaceNftsType: MarketplaceNftsType.LISTED,
+            marketplaceState: MarketplaceState.LISTED,
             nftType: NftType.CAPTAIN
         } as UpdateMarketplaceJob);
     }
@@ -84,7 +81,7 @@ export class BlockchainService implements OnModuleInit {
     async syncNftContracts() {
         this.updateMarketplaceQueue.empty();
         this.updateMarketplaceQueue.add({
-            marketplaceNftsType: MarketplaceNftsType.ALL,
+            marketplaceState: MarketplaceState.NONE,
             nftType: NftType.CAPTAIN
         } as UpdateMarketplaceJob);
     }

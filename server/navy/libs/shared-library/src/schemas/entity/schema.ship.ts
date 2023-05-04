@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
+import { Rarity, ShipSize } from '@app/shared-library/shared-library.main';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { Rarity, ShipSize } from '../shared-library.main';
-import { UserAvatarDocument } from './schema.user.avatar';
+import { UserAvatarDocument } from '../schema.user.avatar';
 
 export type ShipDocument = Ship & Document;
 

@@ -1,6 +1,6 @@
 import { IslandSize, Rarity, Terrain } from "@app/shared-library/shared-library.main";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { UserAvatarDocument } from "./schema.user.avatar";
+import { UserAvatarDocument } from "../schema.user.avatar";
 import mongoose, { Document } from 'mongoose';
 
 export type IslandDocument = Island & Document;

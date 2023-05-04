@@ -1,4 +1,5 @@
 import { Config } from '@app/shared-library/config';
+import { EntityServiceGrpcClientName, EntityServiceGrpcClientOptions } from '@app/shared-library/gprc/grpc.entity.service';
 import { BlockchainTransaction, BlockchainTransactionSchema } from '@app/shared-library/schemas/blockchain/schema.blockchain.transaction';
 import { Collection, CollectionSchema } from '@app/shared-library/schemas/marketplace/schema.collection';
 import { CollectionItem, CollectionItemSchema } from '@app/shared-library/schemas/marketplace/schema.collection.item';
@@ -7,6 +8,7 @@ import { WorkersMarketplace } from '@app/shared-library/workers/workers.marketpl
 import { WorkersMint } from '@app/shared-library/workers/workers.mint';
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
+import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -32,6 +34,12 @@ import { QueueMintProcessor } from './queue/queue.mint.processor';
       { name: Mint.name, schema: MintSchema },
       { name: Collection.name, schema: CollectionSchema },
       { name: CollectionItem.name, schema: CollectionItemSchema },
+    ]),
+    ClientsModule.register([
+      {
+        name: EntityServiceGrpcClientName,
+        ...EntityServiceGrpcClientOptions,
+      },
     ]),
   ],
   controllers: [

@@ -5,6 +5,7 @@ import { Config } from "../config";
 
 export interface EntityService {
     GetRandomCaptainTrait(request: GetRandomCaptainTraitRequest): Observable<GetRandomCaptainTraitResponse>;
+    GenerateCaptainTraits(request: GenerateCaptainTraitsRequest): Observable<GenerateCaptainTraitsResponse>;
 }
 
 //-----------------------------
@@ -24,6 +25,18 @@ export interface GetRandomCaptainTraitRequest {
 }
 
 export interface GetRandomCaptainTraitResponse {
+    traits: ICaptainTrait[];
+}
+
+//-----------------------------
+// GetRandomCaptainTrait
+//-----------------------------
+
+export interface GenerateCaptainTraitsRequest {
+    rarity: number;
+}
+
+export interface GenerateCaptainTraitsResponse {
     traits: ICaptainTrait[];
 }
 

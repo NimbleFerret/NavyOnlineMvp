@@ -89,7 +89,6 @@ export abstract class NftGenerator {
         const resultCanvas = createCanvas(72 * 2, 72 * 2);
         const resultContext = resultCanvas.getContext('2d');
 
-        // this.rarity = 1;
         this.rarity = SharedLibraryService.GenerateRarity();
 
         async function drawScaledImage(imagePartPath: string) {
@@ -153,7 +152,7 @@ export abstract class NftGenerator {
             const uploadedImageFile = await this.moralisClient.uploadFile('nvy/' + entityName + '.png', fileBuffer.toString('base64')) as any;
             const imagePathOnMoralis = uploadedImageFile.toJSON()[0].path;
 
-            this.generateNftMetadata(index, maxIndex, imagePathOnMoralis, this.nftPartsToDraw);
+            await this.generateNftMetadata(index, maxIndex, imagePathOnMoralis, this.nftPartsToDraw);
 
             // Upload metadata to the ipfs
             const uploadedMetadataFile = await this.moralisClient.uploadFile('nvy/' + entityName + '.json', Buffer.from(this.metadata).toString('base64')) as any;
@@ -163,7 +162,6 @@ export abstract class NftGenerator {
         } else {
             const fileName = this.nftTypeName + index + '.png';
             fs.writeFileSync(fileName, fileBuffer);
-
             return fileName;
         }
     }

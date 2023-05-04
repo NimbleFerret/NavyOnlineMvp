@@ -17,7 +17,7 @@ import {
     Process,
     Processor
 } from "@nestjs/bull";
-import { Logger, OnModuleInit } from "@nestjs/common";
+import { Inject, Logger, OnModuleInit } from "@nestjs/common";
 import { NftGenerator } from "./nft/nft.generator";
 import { Job } from "bull";
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
@@ -34,6 +34,8 @@ import {
     TransactionType
 } from '@app/shared-library/schemas/blockchain/schema.blockchain.transaction';
 import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
+import { EntityService, EntityServiceGrpcClientName, EntityServiceName } from '@app/shared-library/gprc/grpc.entity.service';
+import { ClientGrpc } from '@nestjs/microservices';
 
 @Processor(WorkersMint.MintQueue)
 export class QueueMintProcessor implements OnModuleInit {
@@ -41,15 +43,19 @@ export class QueueMintProcessor implements OnModuleInit {
     private readonly logger = new Logger(QueueMintProcessor.name);
     private readonly ethersProvider = new EthersProvider();
     private nftCaptainGenerator: NftGenerator;
+    private entityService: EntityService;
 
     constructor(
         @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
         @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
-        @InjectModel(BlockchainTransaction.name) private blockchainTransactionModel: Model<BlockchainTransactionDocument>
+        @InjectModel(BlockchainTransaction.name) private blockchainTransactionModel: Model<BlockchainTransactionDocument>,
+        @Inject(EntityServiceGrpcClientName) private readonly entityServiceGrpcClient: ClientGrpc
     ) {
     }
 
     async onModuleInit() {
+        this.entityService = this.entityServiceGrpcClient.getService<EntityService>(EntityServiceName);
+
         await this.ethersProvider.init({
             Captain,
             Aks,
@@ -62,7 +68,7 @@ export class QueueMintProcessor implements OnModuleInit {
         });
 
         const captainsCollection = await this.collectionModel.findOne({ name: 'Captains' }).populate('mint');
-        this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection);
+        this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection, this.entityService);
         await this.nftCaptainGenerator.initMoralis();
     }
 

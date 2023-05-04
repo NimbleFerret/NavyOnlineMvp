@@ -60,62 +60,62 @@
                 "categoryDetails": [
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_1.png",
-                        "chancePercent": 50,
+                        "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_2.png",
-                        "chancePercent": 50,
+                        "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_3.png",
-                        "chancePercent": 10,
+                        "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_4.png",
-                        "chancePercent": 10,
+                        "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_5.png",
-                        "chancePercent": 10,
+                        "chancePercent": 40,
                         "rarity": "Rare"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_6.png",
-                        "chancePercent": 10,
+                        "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_7.png",
-                        "chancePercent": 10,
+                        "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_8.png",
-                        "chancePercent": 10,
+                        "chancePercent": 40,
                         "rarity": "Epic"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_9.png",
-                        "chancePercent": 10,
+                        "chancePercent": 30,
                         "rarity": "Epic"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_10.png",
-                        "chancePercent": 10,
+                        "chancePercent": 30,
                         "rarity": "Epic"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_11.png",
-                        "chancePercent": 10,
+                        "chancePercent": 50,
                         "rarity": "Legendary"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/backgrounds/bg_12.png",
-                        "chancePercent": 10,
+                        "chancePercent": 50,
                         "rarity": "Legendary"
                     }
                 ]
@@ -128,7 +128,7 @@
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/body/body_1.png",
                         "chancePercent": 100,
-                        "rarity": "Common"
+                        "rarity": "All"
                     }
                 ]
             },
@@ -144,55 +144,55 @@
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/clothes/clothes_2.png",
-                        "chancePercent": 50,
+                        "chancePercent": 100,
                         "rarity": "Rare"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/clothes/clothes_3.png",
-                        "chancePercent": 50,
+                        "chancePercent": 60,
                         "rarity": "Epic"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/clothes/clothes_4.png",
-                        "chancePercent": 50,
+                        "chancePercent": 40,
                         "rarity": "Epic"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/clothes/clothes_5.png",
-                        "chancePercent": 100,
+                        "chancePercent": 60,
                         "rarity": "Legendary"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/clothes/clothes_6.png",
-                        "chancePercent": 100,
+                        "chancePercent": 40,
                         "rarity": "Legendary"
                     }
                 ]
             },
             {
-                "categoryTitle": "Heads",
-                "categoryPlural": "heads",
-                "categorySingle": "head",
+                "categoryTitle": "Faces",
+                "categoryPlural": "faces",
+                "categorySingle": "face",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/heads/head_1.png",
-                        "chancePercent": 50,
-                        "rarity": "Common"
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/faces/face_1.png",
+                        "chancePercent": 40,
+                        "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/heads/head_2.png",
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/faces/face_2.png",
                         "chancePercent": 25,
-                        "rarity": "Common"
+                        "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/heads/head_3.png",
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/faces/face_3.png",
+                        "chancePercent": 20,
+                        "rarity": "All"
+                    },
+                    {
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/faces/face_4.png",
                         "chancePercent": 15,
-                        "rarity": "Common"
-                    },
-                    {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/heads/head_4.png",
-                        "chancePercent": 10,
-                        "rarity": "Common"
+                        "rarity": "All"
                     }
                 ]
             },
@@ -202,94 +202,94 @@
                 "categorySingle": "acc",
                 "categoryDetails": [
                     {
-                        "imageUrl": "",
-                        "chancePercent": 70,
-                        "rarity": "Common"
-                    },
-                    {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/accessories/acc_1.png",
                         "chancePercent": 30,
                         "rarity": "Common"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/accessories/acc_2.png",
-                        "chancePercent": 70,
+                        "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/accessories/acc_3.png",
-                        "chancePercent": 30,
+                        "chancePercent": 20,
                         "rarity": "Rare"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/accessories/acc_4.png",
-                        "chancePercent": 70,
+                        "chancePercent": 30,
                         "rarity": "Epic"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/accessories/acc_5.png",
-                        "chancePercent": 30,
+                        "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/accessories/acc_6.png",
-                        "chancePercent": 70,
+                        "chancePercent": 20,
+                        "rarity": "Legendary"
+                    },
+                    {
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/accessories/acc_6.png",
+                        "chancePercent": 20,
                         "rarity": "Legendary"
                     },
                     {
                         "imageUrl": "https://navy.online/marketplace/static/assets/captain/accessories/acc_7.png",
-                        "chancePercent": 30,
+                        "chancePercent": 20,
                         "rarity": "Legendary"
                     }
                 ]
             },
             {
-                "categoryTitle": "Haircuts and hats",
-                "categoryPlural": "haircuts_and_hats",
-                "categorySingle": "h_a_h",
+                "categoryTitle": "Headgears",
+                "categoryPlural": "headgears",
+                "categorySingle": "headgear",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/haircuts_and_hats/h_a_h_1.png",
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/headgears/headgear_1.png",
                         "chancePercent": 50,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/haircuts_and_hats/h_a_h_2.png",
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/headgears/headgear_2.png",
                         "chancePercent": 30,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/haircuts_and_hats/h_a_h_3.png",
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/headgears/headgear_3.png",
                         "chancePercent": 20,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/haircuts_and_hats/h_a_h_4.png",
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/headgears/headgear_4.png",
                         "chancePercent": 70,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/haircuts_and_hats/h_a_h_5.png",
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/headgears/headgear_5.png",
                         "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/haircuts_and_hats/h_a_h_6.png",
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/headgears/headgear_6.png",
                         "chancePercent": 20,
                         "rarity": "Legendary"
                     },
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/haircuts_and_hats/h_a_h_7.png",
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/headgears/headgear_7.png",
                         "chancePercent": 30,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/haircuts_and_hats/h_a_h_8.png",
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/headgears/headgear_8.png",
                         "chancePercent": 70,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/haircuts_and_hats/h_a_h_9.png",
+                        "imageUrl": "https://navy.online/marketplace/static/assets/captain/headgears/headgear_9.png",
                         "chancePercent": 80,
                         "rarity": "Legendary"
                     }
