@@ -4,6 +4,7 @@ package entityservice;
 
 service EntityService {
   rpc GetRandomCaptainTrait (GetRandomCaptainTraitRequest) returns (GetRandomCaptainTraitResponse);
+  rpc GenerateCaptainTraits (GenerateCaptainTraitsRequest) returns (GenerateCaptainTraitsResponse);
 }
 
 //-----------------------------
@@ -23,5 +24,17 @@ message GetRandomCaptainTraitRequest {
 }
 
 message GetRandomCaptainTraitResponse {
+  repeated CaptainTrait traits = 1;
+}
+
+//-----------------------------
+// GenerateCaptainTraits
+//-----------------------------
+
+message GenerateCaptainTraitsRequest {
+  int32 rarity = 1;
+}
+
+message GenerateCaptainTraitsResponse {
   repeated CaptainTrait traits = 1;
 }
