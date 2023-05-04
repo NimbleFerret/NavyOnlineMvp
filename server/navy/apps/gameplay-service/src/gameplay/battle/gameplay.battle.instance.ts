@@ -4,7 +4,6 @@ import { BaseGameplayInstance } from "../gameplay.base.instance";
 import { GameplayType } from "../gameplay.base.service";
 import { Model } from "mongoose";
 import { game } from "../../js/NavyGameEngine.js"
-import { ShipDocument } from "@app/shared-library/schemas/schema.ship";
 import {
     WsProtocol,
     SocketServerMessageAddEntity,
@@ -12,6 +11,7 @@ import {
 } from "../../ws/ws.protocol";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
 import { Role, ShipEntity, ShipObjectEntity } from "@app/shared-library/entities/entity.ship";
+import { ShipDocument } from "@app/shared-library/schemas/entity/schema.ship";
 
 export class GameplayBattleInstance extends BaseGameplayInstance {
 
