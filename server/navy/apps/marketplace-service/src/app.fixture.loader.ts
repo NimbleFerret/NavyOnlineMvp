@@ -9,7 +9,7 @@ import { Model } from "mongoose";
 
 export class FixtureLoader {
 
-    private readonly reloadCollectionItems = true;
+    private readonly reloadCollectionItems = false;
 
     constructor(
         private projectModel: Model<ProjectDocument>,

@@ -36,7 +36,6 @@ export class CollectionApiService {
 
     async getCollectionItems(
         authToken: string | undefined,
-        marketplaceState: MarketplaceState,
         contractAddress: string,
         page?: number,
         size?: number,
@@ -59,25 +58,15 @@ export class CollectionApiService {
         // ----------------------------------
 
         const query = {
-            contractAddress: contractAddress.toLowerCase()
+            contractAddress: contractAddress.toLowerCase(),
+            marketplaceState: {
+                "$ne": MarketplaceState.SOLD
+            }
         };
 
         const rarityCheck = rarity && (rarity == 'Legendary' || rarity == 'Epic' || rarity == 'Rare' || rarity == 'Common');
         if (rarityCheck) {
             query['rarity'] = rarity;
-        }
-
-        let nftType = 'all';
-        if (marketplaceState == MarketplaceState.LISTED) {
-            nftType = 'listed';
-            query['marketplaceState'] = marketplaceState;
-        } else if (marketplaceState == MarketplaceState.SOLD) {
-            nftType = 'sold';
-            query['marketplaceState'] = marketplaceState;
-        } else {
-            query['marketplaceState'] = {
-                "$ne": MarketplaceState.SOLD
-            }
         }
 
         const count = await this.collectionItemModel.countDocuments(query);
@@ -90,7 +79,7 @@ export class CollectionApiService {
             .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
             .skip((page - 1) * pageSize)
             .limit(pageSize)
-            .sort([['marketplaceState', 1], [marketplaceState == MarketplaceState.NONE ? 'tokenId' : 'lastUpdated', -1]]);
+            .sort([['marketplaceState', 1], ['tokenId', -1]]);
 
         // ----------------------------------
         // Prepare paginated response
@@ -108,7 +97,7 @@ export class CollectionApiService {
         if (pages > 1) {
             const getUrl = (p: number) => {
                 let url = '';
-                url = `https://navy.online/marketplace/collection/${contractAddress}/${nftType}?page=${p}`;
+                url = `https://navy.online/marketplace/collection/${contractAddress}/all?page=${p}`;
                 if (size) {
                     url += '&size=' + size;
                 }
@@ -183,8 +172,8 @@ export class CollectionApiService {
             topSaleResult.forEach(f => {
                 response.push(Converter.ConvertCollectionItem(f, false));
             });
-            return response;
         }
+        return response;
     }
 
     async getCollectionItemsByOwner(authToken: string) {
@@ -250,14 +239,17 @@ export class CollectionApiService {
     async getCollectionItem(authToken: string | undefined, address: string, tokenId: string) {
         const collectionItem = await this.collectionItemModel.findOne({
             contractAddress: address,
-            tokenId
+            tokenId,
+            marketplaceState: {
+                "$ne": MarketplaceState.SOLD
+            }
         }).select(['-_id', '-__v', '-needUpdate']);
 
         let favourite = false;
         if (authToken) {
             const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
-            const userFavourites = await this.favouriteService.getFavoutireNftIdsByUserProfile(userProfile);
-            favourite = userFavourites.filter(f => f == collectionItem.tokenId).length > 0;
+            const userFavourites = await this.favouriteService.getFavouriteCollectionItemsByUserProfile(userProfile);
+            favourite = userFavourites.filter(f => f.tokenId == collectionItem.tokenId).length > 0;
         }
 
         return Converter.ConvertCollectionItem(collectionItem, favourite);
@@ -276,13 +268,13 @@ export class CollectionApiService {
     }
 
     async fillCollectionItemsFavourites(collectionItems: any, userProfile: UserProfile & Document) {
-        const userFavourites = await this.favouriteService.getFavoutireNftIdsByUserProfile(userProfile);
-        const favouriteCollectionItemsIds = new Set<number>();
+        const userFavourites = await this.favouriteService.getFavouriteCollectionItemsByUserProfile(userProfile);
+        const favouriteCollectionItems = new Set<string>();
         userFavourites.forEach(f => {
-            favouriteCollectionItemsIds.add(f);
+            favouriteCollectionItems.add(f.contractAddress + '_' + f.tokenId);
         });
         collectionItems.forEach(f => {
-            if (favouriteCollectionItemsIds.has(f.tokenId)) {
+            if (favouriteCollectionItems.has(f.contractAddress + '_' + f.tokenId)) {
                 f['favourite'] = true;
             } else {
                 f['favourite'] = false;

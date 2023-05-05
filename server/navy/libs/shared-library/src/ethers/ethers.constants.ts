@@ -4,8 +4,8 @@ export class EthersConstants {
     public static readonly NvyContractAddress = '';
 
     public static readonly CaptainContractAddress = '0x7e77efa1050aac8e12bee238c596d1561231e2ed'.toLowerCase();
-    public static readonly ShipContractAddress = '';
-    public static readonly IslandContractAddress = '';
+    public static readonly ShipContractAddress = '0x7e77efa1050aac8e12bee238c596d1561231e2ee'.toLowerCase();
+    public static readonly IslandContractAddress = '0x7e77efa1050aac8e12bee238c596d1561231e2ef'.toLowerCase();
 
     public static readonly ShipTemplateContractAddress = '';
 

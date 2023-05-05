@@ -70,13 +70,13 @@ export class AppControllerAuth {
     return this.collectionService.getFavouriteCollectionItemsByOwner(Utils.GetBearerTokenFromRequest(request));
   }
 
-  @Post('favourites/add')
+  @Post('favourites')
   @HttpCode(200)
   favouritesAdd(@Req() request: Request, @Body() dto: FavouriteDto) {
     return this.favouriteService.favouritesAdd(Utils.GetBearerTokenFromRequest(request), dto);
   }
 
-  @Delete('favourites/remove')
+  @Delete('favourites')
   @HttpCode(200)
   favouritesRemove(@Req() request: Request, @Body() dto: FavouriteDto) {
     return this.favouriteService.favouritesRemove(Utils.GetBearerTokenFromRequest(request), dto);

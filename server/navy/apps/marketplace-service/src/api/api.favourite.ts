@@ -25,19 +25,19 @@ export class FavouriteApiService {
         });
     }
 
-    async getFavoutireNftIdsByAuthToken(authToken: string) {
+    async getFavouritesByAuthToken(authToken: string) {
         const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
-        return await this.getFavoutireNftIdsByUserProfile(userProfile);
+        return await this.getFavouriteCollectionItemsByUserProfile(userProfile);
     }
 
-    async getFavoutireNftIdsByUserProfile(userProfile: UserProfile & Document) {
+    async getFavouriteCollectionItemsByUserProfile(userProfile: UserProfile & Document) {
         const favs = await this.getFavoutireNftByUserProfile(userProfile);
-        const collectionItemIds = [];
+        const collectionItems = [];
         for (const fav of favs) {
-            const collectionItem = await this.collectionItemModel.findById(fav);
-            collectionItemIds.push(collectionItem.tokenId);
+            const collectionItem = await this.collectionItemModel.findOne({ _id: fav });
+            collectionItems.push(collectionItem);
         }
-        return collectionItemIds;
+        return collectionItems;
     }
 
     async favouritesAdd(authToken: string, dto: FavouriteDto) {

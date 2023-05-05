@@ -63,21 +63,21 @@ export class AppController {
     return this.collectionService.getCollection(address);
   }
 
-  @Get('collection/:address/listed')
-  getCollectionListedItems(
-    @Req() request: Request,
-    @Param('address') address: string,
-    @Query('page') page?: number) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceState.LISTED, address, page);
-  }
+  // @Get('collection/:address/listed')
+  // getCollectionListedItems(
+  //   @Req() request: Request,
+  //   @Param('address') address: string,
+  //   @Query('page') page?: number) {
+  //   return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceState.LISTED, address, page);
+  // }
 
-  @Get('collection/:address/sold')
-  getCollectionSoldItems(
-    @Req() request: Request,
-    @Param('address') address: string,
-    @Query('page') page?: number) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceState.SOLD, address, page);
-  }
+  // @Get('collection/:address/sold')
+  // getCollectionSoldItems(
+  //   @Req() request: Request,
+  //   @Param('address') address: string,
+  //   @Query('page') page?: number) {
+  //   return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceState.SOLD, address, page);
+  // }
 
   @Get('collection/:address/all')
   getCollectionAllItems(
@@ -86,7 +86,7 @@ export class AppController {
     @Query('page') page?: number,
     @Query('size') size?: number,
     @Query('rarity') rarity?: string) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceState.NONE, address, page, size, rarity);
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), address, page, size, rarity);
   }
 
   @Get('collection/:address/item/:tokenId')
