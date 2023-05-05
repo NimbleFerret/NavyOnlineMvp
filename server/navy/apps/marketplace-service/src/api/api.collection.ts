@@ -173,7 +173,7 @@ export class CollectionApiService {
             const favourites = [];
             if (authToken) {
                 const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
-                const userFavourites = await this.favouriteService.getFavoutireNftByUserProfile(userProfile);
+                const userFavourites = await this.favouriteService.getFavouriteCollectionItemsByUserProfile(userProfile);
                 userFavourites.forEach(f => {
                     favourites.push(f.contractAddress + '_' + f.tokenId);
                 });
