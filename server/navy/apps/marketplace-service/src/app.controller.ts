@@ -50,8 +50,8 @@ export class AppController {
   }
 
   @Get('topSales/:days')
-  topSales(@Param('days') days?: string) {
-    return this.collectionService.topSales(days);
+  topSales(@Req() request: Request, @Param('days') days?: string) {
+    return this.collectionService.topSales(Utils.GetBearerTokenFromRequest(request), days);
   }
 
   // --------------------------------

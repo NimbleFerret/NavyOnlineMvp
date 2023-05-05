@@ -150,7 +150,7 @@ export class CollectionApiService {
         }
     }
 
-    async topSales(days?: string) {
+    async topSales(authToken?: string, days?: string) {
         const response = [];
         const projects = await this.generalApiService.getProjects();
         if (projects) {
@@ -169,8 +169,18 @@ export class CollectionApiService {
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
                 .limit(9)
                 .sort([['price', -1], ['lastUpdated', 1]]);
+
+            const favourites = [];
+            if (authToken) {
+                const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
+                const userFavourites = await this.favouriteService.getFavoutireNftByUserProfile(userProfile);
+                userFavourites.forEach(f => {
+                    favourites.push(f.contractAddress + '_' + f.tokenId);
+                });
+            }
+
             topSaleResult.forEach(f => {
-                response.push(Converter.ConvertCollectionItem(f, false));
+                response.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
             });
         }
         return response;
