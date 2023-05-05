@@ -145,7 +145,7 @@ export class CollectionApiService {
 
     async getFavouriteCollectionItemsByOwner(authToken: string) {
         const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
-        if (userProfile.ethAddress && userProfile.ethAddress.length > 0) {
+        if (userProfile) {
             const userFavourites = await this.favouriteService.getFavoutireNftByUserProfile(userProfile);
             const result = await this.collectionItemModel
                 .find({ '_id': { $in: userFavourites } })
@@ -187,9 +187,23 @@ export class CollectionApiService {
         }
     }
 
-
     async getCollectionItemsByOwner(authToken: string) {
         const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
+
+        const result = {
+            captains: {
+                total: 0,
+                items: []
+            },
+            ships: {
+                total: 0,
+                items: []
+            },
+            islands: {
+                total: 0,
+                items: []
+            },
+        };
 
         if (userProfile.ethAddress && userProfile.ethAddress.length > 0) {
             const owner = userProfile.ethAddress.toLowerCase();
@@ -212,21 +226,6 @@ export class CollectionApiService {
             const resultItems = this.convertCollectionItems(collectionItems.sort(function (a, b) { return b.collectionAddress - a.collectionAddress }), false);
             await this.fillCollectionItemsFavourites(resultItems, userProfile);
 
-            const result = {
-                captains: {
-                    total: 0,
-                    items: []
-                },
-                ships: {
-                    total: 0,
-                    items: []
-                },
-                islands: {
-                    total: 0,
-                    items: []
-                },
-            };
-
             resultItems.forEach(f => {
                 switch (f.contractAddress) {
                     case EthersConstants.CaptainContractAddress:
@@ -243,11 +242,9 @@ export class CollectionApiService {
                         break;
                 }
             });
-
-            return result;
-        } else {
-            return {};
         }
+
+        return result;
     }
 
     async getCollectionItem(authToken: string | undefined, address: string, tokenId: string) {
