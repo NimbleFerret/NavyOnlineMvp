@@ -27,7 +27,13 @@ export class QueueMarketplaceListingProcessor {
         });
 
         if (collectionItem) {
-            collectionItem.marketplaceState = job.data.listed ? MarketplaceState.LISTED : MarketplaceState.NONE;
+            if (job.data.listed) {
+                collectionItem.marketplaceState = MarketplaceState.LISTED;
+                collectionItem.price = job.data.price;
+            } else {
+                collectionItem.marketplaceState = MarketplaceState.NONE;
+                collectionItem.price = undefined;
+            }
             await collectionItem.save();
             this.logger.log(`Job finished! ${this.jobInfo(job)}`);
         } else {
@@ -46,6 +52,6 @@ export class QueueMarketplaceListingProcessor {
     }
 
     private jobInfo(job: Job<MarketplaceListingJob>) {
-        return `${job.id} ${job.data.tokenId} ${job.data.listed} ${NftType[job.data.nftType]}`
+        return `${job.id} ${job.data.tokenId} ${job.data.listed} ${NftType[job.data.nftType]} ${job.data.price}`
     }
 }

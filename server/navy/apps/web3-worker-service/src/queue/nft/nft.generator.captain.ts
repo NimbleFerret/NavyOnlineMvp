@@ -72,7 +72,6 @@ export class NftCaptainGenerator extends NftGenerator {
             image: imagePathOnMoralis,
             attributes
         };
-        console.log(this.metadataObject);
         this.metadata = JSON.stringify(this.metadataObject);
     }
 
@@ -97,7 +96,7 @@ export class NftCaptainGenerator extends NftGenerator {
         newCollectionModel.tokenId = this.metadataObject.index;
         newCollectionModel.tokenUri = metadataUrl;
         newCollectionModel.image = this.metadataObject.image;
-        newCollectionModel.owner = owner;
+        newCollectionModel.owner = owner.toLowerCase();
         newCollectionModel.traits = this.metadataObject.attributes[0].traits;
         newCollectionModel.rarity = rarity;
         newCollectionModel.contractAddress = contract.address;

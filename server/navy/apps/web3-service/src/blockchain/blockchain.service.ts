@@ -74,9 +74,10 @@ export class BlockchainService implements OnModuleInit {
         ) => {
             Logger.log(`Captain listed on the marketplace! nftContract: ${nftContract}, tokenId: ${tokenId}, seller: ${seller}, owner: ${owner}, price: ${price}`);
             this.marketplaceListingQueue.add({
-                contractAddress: nftContract,
-                tokenId,
+                contractAddress: nftContract.toLowerCase(),
+                tokenId: Number(tokenId),
                 listed: true,
+                price: Number(price),
                 nftType: NftType.CAPTAIN
             } as MarketplaceListingJob)
         });
@@ -88,8 +89,8 @@ export class BlockchainService implements OnModuleInit {
         ) => {
             Logger.log(`Captain delisted from the marketplace! nftContract: ${nftContract}, tokenId: ${tokenId}, seller: ${seller}`);
             this.marketplaceListingQueue.add({
-                contractAddress: nftContract,
-                tokenId,
+                contractAddress: nftContract.toLowerCase(),
+                tokenId: Number(tokenId),
                 listed: false,
                 nftType: NftType.CAPTAIN
             } as MarketplaceListingJob)
