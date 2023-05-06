@@ -33,8 +33,8 @@ import {
     BlockchainTransactionDto,
     TransactionType
 } from '@app/shared-library/schemas/blockchain/schema.blockchain.transaction';
-import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { EntityService, EntityServiceGrpcClientName, EntityServiceName } from '@app/shared-library/gprc/grpc.entity.service';
+import { CollectionItem, CollectionItemDocument } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { ClientGrpc } from '@nestjs/microservices';
 
 @Processor(WorkersMint.MintQueue)
@@ -47,7 +47,7 @@ export class QueueMintProcessor implements OnModuleInit {
 
     constructor(
         @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
-        @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
+        @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
         @InjectModel(BlockchainTransaction.name) private blockchainTransactionModel: Model<BlockchainTransactionDocument>,
         @Inject(EntityServiceGrpcClientName) private readonly entityServiceGrpcClient: ClientGrpc
     ) {
@@ -68,7 +68,7 @@ export class QueueMintProcessor implements OnModuleInit {
         });
 
         const captainsCollection = await this.collectionModel.findOne({ name: 'Captains' }).populate('mint');
-        this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection, this.entityService);
+        this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection, this.entityService, this.collectionItemModel);
         await this.nftCaptainGenerator.initMoralis();
     }
 
@@ -96,9 +96,8 @@ export class QueueMintProcessor implements OnModuleInit {
 
         const tokensLeft = (await collectionSaleContract.tokensLeft()).toNumber();
         const tokensTotal = (await collectionSaleContract.tokensTotal()).toNumber();
-        const metadata = await nftGenerator.generateNft(tokensLeft, tokensTotal);
-
-        await nftGenerator.mintNft(job.data.sender, collectionContract, metadata);
+        const metadataUrl = await nftGenerator.generateNft(tokensLeft, tokensTotal);
+        await nftGenerator.mintNft(job.data.sender, collectionContract, metadataUrl);
     }
 
     @OnQueueError()

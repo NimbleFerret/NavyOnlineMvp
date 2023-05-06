@@ -14,13 +14,21 @@ export interface NftPartDetails {
     subParts: NftSubPartDetails[];
 }
 
-export interface UpdateMarketplaceJob {
+export interface MarketplaceUpdateJob {
     marketplaceState: MarketplaceState;
+    nftType: NftType;
+}
+
+export interface MarketplaceListingJob {
+    contractAddress: string;
+    tokenId: number;
+    listed: boolean;
     nftType: NftType;
 }
 
 export class WorkersMarketplace {
 
-    public static readonly UpdateMarketplaceQueue = 'UpdateMarketplaceQueue';
+    public static readonly MarketplaceUpdateQueue = 'MarketplaceUpdateQueue';
+    public static readonly MarketplaceListingQueue = 'MarketplaceListingQueue';
 
 }

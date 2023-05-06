@@ -1,5 +1,6 @@
 import { EntityService, EntityServiceGrpcClientName, EntityServiceName } from "@app/shared-library/gprc/grpc.entity.service";
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
+import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Inject, Injectable } from "@nestjs/common";
 import { OnModuleInit } from "@nestjs/common/interfaces";
 import { Logger } from "@nestjs/common/services";
@@ -18,13 +19,14 @@ export class AppService implements OnModuleInit {
 
     constructor(
         @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
+        @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
         @Inject(EntityServiceGrpcClientName) private readonly entityServiceGrpcClient: ClientGrpc) {
     }
 
     async onModuleInit() {
         this.entityService = this.entityServiceGrpcClient.getService<EntityService>(EntityServiceName);
         const captainsCollection = await this.collectionModel.findOne({ name: 'Captains' }).populate('mint');
-        this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection, this.entityService);
+        this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection, this.entityService, this.collectionItemModel);
         // await this.generateCaptainImages();
     }
 
@@ -42,7 +44,7 @@ export class AppService implements OnModuleInit {
 
     async generateCaptainImages() {
         for (let i = 1; i < 2; i++) {
-            console.log(await this.nftCaptainGenerator.generateNft(i, 100, GenerateNftBehaviour.SAVE_LOCALLY));
+            console.log(await this.nftCaptainGenerator.generateNft(i, 100, GenerateNftBehaviour.MORALIS_UPLOAD));
         }
     }
 }

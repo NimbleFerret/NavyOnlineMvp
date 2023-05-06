@@ -6,5 +6,6 @@ export interface MarketplaceNFT {
     owner: string;
     price: string;
     image: string;
+    traits: any;
     lastUpdated: number;
 }

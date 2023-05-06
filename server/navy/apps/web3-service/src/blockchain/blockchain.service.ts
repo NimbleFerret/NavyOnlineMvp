@@ -22,7 +22,11 @@ import {
 } from '@app/shared-library/gprc/grpc.web3.service';
 import { EthersProvider } from '@app/shared-library/ethers/ethers.provider';
 import { MintJob, WorkersMint } from '@app/shared-library/workers/workers.mint';
-import { UpdateMarketplaceJob, WorkersMarketplace } from '@app/shared-library/workers/workers.marketplace';
+import {
+    MarketplaceUpdateJob,
+    MarketplaceListingJob,
+    WorkersMarketplace,
+} from '@app/shared-library/workers/workers.marketplace';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 
@@ -32,7 +36,8 @@ export class BlockchainService implements OnModuleInit {
     private readonly ethersProvider = new EthersProvider();
 
     constructor(
-        @InjectQueue(WorkersMarketplace.UpdateMarketplaceQueue) private readonly updateMarketplaceQueue: Queue,
+        @InjectQueue(WorkersMarketplace.MarketplaceUpdateQueue) private readonly marketplaceUpdateQueue: Queue,
+        @InjectQueue(WorkersMarketplace.MarketplaceListingQueue) private readonly marketplaceListingQueue: Queue,
         @InjectQueue(WorkersMint.MintQueue) private readonly mintQueue: Queue) { }
 
     async onModuleInit() {
@@ -47,8 +52,8 @@ export class BlockchainService implements OnModuleInit {
             Marketplace
         });
 
-        await this.syncSaleContracts();
-        await this.syncNftContracts();
+        // await this.syncSaleContracts();
+        // await this.syncNftContracts();
 
         this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
             Logger.log(`Captains mint occured! sender: ${sender}, contractAddress: ${contractAddress}`);
@@ -57,6 +62,37 @@ export class BlockchainService implements OnModuleInit {
                 sender,
                 contractAddress
             } as MintJob);
+        });
+
+        this.ethersProvider.captainMarketplaceContract.on(EthersProvider.EventNFTListed, async (
+            nftContract: string,
+            tokenId: number,
+            tokenUri: string,
+            seller: string,
+            owner: string,
+            price: number
+        ) => {
+            Logger.log(`Captain listed on the marketplace! nftContract: ${nftContract}, tokenId: ${tokenId}, seller: ${seller}, owner: ${owner}, price: ${price}`);
+            this.marketplaceListingQueue.add({
+                contractAddress: nftContract,
+                tokenId,
+                listed: true,
+                nftType: NftType.CAPTAIN
+            } as MarketplaceListingJob)
+        });
+
+        this.ethersProvider.captainMarketplaceContract.on(EthersProvider.EventNFTDelisted, async (
+            tokenId: number,
+            nftContract: string,
+            seller: string,
+        ) => {
+            Logger.log(`Captain delisted from the marketplace! nftContract: ${nftContract}, tokenId: ${tokenId}, seller: ${seller}`);
+            this.marketplaceListingQueue.add({
+                contractAddress: nftContract,
+                tokenId,
+                listed: false,
+                nftType: NftType.CAPTAIN
+            } as MarketplaceListingJob)
         });
     }
 
@@ -68,22 +104,22 @@ export class BlockchainService implements OnModuleInit {
     }
 
     // TODO better to listen for events
-    @Cron(CronExpression.EVERY_5_MINUTES)
-    async syncSaleContracts() {
-        this.updateMarketplaceQueue.empty();
-        this.updateMarketplaceQueue.add({
-            marketplaceState: MarketplaceState.LISTED,
-            nftType: NftType.CAPTAIN
-        } as UpdateMarketplaceJob);
-    }
+    // @Cron(CronExpression.EVERY_5_MINUTES)
+    // async syncSaleContracts() {
+    //     this.marketplaceUpdateQueue.empty();
+    //     this.marketplaceUpdateQueue.add({
+    //         marketplaceState: MarketplaceState.LISTED,
+    //         nftType: NftType.CAPTAIN
+    //     } as MarketplaceUpdateJob);
+    // }
 
-    @Cron(CronExpression.EVERY_10_MINUTES)
-    async syncNftContracts() {
-        this.updateMarketplaceQueue.empty();
-        this.updateMarketplaceQueue.add({
-            marketplaceState: MarketplaceState.NONE,
-            nftType: NftType.CAPTAIN
-        } as UpdateMarketplaceJob);
-    }
+    // @Cron(CronExpression.EVERY_10_MINUTES)
+    // async syncNftContracts() {
+    //     this.marketplaceUpdateQueue.empty();
+    //     this.marketplaceUpdateQueue.add({
+    //         marketplaceState: MarketplaceState.NONE,
+    //         nftType: NftType.CAPTAIN
+    //     } as MarketplaceUpdateJob);
+    // }
 
 }

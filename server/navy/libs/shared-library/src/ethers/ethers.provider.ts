@@ -15,6 +15,9 @@ export interface EthersConfig {
 export class EthersProvider {
     // Contract events
     public static readonly EventGenerateToken = 'GenerateToken';
+    public static readonly EventNFTListed = 'NFTListed';
+    public static readonly EventNFTDelisted = 'NFTDelisted';
+    public static readonly EventNFTSold = 'NFTSold';
 
     // Token contracts
     public aksContract: Contract;

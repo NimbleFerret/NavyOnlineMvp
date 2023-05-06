@@ -5,6 +5,8 @@ import { NftSubPartDetails } from "@app/shared-library/workers/workers.marketpla
 import { Contract } from "ethers";
 import { NftGenerator } from "./nft.generator";
 import { lastValueFrom } from 'rxjs';
+import { CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
+import { Model } from "mongoose";
 
 export interface CaptainStats {
     currentLevel: number;
@@ -19,7 +21,13 @@ export interface CaptainStats {
 
 export class NftCaptainGenerator extends NftGenerator {
 
-    constructor(collection: Collection, private entityService: EntityService) {
+    private metadataObject: any;
+
+    constructor(
+        collection: Collection,
+        private entityService: EntityService,
+        private collectionItemModel: Model<CollectionItemDocument>
+    ) {
         super(NftType.CAPTAIN, collection);
     }
 
@@ -35,7 +43,6 @@ export class NftCaptainGenerator extends NftGenerator {
         } as CaptainStats;
 
         const captainTraits = await lastValueFrom(this.entityService.GenerateCaptainTraits({ rarity: this.rarity }));
-        console.log(captainTraits);
 
         const attributes: any[] = [
             // { stakingRewardNVY: captainStats.stakingRewardNVY },
@@ -58,29 +65,46 @@ export class NftCaptainGenerator extends NftGenerator {
             attributes.push({ headgear: nftPartsToDraw[5].index });
         }
 
-        this.metadata = JSON.stringify({
-            name: `Captain (${index}/${maxIndex})`,
+        this.metadataObject = {
+            name: `Captain (${maxIndex - index}/${maxIndex})`,
+            index: maxIndex - index,
             description: 'Navy.online Gen1 captains collection',
             image: imagePathOnMoralis,
             attributes
-        });
+        };
+        console.log(this.metadataObject);
+        this.metadata = JSON.stringify(this.metadataObject);
     }
 
-    async mintNft(owner: string, contract: Contract, metadata: string) {
-        await contract.grantCaptain(owner, metadata);
-    }
+    async mintNft(owner: string, contract: Contract, metadataUrl: string) {
+        await contract.grantCaptain(owner, metadataUrl);
 
-    private generateTraits() {
-        let traitsCount = 0;
-        switch (this.rarity) {
-            case Rarity.COMMON:
-                traitsCount = 1;
-            case Rarity.RARE:
-            case Rarity.EPIC:
-                traitsCount = 2;
+        let rarity = 'Common';
+        switch (this.metadataObject.attributes.rarity) {
             case Rarity.LEGENDARY:
-                traitsCount = 3;
+                rarity = 'Legendary';
+                break;
+            case Rarity.EPIC:
+                rarity = 'Epic';
+                break;
+            case Rarity.RARE:
+                rarity = 'Rare';
+                break;
         }
+
+        const newCollectionModel = new this.collectionItemModel;
+        newCollectionModel.id = contract.address + '_' + this.metadataObject.index;
+        newCollectionModel.tokenId = this.metadataObject.index;
+        newCollectionModel.tokenUri = metadataUrl;
+        newCollectionModel.image = this.metadataObject.image;
+        newCollectionModel.owner = owner;
+        newCollectionModel.traits = this.metadataObject.attributes[0].traits;
+        newCollectionModel.rarity = rarity;
+        newCollectionModel.contractAddress = contract.address;
+        newCollectionModel.collectionName = 'captains';
+        newCollectionModel.chainId = '338';
+        newCollectionModel.marketplaceState = MarketplaceState.NONE;
+        await newCollectionModel.save();
     }
 
 }

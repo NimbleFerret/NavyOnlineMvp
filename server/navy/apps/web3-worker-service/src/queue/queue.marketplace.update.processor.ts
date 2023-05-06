@@ -16,14 +16,14 @@ import { NftType } from '@app/shared-library/shared-library.main';
 import { InjectModel } from '@nestjs/mongoose';
 import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
 import { CollectionItem, CollectionItemDocument, MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
-import { UpdateMarketplaceJob, WorkersMarketplace } from "@app/shared-library/workers/workers.marketplace";
+import { MarketplaceUpdateJob, WorkersMarketplace } from "@app/shared-library/workers/workers.marketplace";
 import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { Model } from 'mongoose';
 
-@Processor(WorkersMarketplace.UpdateMarketplaceQueue)
-export class QueueMarketplaceProcessor implements OnModuleInit {
+@Processor(WorkersMarketplace.MarketplaceUpdateQueue)
+export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
 
-    private readonly logger = new Logger(QueueMarketplaceProcessor.name);
+    private readonly logger = new Logger(QueueMarketplaceUpdateProcessor.name);
     private readonly ethersProvider = new EthersProvider();
 
     constructor(
@@ -46,7 +46,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
     }
 
     @Process()
-    async process(job: Job<UpdateMarketplaceJob>) {
+    async process(job: Job<MarketplaceUpdateJob>) {
         let marketplaceContract = this.ethersProvider.captainMarketplaceContract;
         let contractAddressAddress = this.ethersProvider.captainContract.address;
 
@@ -141,6 +141,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                 owner: nft.owner.toLowerCase(),
                 price: ethers.utils.formatEther(nft.price),
                 image: '',
+                traits: {},
                 lastUpdated: nft.lastUpdated.toNumber()
             };
             return marketplaceNFT;
@@ -164,6 +165,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                 const response = await fetch(nft.tokenUri);
                 const body = await response.json();
                 nft.image = body.image;
+                nft.traits = body.attributes[0].traits;
             }
 
             // Save result into the database
@@ -178,6 +180,7 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
                 model.image = nft.image;
                 model.lastUpdated = nft.lastUpdated;
                 model.contractAddress = nft.contractAddress;
+                model.traits = nft.traits;
                 model.marketplaceState = marketplaceState == MarketplaceState.LISTED ? MarketplaceState.LISTED : MarketplaceState.SOLD;
                 model.chainId = '338';
                 await model.save();
@@ -215,11 +218,11 @@ export class QueueMarketplaceProcessor implements OnModuleInit {
     }
 
     @OnQueueFailed()
-    onQueueFailed(job: Job<UpdateMarketplaceJob>, error: Error) {
+    onQueueFailed(job: Job<MarketplaceUpdateJob>, error: Error) {
         this.logger.error(`Job failed ${this.jobInfo(job)}`, error);
     }
 
-    private jobInfo(job: Job<UpdateMarketplaceJob>) {
+    private jobInfo(job: Job<MarketplaceUpdateJob>) {
         return `${job.id} ${MarketplaceState[job.data.marketplaceState]} ${NftType[job.data.nftType]}`
     }
 }

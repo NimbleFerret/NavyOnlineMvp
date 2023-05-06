@@ -12,7 +12,8 @@ import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { QueueMarketplaceProcessor } from './queue/queue.marketplace.processor';
+import { QueueMarketplaceUpdateProcessor } from './queue/queue.marketplace.update.processor';
+import { QueueMarketplaceListingProcessor } from './queue/queue.marketplace.listing.processor';
 import { QueueMintProcessor } from './queue/queue.mint.processor';
 
 @Module({
@@ -21,7 +22,10 @@ import { QueueMintProcessor } from './queue/queue.mint.processor';
       redis: Config.GetRedisHost(),
     }),
     BullModule.registerQueue({
-      name: WorkersMarketplace.UpdateMarketplaceQueue
+      name: WorkersMarketplace.MarketplaceUpdateQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMarketplace.MarketplaceListingQueue
     }),
     BullModule.registerQueue({
       name: WorkersMint.MintQueue
@@ -46,7 +50,8 @@ import { QueueMintProcessor } from './queue/queue.mint.processor';
     AppController
   ],
   providers: [
-    QueueMarketplaceProcessor,
+    QueueMarketplaceUpdateProcessor,
+    QueueMarketplaceListingProcessor,
     QueueMintProcessor,
     AppService
   ],
