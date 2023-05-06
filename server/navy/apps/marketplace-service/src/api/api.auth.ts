@@ -44,6 +44,7 @@ export class AuthApiService {
         let httpStatus = undefined;
 
         if (request.ethAddress && request.signedMessage) {
+            request.ethAddress = request.ethAddress.toLowerCase();
             await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
             if (signIn) {
                 const userProfile = await this.userProfileModel.findOne({ ethAddress: request.ethAddress });
@@ -70,6 +71,7 @@ export class AuthApiService {
                 } else {
                     const issueTokenResult = await this.issueToken(signUpResult.userId);
                     response['token'] = issueTokenResult.token;
+                    response['ethAddress'] = request.ethAddress;
                 }
             }
         } else if (request.email && request.password) {
@@ -98,12 +100,12 @@ export class AuthApiService {
                 const signUpResult = await this.trySignUp(request);
                 if (!signUpResult.success) {
                     response.success = false;
-                    response['email'] = request.email;
                     reason = signUpResult.reason;
                     httpStatus = HttpStatus.BAD_REQUEST;
                 } else {
                     const issueTokenResult = await this.issueToken(signUpResult.userId);
                     response['token'] = issueTokenResult.token;
+                    response['email'] = request.email;
                 }
             }
         } else {
@@ -160,6 +162,7 @@ export class AuthApiService {
 
     async attachWallet(authToken: string, dto: AttachWalletDto) {
         const userProfile = await this.checkTokenAndGetProfile(authToken);
+        dto.ethAddress = dto.ethAddress.toLowerCase();
         await this.checkEthersAuthSignature(dto.ethAddress, dto.signedMessage);
 
         if (await this.walletExists(dto.ethAddress)) {
