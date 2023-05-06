@@ -52,8 +52,8 @@ export class BlockchainService implements OnModuleInit {
             Marketplace
         });
 
-        // await this.syncSaleContracts();
-        // await this.syncNftContracts();
+        await this.syncSaleContracts();
+        await this.syncNftContracts();
 
         this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
             Logger.log(`Captains mint occured! sender: ${sender}, contractAddress: ${contractAddress}`);
@@ -95,6 +95,26 @@ export class BlockchainService implements OnModuleInit {
                 nftType: NftType.CAPTAIN
             } as MarketplaceListingJob)
         });
+
+        this.ethersProvider.captainMarketplaceContract.on(EthersProvider.EventNFTSold, async (
+            nftContract: string,
+            tokenId: number,
+            seller: string,
+            owner: string,
+            price: number
+        ) => {
+            Logger.log(`Captain sold on the marketplace! nftContract: ${nftContract}, tokenId: ${tokenId}, seller: ${seller}, owner: ${owner}, price: ${price}`);
+            this.marketplaceListingQueue.add({
+                contractAddress: nftContract.toLowerCase(),
+                tokenId: Number(tokenId),
+                listed: true,
+                sold: true,
+                price: Number(ethers.utils.formatEther(price)),
+                nftType: NftType.CAPTAIN,
+                seller,
+                owner
+            } as MarketplaceListingJob)
+        });
     }
 
     checkEthersAuthSignature(request: CheckEthersAuthSignatureRequest) {
@@ -105,22 +125,22 @@ export class BlockchainService implements OnModuleInit {
     }
 
     // TODO better to listen for events
-    // @Cron(CronExpression.EVERY_5_MINUTES)
-    // async syncSaleContracts() {
-    //     this.marketplaceUpdateQueue.empty();
-    //     this.marketplaceUpdateQueue.add({
-    //         marketplaceState: MarketplaceState.LISTED,
-    //         nftType: NftType.CAPTAIN
-    //     } as MarketplaceUpdateJob);
-    // }
+    @Cron(CronExpression.EVERY_5_MINUTES)
+    async syncSaleContracts() {
+        this.marketplaceUpdateQueue.empty();
+        this.marketplaceUpdateQueue.add({
+            marketplaceState: MarketplaceState.LISTED,
+            nftType: NftType.CAPTAIN
+        } as MarketplaceUpdateJob);
+    }
 
-    // @Cron(CronExpression.EVERY_10_MINUTES)
-    // async syncNftContracts() {
-    //     this.marketplaceUpdateQueue.empty();
-    //     this.marketplaceUpdateQueue.add({
-    //         marketplaceState: MarketplaceState.NONE,
-    //         nftType: NftType.CAPTAIN
-    //     } as MarketplaceUpdateJob);
-    // }
+    @Cron(CronExpression.EVERY_10_MINUTES)
+    async syncNftContracts() {
+        this.marketplaceUpdateQueue.empty();
+        this.marketplaceUpdateQueue.add({
+            marketplaceState: MarketplaceState.NONE,
+            nftType: NftType.CAPTAIN
+        } as MarketplaceUpdateJob);
+    }
 
 }

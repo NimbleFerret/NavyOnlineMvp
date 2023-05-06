@@ -25,6 +25,9 @@ export interface MarketplaceListingJob {
     listed: boolean;
     nftType: NftType;
     price: number;
+    sold: boolean;
+    seller: string;
+    owner: string;
 }
 
 export class WorkersMarketplace {

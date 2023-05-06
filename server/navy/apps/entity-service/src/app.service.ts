@@ -51,7 +51,7 @@ export class AppService implements OnModuleInit {
     }
 
     for (let i = 0; i < request.count; i++) {
-      const index = SharedLibraryService.GetRandomIntInRangeExcept(1, this.traitsCount + 1, excludeIndexes);
+      const index = SharedLibraryService.GetRandomIntInRangeExcept(1, this.traitsCount, excludeIndexes);
       const trait = await this.captainTraitModel.findOne({ index });
       response.traits.push({
         index: trait.index,

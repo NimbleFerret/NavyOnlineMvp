@@ -12,7 +12,7 @@ import { OnQueueError, OnQueueFailed, Process, Processor } from "@nestjs/bull";
 import { Logger, OnModuleInit } from "@nestjs/common";
 import { Job } from "bull";
 import { Contract, ethers } from 'ethers';
-import { NftType } from '@app/shared-library/shared-library.main';
+import { NftType, Rarity } from '@app/shared-library/shared-library.main';
 import { InjectModel } from '@nestjs/mongoose';
 import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
 import { CollectionItem, CollectionItemDocument, MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
@@ -97,6 +97,7 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                                 const uriResponse = await fetch(nftUri);
                                 const body = await uriResponse.json();
                                 collectionItem.image = body.image;
+                                collectionItem.traits = body.attributes[0];
                                 nftChanged = true;
                             }
                             if (collectionItem.owner != nftOwner) {
@@ -117,8 +118,25 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                             model.owner = nftOwner;
                             model.image = body.image;
                             model.traits = body.attributes[0];
+                            model.visuals = [];
+
+                            let rarity = 'Common';
+                            switch (body.attributes[3].rarity) {
+                                case Rarity.LEGENDARY:
+                                    rarity = 'Legendary';
+                                    break;
+                                case Rarity.EPIC:
+                                    rarity = 'Epic';
+                                    break;
+                                case Rarity.RARE:
+                                    rarity = 'Rare';
+                                    break;
+                            }
+
+                            model.rarity = rarity;
                             model.contractAddress = contractAddress;
                             model.marketplaceState = MarketplaceState.NONE;
+                            model.collectionName = 'captains';
                             model.chainId = '338';
                             await model.save();
                         }
@@ -134,7 +152,7 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
 
         const marketplaceNFTs: MarketplaceNFT[] = nfts.map(nft => {
             const marketplaceNFT: MarketplaceNFT = {
-                contractAddress: nft.contractAddress.toLowerCase(),
+                contractAddress: marketpalceContract.address.toLowerCase(),
                 tokenId: nft.tokenId.toNumber(),
                 tokenUri: nft.tokenUri,
                 seller: nft.seller.toLowerCase(),
@@ -142,6 +160,7 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                 price: ethers.utils.formatEther(nft.price),
                 image: '',
                 traits: {},
+                rarity: 'Common',
                 lastUpdated: nft.lastUpdated.toNumber()
             };
             return marketplaceNFT;
@@ -166,6 +185,19 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                 const body = await response.json();
                 nft.image = body.image;
                 nft.traits = body.attributes[0].traits;
+                let rarity = 'Common';
+                switch (body.attributes[3].rarity) {
+                    case Rarity.LEGENDARY:
+                        rarity = 'Legendary';
+                        break;
+                    case Rarity.EPIC:
+                        rarity = 'Epic';
+                        break;
+                    case Rarity.RARE:
+                        rarity = 'Rare';
+                        break;
+                }
+                nft.rarity = rarity;
             }
 
             // Save result into the database
@@ -181,7 +213,10 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                 model.lastUpdated = nft.lastUpdated;
                 model.contractAddress = nft.contractAddress;
                 model.traits = nft.traits;
+                model.visuals = [];
+                model.rarity = nft.rarity;
                 model.marketplaceState = marketplaceState == MarketplaceState.LISTED ? MarketplaceState.LISTED : MarketplaceState.SOLD;
+                model.collectionName = 'captains';
                 model.chainId = '338';
                 await model.save();
             }

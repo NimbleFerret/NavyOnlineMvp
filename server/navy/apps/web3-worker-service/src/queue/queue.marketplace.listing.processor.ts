@@ -27,11 +27,40 @@ export class QueueMarketplaceListingProcessor {
         });
 
         if (collectionItem) {
-            if (job.data.listed) {
-                collectionItem.marketplaceState = MarketplaceState.LISTED;
-                collectionItem.price = job.data.price;
+            if (!job.data.sold) {
+                if (job.data.listed) {
+                    collectionItem.marketplaceState = MarketplaceState.LISTED;
+                    collectionItem.price = job.data.price;
+                } else {
+                    collectionItem.marketplaceState = MarketplaceState.NONE;
+                    collectionItem.price = undefined;
+                }
             } else {
+                const soldCollectionItem = new this.collectionItemModel();
+                soldCollectionItem.id = collectionItem.id;
+                soldCollectionItem.tokenId = collectionItem.tokenId;
+                soldCollectionItem.tokenUri = collectionItem.tokenUri;
+                soldCollectionItem.seller = job.data.seller;
+                soldCollectionItem.owner = collectionItem.owner;
+                soldCollectionItem.price = job.data.price;
+                soldCollectionItem.image = collectionItem.image;
+                soldCollectionItem.visuals = collectionItem.visuals;
+                soldCollectionItem.traits = collectionItem.traits;
+                soldCollectionItem.rarity = collectionItem.rarity;
+                soldCollectionItem.lastUpdated = collectionItem.lastUpdated;
+                soldCollectionItem.needUpdate = collectionItem.needUpdate;
+                soldCollectionItem.contractAddress = collectionItem.contractAddress;
+                soldCollectionItem.collectionName = collectionItem.collectionName;
+                soldCollectionItem.chainId = collectionItem.chainId;
+                soldCollectionItem.chainName = collectionItem.chainName;
+                soldCollectionItem.coinSymbol = collectionItem.coinSymbol;
+                soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
+                soldCollectionItem.collectionName = 'captains';
+                await soldCollectionItem.save();
+
                 collectionItem.marketplaceState = MarketplaceState.NONE;
+                collectionItem.owner = job.data.owner;
+                collectionItem.seller = job.data.seller;
                 collectionItem.price = undefined;
             }
             await collectionItem.save();
@@ -52,6 +81,6 @@ export class QueueMarketplaceListingProcessor {
     }
 
     private jobInfo(job: Job<MarketplaceListingJob>) {
-        return `${job.id} ${job.data.tokenId} ${job.data.listed} ${NftType[job.data.nftType]} ${job.data.price}`
+        return `${job.id} ${job.data.tokenId} ${job.data.listed} ${NftType[job.data.nftType]} ${job.data.price} ${job.data.sold}`
     }
 }
