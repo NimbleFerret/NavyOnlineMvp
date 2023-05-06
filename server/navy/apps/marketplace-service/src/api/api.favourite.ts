@@ -73,7 +73,7 @@ export class FavouriteApiService {
         const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
         const collectionItem = await this.getCollectionItemById(dto);
         if (collectionItem) {
-            const favourite = await this.favouriteModel.findOne({ collectionItem });
+            const favourite = await this.favouriteModel.findOne({ collectionItem, userProfile });
             return {
                 userProfile,
                 favourite,
