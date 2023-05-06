@@ -44,7 +44,6 @@ export class AuthApiService {
         let httpStatus = undefined;
 
         if (request.ethAddress && request.signedMessage) {
-            request.ethAddress = request.ethAddress.toLowerCase();
             await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
             if (signIn) {
                 const userProfile = await this.userProfileModel.findOne({ ethAddress: request.ethAddress });
