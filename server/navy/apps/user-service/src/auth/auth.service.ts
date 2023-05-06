@@ -106,27 +106,27 @@ export class AuthService {
                             response.reasonCode = SharedLibraryService.UNABLE_TO_GENERATE_CONFIRMATION_CODE;
                         }
                     } else {
-                        if (user.emailState == EmailState.WAITING_FOR_CONFIRMATION) {
-                            if (request.email && request.confirmationCode) {
-                                const confirmationResult = await this.confirmationService.checkCode(request.email, request.confirmationCode);
-                                if (confirmationResult == ConfirmationResult.MATCH) {
-                                    user.emailState = EmailState.CONFIRMED;
-                                    await user.save();
+                        // if (user.emailState == EmailState.WAITING_FOR_CONFIRMATION) {
+                        //     if (request.email && request.confirmationCode) {
+                        //         const confirmationResult = await this.confirmationService.checkCode(request.email, request.confirmationCode);
+                        //         if (confirmationResult == ConfirmationResult.MATCH) {
+                        //             user.emailState = EmailState.CONFIRMED;
+                        //             await user.save();
 
-                                    response.success = true;
-                                    response.signUpState = SignUpState.DONE;
-                                    response.userId = user._id;
-                                } else if (confirmationResult == ConfirmationResult.MISSMATCH) {
-                                    response.reasonCode = SharedLibraryService.CONFIRMATION_CODE_MISSMATCH;
-                                } else {
-                                    response.reasonCode = SharedLibraryService.CONFIRMATION_CODE_EXPIRED;
-                                }
-                            } else {
-                                response.reasonCode = SharedLibraryService.BAD_PARAMS;
-                            }
-                        } else {
-                            response.reasonCode = SharedLibraryService.GENERAL_ERROR;
-                        }
+                        //             response.success = true;
+                        //             response.signUpState = SignUpState.DONE;
+                        //             response.userId = user._id;
+                        //         } else if (confirmationResult == ConfirmationResult.MISSMATCH) {
+                        //             response.reasonCode = SharedLibraryService.CONFIRMATION_CODE_MISSMATCH;
+                        //         } else {
+                        //             response.reasonCode = SharedLibraryService.CONFIRMATION_CODE_EXPIRED;
+                        //         }
+                        //     } else {
+                        //         response.reasonCode = SharedLibraryService.BAD_PARAMS;
+                        //     }
+                        // } else {
+                        //     response.reasonCode = SharedLibraryService.GENERAL_ERROR;
+                        // }
                     }
                 } else {
                     if (user) {

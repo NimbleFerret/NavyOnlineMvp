@@ -148,7 +148,6 @@ export class AuthApiService {
 
         if ((!userProfile.email || userProfile.email.length == 0) && dto.password.length < 6) {
             userProfile.email = dto.email;
-            userProfile.emailState = EmailState.CONFIRMED;
             userProfile.password = dto.password;
             await userProfile.save();
             return {
