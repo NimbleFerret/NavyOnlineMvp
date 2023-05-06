@@ -60,7 +60,7 @@ export class AppController {
 
   @Get('collection/:address')
   getCollection(@Param('address') address: string) {
-    return this.collectionService.getCollection(address);
+    return this.collectionService.getCollection(address.toLowerCase());
   }
 
   // @Get('collection/:address/listed')
@@ -86,7 +86,7 @@ export class AppController {
     @Query('page') page?: number,
     @Query('size') size?: number,
     @Query('rarity') rarity?: string) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), address, page, size, rarity);
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), address.toLowerCase(), page, size, rarity);
   }
 
   @Get('collection/:address/item/:tokenId')
@@ -94,12 +94,12 @@ export class AppController {
     @Req() request: Request,
     @Param('address') address: string,
     @Param('tokenId') tokenId: string) {
-    return this.collectionService.getCollectionItem(Utils.GetBearerTokenFromRequest(request), address, tokenId);
+    return this.collectionService.getCollectionItem(Utils.GetBearerTokenFromRequest(request), address.toLowerCase(), tokenId);
   }
 
   @Get('mint/:collectionAddress')
   getMint(@Param('collectionAddress') collectionAddress: string) {
-    return this.collectionService.getMintByCollection(collectionAddress);
+    return this.collectionService.getMintByCollection(collectionAddress.toLowerCase());
   }
 
 }
