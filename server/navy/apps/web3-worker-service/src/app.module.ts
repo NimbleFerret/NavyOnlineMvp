@@ -42,7 +42,7 @@ import { QueueMintProcessor } from './queue/queue.mint.processor';
     ClientsModule.register([
       {
         name: EntityServiceGrpcClientName,
-        ...EntityServiceGrpcClientOptions,
+        ...EntityServiceGrpcClientOptions(false),
       },
     ]),
   ],

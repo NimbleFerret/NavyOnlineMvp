@@ -44,11 +44,13 @@ export const EntityServiceName = 'EntityService';
 export const EntityServiceGrpcClientName = 'EntityService';
 export const EntityServiceGrpcPackage = 'entityservice';
 
-export const EntityServiceGrpcClientOptions: ClientOptions = {
-    transport: Transport.GRPC,
-    options: {
-        url: (Config.TestEnv ? 'localhost' : 'navy-entity-service') + Config.ENTITY_SERVICE_PORT,
-        package: EntityServiceGrpcPackage,
-        protoPath: join(__dirname, '../../proto/entity.service.proto'),
-    },
-};
+export function EntityServiceGrpcClientOptions(localhost: boolean) {
+    return {
+        transport: Transport.GRPC,
+        options: {
+            url: localhost ? 'localhost' : (Config.TestEnv ? 'localhost' : 'navy-entity-service') + Config.ENTITY_SERVICE_PORT,
+            package: EntityServiceGrpcPackage,
+            protoPath: join(__dirname, '../../proto/entity.service.proto'),
+        },
+    } as ClientOptions;
+}
