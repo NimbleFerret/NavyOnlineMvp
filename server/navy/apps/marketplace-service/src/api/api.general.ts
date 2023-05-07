@@ -49,12 +49,12 @@ export class GeneralApiService implements OnModuleInit {
         await newFeedback.save();
 
         // TODO replace by kafka
-        await lastValueFrom(this.notificationService.SendEmail({
-            recipient: 'hello@navy.online',
-            subject: feedbackDto.subject,
-            message: feedbackDto.message,
-            sender: feedbackDto.from
-        }));
+        // await lastValueFrom(this.notificationService.SendEmail({
+        //     recipient: 'hello@navy.online',
+        //     subject: feedbackDto.subject,
+        //     message: feedbackDto.message,
+        //     sender: feedbackDto.from
+        // }));
     }
 
     getCronosUsdPrice() {

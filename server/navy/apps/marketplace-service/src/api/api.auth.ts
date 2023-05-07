@@ -135,7 +135,7 @@ export class AuthApiService {
             reason = Utils.ERROR_EMAIL_EXISTS;
             httpStatus = HttpStatus.BAD_GATEWAY;
         }
-        if ((!userProfile.email || userProfile.email.length == 0) && dto.password.length < 6) {
+        if (dto.email.length == 0 || dto.password.length < 6) {
             success = false;
             reason = Utils.ERROR_BAD_EMAIL_OR_PASSWORD;
             httpStatus = HttpStatus.BAD_REQUEST;
@@ -147,21 +147,19 @@ export class AuthApiService {
             }, httpStatus);
         }
 
-        if ((!userProfile.email || userProfile.email.length == 0) && dto.password.length < 6) {
-            userProfile.email = dto.email;
-            userProfile.password = dto.password;
-            await userProfile.save();
-            return {
-                success: true,
-                ethAddress: userProfile.ethAddress,
-                email: userProfile.email
-            }
+        userProfile.email = dto.email;
+        userProfile.password = dto.password;
+        await userProfile.save();
+
+        return {
+            success: true,
+            ethAddress: userProfile.ethAddress,
+            email: userProfile.email
         }
     }
 
     async attachWallet(authToken: string, dto: AttachWalletDto) {
         const userProfile = await this.checkTokenAndGetProfile(authToken);
-        dto.ethAddress = dto.ethAddress.toLowerCase();
         await this.checkEthersAuthSignature(dto.ethAddress, dto.signedMessage);
 
         if (await this.walletExists(dto.ethAddress)) {
