@@ -173,7 +173,7 @@ export abstract class NftGenerator {
     private initiateNftPartsImagePath() {
         this.nftPartDetails.forEach(nftPart => {
             for (let i = 0; i < nftPart.subParts.length; i++) {
-                const nftPartFilePath = __dirname + `\\assets\\${this.nftTypeName}\\${nftPart.resPlural}\\${nftPart.resSingle}_${i + 1}.png`;
+                const nftPartFilePath = __dirname + `/assets/${this.nftTypeName}/${nftPart.resPlural}/${nftPart.resSingle}_${i + 1}.png`;
 
                 nftPart.subParts[i].filePath = nftPartFilePath;
                 nftPart.subParts[i].index = i;
