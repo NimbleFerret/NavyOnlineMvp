@@ -6,7 +6,7 @@ import { DashboardApiService } from './api/api.dashboard';
 import { GeneralApiService } from './api/api.general';
 import { FeedbackDto } from './dto/dto.feedback';
 
-@Controller('marketplace')
+@Controller('api/marketplace')
 export class AppController {
 
   constructor(

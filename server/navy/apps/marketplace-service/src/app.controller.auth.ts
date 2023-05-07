@@ -10,7 +10,7 @@ import { NotificationApiService } from './api/api.notification';
 import { BidPlaceDto, BidDeleteDto } from './dto/dto.bids';
 import { FavouriteDto } from './dto/dto.favourite';
 
-@Controller('marketplace/auth')
+@Controller('api/marketplace/auth')
 export class AppControllerAuth {
 
   constructor(
