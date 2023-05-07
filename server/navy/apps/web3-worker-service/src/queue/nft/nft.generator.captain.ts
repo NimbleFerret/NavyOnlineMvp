@@ -150,6 +150,9 @@ export class NftCaptainGenerator extends NftGenerator {
         await contract.grantCaptain(owner, metadataUrl);
 
         let rarity = 'Common';
+        console.log('MINT. PICK RARITY');
+        console.log(this.metadataObject.attributes);
+        console.log(this.metadataObject.attributes[3].rarity);
         switch (this.metadataObject.attributes[3].rarity) {
             case Rarity.LEGENDARY:
                 rarity = 'Legendary';
