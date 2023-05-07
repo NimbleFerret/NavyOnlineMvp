@@ -16,6 +16,6 @@ RUN npm run build
 COPY ./proto/ ./dist/proto
 COPY ./apps/entity-service/fixtures/ ./dist/apps/entity-service/fixtures
 
-EXPOSE 3020
+EXPOSE 3029
 
 CMD npm run start:entity-service:prod
