@@ -212,8 +212,8 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                 model.id = nft.contractAddress + '_' + nft.tokenId;
                 model.tokenId = nft.tokenId;
                 model.tokenUri = nft.tokenUri;
-                model.seller = nft.seller;
-                model.owner = nft.owner;
+                model.seller = nft.seller.toLowerCase();
+                model.owner = nft.owner.toLowerCase();
                 model.price = Number(nft.price);
 
                 if (!tokenIds.includes(nft.tokenId)) {

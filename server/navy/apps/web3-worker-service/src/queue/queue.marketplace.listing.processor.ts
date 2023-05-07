@@ -40,8 +40,8 @@ export class QueueMarketplaceListingProcessor {
                 soldCollectionItem.id = collectionItem.id;
                 soldCollectionItem.tokenId = collectionItem.tokenId;
                 soldCollectionItem.tokenUri = collectionItem.tokenUri;
-                soldCollectionItem.seller = job.data.seller;
-                soldCollectionItem.owner = job.data.owner;
+                soldCollectionItem.seller = job.data.seller.toLowerCase();
+                soldCollectionItem.owner = job.data.owner.toLowerCase();
                 soldCollectionItem.price = job.data.price;
                 soldCollectionItem.image = collectionItem.image;
                 soldCollectionItem.visuals = collectionItem.visuals;
