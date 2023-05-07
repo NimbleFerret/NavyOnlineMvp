@@ -64,7 +64,7 @@ export class QueueMarketplaceListingProcessor {
                 collectionItem.price = undefined;
             }
             await collectionItem.save();
-            this.logger.log(`Job finished! ${this.jobInfo(job)}`);
+            this.logger.log(`Job finished! (${this.jobInfo(job)}) tokenId: ${collectionItem.tokenId}`);
         } else {
             throw Error('Unable to find collection item');
         }

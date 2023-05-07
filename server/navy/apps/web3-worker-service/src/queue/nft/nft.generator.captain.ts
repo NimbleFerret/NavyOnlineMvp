@@ -7,6 +7,7 @@ import { NftGenerator } from "./nft.generator";
 import { lastValueFrom } from 'rxjs';
 import { CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Model } from "mongoose";
+import { Logger } from "@nestjs/common";
 
 export interface CaptainStats {
     currentLevel: number;
@@ -150,9 +151,6 @@ export class NftCaptainGenerator extends NftGenerator {
         await contract.grantCaptain(owner, metadataUrl);
 
         let rarity = 'Common';
-        console.log('MINT. PICK RARITY');
-        console.log(this.metadataObject.attributes);
-        console.log(this.metadataObject.attributes[3].rarity);
         switch (this.metadataObject.attributes[3].rarity) {
             case Rarity.LEGENDARY:
                 rarity = 'Legendary';
@@ -179,6 +177,8 @@ export class NftCaptainGenerator extends NftGenerator {
         newCollectionModel.chainId = '338';
         newCollectionModel.marketplaceState = MarketplaceState.NONE;
         await newCollectionModel.save();
+
+        Logger.log(`Captain ${newCollectionModel.tokenId} minted!`);
     }
 
 }
