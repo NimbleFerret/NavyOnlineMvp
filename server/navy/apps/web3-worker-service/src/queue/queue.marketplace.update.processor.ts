@@ -11,7 +11,7 @@ import { EthersProvider } from "@app/shared-library/ethers/ethers.provider";
 import { OnQueueError, OnQueueFailed, Process, Processor } from "@nestjs/bull";
 import { Logger, OnModuleInit } from "@nestjs/common";
 import { Job } from "bull";
-import { Contract, ethers } from 'ethers';
+import { Contract } from 'ethers';
 import { NftType, Rarity } from '@app/shared-library/shared-library.main';
 import { InjectModel } from '@nestjs/mongoose';
 import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
@@ -19,6 +19,8 @@ import { CollectionItem, CollectionItemDocument, MarketplaceState } from '@app/s
 import { MarketplaceUpdateJob, WorkersMarketplace } from "@app/shared-library/workers/workers.marketplace";
 import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { Model } from 'mongoose';
+import { NftCaptainGenerator } from './nft/nft.generator.captain';
+import { EthersConstants } from '@app/shared-library/ethers/ethers.constants';
 
 @Processor(WorkersMarketplace.MarketplaceUpdateQueue)
 export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
@@ -97,7 +99,8 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                                 const uriResponse = await fetch(nftUri);
                                 const body = await uriResponse.json();
                                 collectionItem.image = body.image;
-                                collectionItem.traits = body.attributes[0];
+                                collectionItem.traits = body.attributes[0].traits;
+                                collectionItem.visuals = NftCaptainGenerator.GenerateVisuals(body);
                                 nftChanged = true;
                             }
                             if (collectionItem.owner != nftOwner) {
@@ -117,8 +120,8 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                             model.tokenUri = nftUri;
                             model.owner = nftOwner;
                             model.image = body.image;
-                            model.traits = body.attributes[0];
-                            model.visuals = [];
+                            model.traits = body.attributes[0].traits;
+                            model.visuals = NftCaptainGenerator.GenerateVisuals(body);
 
                             let rarity = 'Common';
                             switch (body.attributes[3].rarity) {
@@ -150,26 +153,30 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
         const nfts = marketplaceState == MarketplaceState.LISTED ?
             await marketpalceContract.getNftsListed() : await marketpalceContract.getNftsSold();
 
-        const marketplaceNFTs: MarketplaceNFT[] = nfts.map(nft => {
+        // Convert each NFT from the blockchain
+        const marketplaceNFTs: MarketplaceNFT[] = nfts.filter(nft => nft.tokenId != 0).map(nft => {
             const marketplaceNFT: MarketplaceNFT = {
-                contractAddress: marketpalceContract.address.toLowerCase(),
+                contractAddress: EthersConstants.CaptainContractAddress,
                 tokenId: nft.tokenId.toNumber(),
                 tokenUri: nft.tokenUri,
                 seller: nft.seller.toLowerCase(),
                 owner: nft.owner.toLowerCase(),
-                price: ethers.utils.formatEther(nft.price),
+                price: nft.price.toNumber(),
                 image: '',
                 traits: {},
+                visuals: [],
                 rarity: 'Common',
                 lastUpdated: nft.lastUpdated.toNumber()
             };
             return marketplaceNFT;
         });
 
-        if (marketplaceNFTs.length > 0) {
-            const contractAddress = marketplaceNFTs[0].contractAddress;
+        const contractAddress = marketplaceNFTs[0].contractAddress;
 
-            // Skip nfts that we have already
+        if (marketplaceNFTs.length > 0) {
+            console.log(marketplaceNFTs);
+
+            // Find all collection item Id for this collection
             const collectionItems = await this.collectionItemModel.find({
                 contractAddress
             });
@@ -177,32 +184,33 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                 return f.tokenId;
             });
 
-            const nfts = marketplaceNFTs.filter(f => !tokenIds.includes(f.tokenId));
-
-            // Get image from metadata uri
-            for (const nft of nfts) {
-                const response = await fetch(nft.tokenUri);
-                const body = await response.json();
-                nft.image = body.image;
-                nft.traits = body.attributes[0].traits;
-                let rarity = 'Common';
-                switch (body.attributes[3].rarity) {
-                    case Rarity.LEGENDARY:
-                        rarity = 'Legendary';
-                        break;
-                    case Rarity.EPIC:
-                        rarity = 'Epic';
-                        break;
-                    case Rarity.RARE:
-                        rarity = 'Rare';
-                        break;
+            // Fill fields that requires metadata parsing if needed
+            for (const nft of marketplaceNFTs) {
+                if (!tokenIds.includes(nft.tokenId)) {
+                    const response = await fetch(nft.tokenUri);
+                    const body = await response.json();
+                    nft.image = body.image;
+                    nft.traits = body.attributes[0].traits;
+                    nft.visuals = NftCaptainGenerator.GenerateVisuals(body);
+                    let rarity = 'Common';
+                    switch (body.attributes[3].rarity) {
+                        case Rarity.LEGENDARY:
+                            rarity = 'Legendary';
+                            break;
+                        case Rarity.EPIC:
+                            rarity = 'Epic';
+                            break;
+                        case Rarity.RARE:
+                            rarity = 'Rare';
+                            break;
+                    }
+                    nft.rarity = rarity;
                 }
-                nft.rarity = rarity;
             }
 
-            // Save result into the database
-            for (const nft of nfts) {
-                const model = new this.collectionItemModel();
+            const self = this;
+            async function createNewCollectionItem(nft: MarketplaceNFT) {
+                const model = new self.collectionItemModel();
                 model.id = nft.contractAddress + '_' + nft.tokenId;
                 model.tokenId = nft.tokenId;
                 model.tokenUri = nft.tokenUri;
@@ -213,12 +221,56 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                 model.lastUpdated = nft.lastUpdated;
                 model.contractAddress = nft.contractAddress;
                 model.traits = nft.traits;
-                model.visuals = [];
+                model.visuals = nft.visuals;
                 model.rarity = nft.rarity;
                 model.marketplaceState = marketplaceState == MarketplaceState.LISTED ? MarketplaceState.LISTED : MarketplaceState.SOLD;
                 model.collectionName = 'captains';
                 model.chainId = '338';
                 await model.save();
+            }
+
+            // Create missing NFT or update existing
+            for (const nft of marketplaceNFTs) {
+                if (tokenIds.includes(nft.tokenId)) {
+
+                    // Create sold item if we dont have it yet
+                    if (marketplaceState == MarketplaceState.SOLD && collectionItems.filter(f => f.tokenId == nft.tokenId && f.marketplaceState == MarketplaceState.SOLD).length == 0) {
+                        this.logger.log(`Create new sold NFT: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
+                        await createNewCollectionItem(nft);
+                    }
+
+                    // Change state and add price if we dont have listed NFT yet
+                    if (marketplaceState == MarketplaceState.LISTED && collectionItems.filter(f => f.tokenId == nft.tokenId && f.marketplaceState == MarketplaceState.LISTED).length == 0) {
+                        const filteredListedItems = collectionItems.filter(f => f.tokenId == nft.tokenId && f.marketplaceState == MarketplaceState.NONE);
+                        if (filteredListedItems.length == 1) {
+                            const filteredListedItem = filteredListedItems[0];
+                            filteredListedItem.price = Number(nft.price);
+                            filteredListedItem.marketplaceState = MarketplaceState.LISTED;
+                            this.logger.log(`Update missing Listed state: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
+                            await filteredListedItem.save();
+                        } else {
+                            this.logger.error(`Unable to update listed NFT: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
+                        }
+                    }
+                } else {
+                    this.logger.log(`Create missing NFT: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
+                    await createNewCollectionItem(nft);
+                }
+            }
+        } else {
+            // If we have listed NFT, but no listed in the contract
+            if (marketplaceState == MarketplaceState.LISTED) {
+                const collectionItems = await this.collectionItemModel.find({
+                    contractAddress,
+                    marketplaceState: MarketplaceState.LISTED
+                });
+                if (collectionItems.length > 0) {
+                    for (const collectionItem of collectionItems) {
+                        collectionItem.marketplaceState = MarketplaceState.NONE;
+                        this.logger.log(`Creaye missing NFT: contractAddress: ${contractAddress}, tokenId: ${collectionItem.tokenId}`);
+                        await collectionItem.save();
+                    }
+                }
             }
         }
     }
