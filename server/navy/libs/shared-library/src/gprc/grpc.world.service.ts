@@ -18,7 +18,7 @@ export const WorldServiceGrpcPackage = 'worldservice';
 export const WorldServiceGrpcClientOptions: ClientOptions = {
     transport: Transport.GRPC,
     options: {
-        url: 'localhost:' + Config.WORLD_SERVICE_PORT,
+        url: (Config.TestEnv ? 'localhost' : 'navy-world-service') + Config.WORLD_SERVICE_PORT,
         package: WorldServiceGrpcPackage,
         protoPath: join(__dirname, '../../proto/world.service.proto'),
     },

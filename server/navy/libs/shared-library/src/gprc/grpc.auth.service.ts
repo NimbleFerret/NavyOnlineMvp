@@ -35,7 +35,7 @@ export const AuthServiceGrpcPackage = 'authservice';
 export const AuthServiceGrpcClientOptions: ClientOptions = {
     transport: Transport.GRPC,
     options: {
-        url: 'localhost:' + Config.AUTH_SERVICE_PORT,
+        url: (Config.TestEnv ? 'localhost' : 'navy-auth-service') + Config.AUTH_SERVICE_PORT,
         package: AuthServiceGrpcPackage,
         protoPath: join(__dirname, '../../proto/auth.service.proto'),
     },
