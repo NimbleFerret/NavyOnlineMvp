@@ -15,6 +15,7 @@ echo '7. user-service'
 echo '8. web3-service'
 echo '9. web3-worker-service'
 echo '10. world-service'
+echo '11. entity-service'
 
 read app
 
@@ -81,6 +82,12 @@ then
     appServiceName="navy-world-service"
     appDockerfile="docker-world-service.dockerfile"
     appServicePort=3021
+fi
+if [ $app -eq 11 ]
+then
+    appServiceName="navy-entity-service"
+    appDockerfile="docker-entity-service.dockerfile"
+    appServicePort=3029
 fi
 
 docker build --tag $appServiceName -f ./$appDockerfile .
