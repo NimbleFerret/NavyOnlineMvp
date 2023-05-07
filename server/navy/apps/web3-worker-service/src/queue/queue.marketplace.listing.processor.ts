@@ -41,13 +41,13 @@ export class QueueMarketplaceListingProcessor {
                 soldCollectionItem.tokenId = collectionItem.tokenId;
                 soldCollectionItem.tokenUri = collectionItem.tokenUri;
                 soldCollectionItem.seller = job.data.seller;
-                soldCollectionItem.owner = collectionItem.owner;
+                soldCollectionItem.owner = job.data.owner;
                 soldCollectionItem.price = job.data.price;
                 soldCollectionItem.image = collectionItem.image;
                 soldCollectionItem.visuals = collectionItem.visuals;
                 soldCollectionItem.traits = collectionItem.traits;
                 soldCollectionItem.rarity = collectionItem.rarity;
-                soldCollectionItem.lastUpdated = collectionItem.lastUpdated;
+                soldCollectionItem.lastUpdated = Date.now();
                 soldCollectionItem.needUpdate = collectionItem.needUpdate;
                 soldCollectionItem.contractAddress = collectionItem.contractAddress;
                 soldCollectionItem.collectionName = collectionItem.collectionName;

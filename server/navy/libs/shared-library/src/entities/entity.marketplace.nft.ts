@@ -7,6 +7,7 @@ export interface MarketplaceNFT {
     price: string;
     image: string;
     traits: any;
+    visuals: any;
     rarity: string;
     lastUpdated: number;
 }

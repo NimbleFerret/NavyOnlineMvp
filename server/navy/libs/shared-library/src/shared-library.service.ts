@@ -25,10 +25,10 @@ export class SharedLibraryService {
     // Random and chances
     // -------------------------------------
 
-    public static readonly RARITY_COMMON_CHANCE = 35
-    public static readonly RARITY_RARE_CHANCE = 35;
+    public static readonly RARITY_COMMON_CHANCE = 25
+    public static readonly RARITY_RARE_CHANCE = 25;
     public static readonly RARITY_EPIC_CHANCE = 25;
-    public static readonly RARITY_LEGENDARY_CHANCE = 15;
+    public static readonly RARITY_LEGENDARY_CHANCE = 25;
 
     public static GenerateRarity() {
         if (SharedLibraryService.Probability(SharedLibraryService.GetRandomIntInRange(1, SharedLibraryService.RARITY_LEGENDARY_CHANCE))) {

@@ -125,7 +125,7 @@ export class BlockchainService implements OnModuleInit {
     }
 
     // TODO better to listen for events
-    @Cron(CronExpression.EVERY_5_MINUTES)
+    // @Cron(CronExpression.EVERY_5_MINUTES)
     async syncSaleContracts() {
         this.marketplaceUpdateQueue.empty();
         this.marketplaceUpdateQueue.add({
@@ -134,7 +134,7 @@ export class BlockchainService implements OnModuleInit {
         } as MarketplaceUpdateJob);
     }
 
-    @Cron(CronExpression.EVERY_10_MINUTES)
+    // @Cron(CronExpression.EVERY_10_MINUTES)
     async syncNftContracts() {
         this.marketplaceUpdateQueue.empty();
         this.marketplaceUpdateQueue.add({

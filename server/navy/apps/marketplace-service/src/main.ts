@@ -13,8 +13,8 @@ async function bootstrap() {
     .setDescription('Navy.online marketplace api')
     .setBasePath('marketplace')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('marketplace', app, document);
+  // const document = SwaggerModule.createDocument(app, config);
+  // SwaggerModule.setup('marketplace', app, document);
 
   await app.listen(Config.MARKETPLACE_SERVICE_PORT);
   Logger.log(`Marketplace-Service started at port: ${Config.MARKETPLACE_SERVICE_PORT}`);

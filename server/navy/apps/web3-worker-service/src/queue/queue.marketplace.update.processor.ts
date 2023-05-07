@@ -174,8 +174,6 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
         const contractAddress = marketplaceNFTs[0].contractAddress;
 
         if (marketplaceNFTs.length > 0) {
-            console.log(marketplaceNFTs);
-
             // Find all collection item Id for this collection
             const collectionItems = await this.collectionItemModel.find({
                 contractAddress
@@ -217,8 +215,17 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                 model.seller = nft.seller;
                 model.owner = nft.owner;
                 model.price = Number(nft.price);
-                model.image = nft.image;
-                model.lastUpdated = nft.lastUpdated;
+
+                if (!tokenIds.includes(nft.tokenId)) {
+                    model.image = nft.image;
+                } else {
+                    const collectionItem = collectionItems.filter(f => f.tokenId == nft.tokenId)[0];
+                    if (collectionItem) {
+                        model.image = collectionItem.image;
+                    }
+                }
+
+                model.lastUpdated = Date.now();
                 model.contractAddress = nft.contractAddress;
                 model.traits = nft.traits;
                 model.visuals = nft.visuals;
