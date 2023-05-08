@@ -1,4 +1,6 @@
 import { EntityService, EntityServiceGrpcClientName, EntityServiceName } from "@app/shared-library/gprc/grpc.entity.service";
+import { CaptainSettings, CaptainSettingsDocument } from "@app/shared-library/schemas/entity/schema.captain.settings";
+import { CaptainTrait, CaptainTraitDocument } from "@app/shared-library/schemas/entity/schema.captain.trait";
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Inject, Injectable } from "@nestjs/common";
@@ -20,13 +22,15 @@ export class AppService implements OnModuleInit {
     constructor(
         @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
         @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
+        @InjectModel(CaptainTrait.name) private captainTraitModel: Model<CaptainTraitDocument>,
+        @InjectModel(CaptainSettings.name) private captainSettingsModel: Model<CaptainSettingsDocument>,
         @Inject(EntityServiceGrpcClientName) private readonly entityServiceGrpcClient: ClientGrpc) {
     }
 
     async onModuleInit() {
         this.entityService = this.entityServiceGrpcClient.getService<EntityService>(EntityServiceName);
         const captainsCollection = await this.collectionModel.findOne({ name: 'Captains' }).populate('mint');
-        this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection, this.entityService, this.collectionItemModel);
+        this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection, this.captainTraitModel, this.captainSettingsModel, this.collectionItemModel);
         // await this.generateCaptainImages();
     }
 
