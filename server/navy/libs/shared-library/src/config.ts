@@ -19,10 +19,11 @@ export class Config {
     public static readonly TestEnv = false;
 
     private static remoteRedis = true;
+    private static dockerRedis = true;
 
     public static GetRedisHost() {
         return {
-            host: Config.remoteRedis ? '23.111.202.19' : 'localhost',
+            host: Config.dockerRedis ? 'navy-redis' : (Config.remoteRedis ? '23.111.202.19' : 'localhost'),
             port: 6379,
             password: Config.remoteRedis ? 'khbadchgba6576tgfyuv' : ''
         }
