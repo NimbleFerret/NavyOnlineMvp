@@ -6,7 +6,7 @@ import { MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, EntityServiceGrpcClientOptions);
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, EntityServiceGrpcClientOptions(true));
   await app.listen();
 
   Logger.log(`Entity-Service started at port: ${Config.ENTITY_SERVICE_PORT}`);
