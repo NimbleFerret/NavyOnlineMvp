@@ -294,12 +294,23 @@ export class CollectionApiService {
 
     private convertCollectionItems(collectionItems: any, swapSeller = false) {
         const resultItems = [];
+        const resultIds = new Set<number>();
+
         collectionItems.forEach(r => {
-            const resultItem = Converter.ConvertCollectionItem(r, false);
-            if (r.seller && swapSeller) {
-                resultItem.owner = r.seller;
+            if (!resultIds.has(r.tokenId)) {
+                const resultItem = Converter.ConvertCollectionItem(r, false);
+                if (r.seller && swapSeller) {
+                    resultItem.owner = r.seller;
+                }
+                resultItems.push(resultItem);
+                resultIds.add(r.tokenId);
+            } else {
+                for (const resultItem of resultItems) {
+                    if (resultItem.tokenId == r.tokenId && resultItem.marketplaceState == MarketplaceState.NONE && r.marketplaceState == MarketplaceState.LISTED) {
+                        resultItem.marketplaceState = MarketplaceState.LISTED;
+                    }
+                }
             }
-            resultItems.push(resultItem);
         });
         return resultItems;
     }
