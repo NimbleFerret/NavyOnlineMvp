@@ -18,11 +18,13 @@ export class Config {
     // TODO get from env ?
     public static readonly TestEnv = false;
 
+    private static remoteRedis = true;
+
     public static GetRedisHost() {
         return {
-            host: Config.TestEnv ? 'localhost' : 'navy-redis',
+            host: Config.remoteRedis ? '23.111.202.19' : 'localhost',
             port: 6379,
-            password: ''
+            password: Config.remoteRedis ? 'khbadchgba6576tgfyuv' : ''
         }
     }
 
