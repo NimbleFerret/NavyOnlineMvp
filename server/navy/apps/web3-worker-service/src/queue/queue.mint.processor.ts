@@ -100,9 +100,9 @@ export class QueueMintProcessor implements OnModuleInit {
         }
 
         let tokensLeft = (await collectionSaleContract.tokensLeft()).toNumber();
-        if (job.data.tokenId) {
-            tokensLeft = job.data.tokenId;
-        }
+        // if (job.data.tokenId) {
+        //     tokensLeft = job.data.tokenId;
+        // }
         const tokensTotal = (await collectionSaleContract.tokensTotal()).toNumber();
         const metadataUrl = await nftGenerator.generateNft(tokensLeft, tokensTotal);
         await nftGenerator.mintNft(job.data.sender, collectionContract, metadataUrl);
