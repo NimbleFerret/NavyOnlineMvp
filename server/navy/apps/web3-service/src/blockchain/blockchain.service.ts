@@ -59,7 +59,7 @@ export class BlockchainService implements OnModuleInit {
         //     nftType: NftType.CAPTAIN,
         //     sender: '0xE6193b058bBD559E8E0Df3a48202a3cDEC852Ab6',
         //     contractAddress: '0xA7D87Ec62772c3cB9b59de6f4ACa4c8602910bcd',
-        //     tokenId: 123
+        //     tokenId: 23
         // } as MintJob);
 
         this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {

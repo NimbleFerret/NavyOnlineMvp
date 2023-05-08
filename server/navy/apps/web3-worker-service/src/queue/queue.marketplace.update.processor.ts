@@ -74,6 +74,7 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
 
     private async updateNfts(contractAddress: string) {
         const collection = await this.collectionModel.findOne({ address: contractAddress });
+
         if (collection) {
             let contract: Contract;
             if (collection.name == 'Captains') {

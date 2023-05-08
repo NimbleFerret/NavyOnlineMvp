@@ -4,6 +4,7 @@ export interface MintJob {
     nftType: NftType;
     sender: string;
     contractAddress: string;
+    tokenId?: number;
 }
 
 export class WorkersMint {

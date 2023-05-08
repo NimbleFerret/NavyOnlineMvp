@@ -9,7 +9,7 @@ export class DashboardApiService {
     }
 
     async dashboard(days?: string) {
-        const topSales = await this.collectionService.topSales(undefined, days);
+        const topSales = await this.collectionService.tokensPerformance(days);
 
         let cronosTotal = 0;
         let captainsSold = 0;

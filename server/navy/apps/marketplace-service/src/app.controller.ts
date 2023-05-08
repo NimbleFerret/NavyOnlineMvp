@@ -1,4 +1,3 @@
-import { MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { Utils } from '@app/shared-library/utils';
 import { Body, Controller, Get, HttpCode, Param, Post, Query, Req } from '@nestjs/common';
 import { CollectionApiService } from './api/api.collection';
@@ -62,22 +61,6 @@ export class AppController {
   getCollection(@Param('address') address: string) {
     return this.collectionService.getCollection(address.toLowerCase());
   }
-
-  // @Get('collection/:address/listed')
-  // getCollectionListedItems(
-  //   @Req() request: Request,
-  //   @Param('address') address: string,
-  //   @Query('page') page?: number) {
-  //   return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceState.LISTED, address, page);
-  // }
-
-  // @Get('collection/:address/sold')
-  // getCollectionSoldItems(
-  //   @Req() request: Request,
-  //   @Param('address') address: string,
-  //   @Query('page') page?: number) {
-  //   return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), MarketplaceState.SOLD, address, page);
-  // }
 
   @Get('collection/:address/all')
   getCollectionAllItems(

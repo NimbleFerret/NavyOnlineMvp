@@ -121,65 +121,16 @@ export class NftCaptainGenerator extends NftGenerator {
         return visuals;
     }
 
-    async getRandomCaptainTrait(request: GetRandomCaptainTraitRequest) {
-        const response = {
-            traits: []
-        } as GetRandomCaptainTraitResponse;
-        const excludeIndexes: number[] = [];
-        if (request.excludeIds && request.excludeIds.length > 0) {
-            excludeIndexes.push(...request.excludeIds);
-        }
-
-        for (let i = 0; i < request.count; i++) {
-            const index = SharedLibraryService.GetRandomIntInRangeExcept(1, this.traitsCount, excludeIndexes);
-            const trait = await this.captainTraitModel.findOne({ index });
-            response.traits.push({
-                index: trait.index,
-                description: trait.description,
-                bonusType: trait.bonusType,
-                shipStatsAffected: trait.shipStatsAffected
-            });
-            excludeIndexes.push(trait.index);
-        }
-
-        return response;
-    }
-
-    async generateCaptainTraits(request: GenerateCaptainTraitsRequest) {
-        let traits = this.commonCaptainTraits;
-        switch (request.rarity) {
-            case Rarity.LEGENDARY:
-                traits = this.legendaryCaptainTraits;
-                break;
-            case Rarity.EPIC:
-                traits = this.epicCaptainTraits;
-                break;
-            case Rarity.RARE:
-                traits = this.rareCaptainTraits;
-                break;
-        }
-        return await this.getRandomCaptainTrait({
-            count: traits,
-            excludeIds: []
-        });
-    }
-
     async generateNftMetadata(index: number, maxIndex: number, imagePathOnMoralis: string, nftPartsToDraw: NftSubPartDetails[]) {
         const captainStats = {
             currentLevel: 0,
             maxLevel: 10,
             rarity: this.rarity,
-            // staking: false,
-            // stakingRewardNVY: 5,
-            // stakingStartedAt: 0,
-            // stakingDurationSeconds: 120,
         } as CaptainStats;
 
         const captainTraits = await this.generateCaptainTraits({ rarity: this.rarity });
 
         const attributes: any[] = [
-            // { stakingRewardNVY: captainStats.stakingRewardNVY },
-            // { stakingDurationSeconds: captainStats.stakingDurationSeconds },
             { traits: captainTraits.traits },
             { currentLevel: captainStats.currentLevel },
             { maxLevel: captainStats.maxLevel },
@@ -199,8 +150,8 @@ export class NftCaptainGenerator extends NftGenerator {
         }
 
         this.metadataObject = {
-            name: `Captain (${maxIndex - index}/${maxIndex})`,
-            index: maxIndex - index,
+            name: `Captain (${index}/${maxIndex})`,
+            index,
             description: 'Navy.online Gen1 captains collection',
             image: imagePathOnMoralis,
             attributes
@@ -242,4 +193,46 @@ export class NftCaptainGenerator extends NftGenerator {
         Logger.log(`Captain ${newCollectionModel.tokenId} minted!`);
     }
 
+    private async getRandomCaptainTrait(request: GetRandomCaptainTraitRequest) {
+        const response = {
+            traits: []
+        } as GetRandomCaptainTraitResponse;
+        const excludeIndexes: number[] = [];
+        if (request.excludeIds && request.excludeIds.length > 0) {
+            excludeIndexes.push(...request.excludeIds);
+        }
+
+        for (let i = 0; i < request.count; i++) {
+            const index = SharedLibraryService.GetRandomIntInRangeExcept(1, this.traitsCount, excludeIndexes);
+            const trait = await this.captainTraitModel.findOne({ index });
+            response.traits.push({
+                index: trait.index,
+                description: trait.description,
+                bonusType: trait.bonusType,
+                shipStatsAffected: trait.shipStatsAffected
+            });
+            excludeIndexes.push(trait.index);
+        }
+
+        return response;
+    }
+
+    private async generateCaptainTraits(request: GenerateCaptainTraitsRequest) {
+        let traits = this.commonCaptainTraits;
+        switch (request.rarity) {
+            case Rarity.LEGENDARY:
+                traits = this.legendaryCaptainTraits;
+                break;
+            case Rarity.EPIC:
+                traits = this.epicCaptainTraits;
+                break;
+            case Rarity.RARE:
+                traits = this.rareCaptainTraits;
+                break;
+        }
+        return await this.getRandomCaptainTrait({
+            count: traits,
+            excludeIds: []
+        });
+    }
 }

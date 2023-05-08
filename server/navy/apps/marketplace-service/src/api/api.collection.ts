@@ -150,6 +150,31 @@ export class CollectionApiService {
         }
     }
 
+    async tokensPerformance(days?: string) {
+        const response = [];
+        const projects = await this.generalApiService.getProjects();
+        if (projects) {
+            const query = {
+                contractAddress: [],
+                marketplaceState: MarketplaceState.SOLD,
+                lastUpdated: { $gte: Utils.GetDaysSeconds(days) }
+            };
+
+            projects[0].collections.forEach(collection => {
+                query.contractAddress.push(collection.contractAddress);
+            });
+
+            const tokensPerformanceResult = await this.collectionItemModel
+                .find(query)
+                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']);
+
+            tokensPerformanceResult.forEach(f => {
+                response.push(Converter.ConvertCollectionItem(f, false));
+            });
+        }
+        return response;
+    }
+
     async topSales(authToken?: string, days?: string) {
         const response = [];
         const projects = await this.generalApiService.getProjects();
@@ -305,6 +330,7 @@ export class CollectionApiService {
                 resultItems.push(resultItem);
                 resultIds.add(r.tokenId);
             } else {
+                // Remove possible duplicates and prioritize listed one
                 for (const resultItem of resultItems) {
                     if (resultItem.tokenId == r.tokenId && resultItem.marketplaceState == MarketplaceState.NONE && r.marketplaceState == MarketplaceState.LISTED) {
                         resultItem.marketplaceState = MarketplaceState.LISTED;
