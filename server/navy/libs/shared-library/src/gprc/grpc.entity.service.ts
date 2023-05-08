@@ -48,7 +48,7 @@ export function EntityServiceGrpcClientOptions(local: boolean) {
     return {
         transport: Transport.GRPC,
         options: {
-            url: (local ? 'localhost' : (Config.TestEnv ? 'localhost' : 'navy-entity-service')) + ':' + Config.ENTITY_SERVICE_PORT,
+            url: 'localhost:' + Config.ENTITY_SERVICE_PORT,
             package: EntityServiceGrpcPackage,
             protoPath: join(__dirname, '../../proto/entity.service.proto'),
         },

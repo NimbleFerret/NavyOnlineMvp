@@ -15,7 +15,7 @@ export const GameplayBalancerServiceGrpcPackage = 'gameplaybalancerservice';
 export const GameplayBalancerServiceGrpcClientOptions: ClientOptions = {
     transport: Transport.GRPC,
     options: {
-        url: (Config.TestEnv ? 'localhost' : 'navy-gameplay-balancer-service') + Config.GAMEPLAY_BALANCER_SERVICE_PORT,
+        url: 'localhost:' + Config.GAMEPLAY_BALANCER_SERVICE_PORT,
         package: GameplayBalancerServiceGrpcPackage,
         protoPath: join(__dirname, '../../proto/gameplay-balancer.service.proto'),
     },

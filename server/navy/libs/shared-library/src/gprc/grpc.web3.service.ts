@@ -49,7 +49,7 @@ export const Web3ServiceGrpcPackage = 'web3service';
 export const Web3ServiceGrpcClientOptions: ClientOptions = {
     transport: Transport.GRPC,
     options: {
-        url: (Config.TestEnv ? 'localhost' : 'navy-entity-service') + Config.WEB3_SERVICE_PORT,
+        url: 'localhost:' + Config.WEB3_SERVICE_PORT,
         package: Web3ServiceGrpcPackage,
         protoPath: join(__dirname, '../../proto/web3.service.proto'),
     },

@@ -68,7 +68,7 @@ export const NotificationServiceGrpcPackage = 'notificationservice';
 export const NotificationServiceGrpcClientOptions: ClientOptions = {
     transport: Transport.GRPC,
     options: {
-        url: (Config.TestEnv ? 'localhost' : 'navy-notification-service') + Config.NOTIFICATION_SERVICE_PORT,
+        url: 'localhost:' + Config.NOTIFICATION_SERVICE_PORT,
         package: NotificationServiceGrpcPackage,
         protoPath: join(__dirname, '../../proto/notification.service.proto'),
     },

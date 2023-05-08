@@ -72,6 +72,7 @@ export class QueueMintProcessor implements OnModuleInit {
 
         const captainsCollection = await this.collectionModel.findOne({ name: 'Captains' }).populate('mint');
         this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection, this.captainTraitModel, this.captainSettingsModel, this.collectionItemModel);
+        await this.nftCaptainGenerator.init();
         // this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection, this.entityService, this.collectionItemModel);
         await this.nftCaptainGenerator.initMoralis();
     }
@@ -98,7 +99,10 @@ export class QueueMintProcessor implements OnModuleInit {
                 break;
         }
 
-        const tokensLeft = (await collectionSaleContract.tokensLeft()).toNumber();
+        let tokensLeft = (await collectionSaleContract.tokensLeft()).toNumber();
+        if (job.data.tokenId) {
+            tokensLeft = job.data.tokenId;
+        }
         const tokensTotal = (await collectionSaleContract.tokensTotal()).toNumber();
         const metadataUrl = await nftGenerator.generateNft(tokensLeft, tokensTotal);
         await nftGenerator.mintNft(job.data.sender, collectionContract, metadataUrl);

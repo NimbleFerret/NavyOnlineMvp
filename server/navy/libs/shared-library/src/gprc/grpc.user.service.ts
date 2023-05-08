@@ -133,7 +133,7 @@ export const UserServiceGrpcPackage = 'userservice';
 export const UserServiceGrpcClientOptions: ClientOptions = {
     transport: Transport.GRPC,
     options: {
-        url: (Config.TestEnv ? 'localhost' : 'navy-user-service') + Config.USER_SERVICE_PORT,
+        url: 'localhost:' + Config.USER_SERVICE_PORT,
         package: UserServiceGrpcPackage,
         protoPath: join(__dirname, '../../proto/user.service.proto'),
     },

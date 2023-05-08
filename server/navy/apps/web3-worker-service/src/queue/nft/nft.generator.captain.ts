@@ -1,4 +1,4 @@
-import { EntityService, GenerateCaptainTraitsRequest, GetRandomCaptainTraitRequest, GetRandomCaptainTraitResponse } from "@app/shared-library/gprc/grpc.entity.service";
+import { GenerateCaptainTraitsRequest, GetRandomCaptainTraitRequest, GetRandomCaptainTraitResponse } from "@app/shared-library/gprc/grpc.entity.service";
 import { Collection } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { NftType, Rarity } from "@app/shared-library/shared-library.main";
 import { NftSubPartDetails } from "@app/shared-library/workers/workers.marketplace";
@@ -91,12 +91,11 @@ export class NftCaptainGenerator extends NftGenerator {
         NftCaptainGenerator.HeadgearVisualsMap.set(7, 'Bandana');
         NftCaptainGenerator.HeadgearVisualsMap.set(8, 'Hat');
         NftCaptainGenerator.HeadgearVisualsMap.set(9, 'Captain cap');
-
-        this.init().then();
     }
 
-    private async init() {
+    async init() {
         const captainSettings = await this.captainSettingsModel.findOne();
+        this.traitsCount = await this.captainTraitModel.count();
         this.commonCaptainTraits = captainSettings.commonCaptainDefaultTraits;
         this.rareCaptainTraits = captainSettings.rareCaptainDefaultTraits;
         this.epicCaptainTraits = captainSettings.epicCaptainDefaultTraits;
