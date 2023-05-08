@@ -15,6 +15,8 @@ import { AppService } from './app.service';
 import { QueueMarketplaceUpdateProcessor } from './queue/queue.marketplace.update.processor';
 import { QueueMarketplaceListingProcessor } from './queue/queue.marketplace.listing.processor';
 import { QueueMintProcessor } from './queue/queue.mint.processor';
+import { CaptainSettings, CaptainSettingsSchema } from '@app/shared-library/schemas/entity/schema.captain.settings';
+import { CaptainTrait, CaptainTraitSchema } from '@app/shared-library/schemas/entity/schema.captain.trait';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { QueueMintProcessor } from './queue/queue.mint.processor';
       { name: Mint.name, schema: MintSchema },
       { name: Collection.name, schema: CollectionSchema },
       { name: CollectionItem.name, schema: CollectionItemSchema },
+      { name: CaptainTrait.name, schema: CaptainTraitSchema },
+      { name: CaptainSettings.name, schema: CaptainSettingsSchema }
     ]),
     ClientsModule.register([
       {

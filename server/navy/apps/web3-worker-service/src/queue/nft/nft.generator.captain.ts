@@ -1,13 +1,15 @@
-import { EntityService } from "@app/shared-library/gprc/grpc.entity.service";
+import { EntityService, GenerateCaptainTraitsRequest, GetRandomCaptainTraitRequest, GetRandomCaptainTraitResponse } from "@app/shared-library/gprc/grpc.entity.service";
 import { Collection } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { NftType, Rarity } from "@app/shared-library/shared-library.main";
 import { NftSubPartDetails } from "@app/shared-library/workers/workers.marketplace";
 import { Contract } from "ethers";
 import { NftGenerator } from "./nft.generator";
-import { lastValueFrom } from 'rxjs';
 import { CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Model } from "mongoose";
 import { Logger } from "@nestjs/common";
+import { SharedLibraryService } from "@app/shared-library";
+import { CaptainSettingsDocument } from "@app/shared-library/schemas/entity/schema.captain.settings";
+import { CaptainTraitDocument } from "@app/shared-library/schemas/entity/schema.captain.trait";
 
 export interface CaptainStats {
     currentLevel: number;
@@ -24,6 +26,12 @@ export class NftCaptainGenerator extends NftGenerator {
 
     private metadataObject: any;
 
+    private traitsCount = 0;
+    private commonCaptainTraits = 0;
+    private rareCaptainTraits = 0;
+    private epicCaptainTraits = 0;
+    private legendaryCaptainTraits = 0;
+
     private static readonly BackgroundVisualsMap = new Map<number, string>();
     private static readonly BodyVisualsMap = new Map<number, string>();
     private static readonly ClothesVisualsMap = new Map<number, string>();
@@ -33,7 +41,8 @@ export class NftCaptainGenerator extends NftGenerator {
 
     constructor(
         collection: Collection,
-        private entityService: EntityService,
+        private captainTraitModel: Model<CaptainTraitDocument>,
+        private captainSettingsModel: Model<CaptainSettingsDocument>,
         private collectionItemModel: Model<CollectionItemDocument>
     ) {
         super(NftType.CAPTAIN, collection);
@@ -82,6 +91,16 @@ export class NftCaptainGenerator extends NftGenerator {
         NftCaptainGenerator.HeadgearVisualsMap.set(7, 'Bandana');
         NftCaptainGenerator.HeadgearVisualsMap.set(8, 'Hat');
         NftCaptainGenerator.HeadgearVisualsMap.set(9, 'Captain cap');
+
+        this.init().then();
+    }
+
+    private async init() {
+        const captainSettings = await this.captainSettingsModel.findOne();
+        this.commonCaptainTraits = captainSettings.commonCaptainDefaultTraits;
+        this.rareCaptainTraits = captainSettings.rareCaptainDefaultTraits;
+        this.epicCaptainTraits = captainSettings.epicCaptainDefaultTraits;
+        this.legendaryCaptainTraits = captainSettings.legendaryCaptainDefaultTraits;
     }
 
     public static GenerateVisuals(metadata: any) {
@@ -103,6 +122,49 @@ export class NftCaptainGenerator extends NftGenerator {
         return visuals;
     }
 
+    async getRandomCaptainTrait(request: GetRandomCaptainTraitRequest) {
+        const response = {
+            traits: []
+        } as GetRandomCaptainTraitResponse;
+        const excludeIndexes: number[] = [];
+        if (request.excludeIds && request.excludeIds.length > 0) {
+            excludeIndexes.push(...request.excludeIds);
+        }
+
+        for (let i = 0; i < request.count; i++) {
+            const index = SharedLibraryService.GetRandomIntInRangeExcept(1, this.traitsCount, excludeIndexes);
+            const trait = await this.captainTraitModel.findOne({ index });
+            response.traits.push({
+                index: trait.index,
+                description: trait.description,
+                bonusType: trait.bonusType,
+                shipStatsAffected: trait.shipStatsAffected
+            });
+            excludeIndexes.push(trait.index);
+        }
+
+        return response;
+    }
+
+    async generateCaptainTraits(request: GenerateCaptainTraitsRequest) {
+        let traits = this.commonCaptainTraits;
+        switch (request.rarity) {
+            case Rarity.LEGENDARY:
+                traits = this.legendaryCaptainTraits;
+                break;
+            case Rarity.EPIC:
+                traits = this.epicCaptainTraits;
+                break;
+            case Rarity.RARE:
+                traits = this.rareCaptainTraits;
+                break;
+        }
+        return await this.getRandomCaptainTrait({
+            count: traits,
+            excludeIds: []
+        });
+    }
+
     async generateNftMetadata(index: number, maxIndex: number, imagePathOnMoralis: string, nftPartsToDraw: NftSubPartDetails[]) {
         const captainStats = {
             currentLevel: 0,
@@ -114,7 +176,7 @@ export class NftCaptainGenerator extends NftGenerator {
             // stakingDurationSeconds: 120,
         } as CaptainStats;
 
-        const captainTraits = await lastValueFrom(this.entityService.GenerateCaptainTraits({ rarity: this.rarity }));
+        const captainTraits = await this.generateCaptainTraits({ rarity: this.rarity });
 
         const attributes: any[] = [
             // { stakingRewardNVY: captainStats.stakingRewardNVY },

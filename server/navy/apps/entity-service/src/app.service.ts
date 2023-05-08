@@ -32,13 +32,6 @@ export class AppService implements OnModuleInit {
     this.rareCaptainTraits = captainSettings.rareCaptainDefaultTraits;
     this.epicCaptainTraits = captainSettings.epicCaptainDefaultTraits;
     this.legendaryCaptainTraits = captainSettings.legendaryCaptainDefaultTraits;
-
-    this.traitsCount = await this.captainTraitModel.count();
-
-    await this.getRandomCaptainTrait({
-      excludeIds: [],
-      count: 3
-    });
   }
 
   async getRandomCaptainTrait(request: GetRandomCaptainTraitRequest) {
