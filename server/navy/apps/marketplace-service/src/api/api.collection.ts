@@ -272,13 +272,21 @@ export class CollectionApiService {
     }
 
     async getCollectionItem(authToken: string | undefined, address: string, tokenId: string) {
-        const collectionItem = await this.collectionItemModel.findOne({
+        const collectionItems = await this.collectionItemModel.find({
             contractAddress: address,
             tokenId,
             marketplaceState: {
                 "$ne": MarketplaceState.SOLD
             }
         }).select(['-_id', '-__v', '-needUpdate']);
+
+        let collectionItem = collectionItems[0];
+        if (collectionItems.length == 2) {
+            const listedItems = collectionItems.filter(f => f.marketplaceState == MarketplaceState.LISTED);
+            if (listedItems && listedItems.length > 0) {
+                collectionItem = listedItems[0];
+            }
+        }
 
         let favourite = false;
         if (authToken) {
