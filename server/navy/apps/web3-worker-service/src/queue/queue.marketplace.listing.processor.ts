@@ -47,7 +47,7 @@ export class QueueMarketplaceListingProcessor {
                 soldCollectionItem.visuals = collectionItem.visuals;
                 soldCollectionItem.traits = collectionItem.traits;
                 soldCollectionItem.rarity = collectionItem.rarity;
-                soldCollectionItem.lastUpdated = Date.now();
+                soldCollectionItem.lastUpdated = Number((Date.now() / 1000).toFixed(0));
                 soldCollectionItem.needUpdate = collectionItem.needUpdate;
                 soldCollectionItem.contractAddress = collectionItem.contractAddress;
                 soldCollectionItem.collectionName = collectionItem.collectionName;

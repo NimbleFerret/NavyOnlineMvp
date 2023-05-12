@@ -186,6 +186,7 @@ export class NftCaptainGenerator extends NftGenerator {
         newCollectionModel.rarity = rarity;
         newCollectionModel.contractAddress = contract.address;
         newCollectionModel.collectionName = 'captains';
+        newCollectionModel.lastUpdated = Number((Date.now() / 1000).toFixed(0));
         newCollectionModel.chainId = '338';
         newCollectionModel.marketplaceState = MarketplaceState.NONE;
         await newCollectionModel.save();

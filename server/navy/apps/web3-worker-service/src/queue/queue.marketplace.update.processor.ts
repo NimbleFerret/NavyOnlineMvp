@@ -140,6 +140,7 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                             model.rarity = rarity;
                             model.contractAddress = contractAddress;
                             model.marketplaceState = MarketplaceState.NONE;
+                            model.lastUpdated = Number((Date.now() / 1000).toFixed(0));
                             model.collectionName = 'captains';
                             model.chainId = '338';
                             await model.save();
@@ -226,7 +227,7 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                     }
                 }
 
-                model.lastUpdated = Date.now();
+                model.lastUpdated = Number((Date.now() / 1000).toFixed(0));
                 model.contractAddress = nft.contractAddress;
                 model.traits = nft.traits;
                 model.visuals = nft.visuals;
