@@ -1,6 +1,6 @@
 import { Role } from "@app/shared-library/entities/entity.ship";
 import { SectorContent } from "@app/shared-library/gprc/grpc.world.service";
-import { Ship, ShipDocument } from "@app/shared-library/schemas/schema.ship";
+import { Ship, ShipDocument } from "@app/shared-library/schemas/entity/schema.ship";
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { InjectModel } from "@nestjs/mongoose";

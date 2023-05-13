@@ -111,6 +111,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/web3-worker-service/tsconfig.app.json"
       }
+    },
+    "entity-service": {
+      "type": "application",
+      "root": "apps/entity-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/entity-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/entity-service/tsconfig.app.json"
+      }
     }
   }
 }

@@ -1,8 +1,14 @@
-import { AttachOperation } from "@app/shared-library/gprc/grpc.user.service";
+export class UpdatePasswordDto {
+    currentPassword: string;
+    newPassword: string;
+}
 
-export class AuthUpdateDto {
-    operation: AttachOperation;
+export class AttachEmailDto {
     email: string;
+    password: string;
+}
+
+export class AttachWalletDto {
     ethAddress: string;
     signedMessage: string;
 }

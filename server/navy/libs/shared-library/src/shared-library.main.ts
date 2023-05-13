@@ -11,7 +11,8 @@ export enum Rarity {
     COMMON = 1,
     RARE = 2,
     EPIC = 3,
-    LEGENDARY = 4
+    LEGENDARY = 4,
+    ALL = 5
 }
 
 export enum NftType {

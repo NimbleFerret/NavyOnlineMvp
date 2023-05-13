@@ -7,8 +7,7 @@ import * as Island from '../abi/Island.json';
 import * as ShipTemplate from '../abi/ShipTemplate.json';
 import * as CollectionSale from '../abi/CollectionSale.json';
 import * as Marketplace from '../abi/Marketplace.json';
-
-import { NftType, Rarity } from "@app/shared-library/shared-library.main";
+import { NftType } from "@app/shared-library/shared-library.main";
 import { MintJob, WorkersMint } from "@app/shared-library/workers/workers.mint";
 import {
     OnQueueActive,
@@ -18,13 +17,12 @@ import {
     Process,
     Processor
 } from "@nestjs/bull";
-import { Logger, OnModuleInit } from "@nestjs/common";
+import { Inject, Logger, OnModuleInit } from "@nestjs/common";
 import { NftGenerator } from "./nft/nft.generator";
 import { Job } from "bull";
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { NftPartDetails, NftSubPartDetails } from "@app/shared-library/workers/workers.marketplace";
 import { NftCaptainGenerator } from "./nft/nft.generator.captain";
 import { EthersProvider } from "@app/shared-library/ethers/ethers.provider";
 import { Contract } from 'ethers';
@@ -35,7 +33,11 @@ import {
     BlockchainTransactionDto,
     TransactionType
 } from '@app/shared-library/schemas/blockchain/schema.blockchain.transaction';
-import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
+import { EntityService, EntityServiceGrpcClientName, EntityServiceName } from '@app/shared-library/gprc/grpc.entity.service';
+import { CollectionItem, CollectionItemDocument } from '@app/shared-library/schemas/marketplace/schema.collection.item';
+import { ClientGrpc } from '@nestjs/microservices';
+import { CaptainSettings, CaptainSettingsDocument } from '@app/shared-library/schemas/entity/schema.captain.settings';
+import { CaptainTrait, CaptainTraitDocument } from '@app/shared-library/schemas/entity/schema.captain.trait';
 
 @Processor(WorkersMint.MintQueue)
 export class QueueMintProcessor implements OnModuleInit {
@@ -43,11 +45,14 @@ export class QueueMintProcessor implements OnModuleInit {
     private readonly logger = new Logger(QueueMintProcessor.name);
     private readonly ethersProvider = new EthersProvider();
     private nftCaptainGenerator: NftGenerator;
+    private entityService: EntityService;
 
     constructor(
         @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
-        @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
-        @InjectModel(BlockchainTransaction.name) private blockchainTransactionModel: Model<BlockchainTransactionDocument>
+        @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
+        @InjectModel(BlockchainTransaction.name) private blockchainTransactionModel: Model<BlockchainTransactionDocument>,
+        @InjectModel(CaptainTrait.name) private captainTraitModel: Model<CaptainTraitDocument>,
+        @InjectModel(CaptainSettings.name) private captainSettingsModel: Model<CaptainSettingsDocument>
     ) {
     }
 
@@ -64,41 +69,9 @@ export class QueueMintProcessor implements OnModuleInit {
         });
 
         const captainsCollection = await this.collectionModel.findOne({ name: 'Captains' }).populate('mint');
-        if (captainsCollection) {
-            const captainsCollectionNftDetails = captainsCollection.mint.nftPartsItems.map(nftPartsItem => {
-                const nftPartDetails = {
-                    resPlural: nftPartsItem.categoryPlural,
-                    resSingle: nftPartsItem.categorySingle,
-                    subParts: []
-                } as NftPartDetails;
-
-                nftPartDetails.subParts = nftPartsItem.categoryDetails.map(categoryDetails => {
-                    let rarity = Rarity.COMMON;
-                    switch (categoryDetails.rarity) {
-                        case 'Rare':
-                            rarity = Rarity.RARE;
-                            break;
-                        case 'Epic':
-                            rarity = Rarity.EPIC;
-                            break;
-                        case 'Legendary':
-                            rarity = Rarity.LEGENDARY;
-                            break;
-                    }
-                    return {
-                        chance: categoryDetails.chancePercent,
-                        rarity
-                    } as NftSubPartDetails;
-                });
-
-                return nftPartDetails;
-            });
-
-            if (captainsCollectionNftDetails.length > 0) {
-                this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollectionNftDetails);
-                await this.nftCaptainGenerator.initMoralis();
-            }
-        }
+        this.nftCaptainGenerator = new NftCaptainGenerator(captainsCollection, this.captainTraitModel, this.captainSettingsModel, this.collectionItemModel);
+        await this.nftCaptainGenerator.init();
+        await this.nftCaptainGenerator.initMoralis();
     }
 
     @Process()
@@ -123,11 +96,18 @@ export class QueueMintProcessor implements OnModuleInit {
                 break;
         }
 
-        const tokensLeft = (await collectionSaleContract.tokensLeft()).toNumber();
         const tokensTotal = (await collectionSaleContract.tokensTotal()).toNumber();
-        const metadata = await nftGenerator.generateNft(tokensLeft, tokensTotal);
 
-        await nftGenerator.mintNft(job.data.sender, collectionContract, metadata);
+        let currentNftInted = (await collectionSaleContract.tokensLeft()).toNumber();
+        if (job.data.tokenId) {
+            currentNftInted = job.data.tokenId;
+        } else {
+            currentNftInted = tokensTotal - currentNftInted;
+        }
+
+        const metadataUrl = await nftGenerator.generateNft(currentNftInted, tokensTotal);
+
+        await nftGenerator.mintNft(job.data.sender, collectionContract, metadataUrl);
     }
 
     @OnQueueError()

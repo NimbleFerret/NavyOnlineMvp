@@ -3,17 +3,17 @@ export class EthersConstants {
     public static readonly AksContractAddress = '';
     public static readonly NvyContractAddress = '';
 
-    public static readonly CaptainContractAddress = '0x61A03eed4C0220Bb6Ee89b0cda10Dc171f772577'.toLowerCase();
-    public static readonly ShipContractAddress = '';
-    public static readonly IslandContractAddress = '';
+    public static readonly CaptainContractAddress = '0xCefD45799326f48a4D23222Bb8Fa15b49baF28eC'.toLowerCase();
+    public static readonly ShipContractAddress = '0x7e77efa1050aac8e12bee238c596d1561231e2ee'.toLowerCase();
+    public static readonly IslandContractAddress = '0x7e77efa1050aac8e12bee238c596d1561231e2ef'.toLowerCase();
 
     public static readonly ShipTemplateContractAddress = '';
 
-    public static readonly CaptainCollectionSaleContractAddress = '0x94d6C8d99a4dF25c21DA60099F19bE5e13eb6e97'.toLowerCase();
+    public static readonly CaptainCollectionSaleContractAddress = '0x802aA0B2695d0632e129F5f5b64C215Bb03FE452'.toLowerCase();
     public static readonly ShipCollectionSaleContractAddress = '';
     public static readonly IslandCollectionSaleContractAddress = '';
 
-    public static readonly CaptainMarketplaceContractAddress = '0xAc256B90b14465c37F789e16eB5EfE0233Bafe87'.toLowerCase();
+    public static readonly CaptainMarketplaceContractAddress = '0xA7604d33932Ee1108DcD9464e10C9F98606B8D6b'.toLowerCase();
     public static readonly ShipMarketplaceContractAddress = '';
     public static readonly IslandMarketplaceContractAddress = '';
 

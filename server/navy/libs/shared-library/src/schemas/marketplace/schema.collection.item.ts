@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 export type CollectionItemDocument = CollectionItem & Document;
@@ -32,10 +32,16 @@ export class CollectionItem {
     owner: string;
 
     @Prop()
-    price: string;
+    price: number;
 
     @Prop()
     image: string;
+
+    @Prop({ type: Object })
+    visuals: object;
+
+    @Prop({ type: Object })
+    traits: object;
 
     @Prop()
     rarity: string;
@@ -48,6 +54,9 @@ export class CollectionItem {
 
     @Prop()
     contractAddress: string;
+
+    @Prop()
+    collectionName: string;
 
     @Prop()
     chainId: string;

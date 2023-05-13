@@ -8,6 +8,7 @@ import * as CollectionSale from '../abi/CollectionSale.json';
 import * as Marketplace from '../abi/Marketplace.json';
 import {
     Injectable,
+    Logger,
     OnModuleInit
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
@@ -21,12 +22,13 @@ import {
 } from '@app/shared-library/gprc/grpc.web3.service';
 import { EthersProvider } from '@app/shared-library/ethers/ethers.provider';
 import { MintJob, WorkersMint } from '@app/shared-library/workers/workers.mint';
-import { MarketplaceNftsType, UpdateMarketplaceJob, WorkersMarketplace } from '@app/shared-library/workers/workers.marketplace';
+import {
+    MarketplaceUpdateJob,
+    MarketplaceListingJob,
+    WorkersMarketplace,
+} from '@app/shared-library/workers/workers.marketplace';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
-import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 
 @Injectable()
 export class BlockchainService implements OnModuleInit {
@@ -34,9 +36,8 @@ export class BlockchainService implements OnModuleInit {
     private readonly ethersProvider = new EthersProvider();
 
     constructor(
-        @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
-        @InjectModel(Mint.name) private mintModel: Model<MintDocument>,
-        @InjectQueue(WorkersMarketplace.UpdateMarketplaceQueue) private readonly updateMarketplaceQueue: Queue,
+        @InjectQueue(WorkersMarketplace.MarketplaceUpdateQueue) private readonly marketplaceUpdateQueue: Queue,
+        @InjectQueue(WorkersMarketplace.MarketplaceListingQueue) private readonly marketplaceListingQueue: Queue,
         @InjectQueue(WorkersMint.MintQueue) private readonly mintQueue: Queue) { }
 
     async onModuleInit() {
@@ -54,12 +55,72 @@ export class BlockchainService implements OnModuleInit {
         await this.syncSaleContracts();
         await this.syncNftContracts();
 
+        // this.mintQueue.add({
+        //     nftType: NftType.CAPTAIN,
+        //     sender: '0xE6193b058bBD559E8E0Df3a48202a3cDEC852Ab6',
+        //     contractAddress: '0xA7D87Ec62772c3cB9b59de6f4ACa4c8602910bcd',
+        //     tokenId: 23
+        // } as MintJob);
+
         this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
+            Logger.log(`Captains mint occured! sender: ${sender}, contractAddress: ${contractAddress}`);
             this.mintQueue.add({
                 nftType: NftType.CAPTAIN,
                 sender,
                 contractAddress
             } as MintJob);
+        });
+
+        this.ethersProvider.captainMarketplaceContract.on(EthersProvider.EventNFTListed, async (
+            nftContract: string,
+            tokenId: number,
+            tokenUri: string,
+            seller: string,
+            owner: string,
+            price: number
+        ) => {
+            Logger.log(`Captain listed on the marketplace! nftContract: ${nftContract}, tokenId: ${tokenId}, seller: ${seller}, owner: ${owner}, price: ${price}`);
+            this.marketplaceListingQueue.add({
+                contractAddress: nftContract.toLowerCase(),
+                tokenId: Number(tokenId),
+                listed: true,
+                price: Number(price),
+                nftType: NftType.CAPTAIN
+            } as MarketplaceListingJob)
+        });
+
+        this.ethersProvider.captainMarketplaceContract.on(EthersProvider.EventNFTDelisted, async (
+            tokenId: number,
+            nftContract: string,
+            seller: string,
+        ) => {
+            Logger.log(`Captain delisted from the marketplace! nftContract: ${nftContract}, tokenId: ${tokenId}, seller: ${seller}`);
+            this.marketplaceListingQueue.add({
+                contractAddress: nftContract.toLowerCase(),
+                tokenId: Number(tokenId),
+                listed: false,
+                nftType: NftType.CAPTAIN
+            } as MarketplaceListingJob)
+        });
+
+        this.ethersProvider.captainMarketplaceContract.on(EthersProvider.EventNFTSold, async (
+            nftContract: string,
+            tokenId: number,
+            seller: string,
+            owner: string,
+            price: number
+        ) => {
+            Logger.log(`Captain sold on the marketplace! nftContract: ${nftContract}, tokenId: ${tokenId}, seller: ${seller}, owner: ${owner}, price: ${price}`);
+            this.marketplaceListingQueue.add({
+                contractAddress: nftContract.toLowerCase(),
+                tokenId: Number(tokenId),
+                listed: true,
+                sold: true,
+                price: Number(ethers.utils.formatEther(price)),
+                nftType: NftType.CAPTAIN,
+                seller,
+                owner
+            } as MarketplaceListingJob)
         });
     }
 
@@ -71,22 +132,22 @@ export class BlockchainService implements OnModuleInit {
     }
 
     // TODO better to listen for events
-    @Cron(CronExpression.EVERY_5_MINUTES)
+    // @Cron(CronExpression.EVERY_5_MINUTES)
     async syncSaleContracts() {
-        this.updateMarketplaceQueue.empty();
-        this.updateMarketplaceQueue.add({
-            marketplaceNftsType: MarketplaceNftsType.LISTED,
+        this.marketplaceUpdateQueue.empty();
+        this.marketplaceUpdateQueue.add({
+            marketplaceState: MarketplaceState.LISTED,
             nftType: NftType.CAPTAIN
-        } as UpdateMarketplaceJob);
+        } as MarketplaceUpdateJob);
     }
 
-    @Cron(CronExpression.EVERY_10_MINUTES)
+    // @Cron(CronExpression.EVERY_10_MINUTES)
     async syncNftContracts() {
-        this.updateMarketplaceQueue.empty();
-        this.updateMarketplaceQueue.add({
-            marketplaceNftsType: MarketplaceNftsType.ALL,
+        this.marketplaceUpdateQueue.empty();
+        this.marketplaceUpdateQueue.add({
+            marketplaceState: MarketplaceState.NONE,
             nftType: NftType.CAPTAIN
-        } as UpdateMarketplaceJob);
+        } as MarketplaceUpdateJob);
     }
 
 }

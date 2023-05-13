@@ -10,7 +10,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 @Module({
     imports: [
         BullModule.registerQueue({
-            name: WorkersMarketplace.UpdateMarketplaceQueue
+            name: WorkersMarketplace.MarketplaceUpdateQueue
+        }),
+        BullModule.registerQueue({
+            name: WorkersMarketplace.MarketplaceListingQueue
         }),
         BullModule.registerQueue({
             name: WorkersMint.MintQueue

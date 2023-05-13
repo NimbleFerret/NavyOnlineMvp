@@ -27,6 +27,7 @@ export class AuthService {
 
     private readonly logger = new Logger(AuthService.name);
     private readonly emailCodeConfirmationActive = true;
+    private readonly defaultNavySenderEmail = 'hello@navy.online';
     private readonly signUpConfirmationEmailSubject = 'Navy.online authentication';
     private readonly signUpConfirmationEmailText = 'Please enter following code in order to sign up: @';
 
@@ -68,6 +69,12 @@ export class AuthService {
                     response.userId = userModel._id;
                 }
             } else if (request.email && request.password && EmailValidator.validate(request.email)) {
+                if (request.password != request.password2) {
+                    this.logger.error(`signUp failed. Passwords does not match`);
+                    response.reasonCode = SharedLibraryService.BAD_PARAMS;
+                    return response;
+                }
+
                 request.email = request.email.toLowerCase();
 
                 const user = await this.userProfileModel.findOne({
@@ -87,7 +94,8 @@ export class AuthService {
                         const sendEmailResult = await lastValueFrom(this.notificationService.SendEmail({
                             recipient: request.email,
                             subject: this.signUpConfirmationEmailSubject,
-                            message: this.signUpConfirmationEmailText.replace('@', generatedCode.code)
+                            message: this.signUpConfirmationEmailText.replace('@', generatedCode.code),
+                            sender: this.defaultNavySenderEmail
                         }));
 
                         if (sendEmailResult.success) {
@@ -98,27 +106,27 @@ export class AuthService {
                             response.reasonCode = SharedLibraryService.UNABLE_TO_GENERATE_CONFIRMATION_CODE;
                         }
                     } else {
-                        if (user.emailState == EmailState.WAITING_FOR_CONFIRMATION) {
-                            if (request.email && request.confirmationCode) {
-                                const confirmationResult = await this.confirmationService.checkCode(request.email, request.confirmationCode);
-                                if (confirmationResult == ConfirmationResult.MATCH) {
-                                    user.emailState = EmailState.CONFIRMED;
-                                    await user.save();
+                        // if (user.emailState == EmailState.WAITING_FOR_CONFIRMATION) {
+                        //     if (request.email && request.confirmationCode) {
+                        //         const confirmationResult = await this.confirmationService.checkCode(request.email, request.confirmationCode);
+                        //         if (confirmationResult == ConfirmationResult.MATCH) {
+                        //             user.emailState = EmailState.CONFIRMED;
+                        //             await user.save();
 
-                                    response.success = true;
-                                    response.signUpState = SignUpState.DONE;
-                                    response.userId = user._id;
-                                } else if (confirmationResult == ConfirmationResult.MISSMATCH) {
-                                    response.reasonCode = SharedLibraryService.CONFIRMATION_CODE_MISSMATCH;
-                                } else {
-                                    response.reasonCode = SharedLibraryService.CONFIRMATION_CODE_EXPIRED;
-                                }
-                            } else {
-                                response.reasonCode = SharedLibraryService.BAD_PARAMS;
-                            }
-                        } else {
-                            response.reasonCode = SharedLibraryService.GENERAL_ERROR;
-                        }
+                        //             response.success = true;
+                        //             response.signUpState = SignUpState.DONE;
+                        //             response.userId = user._id;
+                        //         } else if (confirmationResult == ConfirmationResult.MISSMATCH) {
+                        //             response.reasonCode = SharedLibraryService.CONFIRMATION_CODE_MISSMATCH;
+                        //         } else {
+                        //             response.reasonCode = SharedLibraryService.CONFIRMATION_CODE_EXPIRED;
+                        //         }
+                        //     } else {
+                        //         response.reasonCode = SharedLibraryService.BAD_PARAMS;
+                        //     }
+                        // } else {
+                        //     response.reasonCode = SharedLibraryService.GENERAL_ERROR;
+                        // }
                     }
                 } else {
                     if (user) {

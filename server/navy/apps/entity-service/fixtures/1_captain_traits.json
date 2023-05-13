@@ -1,0 +1,184 @@
+[
+    {
+        "index": 1,
+        "description": "Damage reduction 1",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Armor"
+        ]
+    },
+    {
+        "index": 2,
+        "description": "Damage reduction 2",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Hull"
+        ]
+    },
+    {
+        "index": 3,
+        "description": "Damage reduction 3",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Armor",
+            "Hull"
+        ]
+    },
+    {
+        "index": 4,
+        "description": "Damage reduction 4",
+        "bonusType": "Flat",
+        "shipStatsAffected": [
+            "Damage reduction"
+        ]
+    },
+    {
+        "index": 5,
+        "description": "Maneuverability 1",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Max speed"
+        ]
+    },
+    {
+        "index": 6,
+        "description": "Maneuverability 2",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Acceleration"
+        ]
+    },
+    {
+        "index": 7,
+        "description": "Maneuverability 3",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Max speed",
+            "Acceleration"
+        ]
+    },
+    {
+        "index": 8,
+        "description": "Firing 1",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Firing range"
+        ]
+    },
+    {
+        "index": 9,
+        "description": "Firing 2",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Damage per shot"
+        ]
+    },
+    {
+        "index": 10,
+        "description": "Firing 3",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Firing range",
+            "Damage per shot"
+        ]
+    },
+    {
+        "index": 11,
+        "description": "Firing 4",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Rate of fire"
+        ]
+    },
+    {
+        "index": 12,
+        "description": "Firing 5",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Damage per shot",
+            "Rate of fire"
+        ]
+    },
+    {
+        "index": 13,
+        "description": "Firing 6",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Damage per shot",
+            "Firing range"
+        ]
+    },
+    {
+        "index": 14,
+        "description": "Firing 7",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Firing range",
+            "Rate of fire"
+        ]
+    },
+    {
+        "index": 15,
+        "description": "Firing 8",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Firing range",
+            "Damage per shot",
+            "Rate of fire"
+        ]
+    },
+    {
+        "index": 16,
+        "description": "Firing 9",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Cannons slop angle",
+            "Firing range"
+        ]
+    },
+    {
+        "index": 17,
+        "description": "Firing 10",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Cannons slop angle",
+            "Firing range",
+            "Damage per shot"
+        ]
+    },
+    {
+        "index": 18,
+        "description": "Firing 11",
+        "bonusType": "Percent",
+        "shipStatsAffected": [
+            "Cannons slop angle",
+            "Firing range",
+            "Rate of fire"
+        ]
+    },
+    {
+        "index": 19,
+        "description": "Critical strike 1",
+        "bonusType": "Flat",
+        "shipStatsAffected": [
+            "Critical chance"
+        ]
+    },
+    {
+        "index": 20,
+        "description": "Critical strike 2",
+        "bonusType": "Flat",
+        "shipStatsAffected": [
+            "Critical damage"
+        ]
+    },
+    {
+        "index": 21,
+        "description": "Critical strike 3",
+        "bonusType": "Flat",
+        "shipStatsAffected": [
+            "Critical chance",
+            "Critical damage"
+        ]
+    }
+]

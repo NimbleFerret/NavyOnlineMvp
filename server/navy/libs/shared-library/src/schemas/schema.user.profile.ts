@@ -14,15 +14,18 @@ export class UserProfile {
     @Prop({ index: true })
     email: string;
 
-    @Prop({
-        type: Number,
-        required: true,
-        enum: [
-            EmailState.WAITING_FOR_CONFIRMATION,
-            EmailState.CONFIRMED
-        ]
-    })
-    emailState: EmailState;
+    // @Prop({
+    //     type: Number,
+    //     required: true,
+    //     enum: [
+    //         EmailState.WAITING_FOR_CONFIRMATION,
+    //         EmailState.CONFIRMED
+    //     ]
+    // })
+    // emailState: EmailState;
+
+    @Prop()
+    authToken: string;
 
     // TODO hash it
     @Prop()

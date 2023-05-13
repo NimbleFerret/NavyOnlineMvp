@@ -1,4 +1,4 @@
-import { Ship, ShipSchema } from '@app/shared-library/schemas/schema.ship';
+import { Ship, ShipSchema } from '@app/shared-library/schemas/entity/schema.ship';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GameplayBattleService } from './battle/gameplay.battle.service';

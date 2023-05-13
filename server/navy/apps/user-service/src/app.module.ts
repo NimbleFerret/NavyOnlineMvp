@@ -1,7 +1,8 @@
+import { Config } from '@app/shared-library/config';
 import { Web3ServiceGrpcClientName, Web3ServiceGrpcClientOptions } from '@app/shared-library/gprc/grpc.web3.service';
-import { Captain, CaptainSchema } from '@app/shared-library/schemas/schema.captain';
-import { Island, IslandSchema } from '@app/shared-library/schemas/schema.island';
-import { Ship, ShipSchema } from '@app/shared-library/schemas/schema.ship';
+import { Captain, CaptainSchema } from '@app/shared-library/schemas/entity/schema.captain';
+import { Island, IslandSchema } from '@app/shared-library/schemas/entity/schema.island';
+import { Ship, ShipSchema } from '@app/shared-library/schemas/entity/schema.ship';
 import { UserAvatar, UserAvatarSchema } from '@app/shared-library/schemas/schema.user.avatar';
 import { UserProfile, UserProfileSchema } from '@app/shared-library/schemas/schema.user.profile';
 import { Module } from '@nestjs/common';
@@ -21,7 +22,9 @@ import { AuthModule } from './auth/auth.module';
       { name: Ship.name, schema: ShipSchema },
       { name: Island.name, schema: IslandSchema },
     ]),
-    MongooseModule.forRoot('mongodb://localhost/navy'),
+    MongooseModule.forRoot(Config.GetMongoHost(), {
+      dbName: Config.MongoDBName
+    }),
     ClientsModule.register([
       {
         name: Web3ServiceGrpcClientName,

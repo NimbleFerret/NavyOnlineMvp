@@ -1,5 +1,5 @@
-import { GetUserNotificationsRequest, ReadUserNotificationsRequest, SendEmailRequest, SendEmailResponse } from '@app/shared-library/gprc/grpc.notification.service';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { SendEmailRequest, SendEmailResponse } from '@app/shared-library/gprc/grpc.notification.service';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 const nodemailer = require("nodemailer");
@@ -28,8 +28,9 @@ export class EmailService {
             success: false
         } as SendEmailResponse;
         try {
+            const from = request.sender ? request.sender : this.senderEmail;
             await this.transporter.sendMail({
-                from: this.senderEmail,
+                from,
                 to: request.recipient,
                 subject: request.subject,
                 html: `<b>${request.message}</b>`

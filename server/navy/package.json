@@ -28,6 +28,8 @@
     "start:marketplace-service:prod": "nest start marketplace-service",
     "start:notification-service:dev": "nest start notification-service --debug --watch",
     "start:notification-service:prod": "nest start notification-service",
+    "start:entity-service:dev": "nest start entity-service --debug --watch",
+    "start:entity-service:prod": "nest start entity-service",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {

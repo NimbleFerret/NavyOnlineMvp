@@ -1,10 +1,5 @@
+import { MarketplaceState } from "../schemas/marketplace/schema.collection.item";
 import { NftType, Rarity } from "../shared-library.main";
-
-export enum MarketplaceNftsType {
-    LISTED,
-    SOLD,
-    ALL
-}
 
 export interface NftSubPartDetails {
     index: number;
@@ -19,13 +14,25 @@ export interface NftPartDetails {
     subParts: NftSubPartDetails[];
 }
 
-export interface UpdateMarketplaceJob {
-    marketplaceNftsType: MarketplaceNftsType;
+export interface MarketplaceUpdateJob {
+    marketplaceState: MarketplaceState;
     nftType: NftType;
+}
+
+export interface MarketplaceListingJob {
+    contractAddress: string;
+    tokenId: number;
+    listed: boolean;
+    nftType: NftType;
+    price: number;
+    sold: boolean;
+    seller: string;
+    owner: string;
 }
 
 export class WorkersMarketplace {
 
-    public static readonly UpdateMarketplaceQueue = 'UpdateMarketplaceQueue';
+    public static readonly MarketplaceUpdateQueue = 'MarketplaceUpdateQueue';
+    public static readonly MarketplaceListingQueue = 'MarketplaceListingQueue';
 
 }
