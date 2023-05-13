@@ -17,7 +17,7 @@ import {
     Process,
     Processor
 } from "@nestjs/bull";
-import { Inject, Logger, OnModuleInit } from "@nestjs/common";
+import { Logger, OnModuleInit } from "@nestjs/common";
 import { NftGenerator } from "./nft/nft.generator";
 import { Job } from "bull";
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
@@ -33,9 +33,7 @@ import {
     BlockchainTransactionDto,
     TransactionType
 } from '@app/shared-library/schemas/blockchain/schema.blockchain.transaction';
-import { EntityService, EntityServiceGrpcClientName, EntityServiceName } from '@app/shared-library/gprc/grpc.entity.service';
 import { CollectionItem, CollectionItemDocument } from '@app/shared-library/schemas/marketplace/schema.collection.item';
-import { ClientGrpc } from '@nestjs/microservices';
 import { CaptainSettings, CaptainSettingsDocument } from '@app/shared-library/schemas/entity/schema.captain.settings';
 import { CaptainTrait, CaptainTraitDocument } from '@app/shared-library/schemas/entity/schema.captain.trait';
 
@@ -45,7 +43,6 @@ export class QueueMintProcessor implements OnModuleInit {
     private readonly logger = new Logger(QueueMintProcessor.name);
     private readonly ethersProvider = new EthersProvider();
     private nftCaptainGenerator: NftGenerator;
-    private entityService: EntityService;
 
     constructor(
         @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,

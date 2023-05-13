@@ -9,6 +9,7 @@ import { BadGatewayException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Document } from "mongoose";
 import { AppService } from "../app.service";
+import { PaginatedCollectionItemsResponse } from "../dto/dto.collection";
 import { AuthApiService } from "./api.auth";
 import { FavouriteApiService } from "./api.favourite";
 import { GeneralApiService } from "./api.general";
@@ -40,7 +41,7 @@ export class CollectionApiService {
         page?: number,
         size?: number,
         rarity?: string
-    ) {
+    ): Promise<PaginatedCollectionItemsResponse> {
         let userProfile = undefined;
         if (authToken) {
             userProfile = await this.authService.checkTokenAndGetProfile(authToken);
@@ -111,7 +112,7 @@ export class CollectionApiService {
             prev = page > 1 ? getUrl(page - 1) : null;
         }
 
-        const response = {
+        const response: PaginatedCollectionItemsResponse = {
             info: {
                 count,
                 pages,
@@ -140,7 +141,7 @@ export class CollectionApiService {
         price?: string,
         rarity?: string[],
         marketplaceState?: string
-    ) {
+    ): Promise<PaginatedCollectionItemsResponse> {
         let userProfile = undefined;
         if (authToken) {
             userProfile = await this.authService.checkTokenAndGetProfile(authToken);
@@ -263,7 +264,7 @@ export class CollectionApiService {
             prev = page > 1 ? getUrl(page - 1) : null;
         }
 
-        const response = {
+        const response: PaginatedCollectionItemsResponse = {
             info: {
                 count: totalCount,
                 pages,

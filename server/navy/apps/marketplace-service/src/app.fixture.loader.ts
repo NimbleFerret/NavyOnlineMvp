@@ -25,12 +25,12 @@ export class FixtureLoader {
         if (this.reloadCollectionItems) {
             await this.collectionItemModel.deleteMany({
                 contractAddress: {
-                    '$ne': '0xa7d87ec62772c3cb9b59de6f4aca4c8602910bcd'
+                    '$ne': '0xcefd45799326f48a4d23222bb8fa15b49baf28ec'
                 }
             });
-            // await this.loadTopSales('captains', '0x7e77efa1050aac8e12bee238c596d1561231e2ed');
-            await this.loadTopSales('ships', '0x7e77efa1050aac8e12bee238c596d1561231e2ee');
-            await this.loadTopSales('islands', '0x7e77efa1050aac8e12bee238c596d1561231e2ef');
+            // await this.loadTopSales('captains', '0xcefd45799326f48a4d23222bb8fa15b49baf28ec');
+            await this.loadTopSales('ships', '0xcefd45799326f48a4d23222bb8fa15b49baf28ed');
+            await this.loadTopSales('islands', '0xcefd45799326f48a4d23222bb8fa15b49baf28ee');
         }
     }
 
@@ -46,7 +46,7 @@ export class FixtureLoader {
                 project.supportedChains = fixture.supportedChains;
 
                 FileUtils.LoadFixture('marketplace-service', '2_collections.json', async (fixtures: any) => {
-                    const collections = [new this.collectionModel(), new this.collectionModel()];
+                    const collections = [new this.collectionModel(), new this.collectionModel(), new this.collectionModel()];
 
                     for (let i = 0; i < fixtures.length; i++) {
                         collections[i].name = fixtures[i].name;
@@ -102,28 +102,6 @@ export class FixtureLoader {
                     });
                 });
             });
-
-            FileUtils.LoadFixture('marketplace-service', '4_collection_items.json', async (fixtures: any) => {
-                for (let i = 0; i < fixtures.length; i++) {
-                    const collectionItem = new this.collectionItemModel();
-                    collectionItem.id = fixtures[i].id;
-                    collectionItem.tokenId = fixtures[i].tokenId;
-                    collectionItem.tokenUri = fixtures[i].tokenUri;
-                    collectionItem.seller = fixtures[i].seller;
-                    collectionItem.owner = fixtures[i].owner;
-                    collectionItem.price = fixtures[i].price;
-                    collectionItem.image = fixtures[i].image;
-                    collectionItem.rarity = fixtures[i].rarity;
-                    collectionItem.lastUpdated = fixtures[i].lastUpdated;
-                    collectionItem.needUpdate = fixtures[i].needUpdate;
-                    collectionItem.contractAddress = fixtures[i].contractAddress;
-                    collectionItem.chainId = fixtures[i].chainId;
-                    collectionItem.chainName = fixtures[i].chainName;
-                    collectionItem.coinSymbol = fixtures[i].coinSymbol;
-                    collectionItem.marketplaceState = fixtures[i].marketplaceState;
-                    await collectionItem.save();
-                }
-            });
         }
     }
 
@@ -150,7 +128,7 @@ export class FixtureLoader {
             traits: [],
             contractAddress,
             collectionName,
-            marketplaceState: 1,
+            marketplaceState: 'Sold',
             chainId: "338"
         };
 
@@ -306,7 +284,7 @@ export class FixtureLoader {
     private async loadFaq() {
         const faq = await this.faqModel.findOne();
         if (!faq) {
-            FileUtils.LoadFixture('marketplace-service', '5_faq.json', async (fixtures: any) => {
+            FileUtils.LoadFixture('marketplace-service', '4_faq.json', async (fixtures: any) => {
                 const newFaq = new this.faqModel();
                 const questionsAndAnswers = [];
                 for (const fixture of fixtures) {
