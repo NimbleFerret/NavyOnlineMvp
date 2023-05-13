@@ -13,7 +13,7 @@ import { AppService } from './app.service';
       { name: CaptainSettings.name, schema: CaptainSettingsSchema },
     ]),
     MongooseModule.forRoot(Config.GetMongoHost(), {
-      dbName: 'navy'
+      dbName: Config.MongoDBName
     }),
   ],
   controllers: [AppController],

@@ -49,7 +49,7 @@ import { Favourite, FavouriteSchema } from '@app/shared-library/schemas/marketpl
       { name: UserProfile.name, schema: UserProfileSchema }
     ]),
     MongooseModule.forRoot(Config.GetMongoHost(), {
-      dbName: 'navy'
+      dbName: Config.MongoDBName
     }),
     ClientsModule.register([
       {

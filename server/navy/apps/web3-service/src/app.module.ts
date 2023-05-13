@@ -15,7 +15,7 @@ import { Config } from '@app/shared-library/config';
       redis: Config.GetRedisHost(),
     }),
     MongooseModule.forRoot(Config.GetMongoHost(), {
-      dbName: 'navy'
+      dbName: Config.MongoDBName
     }),
     ScheduleModule.forRoot(),
   ],

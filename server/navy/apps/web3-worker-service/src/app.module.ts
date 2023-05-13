@@ -33,7 +33,7 @@ import { CaptainTrait, CaptainTraitSchema } from '@app/shared-library/schemas/en
       name: WorkersMint.MintQueue
     }),
     MongooseModule.forRoot(Config.GetMongoHost(), {
-      dbName: 'navy'
+      dbName: Config.MongoDBName
     }),
     MongooseModule.forFeature([
       { name: BlockchainTransaction.name, schema: BlockchainTransactionSchema },

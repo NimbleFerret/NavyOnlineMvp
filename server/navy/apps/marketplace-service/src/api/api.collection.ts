@@ -132,6 +132,150 @@ export class CollectionApiService {
         return response;
     }
 
+    async getCollectionItemsV2(
+        authToken: string | undefined,
+        contractAddress: string,
+        page?: number,
+        size?: number,
+        price?: string,
+        rarity?: string[],
+        marketplaceState?: string
+    ) {
+        let userProfile = undefined;
+        if (authToken) {
+            userProfile = await this.authService.checkTokenAndGetProfile(authToken);
+        }
+
+        let initialPage = page;
+        if (!page) {
+            page = 1;
+            initialPage = 1;
+        }
+        const pageSize = size ? size : AppService.DefaultPaginationSize;
+
+        // ----------------------------------
+        // Query collection items count
+        // ----------------------------------
+
+        const listedQuery = {
+            contractAddress: contractAddress.toLowerCase(),
+            marketplaceState: MarketplaceState.LISTED
+        };
+        const notListedQuery = {
+            contractAddress: contractAddress.toLowerCase(),
+            marketplaceState: MarketplaceState.NONE
+        };
+
+        if (rarity && rarity.length > 0) {
+            const rarityIn = [];
+
+            if (rarity.includes('Legendary')) {
+                rarityIn.push('Legendary');
+            }
+            if (rarity.includes('Epic')) {
+                rarityIn.push('Epic');
+            }
+            if (rarity.includes('Rare')) {
+                rarityIn.push('Rare');
+            }
+            if (rarity.includes('Common')) {
+                rarityIn.push('Common');
+            }
+
+            if (rarityIn.length > 0) {
+                listedQuery['rarity'] = { "$in": rarityIn };
+                notListedQuery['rarity'] = { "$in": rarityIn };
+            }
+        }
+
+        let loadListed = true;
+        let loadNotListed = true;
+        const listedResult = []
+        const notListedResult = [];
+
+        if (marketplaceState) {
+            if (marketplaceState == 'listed') {
+                loadNotListed = false;
+            }
+            if (marketplaceState == 'none') {
+                loadListed = false;
+            }
+        }
+
+        if (loadListed) {
+            listedResult.push(...await this.collectionItemModel.find(listedQuery)
+                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
+                .skip((page - 1) * pageSize)
+                .limit(pageSize));
+        }
+        if (loadNotListed) {
+            notListedResult.push(...await this.collectionItemModel.find(notListedQuery)
+                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
+                .skip((page - 1) * pageSize)
+                .limit(pageSize - listedResult.length));
+        }
+
+        const totalCount = listedResult.length + notListedResult.length;
+
+        // ----------------------------------
+        // Query collection items
+        // ----------------------------------
+
+        const totalResult = [...listedResult, ...notListedResult]
+            .sort(function (a, b) {
+                return a.marketplaceState - b.marketplaceState || a.tokenId - b.tokenId;
+            });
+
+        const resultItems = this.convertCollectionItems(totalResult, false);
+
+        if (userProfile) {
+            await this.fillCollectionItemsFavourites(resultItems, userProfile);
+        }
+
+        // ----------------------------------
+        // Prepare paginated response
+        // ----------------------------------
+
+        let pages = Math.ceil(totalCount / pageSize);
+        let next = null;
+        let prev = null;
+
+        if (pages < 1) {
+            pages = 1;
+        }
+        if (pages > 1) {
+            const getUrl = (p: number) => {
+                let url = '';
+                url = `https://navy.online/marketplace/collection/${contractAddress}/items?page=${p}`;
+                if (size) {
+                    url += '&size=' + size;
+                }
+                if (rarity) {
+                    url += '&rarity=' + rarity;
+                }
+                if (price) {
+                    url += '&price=' + price;
+                }
+                return url;
+            };
+
+            next = ((page - 1) * pageSize) + totalResult.length < (totalCount) ? getUrl(Number(initialPage) + 1) : null;
+            prev = page > 1 ? getUrl(page - 1) : null;
+        }
+
+        const response = {
+            info: {
+                count: totalCount,
+                pages,
+                next,
+                prev
+            },
+            result: resultItems
+        };
+
+        return response;
+    }
+
     async getFavouriteCollectionItemsByOwner(authToken: string) {
         const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
         if (userProfile) {

@@ -23,8 +23,12 @@ export class FixtureLoader {
         await this.loadProjects();
         await this.loadFaq();
         if (this.reloadCollectionItems) {
-            await this.collectionItemModel.deleteMany();
-            await this.loadTopSales('captains', '0x7e77efa1050aac8e12bee238c596d1561231e2ed');
+            await this.collectionItemModel.deleteMany({
+                contractAddress: {
+                    '$ne': '0xa7d87ec62772c3cb9b59de6f4aca4c8602910bcd'
+                }
+            });
+            // await this.loadTopSales('captains', '0x7e77efa1050aac8e12bee238c596d1561231e2ed');
             await this.loadTopSales('ships', '0x7e77efa1050aac8e12bee238c596d1561231e2ee');
             await this.loadTopSales('islands', '0x7e77efa1050aac8e12bee238c596d1561231e2ef');
         }
@@ -137,9 +141,9 @@ export class FixtureLoader {
             tokenId: 0,
             tokenUri: "https://ipfs.moralis.io:2053/ipfs/QmQmRiVEaAbBnF7rnGNfaTMya2UH7NyRu2HCjc8HvN88R5/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.json",
             seller: "0xe6193b058bbd559e8e0df3a48202a3cdec852ab6",
-            owner: "0x89DBad2C15A2fCEd932aEf71C2F798fD86B1349F".toLowerCase(),
+            owner: "0x89DBad2C15A2fCEd932aEf71C2F798fD86B1349C".toLowerCase(),
             price: 10,
-            image: "https://navy.online/marketplace/static/assets/captain/captain" + imageIndex + ".png",
+            image: "https://navy.online/api/marketplace/static/assets/captain/captain" + imageIndex + ".png",
             rarity: "Common",
             lastUpdated: 0,
             visuals: [],
@@ -182,8 +186,8 @@ export class FixtureLoader {
         function generateCaptainTraits() {
             return [
                 {
-                    trait_type: 'Ship bonus 1',
-                    value: '1'
+                    description: 'Bonus 1',
+                    shipStatsAffected: ['Everything is better']
                 }
             ]
         }
@@ -196,10 +200,10 @@ export class FixtureLoader {
             defaultCollectionItem.traits = generateCaptainTraits();
 
             if (collectionName == 'captains') {
-                defaultCollectionItem.image = "https://navy.online/marketplace/static/assets/captain/captain" + imageIndex + ".png";
+                defaultCollectionItem.image = "https://navy.online/api/marketplace/static/assets/captain/captain" + imageIndex + ".png";
             }
             if (collectionName == 'ships') {
-                defaultCollectionItem.image = "https://navy.online/marketplace/static/assets/ship/ship" + imageIndex + ".png";
+                defaultCollectionItem.image = "https://navy.online/api/marketplace/static/assets/ship/ship" + imageIndex + ".png";
 
                 if (imageIndex == 1) {
                     defaultCollectionItem.rarity = 'Epic';
@@ -212,7 +216,7 @@ export class FixtureLoader {
                 }
             }
             if (collectionName == 'islands') {
-                defaultCollectionItem.image = "https://navy.online/marketplace/static/assets/island/island" + imageIndex + ".png";
+                defaultCollectionItem.image = "https://navy.online/api/marketplace/static/assets/island/island" + imageIndex + ".png";
 
                 if (imageIndex == 1) {
                     defaultCollectionItem.rarity = 'Legendary';
@@ -237,12 +241,12 @@ export class FixtureLoader {
         }
 
         // Today sells
-        for (let i = 0; i < 20; i++) {
-            if (collectionName == 'captains') {
-                const soldCollectionItem = newCollectionItem();
-                soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
-                await new this.collectionItemModel(soldCollectionItem).save();
-            }
+        for (let i = 0; i < 10; i++) {
+            // if (collectionName == 'captains') {
+            const soldCollectionItem = newCollectionItem();
+            soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
+            await new this.collectionItemModel(soldCollectionItem).save();
+            // }
 
             const ownedCollectionItem = newCollectionItem();
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
@@ -258,12 +262,12 @@ export class FixtureLoader {
         nextTimeSeconds = nowTimeSeconds;
 
         // 7d
-        for (let i = 0; i < 20; i++) {
-            if (collectionName == 'captains') {
-                const soldCollectionItem = newCollectionItem();
-                soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
-                await new this.collectionItemModel(soldCollectionItem).save();
-            }
+        for (let i = 0; i < 10; i++) {
+            // if (collectionName == 'captains') {
+            const soldCollectionItem = newCollectionItem();
+            soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
+            await new this.collectionItemModel(soldCollectionItem).save();
+            // }
 
             const ownedCollectionItem = newCollectionItem();
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
@@ -279,12 +283,12 @@ export class FixtureLoader {
         nextTimeSeconds = nowTimeSeconds;
 
         // 30d 
-        for (let i = 0; i < 20; i++) {
-            if (collectionName == 'captains') {
-                const soldCollectionItem = newCollectionItem();
-                soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
-                await new this.collectionItemModel(soldCollectionItem).save();
-            }
+        for (let i = 0; i < 10; i++) {
+            // if (collectionName == 'captains') {
+            const soldCollectionItem = newCollectionItem();
+            soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
+            await new this.collectionItemModel(soldCollectionItem).save();
+            // }
 
             const ownedCollectionItem = newCollectionItem();
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;

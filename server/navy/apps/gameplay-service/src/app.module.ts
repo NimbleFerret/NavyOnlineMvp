@@ -41,7 +41,7 @@ import { WsModule } from './ws/ws.module';
       },
     ]),
     MongooseModule.forRoot(Config.GetMongoHost(), {
-      dbName: 'navy'
+      dbName: Config.MongoDBName
     }),
     GameplayModule,
     WsModule,
