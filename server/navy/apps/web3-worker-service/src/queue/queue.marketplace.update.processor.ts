@@ -50,23 +50,24 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
     @Process()
     async process(job: Job<MarketplaceUpdateJob>) {
         let marketplaceContract = this.ethersProvider.captainMarketplaceContract;
-        let contractAddressAddress = this.ethersProvider.captainContract.address;
+        let entityAddress = this.ethersProvider.captainContract.address;
 
         switch (job.data.nftType) {
             case NftType.SHIP:
                 marketplaceContract = this.ethersProvider.shipMarketplaceContract;
-                contractAddressAddress = this.ethersProvider.shipContract.address;
+                entityAddress = this.ethersProvider.shipContract.address;
                 break;
             case NftType.ISLAND:
                 marketplaceContract = this.ethersProvider.islandMarketplaceContract;
-                contractAddressAddress = this.ethersProvider.islandContract.address;
+                entityAddress = this.ethersProvider.islandContract.address;
                 break;
         }
 
+
         if (job.data.marketplaceState == MarketplaceState.NONE) {
-            await this.updateNfts(contractAddressAddress);
+            await this.updateNfts(entityAddress);
         } else {
-            await this.updateSaleCollections(contractAddressAddress);
+            await this.updateSaleCollections(entityAddress);
             await this.getMarketplaceNfts(marketplaceContract, MarketplaceState.LISTED);
             await this.getMarketplaceNfts(marketplaceContract, MarketplaceState.SOLD);
         }
@@ -142,6 +143,8 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                             model.marketplaceState = MarketplaceState.NONE;
                             model.lastUpdated = Number((Date.now() / 1000).toFixed(0));
                             model.collectionName = 'captains';
+                            model.coinSymbol = 'CRO';
+                            model.chainName = 'Cronos';
                             model.chainId = '338';
                             await model.save();
                         }
@@ -155,129 +158,133 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
         const nfts = marketplaceState == MarketplaceState.LISTED ?
             await marketpalceContract.getNftsListed() : await marketpalceContract.getNftsSold();
 
-        // Convert each NFT from the blockchain
-        const marketplaceNFTs: MarketplaceNFT[] = nfts.filter(nft => nft.tokenId != 0).map(nft => {
-            const marketplaceNFT: MarketplaceNFT = {
-                contractAddress: EthersConstants.CaptainContractAddress,
-                tokenId: nft.tokenId.toNumber(),
-                tokenUri: nft.tokenUri,
-                seller: nft.seller.toLowerCase(),
-                owner: nft.owner.toLowerCase(),
-                price: nft.price.toNumber(),
-                image: '',
-                traits: {},
-                visuals: [],
-                rarity: 'Common',
-                lastUpdated: nft.lastUpdated.toNumber()
-            };
-            return marketplaceNFT;
-        });
-
-        const contractAddress = marketplaceNFTs[0].contractAddress;
-
-        if (marketplaceNFTs.length > 0) {
-            // Find all collection item Id for this collection
-            const collectionItems = await this.collectionItemModel.find({
-                contractAddress
-            });
-            const tokenIds = collectionItems.map(f => {
-                return f.tokenId;
+        if (nfts && nfts.length > 0) {
+            // Convert each NFT from the blockchain
+            const marketplaceNFTs: MarketplaceNFT[] = nfts.filter(nft => nft.tokenId != 0).map(nft => {
+                const marketplaceNFT: MarketplaceNFT = {
+                    contractAddress: EthersConstants.CaptainContractAddress,
+                    tokenId: nft.tokenId.toNumber(),
+                    tokenUri: nft.tokenUri,
+                    seller: nft.seller.toLowerCase(),
+                    owner: nft.owner.toLowerCase(),
+                    price: nft.price.toNumber(),
+                    image: '',
+                    traits: {},
+                    visuals: [],
+                    rarity: 'Common',
+                    lastUpdated: nft.lastUpdated.toNumber()
+                };
+                return marketplaceNFT;
             });
 
-            // Fill fields that requires metadata parsing if needed
-            for (const nft of marketplaceNFTs) {
-                if (!tokenIds.includes(nft.tokenId)) {
-                    const response = await fetch(nft.tokenUri);
-                    const body = await response.json();
-                    nft.image = body.image;
-                    nft.traits = body.attributes[0].traits;
-                    nft.visuals = NftCaptainGenerator.GenerateVisuals(body);
-                    let rarity = 'Common';
-                    switch (body.attributes[3].rarity) {
-                        case Rarity.LEGENDARY:
-                            rarity = 'Legendary';
-                            break;
-                        case Rarity.EPIC:
-                            rarity = 'Epic';
-                            break;
-                        case Rarity.RARE:
-                            rarity = 'Rare';
-                            break;
-                    }
-                    nft.rarity = rarity;
-                }
-            }
+            const contractAddress = marketplaceNFTs[0].contractAddress;
 
-            const self = this;
-            async function createNewCollectionItem(nft: MarketplaceNFT) {
-                const model = new self.collectionItemModel();
-                model.id = nft.contractAddress + '_' + nft.tokenId;
-                model.tokenId = nft.tokenId;
-                model.tokenUri = nft.tokenUri;
-                model.seller = nft.seller.toLowerCase();
-                model.owner = nft.owner.toLowerCase();
-                model.price = Number(nft.price);
+            if (marketplaceNFTs.length > 0) {
+                // Find all collection item Id for this collection
+                const collectionItems = await this.collectionItemModel.find({
+                    contractAddress
+                });
+                const tokenIds = collectionItems.map(f => {
+                    return f.tokenId;
+                });
 
-                if (!tokenIds.includes(nft.tokenId)) {
-                    model.image = nft.image;
-                } else {
-                    const collectionItem = collectionItems.filter(f => f.tokenId == nft.tokenId)[0];
-                    if (collectionItem) {
-                        model.image = collectionItem.image;
+                // Fill fields that requires metadata parsing if needed
+                for (const nft of marketplaceNFTs) {
+                    if (!tokenIds.includes(nft.tokenId)) {
+                        const response = await fetch(nft.tokenUri);
+                        const body = await response.json();
+                        nft.image = body.image;
+                        nft.traits = body.attributes[0].traits;
+                        nft.visuals = NftCaptainGenerator.GenerateVisuals(body);
+                        let rarity = 'Common';
+                        switch (body.attributes[3].rarity) {
+                            case Rarity.LEGENDARY:
+                                rarity = 'Legendary';
+                                break;
+                            case Rarity.EPIC:
+                                rarity = 'Epic';
+                                break;
+                            case Rarity.RARE:
+                                rarity = 'Rare';
+                                break;
+                        }
+                        nft.rarity = rarity;
                     }
                 }
 
-                model.lastUpdated = Number((Date.now() / 1000).toFixed(0));
-                model.contractAddress = nft.contractAddress;
-                model.traits = nft.traits;
-                model.visuals = nft.visuals;
-                model.rarity = nft.rarity;
-                model.marketplaceState = marketplaceState == MarketplaceState.LISTED ? MarketplaceState.LISTED : MarketplaceState.SOLD;
-                model.collectionName = 'captains';
-                model.chainId = '338';
-                await model.save();
-            }
+                const self = this;
+                async function createNewCollectionItem(nft: MarketplaceNFT) {
+                    const model = new self.collectionItemModel();
+                    model.id = nft.contractAddress + '_' + nft.tokenId;
+                    model.tokenId = nft.tokenId;
+                    model.tokenUri = nft.tokenUri;
+                    model.seller = nft.seller.toLowerCase();
+                    model.owner = nft.owner.toLowerCase();
+                    model.price = Number(nft.price);
 
-            // Create missing NFT or update existing
-            for (const nft of marketplaceNFTs) {
-                if (tokenIds.includes(nft.tokenId)) {
-
-                    // Create sold item if we dont have it yet
-                    if (marketplaceState == MarketplaceState.SOLD && collectionItems.filter(f => f.tokenId == nft.tokenId && f.marketplaceState == MarketplaceState.SOLD).length == 0) {
-                        this.logger.log(`Create new sold NFT: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
-                        await createNewCollectionItem(nft);
-                    }
-
-                    // Change state and add price if we dont have listed NFT yet
-                    if (marketplaceState == MarketplaceState.LISTED && collectionItems.filter(f => f.tokenId == nft.tokenId && f.marketplaceState == MarketplaceState.LISTED).length == 0) {
-                        const filteredListedItems = collectionItems.filter(f => f.tokenId == nft.tokenId && f.marketplaceState == MarketplaceState.NONE);
-                        if (filteredListedItems.length == 1) {
-                            const filteredListedItem = filteredListedItems[0];
-                            filteredListedItem.price = Number(nft.price);
-                            filteredListedItem.marketplaceState = MarketplaceState.LISTED;
-                            this.logger.log(`Update missing Listed state: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
-                            await filteredListedItem.save();
-                        } else {
-                            this.logger.error(`Unable to update listed NFT: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
+                    if (!tokenIds.includes(nft.tokenId)) {
+                        model.image = nft.image;
+                    } else {
+                        const collectionItem = collectionItems.filter(f => f.tokenId == nft.tokenId)[0];
+                        if (collectionItem) {
+                            model.image = collectionItem.image;
                         }
                     }
-                } else {
-                    this.logger.log(`Create missing NFT: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
-                    await createNewCollectionItem(nft);
+
+                    model.lastUpdated = Number((Date.now() / 1000).toFixed(0));
+                    model.contractAddress = nft.contractAddress;
+                    model.traits = nft.traits;
+                    model.visuals = nft.visuals;
+                    model.rarity = nft.rarity;
+                    model.marketplaceState = marketplaceState == MarketplaceState.LISTED ? MarketplaceState.LISTED : MarketplaceState.SOLD;
+                    model.collectionName = 'captains';
+                    model.coinSymbol = 'CRO';
+                    model.chainName = 'Cronos';
+                    model.chainId = '338';
+                    await model.save();
                 }
-            }
-        } else {
-            // If we have listed NFT, but no listed in the contract
-            if (marketplaceState == MarketplaceState.LISTED) {
-                const collectionItems = await this.collectionItemModel.find({
-                    contractAddress,
-                    marketplaceState: MarketplaceState.LISTED
-                });
-                if (collectionItems.length > 0) {
-                    for (const collectionItem of collectionItems) {
-                        collectionItem.marketplaceState = MarketplaceState.NONE;
-                        this.logger.log(`Creaye missing NFT: contractAddress: ${contractAddress}, tokenId: ${collectionItem.tokenId}`);
-                        await collectionItem.save();
+
+                // Create missing NFT or update existing
+                for (const nft of marketplaceNFTs) {
+                    if (tokenIds.includes(nft.tokenId)) {
+
+                        // Create sold item if we dont have it yet
+                        if (marketplaceState == MarketplaceState.SOLD && collectionItems.filter(f => f.tokenId == nft.tokenId && f.marketplaceState == MarketplaceState.SOLD).length == 0) {
+                            this.logger.log(`Create new sold NFT: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
+                            await createNewCollectionItem(nft);
+                        }
+
+                        // Change state and add price if we dont have listed NFT yet
+                        if (marketplaceState == MarketplaceState.LISTED && collectionItems.filter(f => f.tokenId == nft.tokenId && f.marketplaceState == MarketplaceState.LISTED).length == 0) {
+                            const filteredListedItems = collectionItems.filter(f => f.tokenId == nft.tokenId && f.marketplaceState == MarketplaceState.NONE);
+                            if (filteredListedItems.length == 1) {
+                                const filteredListedItem = filteredListedItems[0];
+                                filteredListedItem.price = Number(nft.price);
+                                filteredListedItem.marketplaceState = MarketplaceState.LISTED;
+                                this.logger.log(`Update missing Listed state: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
+                                await filteredListedItem.save();
+                            } else {
+                                this.logger.error(`Unable to update listed NFT: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
+                            }
+                        }
+                    } else {
+                        this.logger.log(`Create missing NFT: contractAddress: ${nft.contractAddress}, tokenId: ${nft.tokenId}`);
+                        await createNewCollectionItem(nft);
+                    }
+                }
+            } else {
+                // If we have listed NFT, but no listed in the contract
+                if (marketplaceState == MarketplaceState.LISTED) {
+                    const collectionItems = await this.collectionItemModel.find({
+                        contractAddress,
+                        marketplaceState: MarketplaceState.LISTED
+                    });
+                    if (collectionItems.length > 0) {
+                        for (const collectionItem of collectionItems) {
+                            collectionItem.marketplaceState = MarketplaceState.NONE;
+                            this.logger.log(`Creaye missing NFT: contractAddress: ${contractAddress}, tokenId: ${collectionItem.tokenId}`);
+                            await collectionItem.save();
+                        }
                     }
                 }
             }

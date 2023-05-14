@@ -16,10 +16,6 @@ export interface CaptainStats {
     maxLevel: number;
     traits: any;
     rarity: number;
-    // staking: boolean,
-    // stakingRewardNVY: number;
-    // stakingStartedAt: number;
-    // stakingDurationSeconds: number;
 }
 
 export class NftCaptainGenerator extends NftGenerator {
@@ -188,7 +184,10 @@ export class NftCaptainGenerator extends NftGenerator {
         newCollectionModel.collectionName = 'captains';
         newCollectionModel.lastUpdated = Number((Date.now() / 1000).toFixed(0));
         newCollectionModel.chainId = '338';
+        newCollectionModel.chainName = 'CRO';
+        newCollectionModel.coinSymbol = 'Cronos';
         newCollectionModel.marketplaceState = MarketplaceState.NONE;
+
         await newCollectionModel.save();
 
         Logger.log(`Captain ${newCollectionModel.tokenId} minted!`);

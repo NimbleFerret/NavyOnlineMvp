@@ -8,3 +8,7 @@ export interface GenerateNftImageDto {
     amount: number,
     nftParts?: NftPart[]
 }
+
+export interface MintCaptainDto {
+    owner: string;
+}

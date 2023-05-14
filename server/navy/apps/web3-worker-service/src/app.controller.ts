@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { AppService } from "./app.service";
-import { GenerateNftImageDto } from "./dto/dto";
+import { GenerateNftImageDto, MintCaptainDto } from "./dto/dto";
 
 @Controller()
 export class AppController {
@@ -11,6 +11,11 @@ export class AppController {
     @Post('generateNftImage')
     generateNftImage(@Body() request: GenerateNftImageDto) {
         this.appSerivce.generateNftImage(request);
+    }
+
+    @Post('mintCaptain')
+    mintCaptain(@Body() request: MintCaptainDto) {
+        this.appSerivce.mintCaptain(request);
     }
 
 }

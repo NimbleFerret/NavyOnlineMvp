@@ -7,6 +7,6 @@ export interface ProjectCollection {
 export interface ProjectDto {
     name: string;
     active: boolean;
-    state: number;
+    state: string;
     collections: ProjectCollection[];
 }
