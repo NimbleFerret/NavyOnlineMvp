@@ -40,8 +40,8 @@ export class QueueMarketplaceListingProcessor {
                 soldCollectionItem.id = collectionItem.id;
                 soldCollectionItem.tokenId = collectionItem.tokenId;
                 soldCollectionItem.tokenUri = collectionItem.tokenUri;
-                soldCollectionItem.seller = job.data.seller.toLowerCase();
-                soldCollectionItem.owner = job.data.owner.toLowerCase();
+                soldCollectionItem.seller = job.data.seller;
+                soldCollectionItem.owner = job.data.owner;
                 soldCollectionItem.price = job.data.price;
                 soldCollectionItem.image = collectionItem.image;
                 soldCollectionItem.visuals = collectionItem.visuals;
@@ -61,7 +61,6 @@ export class QueueMarketplaceListingProcessor {
                 collectionItem.marketplaceState = MarketplaceState.NONE;
                 collectionItem.owner = job.data.owner;
                 collectionItem.seller = job.data.seller;
-                collectionItem.price = undefined;
             }
             await collectionItem.save();
             this.logger.log(`Job finished! (${this.jobInfo(job)}) tokenId: ${collectionItem.tokenId}`);

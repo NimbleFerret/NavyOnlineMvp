@@ -55,15 +55,12 @@ export class BlockchainService implements OnModuleInit {
         await this.syncSaleContracts();
         await this.syncNftContracts();
 
-        // this.mintQueue.add({
-        //     nftType: NftType.CAPTAIN,
-        //     sender: '0xE6193b058bBD559E8E0Df3a48202a3cDEC852Ab6',
-        //     contractAddress: '0xA7D87Ec62772c3cB9b59de6f4ACa4c8602910bcd',
-        //     tokenId: 23
-        // } as MintJob);
-
         this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
+            sender = sender.toLowerCase();
+            contractAddress = contractAddress.toLowerCase();
+
             Logger.log(`Captains mint occured! sender: ${sender}, contractAddress: ${contractAddress}`);
+
             this.mintQueue.add({
                 nftType: NftType.CAPTAIN,
                 sender,
@@ -79,9 +76,14 @@ export class BlockchainService implements OnModuleInit {
             owner: string,
             price: number
         ) => {
+            nftContract = nftContract.toLowerCase();
+            seller = seller.toLowerCase();
+            owner = owner.toLowerCase();
+
             Logger.log(`Captain listed on the marketplace! nftContract: ${nftContract}, tokenId: ${tokenId}, seller: ${seller}, owner: ${owner}, price: ${price}`);
+
             this.marketplaceListingQueue.add({
-                contractAddress: nftContract.toLowerCase(),
+                contractAddress: nftContract,
                 tokenId: Number(tokenId),
                 listed: true,
                 price: Number(price),
@@ -94,9 +96,13 @@ export class BlockchainService implements OnModuleInit {
             nftContract: string,
             seller: string,
         ) => {
+            nftContract = nftContract.toLowerCase();
+            seller = seller.toLowerCase();
+
             Logger.log(`Captain delisted from the marketplace! nftContract: ${nftContract}, tokenId: ${tokenId}, seller: ${seller}`);
+
             this.marketplaceListingQueue.add({
-                contractAddress: nftContract.toLowerCase(),
+                contractAddress: nftContract,
                 tokenId: Number(tokenId),
                 listed: false,
                 nftType: NftType.CAPTAIN
@@ -110,7 +116,12 @@ export class BlockchainService implements OnModuleInit {
             owner: string,
             price: number
         ) => {
+            nftContract = nftContract.toLowerCase();
+            seller = seller.toLowerCase();
+            owner = owner.toLowerCase();
+
             Logger.log(`Captain sold on the marketplace! nftContract: ${nftContract}, tokenId: ${tokenId}, seller: ${seller}, owner: ${owner}, price: ${price}`);
+
             this.marketplaceListingQueue.add({
                 contractAddress: nftContract.toLowerCase(),
                 tokenId: Number(tokenId),
