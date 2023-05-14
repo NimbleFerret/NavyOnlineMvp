@@ -11,4 +11,5 @@ export interface GenerateNftImageDto {
 
 export interface MintCaptainDto {
     owner: string;
+    tokenId: number;
 }
