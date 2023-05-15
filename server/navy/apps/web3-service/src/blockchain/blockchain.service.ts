@@ -53,7 +53,7 @@ export class BlockchainService implements OnModuleInit {
         });
 
         await this.syncSaleContracts();
-        await this.syncNftContracts();
+        // await this.syncNftContracts();
 
         this.ethersProvider.captainCollectionSaleContract.on(EthersProvider.EventGenerateToken, async (sender: string, contractAddress: string) => {
             sender = sender.toLowerCase();
@@ -86,7 +86,7 @@ export class BlockchainService implements OnModuleInit {
                 contractAddress: nftContract,
                 tokenId: Number(tokenId),
                 listed: true,
-                price: Number(price),
+                price: Number(ethers.utils.formatEther(price)),
                 nftType: NftType.CAPTAIN
             } as MarketplaceListingJob)
         });

@@ -62,26 +62,16 @@ export class AppController {
     return this.collectionService.getCollection(address.toLowerCase());
   }
 
-  @Get('collection/:address/all')
-  getCollectionAllItems(
-    @Req() request: Request,
-    @Param('address') address: string,
-    @Query('page') page?: number,
-    @Query('size') size?: number,
-    @Query('rarity') rarity?: string) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), address.toLowerCase(), page, size, rarity);
-  }
-
   @Get('collection/:address/items')
   getCollectionItems(
     @Req() request: Request,
     @Param('address') address: string,
     @Query('page') page?: number,
     @Query('size') size?: number,
-    @Query('price') price?: string,
+    @Query('priceOrder') priceOrder?: string,
     @Query('rarity') rarity?: string[],
     @Query('marketplaceState') marketplaceState?: string) {
-    return this.collectionService.getCollectionItemsV2(Utils.GetBearerTokenFromRequest(request), address.toLowerCase(), page, size, price, rarity, marketplaceState);
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), address.toLowerCase(), page, size, priceOrder, rarity, marketplaceState);
   }
 
   @Get('collection/:address/item/:tokenId')

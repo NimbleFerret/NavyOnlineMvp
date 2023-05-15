@@ -88,7 +88,9 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                         const collectionItem = await this.collectionItemModel.findOne({
                             contractAddress,
                             tokenId: i,
-                            marketplaceState: MarketplaceState.NONE
+                            marketplaceState: {
+                                "$in": [MarketplaceState.NONE, MarketplaceState.LISTED]
+                            }
                         });
 
                         const nftOwner = (await this.ethersProvider.captainContract.ownerOf(i)).toLowerCase();
@@ -218,8 +220,12 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                     model.id = nft.contractAddress + '_' + nft.tokenId;
                     model.tokenId = nft.tokenId;
                     model.tokenUri = nft.tokenUri;
-                    model.seller = nft.seller.toLowerCase();
-                    model.owner = nft.owner.toLowerCase();
+                    if (marketplaceState == MarketplaceState.LISTED) {
+                        model.owner = nft.seller.toLowerCase();
+                    } else {
+                        model.seller = nft.seller.toLowerCase();
+                        model.owner = nft.owner.toLowerCase();
+                    }
                     model.price = Number(nft.price);
 
                     if (!tokenIds.includes(nft.tokenId)) {
@@ -241,6 +247,7 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
                     model.coinSymbol = 'CRO';
                     model.chainName = 'Cronos';
                     model.chainId = '338';
+                    console.log('getMarketplaceNfts. Saved.');
                     await model.save();
                 }
 
@@ -301,7 +308,6 @@ export class QueueMarketplaceUpdateProcessor implements OnModuleInit {
             if (tokensLeft > 0) {
                 collection.collectionItemsLeft = tokensLeft;
                 await collection.save();
-
                 const collectionMint = await this.mintModel.findById(collection.mint);
                 if (collectionMint) {
                     collectionMint.collectionItemsLeft = tokensLeft;

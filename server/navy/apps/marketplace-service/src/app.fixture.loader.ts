@@ -9,7 +9,7 @@ import { Model } from "mongoose";
 
 export class FixtureLoader {
 
-    private readonly reloadCollectionItems = false;
+    private readonly reloadCollectionItems = true;
 
     constructor(
         private projectModel: Model<ProjectDocument>,
@@ -129,6 +129,8 @@ export class FixtureLoader {
             contractAddress,
             collectionName,
             marketplaceState: 'Sold',
+            coinSymbol: "CRO",
+            chainName: "Cronos",
             chainId: "338"
         };
 

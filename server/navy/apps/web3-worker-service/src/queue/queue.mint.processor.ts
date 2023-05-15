@@ -95,7 +95,7 @@ export class QueueMintProcessor implements OnModuleInit {
 
         const tokensTotal = (await collectionSaleContract.tokensTotal()).toNumber();
 
-        let tokenIndex = (await collectionContract.totalSupply()).toNumber();
+        let tokenIndex = (await collectionContract.totalSupply()).toNumber() + 1;
         if (job.data.tokenId) {
             tokenIndex = job.data.tokenId;
         }

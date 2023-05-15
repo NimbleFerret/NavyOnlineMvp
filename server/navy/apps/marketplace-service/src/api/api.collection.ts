@@ -40,105 +40,7 @@ export class CollectionApiService {
         contractAddress: string,
         page?: number,
         size?: number,
-        rarity?: string
-    ): Promise<PaginatedCollectionItemsResponse> {
-        let userProfile = undefined;
-        if (authToken) {
-            userProfile = await this.authService.checkTokenAndGetProfile(authToken);
-        }
-
-        let initialPage = page;
-        if (!page) {
-            page = 1;
-            initialPage = 1;
-        }
-        const pageSize = size ? size : AppService.DefaultPaginationSize;
-
-        // ----------------------------------
-        // Query collection items count
-        // ----------------------------------
-
-        const query = {
-            contractAddress: contractAddress.toLowerCase(),
-            marketplaceState: {
-                "$ne": MarketplaceState.SOLD
-            }
-        };
-
-        const rarityCheck = rarity && (rarity == 'Legendary' || rarity == 'Epic' || rarity == 'Rare' || rarity == 'Common');
-        if (rarityCheck) {
-            query['rarity'] = rarity;
-        }
-
-        const count = await this.collectionItemModel.countDocuments(query);
-
-        // ----------------------------------
-        // Query collection items
-        // ----------------------------------
-
-        const result = await this.collectionItemModel.find(query)
-            .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
-            .skip((page - 1) * pageSize)
-            .limit(pageSize)
-            .sort([['marketplaceState', 1], ['tokenId', -1]]);
-
-        // ----------------------------------
-        // Prepare paginated response
-        // ----------------------------------
-
-        const resultItems = this.convertCollectionItems(result, true);
-
-        let pages = Math.ceil(count / pageSize);
-        let next = null;
-        let prev = null;
-
-        if (pages < 1) {
-            pages = 1;
-        }
-        if (pages > 1) {
-            const getUrl = (p: number) => {
-                let url = '';
-                url = `https://navy.online/marketplace/collection/${contractAddress}/all?page=${p}`;
-                if (size) {
-                    url += '&size=' + size;
-                }
-                if (rarity) {
-                    url += '&rarity=' + size;
-                }
-                return url;
-            };
-
-            next = ((page - 1) * pageSize) + result.length < (count) ? getUrl(Number(initialPage) + 1) : null;
-            prev = page > 1 ? getUrl(page - 1) : null;
-        }
-
-        const response: PaginatedCollectionItemsResponse = {
-            info: {
-                count,
-                pages,
-                next,
-                prev
-            },
-            result: resultItems
-        };
-
-        // ----------------------------------
-        // Fill user favourite items 
-        // ----------------------------------
-
-        if (userProfile) {
-            await this.fillCollectionItemsFavourites(response.result, userProfile);
-        }
-
-        return response;
-    }
-
-    async getCollectionItemsV2(
-        authToken: string | undefined,
-        contractAddress: string,
-        page?: number,
-        size?: number,
-        price?: string,
+        priceOrder?: string,
         rarity?: string[],
         marketplaceState?: string
     ): Promise<PaginatedCollectionItemsResponse> {
@@ -191,7 +93,9 @@ export class CollectionApiService {
 
         let loadListed = true;
         let loadNotListed = true;
-        const listedResult = []
+        let listedCount = 0;
+        let notListedCount = 0;
+        const listedResult = [];
         const notListedResult = [];
 
         if (marketplaceState) {
@@ -204,19 +108,21 @@ export class CollectionApiService {
         }
 
         if (loadListed) {
+            listedCount = await this.collectionItemModel.count(listedQuery);
             listedResult.push(...await this.collectionItemModel.find(listedQuery)
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
                 .skip((page - 1) * pageSize)
                 .limit(pageSize));
         }
         if (loadNotListed) {
+            notListedCount = await this.collectionItemModel.count(notListedQuery);
             notListedResult.push(...await this.collectionItemModel.find(notListedQuery)
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
                 .skip((page - 1) * pageSize)
                 .limit(pageSize - listedResult.length));
         }
 
-        const totalCount = listedResult.length + notListedResult.length;
+        const totalCount = listedCount + notListedCount;
 
         // ----------------------------------
         // Query collection items
@@ -224,10 +130,21 @@ export class CollectionApiService {
 
         const totalResult = [...listedResult, ...notListedResult]
             .sort(function (a, b) {
-                return a.marketplaceState - b.marketplaceState || a.tokenId - b.tokenId;
+                const marketplaceStateCondition = a.marketplaceState.localeCompare(b.marketplaceState);
+                let sortCondition = marketplaceStateCondition || b.tokenId - a.tokenId;
+
+                if (priceOrder) {
+                    if (priceOrder == 'asc') {
+                        sortCondition = marketplaceStateCondition || b.price - a.price;
+                    } else if (priceOrder == 'desc') {
+                        sortCondition = marketplaceStateCondition || a.price - b.price;
+                    }
+                }
+
+                return sortCondition;
             });
 
-        const resultItems = this.convertCollectionItems(totalResult, false);
+        const resultItems = this.convertCollectionItems(totalResult);
 
         if (userProfile) {
             await this.fillCollectionItemsFavourites(resultItems, userProfile);
@@ -254,8 +171,8 @@ export class CollectionApiService {
                 if (rarity) {
                     url += '&rarity=' + rarity;
                 }
-                if (price) {
-                    url += '&price=' + price;
+                if (priceOrder) {
+                    url += '&priceOrder=' + priceOrder;
                 }
                 return url;
             };
@@ -381,7 +298,7 @@ export class CollectionApiService {
             collectionItems.push(...(await this.collectionItemModel
                 .find({
                     marketplaceState: MarketplaceState.LISTED,
-                    seller: owner
+                    owner: owner
                 })
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])));
 
@@ -392,7 +309,7 @@ export class CollectionApiService {
                 })
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']));
 
-            const resultItems = this.convertCollectionItems(collectionItems.sort(function (a, b) { return b.collectionAddress - a.collectionAddress }), false);
+            const resultItems = this.convertCollectionItems(collectionItems.sort(function (a, b) { return b.collectionAddress - a.collectionAddress }));
             await this.fillCollectionItemsFavourites(resultItems, userProfile);
 
             resultItems.forEach(f => {
@@ -470,16 +387,13 @@ export class CollectionApiService {
         });
     }
 
-    private convertCollectionItems(collectionItems: any, swapSeller = false) {
+    private convertCollectionItems(collectionItems: any) {
         const resultItems = [];
         const resultIds = new Set<number>();
 
         collectionItems.forEach(r => {
             if (!resultIds.has(r.tokenId)) {
                 const resultItem = Converter.ConvertCollectionItem(r, false);
-                if (r.seller && swapSeller) {
-                    resultItem.owner = r.seller;
-                }
                 resultItems.push(resultItem);
                 resultIds.add(r.tokenId);
             } else {

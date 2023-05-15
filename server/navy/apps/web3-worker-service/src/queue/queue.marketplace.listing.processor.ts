@@ -62,6 +62,7 @@ export class QueueMarketplaceListingProcessor {
                 collectionItem.owner = job.data.owner;
                 collectionItem.seller = job.data.seller;
             }
+            collectionItem.lastUpdated = Number((Date.now() / 1000).toFixed(0));
             await collectionItem.save();
             this.logger.log(`Job finished! (${this.jobInfo(job)}) tokenId: ${collectionItem.tokenId}`);
         } else {
