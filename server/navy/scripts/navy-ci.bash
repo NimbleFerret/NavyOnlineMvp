@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /srv/NavyOnlineSource
+cd /srv/NavyOnline
 gh repo sync --branch venom-hackathon
 cd server/navy
 
