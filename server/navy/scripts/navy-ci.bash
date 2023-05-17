@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /srv/NavyOnlineSource
-gh repo sync --branch theta-hack
+gh repo sync --branch venom-hackathon
 cd server/navy
 
 echo 'Choose an app to deploy:'
