@@ -15,7 +15,7 @@ export class Config {
     public static readonly GAMEPLAY_SERVICE_DEFAULT_PORT = 4020;
     public static readonly GAMEPLAY_SERVICE_DEFAULT_REGION = 'EU';
 
-    public static readonly TestEnv = false;
+    public static readonly TestEnv = true;
 
     private static RemoteRedis = false;
     private static DockerRedis = true;
@@ -29,10 +29,11 @@ export class Config {
         }
     }
 
-    public static MongoDBName = 'navy';
+    public static MongoDBName = 'navy_test';
 
     public static GetMongoHost() {
-        return `mongodb://${Config.TestEnv ? 'localhost' : 'navyuser:jhassct872hbJGFJgkcva2s@navy-mongodb'}`;
+        return `mongodb://navyuser:jhassct872hbJGFJgkcva2s@23.111.202.19:27017/?authMechanism=DEFAULT`;
+        // return `mongodb://${Config.TestEnv ? 'localhost' : 'navyuser:jhassct872hbJGFJgkcva2s@navy-mongodb'}`;
     }
 
     // return `mongodb://navyuser:jhassct872hbJGFJgkcva2s@23.111.202.19:27017/?authMechanism=DEFAULT`;

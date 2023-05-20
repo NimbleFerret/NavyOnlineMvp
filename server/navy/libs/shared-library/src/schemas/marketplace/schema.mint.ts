@@ -27,9 +27,10 @@ export interface MintDetails {
     chainId: string;
     chainName: string;
     coinSymbol: string;
-    mintPriceEth: number;
-    saleContractAddress: string;
-    tokenContractAddress: string;
+    mintPriceNativeCoin: number;
+    saleContractAddress?: string;
+    tokenContractAddress?: string;
+    collectionContractAddress?: string;
 }
 
 @Schema()
@@ -46,8 +47,8 @@ export class Mint {
     @Prop()
     mintingEndTime: string;
 
-    @Prop()
-    mintingDetails: MintDetails[];
+    @Prop({ type: Object })
+    mintingDetails: MintDetails;
 
     // ------------------------------
 

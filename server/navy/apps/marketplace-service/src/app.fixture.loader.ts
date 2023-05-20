@@ -1,4 +1,5 @@
 import { SharedLibraryService } from "@app/shared-library";
+import { EthersConstants } from "@app/shared-library/ethers/ethers.constants";
 import { CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { FaqDocument } from "@app/shared-library/schemas/marketplace/schema.faq";
@@ -9,7 +10,7 @@ import { Model } from "mongoose";
 
 export class FixtureLoader {
 
-    private readonly reloadCollectionItems = false;
+    private readonly reloadCollectionItems = true;
 
     constructor(
         private projectModel: Model<ProjectDocument>,
@@ -24,13 +25,14 @@ export class FixtureLoader {
         await this.loadFaq();
         if (this.reloadCollectionItems) {
             await this.collectionItemModel.deleteMany({
+                chainName: SharedLibraryService.CRONOS_CHAIN_NAME,
                 contractAddress: {
-                    '$ne': '0xcefd45799326f48a4d23222bb8fa15b49baf28ec'
+                    '$ne': EthersConstants.CaptainContractAddress
                 }
             });
             // await this.loadTopSales('captains', '0xcefd45799326f48a4d23222bb8fa15b49baf28ec');
-            await this.loadTopSales('ships', '0xcefd45799326f48a4d23222bb8fa15b49baf28ed');
-            await this.loadTopSales('islands', '0xcefd45799326f48a4d23222bb8fa15b49baf28ee');
+            await this.loadTopSales('ships', '0xcefd45799326f48a4d23222bb8fa15b49baf28ed', SharedLibraryService.CRONOS_CHAIN_NAME);
+            await this.loadTopSales('islands', '0xcefd45799326f48a4d23222bb8fa15b49baf28ee', SharedLibraryService.CRONOS_CHAIN_NAME);
         }
     }
 
@@ -46,12 +48,17 @@ export class FixtureLoader {
                 project.supportedChains = fixture.supportedChains;
 
                 FileUtils.LoadFixture('marketplace-service', '2_collections.json', async (fixtures: any) => {
-                    const collections = [new this.collectionModel(), new this.collectionModel(), new this.collectionModel()];
+                    const collections = [
+                        new this.collectionModel(),
+                        new this.collectionModel(),
+                        new this.collectionModel(),
+                        new this.collectionModel()
+                    ];
 
                     for (let i = 0; i < fixtures.length; i++) {
                         collections[i].name = fixtures[i].name;
                         collections[i].description = fixtures[i].description;
-                        collections[i].chainId = fixtures[i].chainId;
+                        collections[i].chainName = fixtures[i].chainName;
                         collections[i].contractAddress = fixtures[i].contractAddress.toLowerCase();
                         collections[i].collectionSize = fixtures[i].collectionSize;
                         collections[i].collectionItemsLeft = fixtures[i].collectionItemsLeft;
@@ -62,10 +69,12 @@ export class FixtureLoader {
                         for (let i = 0; i < fixtures.length; i++) {
                             const mint = new this.mintModel();
 
-                            fixtures[i].mintingDetails.forEach(mintingDetail => {
-                                mintingDetail.saleContractAddress = mintingDetail.saleContractAddress.toLowerCase();
-                                mintingDetail.tokenContractAddress = mintingDetail.tokenContractAddress.toLowerCase();
-                            });
+                            if (fixtures[i].mintingDetails.collectionContractAddress) {
+                                fixtures[i].mintingDetails.collectionContractAddress.toLowerCase();
+                            } else {
+                                fixtures[i].mintingDetails.saleContractAddress.toLowerCase();
+                                fixtures[i].mintingDetails.tokenContractAddress.toLowerCase();
+                            }
 
                             mint.mintingEnabled = fixtures[i].mintingEnabled;
                             mint.mintingStartTime = fixtures[i].mintingStartTime;
@@ -105,7 +114,12 @@ export class FixtureLoader {
         }
     }
 
-    private async loadTopSales(collectionName: string, contractAddress: string) {
+    private async loadTopSales(collectionName: string, contractAddress: string, chainName: string) {
+        const coinSymbol = chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
+            SharedLibraryService.VENOM_COIN_SYMBOL : SharedLibraryService.CRONOS_COIN_SYMBOL;
+        const chainId = chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
+            SharedLibraryService.VENOM_CHAIN_ID : SharedLibraryService.CRONOS_CHAIN_ID;
+
         const nowTimeSeconds = Number(Number(Date.now() / 1000).toFixed(0));
         const daySeconds = 24 * 60 * 60;
         const itemIdPrefix = '0x61a03eed4c0220bb6ee89b0cda10dc171f772577_';
@@ -129,9 +143,9 @@ export class FixtureLoader {
             contractAddress,
             collectionName,
             marketplaceState: 'Sold',
-            coinSymbol: "CRO",
-            chainName: "Cronos",
-            chainId: "338"
+            coinSymbol,
+            chainName,
+            chainId
         };
 
         function generateCaptainVisuals() {
@@ -222,11 +236,9 @@ export class FixtureLoader {
 
         // Today sells
         for (let i = 0; i < 10; i++) {
-            // if (collectionName == 'captains') {
             const soldCollectionItem = newCollectionItem();
             soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
             await new this.collectionItemModel(soldCollectionItem).save();
-            // }
 
             const ownedCollectionItem = newCollectionItem();
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
@@ -243,11 +255,9 @@ export class FixtureLoader {
 
         // 7d
         for (let i = 0; i < 10; i++) {
-            // if (collectionName == 'captains') {
             const soldCollectionItem = newCollectionItem();
             soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
             await new this.collectionItemModel(soldCollectionItem).save();
-            // }
 
             const ownedCollectionItem = newCollectionItem();
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
@@ -264,11 +274,9 @@ export class FixtureLoader {
 
         // 30d 
         for (let i = 0; i < 10; i++) {
-            // if (collectionName == 'captains') {
             const soldCollectionItem = newCollectionItem();
             soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
             await new this.collectionItemModel(soldCollectionItem).save();
-            // }
 
             const ownedCollectionItem = newCollectionItem();
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;

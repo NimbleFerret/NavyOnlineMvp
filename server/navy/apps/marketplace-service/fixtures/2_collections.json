@@ -1,9 +1,24 @@
 [
         {
                 "name": "Captains",
-                "description": "Captains collection",
-                "chainId": "25",
+                "description": "Cronos captains collection",
+                "chainName": "Cronos",
                 "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ec",
+                "collectionSize": 200,
+                "collectionItemsLeft": 200,
+                "preview": [
+                        "https://navy.online/marketplace/static/assets/captain/preview_1.png",
+                        "https://navy.online/marketplace/static/assets/captain/preview_2.png",
+                        "https://navy.online/marketplace/static/assets/captain/preview_3.png",
+                        "https://navy.online/marketplace/static/assets/captain/preview_4.png",
+                        "https://navy.online/marketplace/static/assets/captain/preview_5.png"
+                ]
+        },
+        {
+                "name": "Captains",
+                "description": "Venom captains collection",
+                "chainName": "Venom",
+                "contractAddress": "0:dbcdf5d43044c8039fc34fcf8e695f10774ef942b10f93bd9c78513761c518de",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
                 "preview": [
@@ -17,7 +32,7 @@
         {
                 "name": "Ships",
                 "description": "Ships collection",
-                "chainId": "25",
+                "chainName": "Cronos",
                 "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ed",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
@@ -28,7 +43,7 @@
         {
                 "name": "Islands",
                 "description": "Islands collection",
-                "chainId": "25",
+                "chainName": "Cronos",
                 "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ee",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
