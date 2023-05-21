@@ -4,8 +4,8 @@
         "mintingStartTime": "14/03/2023",
         "mintingEndTime": "14/07/2023",
         "mintingDetails": {
-            "chainId": "25",
-            "chainName": "Cronos",
+            "chainId": "338",
+            "chainName": "cronos",
             "coinSymbol": "CRO",
             "mintPriceNativeCoin": 5,
             "saleContractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ec",
@@ -300,8 +300,8 @@
         "mintingStartTime": "14/03/2023",
         "mintingEndTime": "14/07/2023",
         "mintingDetails": {
-            "chainId": "25",
-            "chainName": "Cronos",
+            "chainId": "338",
+            "chainName": "cronos",
             "coinSymbol": "CRO",
             "mintPriceNativeCoin": 5,
             "saleContractAddress": "0xe0329c20d37D05806F73912B28F5434BCC56A8B7",
@@ -437,8 +437,8 @@
         "mintingStartTime": "14/03/2023",
         "mintingEndTime": "14/07/2023",
         "mintingDetails": {
-            "chainId": "25",
-            "chainName": "Cronos",
+            "chainId": "338",
+            "chainName": "cronos",
             "coinSymbol": "CRO",
             "mintPriceNativeCoin": 5,
             "saleContractAddress": "0xe0329c20d37D05806F73912B28F5434BCC56A8B7",
@@ -575,7 +575,7 @@
         "mintingEndTime": "14/07/2023",
         "mintingDetails": {
             "chainId": "1002",
-            "chainName": "Venom",
+            "chainName": "venom",
             "coinSymbol": "V",
             "mintPriceNativeCoin": 5,
             "collectionContractAddress": "0:dbcdf5d43044c8039fc34fcf8e695f10774ef942b10f93bd9c78513761c518de"

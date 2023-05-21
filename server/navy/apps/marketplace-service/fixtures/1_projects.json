@@ -4,8 +4,8 @@
         "active": true,
         "state": "Minting_and_sale",
         "supportedChains": [
-            "Cronos",
-            "Venom"
+            "cronos",
+            "venom"
         ]
     }
 ]

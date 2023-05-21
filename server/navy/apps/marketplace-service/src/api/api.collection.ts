@@ -29,8 +29,8 @@ export class CollectionApiService {
     ) {
     }
 
-    async getCollection(contractAddress: string) {
-        const collection = await this.collectionModel.findOne({ contractAddress }).select(['-_id', '-__v']);
+    async getCollection(chainName: string, contractAddress: string) {
+        const collection = await this.collectionModel.findOne({ chainName, contractAddress }).select(['-_id', '-__v']);
         if (!collection) {
             throw new BadGatewayException();
         }
@@ -39,6 +39,7 @@ export class CollectionApiService {
 
     async getCollectionItems(
         authToken: string | undefined,
+        chainName: string,
         contractAddress: string,
         page?: number,
         size?: number,
@@ -63,10 +64,12 @@ export class CollectionApiService {
         // ----------------------------------
 
         const listedQuery = {
+            chainName,
             contractAddress: contractAddress.toLowerCase(),
             marketplaceState: MarketplaceState.LISTED
         };
         const notListedQuery = {
+            chainName,
             contractAddress: contractAddress.toLowerCase(),
             marketplaceState: MarketplaceState.NONE
         };
@@ -380,8 +383,8 @@ export class CollectionApiService {
         return Converter.ConvertCollectionItem(collectionItem, favourite);
     }
 
-    async getMintByCollection(collectionAddress: string) {
-        const collection = await this.getCollection(collectionAddress);
+    async getMintByCollection(chainName: string, collectionAddress: string) {
+        const collection = await this.getCollection(chainName, collectionAddress);
         if (!collection) {
             throw new BadGatewayException();
         }

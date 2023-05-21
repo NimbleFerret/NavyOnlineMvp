@@ -2,7 +2,7 @@
         {
                 "name": "Captains",
                 "description": "Cronos captains collection",
-                "chainName": "Cronos",
+                "chainName": "cronos",
                 "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ec",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
@@ -17,7 +17,7 @@
         {
                 "name": "Captains",
                 "description": "Venom captains collection",
-                "chainName": "Venom",
+                "chainName": "venom",
                 "contractAddress": "0:dbcdf5d43044c8039fc34fcf8e695f10774ef942b10f93bd9c78513761c518de",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
@@ -31,8 +31,19 @@
         },
         {
                 "name": "Ships",
-                "description": "Ships collection",
-                "chainName": "Cronos",
+                "description": "Cronos ships collection",
+                "chainName": "cronos",
+                "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ed",
+                "collectionSize": 200,
+                "collectionItemsLeft": 200,
+                "preview": [
+                        "https://navy.online/marketplace/static/assets/ship/preview_1.png"
+                ]
+        },
+        {
+                "name": "Ships",
+                "description": "Venom ships collection",
+                "chainName": "venom",
                 "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ed",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
@@ -42,8 +53,19 @@
         },
         {
                 "name": "Islands",
-                "description": "Islands collection",
-                "chainName": "Cronos",
+                "description": "Cronos islands collection",
+                "chainName": "cronos",
+                "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ee",
+                "collectionSize": 200,
+                "collectionItemsLeft": 200,
+                "preview": [
+                        "https://navy.online/marketplace/static/assets/ship/preview_1.png"
+                ]
+        },
+        {
+                "name": "Islands",
+                "description": "Venom islands collection",
+                "chainName": "venom",
                 "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ee",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,

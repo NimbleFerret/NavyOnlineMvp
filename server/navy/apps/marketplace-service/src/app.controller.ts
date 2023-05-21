@@ -57,36 +57,36 @@ export class AppController {
   // Collection api
   // --------------------------------
 
-  @Get('collection/:chain/:address')
-  getCollection(@Param('chain') chain: string, @Param('address') address: string) {
-    return this.collectionService.getCollection(address.toLowerCase());
+  @Get('collection/:chainName/:collectionAddress')
+  getCollection(@Param('chainName') chainName: string, @Param('collectionAddress') collectionAddress: string) {
+    return this.collectionService.getCollection(chainName, collectionAddress.toLowerCase());
   }
 
-  @Get('collection/:chain/:address/items')
+  @Get('collection/:chainName/:collectionAddress/items')
   getCollectionItems(
     @Req() request: Request,
-    @Param('chain') chain: string,
-    @Param('address') address: string,
+    @Param('chainName') chainName: string,
+    @Param('collectionAddress') collectionAddress: string,
     @Query('page') page?: number,
     @Query('size') size?: number,
     @Query('priceOrder') priceOrder?: string,
     @Query('rarity') rarity?: string[],
     @Query('marketplaceState') marketplaceState?: string) {
-    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), address.toLowerCase(), page, size, priceOrder, rarity, marketplaceState);
+    return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), chainName, collectionAddress.toLowerCase(), page, size, priceOrder, rarity, marketplaceState);
   }
 
-  @Get('collection/:chain/:address/item/:tokenId')
+  @Get('collection/:chainName/:collectionAddress/item/:tokenId')
   getCollectionItem(
     @Req() request: Request,
-    @Param('chain') chain: string,
-    @Param('address') address: string,
+    @Param('chainName') chainName: string,
+    @Param('collectionAddress') collectionAddress: string,
     @Param('tokenId') tokenId: string) {
-    return this.collectionService.getCollectionItem(Utils.GetBearerTokenFromRequest(request), address.toLowerCase(), tokenId);
+    return this.collectionService.getCollectionItem(Utils.GetBearerTokenFromRequest(request), collectionAddress.toLowerCase(), tokenId);
   }
 
-  @Get('mint/:collectionAddress')
-  getMint(@Param('collectionAddress') collectionAddress: string) {
-    return this.collectionService.getMintByCollection(collectionAddress.toLowerCase());
+  @Get('mint/:chainName/:collectionAddress')
+  getMint(@Param('chainName') chainName: string, @Param('collectionAddress') collectionAddress: string) {
+    return this.collectionService.getMintByCollection(chainName, collectionAddress.toLowerCase());
   }
 
 }
