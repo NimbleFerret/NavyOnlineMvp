@@ -5,7 +5,7 @@ import {
 } from '@app/shared-library/gprc/grpc.web3.service';
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { BlockchainService } from './blockchain/blockchain.service';
+import { BlockchainService } from './blockchain/blockchain.service.cronos';
 import { MoralisService } from './moralis/moralis.service';
 
 @Controller()

@@ -1,4 +1,4 @@
-export class EthersConstants {
+export class CronosConstants {
 
     public static readonly AksContractAddress = '';
     public static readonly NvyContractAddress = '';

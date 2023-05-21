@@ -56,6 +56,8 @@
     "canvas": "2.11.0",
     "email-validator": "2.0.4",
     "ethers": "5.7.1",
+    "everscale-inpage-provider": "^0.3.60",
+    "everscale-standalone-client": "^2.1.19",
     "ip": "2.0.0",
     "jsonwebtoken": "9.0.0",
     "mongoose": "6.6.5",
