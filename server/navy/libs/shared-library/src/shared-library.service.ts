@@ -11,11 +11,11 @@ export class SharedLibraryService {
 
     public static readonly VENOM_CHAIN_ID = '1002';
     public static readonly VENOM_CHAIN_NAME = 'Venom';
-    public static readonly VENOM_COIN_SYMBOL = 'V';
+    public static readonly VENOM_TOKEN_SYMBOL = 'V';
 
     public static readonly CRONOS_CHAIN_ID = '338';
     public static readonly CRONOS_CHAIN_NAME = 'Cronos';
-    public static readonly CRONOS_COIN_SYMBOL = 'CRO';
+    public static readonly CRONOS_TOKEN_SYMBOL = 'CRO';
 
     public static readonly GENERAL_ERROR = 1;
     public static readonly NOT_FOUND_ERROR = 2;

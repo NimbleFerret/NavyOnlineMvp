@@ -18,9 +18,9 @@ export class AppController {
   // General api page
   // -------------------------------- 
 
-  @Get('cronosUsdPrice')
-  getCronosUsdPrice() {
-    return this.generalService.getCronosUsdPrice()
+  @Get('tokensUsdPrice')
+  getTokensUsdPrice() {
+    return this.generalService.getTokensUsdPrice()
   }
 
   @Get('faq')
@@ -57,14 +57,15 @@ export class AppController {
   // Collection api
   // --------------------------------
 
-  @Get('collection/:address')
-  getCollection(@Param('address') address: string) {
+  @Get('collection/:chain/:address')
+  getCollection(@Param('chain') chain: string, @Param('address') address: string) {
     return this.collectionService.getCollection(address.toLowerCase());
   }
 
-  @Get('collection/:address/items')
+  @Get('collection/:chain/:address/items')
   getCollectionItems(
     @Req() request: Request,
+    @Param('chain') chain: string,
     @Param('address') address: string,
     @Query('page') page?: number,
     @Query('size') size?: number,
@@ -74,9 +75,10 @@ export class AppController {
     return this.collectionService.getCollectionItems(Utils.GetBearerTokenFromRequest(request), address.toLowerCase(), page, size, priceOrder, rarity, marketplaceState);
   }
 
-  @Get('collection/:address/item/:tokenId')
+  @Get('collection/:chain/:address/item/:tokenId')
   getCollectionItem(
     @Req() request: Request,
+    @Param('chain') chain: string,
     @Param('address') address: string,
     @Param('tokenId') tokenId: string) {
     return this.collectionService.getCollectionItem(Utils.GetBearerTokenFromRequest(request), address.toLowerCase(), tokenId);

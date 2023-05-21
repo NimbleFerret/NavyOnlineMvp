@@ -1,3 +1,4 @@
+import { SharedLibraryService } from "@app/shared-library";
 import { EthersConstants } from "@app/shared-library/ethers/ethers.constants";
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItem, CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
@@ -9,7 +10,8 @@ import { BadGatewayException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Document } from "mongoose";
 import { AppService } from "../app.service";
-import { PaginatedCollectionItemsResponse } from "../dto/dto.collection";
+import { CollectionItemResponseObject, PaginatedCollectionItemsResponse } from "../dto/dto.collection";
+import { TopSalesDto } from "../dto/dto.topSales";
 import { AuthApiService } from "./api.auth";
 import { FavouriteApiService } from "./api.favourite";
 import { GeneralApiService } from "./api.general";
@@ -212,8 +214,8 @@ export class CollectionApiService {
         }
     }
 
-    async tokensPerformance(days?: string) {
-        const response = [];
+    async getLastCollectionItemsSold(days?: string) {
+        const response: CollectionItemResponseObject[] = [];
         const projects = await this.generalApiService.getProjects();
         if (projects) {
             const query = {
@@ -238,24 +240,39 @@ export class CollectionApiService {
     }
 
     async topSales(authToken?: string, days?: string) {
-        const response = [];
+        const response: TopSalesDto = {
+            venomTopSales: [],
+            cronosTopSales: []
+        };
+
+        const topSalesCount = 9;
+
         const projects = await this.generalApiService.getProjects();
         if (projects) {
-            const query = {
-                contractAddress: [],
-                marketplaceState: MarketplaceState.SOLD,
-                lastUpdated: { $gte: Utils.GetDaysSeconds(days) }
-            };
+            const self = this;
+            async function getTopSalesByChainName(chainName: string) {
+                const query = {
+                    chainName,
+                    contractAddress: [],
+                    marketplaceState: MarketplaceState.SOLD,
+                    lastUpdated: { $gte: Utils.GetDaysSeconds(days) }
+                };
 
-            projects[0].collections.forEach(collection => {
-                query.contractAddress.push(collection.contractAddress);
-            });
+                projects[0].collections.forEach(collection => {
+                    query.contractAddress.push(collection.contractAddress);
+                });
 
-            const topSaleResult = await this.collectionItemModel
-                .find(query)
-                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
-                .limit(9)
-                .sort([['price', -1], ['lastUpdated', 1]]);
+                const topSaleResult = await self.collectionItemModel
+                    .find(query)
+                    .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
+                    .limit(topSalesCount)
+                    .sort([['price', -1], ['lastUpdated', 1]]);
+
+                return topSaleResult;
+            }
+
+            const venomTopSales = await getTopSalesByChainName(SharedLibraryService.VENOM_CHAIN_NAME);
+            const cronosTopSales = await getTopSalesByChainName(SharedLibraryService.CRONOS_CHAIN_NAME);
 
             const favourites = [];
             if (authToken) {
@@ -266,8 +283,11 @@ export class CollectionApiService {
                 });
             }
 
-            topSaleResult.forEach(f => {
-                response.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+            venomTopSales.forEach(f => {
+                response.venomTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+            });
+            cronosTopSales.forEach(f => {
+                response.cronosTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
             });
         }
         return response;

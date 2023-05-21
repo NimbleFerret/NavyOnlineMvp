@@ -6,6 +6,7 @@ import { FaqDocument } from "@app/shared-library/schemas/marketplace/schema.faq"
 import { MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
 import { ProjectDocument } from "@app/shared-library/schemas/marketplace/schema.project";
 import { FileUtils } from "@app/shared-library/shared-library.file.utils";
+import { VenomConstants } from "@app/shared-library/venom/venom.constants";
 import { Model } from "mongoose";
 
 export class FixtureLoader {
@@ -30,9 +31,19 @@ export class FixtureLoader {
                     '$ne': EthersConstants.CaptainContractAddress
                 }
             });
-            // await this.loadTopSales('captains', '0xcefd45799326f48a4d23222bb8fa15b49baf28ec');
-            await this.loadTopSales('ships', '0xcefd45799326f48a4d23222bb8fa15b49baf28ed', SharedLibraryService.CRONOS_CHAIN_NAME);
-            await this.loadTopSales('islands', '0xcefd45799326f48a4d23222bb8fa15b49baf28ee', SharedLibraryService.CRONOS_CHAIN_NAME);
+
+            await this.collectionItemModel.deleteMany({
+                chainName: SharedLibraryService.VENOM_CHAIN_NAME,
+                contractAddress: {
+                    '$ne': VenomConstants.CaptainsCollectionContractAddress
+                }
+            });
+
+            await this.loadTopSales('ships', EthersConstants.ShipContractAddress, SharedLibraryService.CRONOS_CHAIN_NAME);
+            await this.loadTopSales('islands', EthersConstants.IslandContractAddress, SharedLibraryService.CRONOS_CHAIN_NAME);
+
+            await this.loadTopSales('ships', VenomConstants.ShipsCollectionContractAddress, SharedLibraryService.VENOM_CHAIN_NAME);
+            await this.loadTopSales('islands', VenomConstants.IslandsCollectionContractAddress, SharedLibraryService.VENOM_CHAIN_NAME);
         }
     }
 
@@ -116,13 +127,17 @@ export class FixtureLoader {
 
     private async loadTopSales(collectionName: string, contractAddress: string, chainName: string) {
         const coinSymbol = chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
-            SharedLibraryService.VENOM_COIN_SYMBOL : SharedLibraryService.CRONOS_COIN_SYMBOL;
+            SharedLibraryService.VENOM_TOKEN_SYMBOL : SharedLibraryService.CRONOS_TOKEN_SYMBOL;
         const chainId = chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
             SharedLibraryService.VENOM_CHAIN_ID : SharedLibraryService.CRONOS_CHAIN_ID;
+        const owner = chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
+            '0:d3d74c409a8961c335d2111e1f64c7daa0dd40835aab5e0b500de91b4be8083e' : '0x89dbad2c15a2fced932aef71c2f798fd86b1349c';
+        const seller = chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
+            '0:47ff382c680403d2f1982f2580edc847c31feb0702ab07837772d29c88401f0f' : '0xe6193b058bbd559e8e0df3a48202a3cdec852ab6';
 
         const nowTimeSeconds = Number(Number(Date.now() / 1000).toFixed(0));
         const daySeconds = 24 * 60 * 60;
-        const itemIdPrefix = '0x61a03eed4c0220bb6ee89b0cda10dc171f772577_';
+        const itemIdPrefix = contractAddress + '_';
         let nextId = 54;
         let nextTimeSeconds = nowTimeSeconds;
         let imageIndex = 1;
@@ -132,8 +147,8 @@ export class FixtureLoader {
             id: itemIdPrefix,
             tokenId: 0,
             tokenUri: "https://ipfs.moralis.io:2053/ipfs/QmQmRiVEaAbBnF7rnGNfaTMya2UH7NyRu2HCjc8HvN88R5/nvy/e1b50bc2-37f1-409d-af6a-32ba0b730e6a.json",
-            seller: "0xe6193b058bbd559e8e0df3a48202a3cdec852ab6",
-            owner: "0x89DBad2C15A2fCEd932aEf71C2F798fD86B1349C".toLowerCase(),
+            seller,
+            owner,
             price: 10,
             image: "https://navy.online/api/marketplace/static/assets/captain/captain" + imageIndex + ".png",
             rarity: "Common",

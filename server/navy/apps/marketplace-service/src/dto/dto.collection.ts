@@ -16,7 +16,7 @@ export interface CollectionItemResponseObject {
     marketplaceState: MarketplaceState;
     lastUpdated: number,
     chainName: string;
-    coinSymbol: string;
+    tokenSymbol: string;
     favourite: boolean
 }
 

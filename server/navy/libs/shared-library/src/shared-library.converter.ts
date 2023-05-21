@@ -20,8 +20,8 @@ export class Converter {
             chainId: collectionItem.chainId,
             marketplaceState: collectionItem.marketplaceState,
             lastUpdated: collectionItem.lastUpdated,
-            chainName: 'Cronos',
-            coinSymbol: 'CRO',
+            chainName: collectionItem.chainName,
+            tokenSymbol: collectionItem.tokenSymbol,
             favourite
         };
         return item;

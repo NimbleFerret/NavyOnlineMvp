@@ -65,7 +65,7 @@ export class CollectionItem {
     chainName: string;
 
     @Prop({ required: true })
-    coinSymbol: string;
+    tokenSymbol: string;
 
     @Prop({
         type: String,

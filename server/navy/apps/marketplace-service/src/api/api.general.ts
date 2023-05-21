@@ -56,9 +56,10 @@ export class GeneralApiService implements OnModuleInit {
         // }));
     }
 
-    getCronosUsdPrice() {
+    getTokensUsdPrice() {
         return {
-            usd: this.cronosTokenUsdPrice
+            venomUsdPrice: 0,
+            cronosUsdPrice: this.cronosTokenUsdPrice
         };
     }
 
