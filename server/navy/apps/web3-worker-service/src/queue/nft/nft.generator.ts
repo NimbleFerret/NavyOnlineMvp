@@ -1,12 +1,11 @@
 import { SharedLibraryService, SelectPercentageOptions } from "@app/shared-library";
 import { Rarity, NftType } from "@app/shared-library/shared-library.main";
 import { NftSubPartDetails, NftPartDetails } from "@app/shared-library/workers/workers.marketplace";
-import { MoralisClient } from "@app/shared-library/moralis/moralis.client";
-import { Contract } from "ethers";
 import { Collection } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { v4 as uuidv4 } from 'uuid';
 import { createCanvas, loadImage } from "canvas";
 import { NftPart } from "../../dto/dto";
+import { MoralisClient } from "@app/shared-library/moralis/moralis.client";
 
 const fs = require("fs");
 
@@ -24,66 +23,63 @@ export abstract class NftGenerator {
     private nftPartDetails: NftPartDetails[] = [];
     private nftPartsToDraw: NftSubPartDetails[] = [];
     private nftTypeName: string;
-    private moralisClient = new MoralisClient();
 
     constructor(public nftType: NftType, collection: Collection) {
-        // Convert initial data
-        this.nftPartDetails = collection.mint.nftPartsItems.map(nftPartsItem => {
-            const nftPartDetails = {
-                resPlural: nftPartsItem.categoryPlural,
-                resSingle: nftPartsItem.categorySingle,
-                subParts: []
-            } as NftPartDetails;
+        this.init().then(f => {
+            // Convert initial data
+            this.nftPartDetails = collection.mint.nftPartsItems.map(nftPartsItem => {
+                const nftPartDetails = {
+                    resPlural: nftPartsItem.categoryPlural,
+                    resSingle: nftPartsItem.categorySingle,
+                    subParts: []
+                } as NftPartDetails;
 
-            nftPartDetails.subParts = nftPartsItem.categoryDetails.map(categoryDetails => {
-                let rarity = Rarity.COMMON;
-                switch (categoryDetails.rarity) {
-                    case 'Rare':
-                        rarity = Rarity.RARE;
-                        break;
-                    case 'Epic':
-                        rarity = Rarity.EPIC;
-                        break;
-                    case 'Legendary':
-                        rarity = Rarity.LEGENDARY;
-                        break;
-                    case 'All':
-                        rarity = Rarity.ALL;
-                        break;
-                }
-                return {
-                    chance: categoryDetails.chancePercent,
-                    rarity
-                } as NftSubPartDetails;
+                nftPartDetails.subParts = nftPartsItem.categoryDetails.map(categoryDetails => {
+                    let rarity = Rarity.COMMON;
+                    switch (categoryDetails.rarity) {
+                        case 'Rare':
+                            rarity = Rarity.RARE;
+                            break;
+                        case 'Epic':
+                            rarity = Rarity.EPIC;
+                            break;
+                        case 'Legendary':
+                            rarity = Rarity.LEGENDARY;
+                            break;
+                        case 'All':
+                            rarity = Rarity.ALL;
+                            break;
+                    }
+                    return {
+                        chance: categoryDetails.chancePercent,
+                        rarity
+                    } as NftSubPartDetails;
+                });
+                return nftPartDetails;
             });
-            return nftPartDetails;
-        });
 
-        // Load image paths
-        switch (nftType) {
-            case NftType.CAPTAIN:
-                this.nftTypeName = 'captain';
-                break;
-            case NftType.SHIP:
-                this.nftTypeName = 'ship';
-                break;
-            case NftType.ISLAND:
-                this.nftTypeName = 'island';
-                break;
-        }
-        this.initiateNftPartsImagePath();
+            // Load image paths
+            switch (nftType) {
+                case NftType.CAPTAIN:
+                    this.nftTypeName = 'captain';
+                    break;
+                case NftType.SHIP:
+                    this.nftTypeName = 'ship';
+                    break;
+                case NftType.ISLAND:
+                    this.nftTypeName = 'island';
+                    break;
+            }
+            this.initiateNftPartsImagePath();
 
-        // Sort nft parts by rarity
-        this.nftPartDetails.forEach(nftPart => {
-            nftPart.subParts = nftPart.subParts.sort(function (a, b) { return b.rarity - a.rarity });
+            // Sort nft parts by rarity
+            this.nftPartDetails.forEach(nftPart => {
+                nftPart.subParts = nftPart.subParts.sort(function (a, b) { return b.rarity - a.rarity });
+            });
         });
     }
 
-    public async initMoralis() {
-        await this.moralisClient.init();
-    }
-
-    public async generateNft(index: number, maxIndex: number, saveBahaviour: GenerateNftBehaviour = GenerateNftBehaviour.MORALIS_UPLOAD, predefinedNftParts?: NftPart[]) {
+    public async generateNftAndUpload(index: number, maxIndex: number, saveBahaviour: GenerateNftBehaviour = GenerateNftBehaviour.MORALIS_UPLOAD, predefinedNftParts?: NftPart[]) {
         const basicCanvas = createCanvas(72, 72);
         const basicContext = basicCanvas.getContext('2d');
         const resultCanvas = createCanvas(72 * 2, 72 * 2);
@@ -147,13 +143,13 @@ export abstract class NftGenerator {
         const fileBuffer = resultCanvas.toBuffer('image/png');
 
         if (saveBahaviour == GenerateNftBehaviour.MORALIS_UPLOAD) {
-            const uploadedImageFile = await this.moralisClient.uploadFile('nvy/' + entityName + '.png', fileBuffer.toString('base64')) as any;
+            const uploadedImageFile = await MoralisClient.getInstance().uploadFile('nvy/' + entityName + '.png', fileBuffer.toString('base64')) as any;
             const imagePathOnMoralis = uploadedImageFile.toJSON()[0].path;
 
             await this.generateNftMetadata(index, maxIndex, imagePathOnMoralis, this.nftPartsToDraw);
 
             // Upload metadata to the ipfs
-            const uploadedMetadataFile = await this.moralisClient.uploadFile('nvy/' + entityName + '.json', Buffer.from(this.metadata).toString('base64')) as any;
+            const uploadedMetadataFile = await MoralisClient.getInstance().uploadFile('nvy/' + entityName + '.json', Buffer.from(this.metadata).toString('base64')) as any;
             const metadataPathOnMoralis = uploadedMetadataFile.toJSON()[0].path;
             return metadataPathOnMoralis;
         } else {
@@ -163,11 +159,21 @@ export abstract class NftGenerator {
         }
     }
 
-    abstract init();
+    public async mintAndSaveNft(owner: string, metadataUrl: string, nftContractAddress: string) {
+        await this.mintNft(owner, metadataUrl);
+        await this.saveCollectionItem(owner, nftContractAddress, metadataUrl);
+    }
 
-    abstract generateNftMetadata(index: number, maxIndex: number, imagePathOnMoralis: string, nftPartsToDraw: NftSubPartDetails[]);
+    // -------------------------------
+    // Abstract functions
+    // -------------------------------
 
-    abstract mintNft(owner: string, contract: Contract, tokenUri: string);
+    protected abstract init(): Promise<any>;
+    protected abstract mintNft(owner: string, metadataUrl: string);
+    protected abstract saveCollectionItem(owner: string, nftContractAddress: string, metadataUrl: string);
+    protected abstract generateNftMetadata(index: number, maxIndex: number, imagePathOnMoralis: string, nftPartsToDraw: NftSubPartDetails[]);
+
+    // -------------------------------
 
     private initiateNftPartsImagePath() {
         this.nftPartDetails.forEach(nftPart => {

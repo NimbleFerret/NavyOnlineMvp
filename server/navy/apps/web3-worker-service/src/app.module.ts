@@ -24,13 +24,31 @@ import { CaptainTrait, CaptainTraitSchema } from '@app/shared-library/schemas/en
       redis: Config.GetRedisHost(),
     }),
     BullModule.registerQueue({
-      name: WorkersMarketplace.MarketplaceUpdateQueue
+      name: WorkersMarketplace.CronosMarketplaceUpdateQueue
     }),
     BullModule.registerQueue({
-      name: WorkersMarketplace.MarketplaceListingQueue
+      name: WorkersMarketplace.CronosMarketplaceListingQueue
     }),
     BullModule.registerQueue({
-      name: WorkersMint.MintQueue
+      name: WorkersMarketplace.CronosMarketplaceSoldQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMint.CronosMintQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMarketplace.VenomMarketplaceUpdateQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMarketplace.VenomMarketplaceListingQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMarketplace.VenomMarketplaceSoldQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMarketplace.VenomMarketplaceSetSalePriceQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMint.VenomMintQueue
     }),
     MongooseModule.forRoot(Config.GetMongoHost(), {
       dbName: Config.MongoDBName

@@ -44,16 +44,7 @@ export interface NftSalePriceSetEventParams {
     price: number;
 }
 
-// export interface BlockchainProviderEventCallbacks {
-//     (event: NftListedEventParams): void;
-//     (event: NftMintedEventParams): void;
-//     (event: NftGeneratedEventParams): void;
-//     (event: NftDelistedEventParams): void;
-//     (event: NftSoldEventParams): void;
-//     (event: NftSalePriceSetEventParams): void;
-// }
-
-export class BlockchainEventsProcessor {
+export class BlockchainBaseProcessor {
 
     constructor(
         private chainName: string,
@@ -67,7 +58,7 @@ export class BlockchainEventsProcessor {
     async processNftMintedEvent(nftType: NftType, event: NftMintedEventParams) {
         event.owner.toLowerCase();
 
-        Logger.log(`${this.nftTypeToString(nftType)} mint occured on ${this.chainName} chain! Owner: ${event.owner}`);
+        Logger.log(`${BlockchainBaseProcessor.NftTypeToString(nftType)} mint occured on ${this.chainName} chain! Owner: ${event.owner}`);
 
         this.mintQueue.add({
             nftType,
@@ -90,7 +81,7 @@ export class BlockchainEventsProcessor {
         const sellerString = 'seller: ' + event.seller;
         const priceString = this.chainName == SharedLibraryService.CRONOS_CHAIN_NAME ? ' , price: ' + event.price : '';
 
-        Logger.log(`${this.nftTypeToString(nftType)} listed on the ${this.chainName} marketplace! ${nftString}, ${ownerString}, ${sellerString}${priceString}`);
+        Logger.log(`${BlockchainBaseProcessor.NftTypeToString(nftType)} listed on the ${this.chainName} marketplace! ${nftString}, ${ownerString}, ${sellerString}${priceString}`);
 
         const queueJobData: MarketplaceListingJob = {
             chainName: this.chainName,
@@ -117,7 +108,7 @@ export class BlockchainEventsProcessor {
             event.nftAddress : event.nftId;
         const sellerString = 'seller: ' + event.seller;
 
-        Logger.log(`${this.nftTypeToString(nftType)} delisted from the ${this.chainName} marketplace! ${nftString}, ${sellerString}`);
+        Logger.log(`${BlockchainBaseProcessor.NftTypeToString(nftType)} delisted from the ${this.chainName} marketplace! ${nftString}, ${sellerString}`);
 
         const queueJobData: MarketplaceListingJob = {
             chainName: this.chainName,
@@ -145,7 +136,7 @@ export class BlockchainEventsProcessor {
         const sellerString = 'seller: ' + event.seller;
         const priceString = 'price: ' + event.price;
 
-        Logger.log(`${this.nftTypeToString(nftType)} sold on the ${this.chainName} marketplace! ${nftString}, ${ownerString}, ${sellerString}, ${priceString}`);
+        Logger.log(`${BlockchainBaseProcessor.NftTypeToString(nftType)} sold on the ${this.chainName} marketplace! ${nftString}, ${ownerString}, ${sellerString}, ${priceString}`);
 
         const queueJobData: MarketplaceSoldJob = {
             chainName: this.chainName,
@@ -172,7 +163,7 @@ export class BlockchainEventsProcessor {
         const sellerString = 'seller: ' + event.seller;
         const priceString = 'price: ' + event.price;
 
-        Logger.log(`${this.nftTypeToString(nftType)} price set on the ${this.chainName} marketplace! ${nftString}, ${sellerString}, ${priceString}`);
+        Logger.log(`${BlockchainBaseProcessor.NftTypeToString(nftType)} price set on the ${this.chainName} marketplace! ${nftString}, ${sellerString}, ${priceString}`);
 
         const queueJobData: MarketplaceSetSalePriceJob = {
             chainName: this.chainName,
@@ -186,15 +177,15 @@ export class BlockchainEventsProcessor {
     }
 
     async syncMarketplaceState(marketplaceState: MarketplaceState) {
-        this.marketplaceUpdateQueue.empty();
-        this.marketplaceUpdateQueue.add({
+        await this.marketplaceUpdateQueue.empty();
+        await this.marketplaceUpdateQueue.add({
             chainName: this.chainName,
             marketplaceState,
             nftType: NftType.CAPTAIN
         } as MarketplaceUpdateJob);
     }
 
-    private nftTypeToString(nftType: NftType) {
+    public static NftTypeToString(nftType: NftType) {
         switch (nftType) {
             case NftType.CAPTAIN:
                 return 'Captain';

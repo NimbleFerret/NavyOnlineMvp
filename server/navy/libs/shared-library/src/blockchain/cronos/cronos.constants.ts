@@ -9,9 +9,9 @@ export class CronosConstants {
 
     public static readonly ShipTemplateContractAddress = '';
 
-    public static readonly CaptainCollectionSaleContractAddress = '0x802aA0B2695d0632e129F5f5b64C215Bb03FE452'.toLowerCase();
-    public static readonly ShipCollectionSaleContractAddress = '';
-    public static readonly IslandCollectionSaleContractAddress = '';
+    public static readonly CaptainCollectionContractAddress = '0x802aA0B2695d0632e129F5f5b64C215Bb03FE452'.toLowerCase();
+    public static readonly ShipCollectionContractAddress = '';
+    public static readonly IslandCollectionContractAddress = '';
 
     public static readonly CaptainMarketplaceContractAddress = '0xA7604d33932Ee1108DcD9464e10C9F98606B8D6b'.toLowerCase();
     public static readonly ShipMarketplaceContractAddress = '';

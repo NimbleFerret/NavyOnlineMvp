@@ -29,9 +29,9 @@ export class CronosProvider {
     public islandContract: Contract;
 
     // Sale contracts
-    public captainCollectionSaleContract: Contract;
-    public shipCollectionSaleContract: Contract;
-    public islandCollectionSaleContract: Contract;
+    public captainCollectionContract: Contract;
+    public shipCollectionContract: Contract;
+    public islandCollectionContract: Contract;
 
     // Marketplace contracts
     public captainMarketplaceContract: Contract;
@@ -63,9 +63,9 @@ export class CronosProvider {
         this.shipContract = new ethers.Contract(CronosConstants.ShipContractAddress, Ship, this.ethersProvider).connect(this.backendWallet);
         this.islandContract = new ethers.Contract(CronosConstants.IslandContractAddress, Island, this.ethersProvider).connect(this.backendWallet);
 
-        this.captainCollectionSaleContract = new ethers.Contract(CronosConstants.CaptainCollectionSaleContractAddress, CollectionSale, this.ethersProvider);
-        this.shipCollectionSaleContract = new ethers.Contract(CronosConstants.ShipCollectionSaleContractAddress, CollectionSale, this.ethersProvider);
-        this.islandCollectionSaleContract = new ethers.Contract(CronosConstants.IslandCollectionSaleContractAddress, CollectionSale, this.ethersProvider);
+        this.captainCollectionContract = new ethers.Contract(CronosConstants.CaptainCollectionContractAddress, CollectionSale, this.ethersProvider);
+        this.shipCollectionContract = new ethers.Contract(CronosConstants.ShipCollectionContractAddress, CollectionSale, this.ethersProvider);
+        this.islandCollectionContract = new ethers.Contract(CronosConstants.IslandCollectionContractAddress, CollectionSale, this.ethersProvider);
 
         this.captainMarketplaceContract = new ethers.Contract(CronosConstants.CaptainMarketplaceContractAddress, Marketplace, this.ethersProvider);
         this.shipMarketplaceContract = new ethers.Contract(CronosConstants.ShipMarketplaceContractAddress, Marketplace, this.ethersProvider);

@@ -5,15 +5,8 @@ import {
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { Constants } from '../app.constants';
-import { NftType } from '@app/shared-library/shared-library.main';
-import { ethers } from 'ethers';
-import {
-    CheckEthersAuthSignatureRequest,
-    CheckEthersAuthSignatureResponse,
-} from '@app/shared-library/gprc/grpc.web3.service';
 import { VenomProvider } from '@app/shared-library/blockchain/venom/venom.provider';
-import { MintJob, WorkersMint } from '@app/shared-library/workers/workers.mint';
+import { WorkersMint } from '@app/shared-library/workers/workers.mint';
 import {
     MarketplaceUpdateJob,
     MarketplaceListingJob,
@@ -27,7 +20,14 @@ import { SharedLibraryService } from '@app/shared-library';
 @Injectable()
 export class BlockchainServiceVenom implements OnModuleInit {
 
-    private readonly venomProvider = new VenomProvider();
+    private readonly venomProvider = new VenomProvider(
+        this.nftMintedCallback,
+        this.nftGeneratedCallback,
+        this.nftListedCallback,
+        this.nftDelistedCallback,
+        this.nftSetPriceSetCallback,
+        this.nftSoldCallback
+    );
     private readonly blockchainEventsProcessor: BlockchainEventsProcessor;
 
     constructor(
@@ -50,7 +50,30 @@ export class BlockchainServiceVenom implements OnModuleInit {
     async onModuleInit() {
         // TODO pass config here
         await this.venomProvider.init('', '');
+    }
 
+    // TODO add typed args
+    private async nftMintedCallback() {
+
+    }
+
+    private async nftGeneratedCallback() {
+
+    }
+
+    private async nftListedCallback() {
+
+    }
+
+    private async nftDelistedCallback() {
+
+    }
+
+    private async nftSetPriceSetCallback() {
+
+    }
+
+    private async nftSoldCallback() {
 
     }
 

@@ -19,7 +19,7 @@ import { CollectionItem, CollectionItemDocument, MarketplaceState } from '@app/s
 import { MarketplaceUpdateJob, WorkersMarketplace } from "@app/shared-library/workers/workers.marketplace";
 import { Mint, MintDocument } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { Model } from 'mongoose';
-import { NftCaptainGenerator } from './nft/nft.generator.captain';
+import { NftCaptainGenerator } from './nft/nft.generator.captain.base';
 import { EthersConstants } from '@app/shared-library/ethers/ethers.constants';
 
 @Processor(WorkersMarketplace.MarketplaceUpdateQueue)
