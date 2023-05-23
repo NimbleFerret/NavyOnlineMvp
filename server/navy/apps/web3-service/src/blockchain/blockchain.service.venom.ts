@@ -14,7 +14,7 @@ import {
 } from '@app/shared-library/workers/workers.marketplace';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
-import { BlockchainEventsProcessor } from '@app/shared-library/blockchain/blockchain.base.provider';
+import { BlockchainBaseProcessor } from '@app/shared-library/blockchain/blockchain.base.provider';
 import { SharedLibraryService } from '@app/shared-library';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class BlockchainServiceVenom implements OnModuleInit {
         this.nftSetPriceSetCallback,
         this.nftSoldCallback
     );
-    private readonly blockchainEventsProcessor: BlockchainEventsProcessor;
+    private readonly blockchainBaseProcessor: BlockchainBaseProcessor;
 
     constructor(
         @InjectQueue(WorkersMint.VenomMintQueue) mintQueue: Queue,
@@ -37,7 +37,7 @@ export class BlockchainServiceVenom implements OnModuleInit {
         @InjectQueue(WorkersMarketplace.VenomMarketplaceSoldQueue) marketplaceSoldQueue: Queue,
         @InjectQueue(WorkersMarketplace.VenomMarketplaceSetSalePriceQueue) marketplaceSetSalePriceQueue: Queue
     ) {
-        this.blockchainEventsProcessor = new BlockchainEventsProcessor(
+        this.blockchainBaseProcessor = new BlockchainBaseProcessor(
             SharedLibraryService.VENOM_CHAIN_NAME,
             mintQueue,
             marketplaceUpdateQueue,

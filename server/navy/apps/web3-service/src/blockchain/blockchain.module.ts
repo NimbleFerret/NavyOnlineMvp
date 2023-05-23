@@ -44,11 +44,11 @@ import { MongooseModule } from '@nestjs/mongoose';
     ],
     providers: [
         BlockchainServiceCronos,
-        BlockchainServiceVenom
+        // BlockchainServiceVenom
     ],
     exports: [
         BlockchainServiceCronos,
-        BlockchainServiceVenom
+        // BlockchainServiceVenom
     ]
 })
 export class BlockchainModule { }

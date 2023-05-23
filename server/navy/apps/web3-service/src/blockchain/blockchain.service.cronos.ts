@@ -1,12 +1,6 @@
-import * as Captain from '../abi/Captain.json';
-import * as Aks from '../abi/Aks.json';
-import * as Nvy from '../abi/Nvy.json';
-import * as Ship from '../abi/Ship.json';
-import * as Island from '../abi/Island.json';
-import * as CollectionSale from '../abi/CollectionSale.json';
-import * as Marketplace from '../abi/Marketplace.json';
 import {
     Injectable,
+    Logger,
     OnModuleInit
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
@@ -23,15 +17,19 @@ import { WorkersMint } from '@app/shared-library/workers/workers.mint';
 import { WorkersMarketplace } from '@app/shared-library/workers/workers.marketplace';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
-import { BlockchainEventsProcessor } from '@app/shared-library/blockchain/blockchain.base.provider';
+import { BlockchainBaseProcessor } from '@app/shared-library/blockchain/blockchain.base.provider';
 import { SharedLibraryService } from '@app/shared-library';
 import { CronosConstants } from '@app/shared-library/blockchain/cronos/cronos.constants';
+
+const { NftContractAbi } = require('../abi/NftContract.js');
+const { CollectionContractAbi } = require('../abi/CollectionContract.js');
+const { MarketplaceContractAbi } = require('../abi/MarketplaceContract.js');
 
 @Injectable()
 export class BlockchainServiceCronos implements OnModuleInit {
 
     private readonly cronosProvider = new CronosProvider();
-    private readonly blockchainEventsProcessor: BlockchainEventsProcessor;
+    private readonly blockchainBaseProcessor: BlockchainBaseProcessor;
 
     constructor(
         @InjectQueue(WorkersMint.CronosMintQueue) mintQueue: Queue,
@@ -39,38 +37,38 @@ export class BlockchainServiceCronos implements OnModuleInit {
         @InjectQueue(WorkersMarketplace.CronosMarketplaceListingQueue) marketplaceListingQueue: Queue,
         @InjectQueue(WorkersMarketplace.CronosMarketplaceSoldQueue) marketplaceSoldQueue: Queue
     ) {
-        this.blockchainEventsProcessor = new BlockchainEventsProcessor(
+        Logger.log('BlockchainServiceCronos constructor 1');
+        this.blockchainBaseProcessor = new BlockchainBaseProcessor(
             SharedLibraryService.CRONOS_CHAIN_NAME,
             mintQueue,
             marketplaceUpdateQueue,
             marketplaceListingQueue,
             marketplaceSoldQueue
         );
+        Logger.log('BlockchainServiceCronos constructor 2');
     }
 
     async onModuleInit() {
-        await this.cronosProvider.init({
-            Captain,
-            Aks,
-            Nvy,
-            Ship,
-            Island,
-            CollectionSale,
-            Marketplace
-        });
-
-        await this.blockchainEventsProcessor.syncMarketplaceState(MarketplaceState.LISTED);
-        await this.blockchainEventsProcessor.syncMarketplaceState(MarketplaceState.SOLD);
-
-        this.cronosProvider.captainCollectionSaleContract.on(CronosProvider.EventNftMinted, async (
+        Logger.log('BlockchainServiceCronos onModuleInit 1');
+        await this.cronosProvider.init(
+            NftContractAbi,
+            CollectionContractAbi,
+            MarketplaceContractAbi
+        );
+        Logger.log('BlockchainServiceCronos onModuleInit 2');
+        // await this.blockchainBaseProcessor.syncMarketplaceState(MarketplaceState.LISTED);
+        // await this.blockchainBaseProcessor.syncMarketplaceState(MarketplaceState.SOLD);
+        this.cronosProvider.captainCollectionContract.on(CronosProvider.EventNftMinted, async (
             id: number,
             owner: string
         ) => {
-            await this.blockchainEventsProcessor.processNftListedEvent(NftType.CAPTAIN, {
-                nftId: id,
-                owner: CronosConstants.CaptainMarketplaceContractAddress,
-                seller: owner
-            });
+            Logger.log('Captains mint occured:');
+            Logger.log({ id, owner });
+            // await this.blockchainBaseProcessor.processNftListedEvent(NftType.CAPTAIN, {
+            //     nftId: id,
+            //     owner: CronosConstants.CaptainMarketplaceContractAddress,
+            //     seller: owner
+            // });
         });
 
         this.cronosProvider.captainMarketplaceContract.on(CronosProvider.EventNftListed, async (
@@ -79,22 +77,28 @@ export class BlockchainServiceCronos implements OnModuleInit {
             owner: string,
             price: number
         ) => {
-            await this.blockchainEventsProcessor.processNftListedEvent(NftType.CAPTAIN, {
-                nftId,
-                owner,
-                seller,
-                price
-            });
+            Logger.log('Captains lising occured:');
+            Logger.log({ nftId, seller, owner, price });
+
+            // await this.blockchainBaseProcessor.processNftListedEvent(NftType.CAPTAIN, {
+            //     nftId,
+            //     owner,
+            //     seller,
+            //     price
+            // });
         });
 
         this.cronosProvider.captainMarketplaceContract.on(CronosProvider.EventNftDelisted, async (
             nftId: number,
             seller: string,
         ) => {
-            await this.blockchainEventsProcessor.processNftDelistedEvent(NftType.CAPTAIN, {
-                nftId,
-                seller
-            });
+            Logger.log('Captains delisting occured:');
+            Logger.log({ nftId, seller });
+
+            // await this.blockchainBaseProcessor.processNftDelistedEvent(NftType.CAPTAIN, {
+            //     nftId,
+            //     seller
+            // });
         });
 
         this.cronosProvider.captainMarketplaceContract.on(CronosProvider.EventNftSold, async (
@@ -103,13 +107,18 @@ export class BlockchainServiceCronos implements OnModuleInit {
             owner: string,
             price: number
         ) => {
-            await this.blockchainEventsProcessor.processNftSoldEvent(NftType.CAPTAIN, {
-                nftId,
-                seller,
-                owner,
-                price
-            });
+            Logger.log('Captain sold occured:');
+            Logger.log({ nftId, seller, owner, price });
+
+            // await this.blockchainBaseProcessor.processNftSoldEvent(NftType.CAPTAIN, {
+            //     nftId,
+            //     seller,
+            //     owner,
+            //     price
+            // });
         });
+
+        Logger.log('BlockchainServiceCronos onModuleInit 3');
     }
 
     checkEthersAuthSignature(request: CheckEthersAuthSignatureRequest) {

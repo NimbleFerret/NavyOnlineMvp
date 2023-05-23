@@ -1,6 +1,6 @@
 import { SharedLibraryService } from "@app/shared-library";
-import { EthersConstants } from "@app/shared-library/ethers/ethers.constants";
-import { VenomConstants } from "@app/shared-library/venom/venom.constants";
+import { CronosConstants } from "@app/shared-library/blockchain/cronos/cronos.constants";
+import { VenomConstants } from "@app/shared-library/blockchain/venom/venom.constants";
 import { Injectable } from "@nestjs/common";
 import { DashboardDto } from "../dto/dto.dashboard";
 import { CollectionApiService } from "./api.collection";
@@ -48,13 +48,13 @@ export class DashboardApiService {
                     }
                     result.venomPerformance.tokenTurnover += collectionItem.price;
                 } else {
-                    if (EthersConstants.CaptainContractAddress == collectionItem.contractAddress) {
+                    if (CronosConstants.CaptainContractAddress == collectionItem.contractAddress) {
                         result.cronosPerformance.captainsSold++;
                     }
-                    if (EthersConstants.ShipContractAddress == collectionItem.contractAddress) {
+                    if (CronosConstants.ShipContractAddress == collectionItem.contractAddress) {
                         result.cronosPerformance.shipsSold++;
                     }
-                    if (EthersConstants.IslandContractAddress == collectionItem.contractAddress) {
+                    if (CronosConstants.IslandContractAddress == collectionItem.contractAddress) {
                         result.cronosPerformance.islandsSold++;
                     }
                     result.cronosPerformance.tokenTurnover += collectionItem.price;

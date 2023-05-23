@@ -1,6 +1,12 @@
-[
+const MarketplaceContractAbi = [
     {
-        "inputs": [],
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_collectionAddress",
+                "type": "address"
+            }
+        ],
         "stateMutability": "nonpayable",
         "type": "constructor"
     },
@@ -10,14 +16,8 @@
             {
                 "indexed": false,
                 "internalType": "uint256",
-                "name": "tokenId",
+                "name": "nftId",
                 "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "nftContract",
-                "type": "address"
             },
             {
                 "indexed": false,
@@ -26,7 +26,7 @@
                 "type": "address"
             }
         ],
-        "name": "NFTDelisted",
+        "name": "NftDelisted",
         "type": "event"
     },
     {
@@ -34,57 +34,8 @@
         "inputs": [
             {
                 "indexed": false,
-                "internalType": "address",
-                "name": "nftContract",
-                "type": "address"
-            },
-            {
-                "indexed": false,
                 "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "tokenUri",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "seller",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "price",
-                "type": "uint256"
-            }
-        ],
-        "name": "NFTListed",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "nftContract",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "tokenId",
+                "name": "nftId",
                 "type": "uint256"
             },
             {
@@ -106,7 +57,38 @@
                 "type": "uint256"
             }
         ],
-        "name": "NFTSold",
+        "name": "NftListed",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "nftId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "seller",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "price",
+                "type": "uint256"
+            }
+        ],
+        "name": "NftSold",
         "type": "event"
     },
     {
@@ -131,7 +113,7 @@
             },
             {
                 "internalType": "uint256",
-                "name": "_tokenId",
+                "name": "_nftId",
                 "type": "uint256"
             }
         ],
@@ -141,10 +123,28 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "collectionAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "_nftContract",
+                "type": "address"
+            },
+            {
                 "internalType": "uint256",
-                "name": "_tokenId",
+                "name": "_nftId",
                 "type": "uint256"
             }
         ],
@@ -160,19 +160,9 @@
             {
                 "components": [
                     {
-                        "internalType": "address",
-                        "name": "nftContract",
-                        "type": "address"
-                    },
-                    {
                         "internalType": "uint256",
-                        "name": "tokenId",
+                        "name": "id",
                         "type": "uint256"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "tokenUri",
-                        "type": "string"
                     },
                     {
                         "internalType": "address",
@@ -191,7 +181,7 @@
                     },
                     {
                         "internalType": "uint256",
-                        "name": "lastUpdated",
+                        "name": "updateTime",
                         "type": "uint256"
                     }
                 ],
@@ -210,19 +200,9 @@
             {
                 "components": [
                     {
-                        "internalType": "address",
-                        "name": "nftContract",
-                        "type": "address"
-                    },
-                    {
                         "internalType": "uint256",
-                        "name": "tokenId",
+                        "name": "id",
                         "type": "uint256"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "tokenUri",
-                        "type": "string"
                     },
                     {
                         "internalType": "address",
@@ -241,7 +221,7 @@
                     },
                     {
                         "internalType": "uint256",
-                        "name": "lastUpdated",
+                        "name": "updateTime",
                         "type": "uint256"
                     }
                 ],
@@ -262,7 +242,7 @@
             },
             {
                 "internalType": "uint256",
-                "name": "_tokenId",
+                "name": "_nftId",
                 "type": "uint256"
             },
             {
@@ -276,4 +256,8 @@
         "stateMutability": "nonpayable",
         "type": "function"
     }
-]
+];
+
+module.exports = {
+    MarketplaceContractAbi
+};

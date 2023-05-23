@@ -2,12 +2,8 @@ import { Contract, ethers } from "ethers";
 import { CronosConstants } from "./cronos.constants";
 
 export interface CronosConfig {
-    Nvy: any;
-    Aks: any;
     Captain: any;
-    Ship: any;
-    Island: any;
-    CollectionSale: any;
+    Collection: any;
     Marketplace: any;
 }
 
@@ -44,31 +40,21 @@ export class CronosProvider {
     private readonly ethersProvider = new ethers.providers.JsonRpcProvider('https://evm-t3.cronos.org');
     private readonly backendWallet = new ethers.Wallet('4378e658ba1f1e392b07582ad1e533bc55d606aaa22138cb08e83132cd3635e1', this.ethersProvider);
 
-    // 0xd6d6EE855ADDBD0eC5591DdF3D1266EcaecD97B6
-    // 4378e658ba1f1e392b07582ad1e533bc55d606aaa22138cb08e83132cd3635e1
 
-    async init(config: CronosConfig) {
-        const Aks = config.Aks;
-        const Nvy = config.Nvy;
-        const Captain = config.Captain;
-        const Ship = config.Ship;
-        const Island = config.Island;
-        const CollectionSale = config.CollectionSale;
-        const Marketplace = config.Marketplace;
+    async init(nftContractAbi: any, collectionContractAbi: any, marketplaceContractAbi: any) {
+        // this.aksContract = new ethers.Contract(CronosConstants.AksContractAddress, Aks, this.ethersProvider).connect(this.backendWallet);
+        // this.nvyContract = new ethers.Contract(CronosConstants.NvyContractAddress, Nvy, this.ethersProvider).connect(this.backendWallet);
 
-        this.aksContract = new ethers.Contract(CronosConstants.AksContractAddress, Aks, this.ethersProvider).connect(this.backendWallet);
-        this.nvyContract = new ethers.Contract(CronosConstants.NvyContractAddress, Nvy, this.ethersProvider).connect(this.backendWallet);
+        this.captainContract = new ethers.Contract(CronosConstants.CaptainContractAddress, nftContractAbi, this.ethersProvider).connect(this.backendWallet);
+        // this.shipContract = new ethers.Contract(CronosConstants.ShipContractAddress, Ship, this.ethersProvider).connect(this.backendWallet);
+        // this.islandContract = new ethers.Contract(CronosConstants.IslandContractAddress, Island, this.ethersProvider).connect(this.backendWallet);
 
-        this.captainContract = new ethers.Contract(CronosConstants.CaptainContractAddress, Captain, this.ethersProvider).connect(this.backendWallet);
-        this.shipContract = new ethers.Contract(CronosConstants.ShipContractAddress, Ship, this.ethersProvider).connect(this.backendWallet);
-        this.islandContract = new ethers.Contract(CronosConstants.IslandContractAddress, Island, this.ethersProvider).connect(this.backendWallet);
+        this.captainCollectionContract = new ethers.Contract(CronosConstants.CaptainCollectionContractAddress, collectionContractAbi, this.ethersProvider);
+        // this.shipCollectionContract = new ethers.Contract(CronosConstants.ShipCollectionContractAddress, CollectionSale, this.ethersProvider);
+        // this.islandCollectionContract = new ethers.Contract(CronosConstants.IslandCollectionContractAddress, CollectionSale, this.ethersProvider);
 
-        this.captainCollectionContract = new ethers.Contract(CronosConstants.CaptainCollectionContractAddress, CollectionSale, this.ethersProvider);
-        this.shipCollectionContract = new ethers.Contract(CronosConstants.ShipCollectionContractAddress, CollectionSale, this.ethersProvider);
-        this.islandCollectionContract = new ethers.Contract(CronosConstants.IslandCollectionContractAddress, CollectionSale, this.ethersProvider);
-
-        this.captainMarketplaceContract = new ethers.Contract(CronosConstants.CaptainMarketplaceContractAddress, Marketplace, this.ethersProvider);
-        this.shipMarketplaceContract = new ethers.Contract(CronosConstants.ShipMarketplaceContractAddress, Marketplace, this.ethersProvider);
-        this.islandMarketplaceContract = new ethers.Contract(CronosConstants.IslandMarketplaceContractAddress, Marketplace, this.ethersProvider);
+        this.captainMarketplaceContract = new ethers.Contract(CronosConstants.CaptainMarketplaceContractAddress, marketplaceContractAbi, this.ethersProvider);
+        // this.shipMarketplaceContract = new ethers.Contract(CronosConstants.ShipMarketplaceContractAddress, Marketplace, this.ethersProvider);
+        // this.islandMarketplaceContract = new ethers.Contract(CronosConstants.IslandMarketplaceContractAddress, Marketplace, this.ethersProvider);
     }
 }

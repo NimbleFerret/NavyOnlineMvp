@@ -1,12 +1,12 @@
 import { SharedLibraryService } from "@app/shared-library";
-import { EthersConstants } from "@app/shared-library/ethers/ethers.constants";
+import { CronosConstants } from "@app/shared-library/blockchain/cronos/cronos.constants";
 import { CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { FaqDocument } from "@app/shared-library/schemas/marketplace/schema.faq";
 import { MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
 import { ProjectDocument } from "@app/shared-library/schemas/marketplace/schema.project";
 import { FileUtils } from "@app/shared-library/shared-library.file.utils";
-import { VenomConstants } from "@app/shared-library/venom/venom.constants";
+import { VenomConstants } from "@app/shared-library/blockchain/venom/venom.constants";
 import { Model } from "mongoose";
 
 export class FixtureLoader {
@@ -28,7 +28,7 @@ export class FixtureLoader {
             await this.collectionItemModel.deleteMany({
                 chainName: SharedLibraryService.CRONOS_CHAIN_NAME,
                 contractAddress: {
-                    '$ne': EthersConstants.CaptainContractAddress
+                    '$ne': CronosConstants.CaptainContractAddress
                 }
             });
 
@@ -39,8 +39,8 @@ export class FixtureLoader {
                 }
             });
 
-            await this.loadTopSales('ships', EthersConstants.ShipContractAddress, SharedLibraryService.CRONOS_CHAIN_NAME);
-            await this.loadTopSales('islands', EthersConstants.IslandContractAddress, SharedLibraryService.CRONOS_CHAIN_NAME);
+            await this.loadTopSales('ships', CronosConstants.ShipContractAddress, SharedLibraryService.CRONOS_CHAIN_NAME);
+            await this.loadTopSales('islands', CronosConstants.IslandContractAddress, SharedLibraryService.CRONOS_CHAIN_NAME);
 
             await this.loadTopSales('ships', VenomConstants.ShipsCollectionContractAddress, SharedLibraryService.VENOM_CHAIN_NAME);
             await this.loadTopSales('islands', VenomConstants.IslandsCollectionContractAddress, SharedLibraryService.VENOM_CHAIN_NAME);
@@ -60,6 +60,8 @@ export class FixtureLoader {
 
                 FileUtils.LoadFixture('marketplace-service', '2_collections.json', async (fixtures: any) => {
                     const collections = [
+                        new this.collectionModel(),
+                        new this.collectionModel(),
                         new this.collectionModel(),
                         new this.collectionModel(),
                         new this.collectionModel(),
@@ -126,7 +128,7 @@ export class FixtureLoader {
     }
 
     private async loadTopSales(collectionName: string, contractAddress: string, chainName: string) {
-        const coinSymbol = chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
+        const tokenSymbol = chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
             SharedLibraryService.VENOM_TOKEN_SYMBOL : SharedLibraryService.CRONOS_TOKEN_SYMBOL;
         const chainId = chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
             SharedLibraryService.VENOM_CHAIN_ID : SharedLibraryService.CRONOS_CHAIN_ID;
@@ -158,7 +160,7 @@ export class FixtureLoader {
             contractAddress,
             collectionName,
             marketplaceState: 'Sold',
-            coinSymbol,
+            tokenSymbol,
             chainName,
             chainId
         };

@@ -1,5 +1,6 @@
 import { SharedLibraryService } from "@app/shared-library";
-import { EthersConstants } from "@app/shared-library/ethers/ethers.constants";
+import { CronosConstants } from "@app/shared-library/blockchain/cronos/cronos.constants";
+import { VenomConstants } from "@app/shared-library/blockchain/venom/venom.constants";
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItem, CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Mint, MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
@@ -337,15 +338,18 @@ export class CollectionApiService {
 
             resultItems.forEach(f => {
                 switch (f.contractAddress) {
-                    case EthersConstants.CaptainContractAddress:
+                    case VenomConstants.CaptainsCollectionContractAddress:
+                    case CronosConstants.CaptainContractAddress:
                         result.captains.total++;
                         result.captains.items.push(f);
                         break;
-                    case EthersConstants.ShipContractAddress:
+                    case VenomConstants.ShipsCollectionContractAddress:
+                    case CronosConstants.ShipContractAddress:
                         result.ships.total++;
                         result.ships.items.push(f);
                         break;
-                    case EthersConstants.IslandContractAddress:
+                    case VenomConstants.IslandsCollectionContractAddress:
+                    case CronosConstants.IslandContractAddress:
                         result.islands.total++;
                         result.islands.items.push(f);
                         break;

@@ -1,20 +1,15 @@
-[
+const CollectionContractAbi = [
     {
         "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_tokensTotal",
-                "type": "uint256"
-            },
             {
                 "internalType": "uint256",
                 "name": "_mintPrice",
                 "type": "uint256"
             },
             {
-                "internalType": "address",
-                "name": "_contractAddress",
-                "type": "address"
+                "internalType": "uint256",
+                "name": "_totalSupply",
+                "type": "uint256"
             }
         ],
         "stateMutability": "nonpayable",
@@ -25,18 +20,18 @@
         "inputs": [
             {
                 "indexed": false,
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
             },
             {
                 "indexed": false,
                 "internalType": "address",
-                "name": "contractAddress",
+                "name": "owner",
                 "type": "address"
             }
         ],
-        "name": "GenerateToken",
+        "name": "NftMinted",
         "type": "event"
     },
     {
@@ -87,7 +82,7 @@
     {
         "inputs": [
             {
-                "internalType": "enum CollectionSale.MintState",
+                "internalType": "enum Collection.MintState",
                 "name": "_mintState",
                 "type": "uint8"
             }
@@ -99,12 +94,12 @@
     },
     {
         "inputs": [],
-        "name": "contractAddress",
+        "name": "currentSupply",
         "outputs": [
             {
-                "internalType": "address",
+                "internalType": "uint256",
                 "name": "",
-                "type": "address"
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -112,7 +107,7 @@
     },
     {
         "inputs": [],
-        "name": "mint",
+        "name": "mintNft",
         "outputs": [],
         "stateMutability": "payable",
         "type": "function"
@@ -135,7 +130,7 @@
         "name": "mintState",
         "outputs": [
             {
-                "internalType": "enum CollectionSale.MintState",
+                "internalType": "enum Collection.MintState",
                 "name": "",
                 "type": "uint8"
             }
@@ -191,20 +186,7 @@
     },
     {
         "inputs": [],
-        "name": "tokensLeft",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "tokensTotal",
+        "name": "totalSupply",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -247,4 +229,8 @@
         "stateMutability": "view",
         "type": "function"
     }
-]
+];
+
+module.exports = {
+    CollectionContractAbi
+};
