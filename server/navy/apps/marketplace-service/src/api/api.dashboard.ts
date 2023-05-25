@@ -46,7 +46,7 @@ export class DashboardApiService {
                     if (VenomConstants.IslandsCollectionContractAddress == collectionItem.contractAddress) {
                         result.venomPerformance.islandsSold++;
                     }
-                    result.venomPerformance.tokenTurnover += collectionItem.price;
+                    result.venomPerformance.tokenTurnover += Number(collectionItem.price);
                 } else {
                     if (CronosConstants.CaptainContractAddress == collectionItem.contractAddress) {
                         result.cronosPerformance.captainsSold++;
@@ -57,7 +57,7 @@ export class DashboardApiService {
                     if (CronosConstants.IslandContractAddress == collectionItem.contractAddress) {
                         result.cronosPerformance.islandsSold++;
                     }
-                    result.cronosPerformance.tokenTurnover += collectionItem.price;
+                    result.cronosPerformance.tokenTurnover += Number(collectionItem.price);
                 }
             });
         }

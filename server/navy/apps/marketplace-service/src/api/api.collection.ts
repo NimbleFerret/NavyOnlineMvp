@@ -7,7 +7,7 @@ import { Mint, MintDocument } from "@app/shared-library/schemas/marketplace/sche
 import { UserProfile } from "@app/shared-library/schemas/schema.user.profile";
 import { Converter } from "@app/shared-library/shared-library.converter";
 import { Utils } from "@app/shared-library/utils";
-import { BadGatewayException, Injectable } from "@nestjs/common";
+import { BadGatewayException, BadRequestException, Injectable, OnModuleInit } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Document } from "mongoose";
 import { AppService } from "../app.service";
@@ -18,7 +18,10 @@ import { FavouriteApiService } from "./api.favourite";
 import { GeneralApiService } from "./api.general";
 
 @Injectable()
-export class CollectionApiService {
+export class CollectionApiService implements OnModuleInit {
+
+    private collectionDisplayingNameByName = new Map<string, string>();
+    private collectionDisplayingDescriptionByName = new Map<string, string>();
 
     constructor(
         private readonly generalApiService: GeneralApiService,
@@ -28,6 +31,22 @@ export class CollectionApiService {
         @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
         @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
     ) {
+    }
+
+    // TODO need better loading order, it failes on fresh
+    async onModuleInit() {
+        const captainsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.CaptainContractAddress);
+        const shipsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.ShipContractAddress);
+        const islandsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.IslandContractAddress);
+
+        this.collectionDisplayingNameByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.name);
+        this.collectionDisplayingDescriptionByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.description);
+
+        this.collectionDisplayingNameByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.name);
+        this.collectionDisplayingDescriptionByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.description);
+
+        this.collectionDisplayingNameByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.name);
+        this.collectionDisplayingDescriptionByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.description);
     }
 
     async getCollection(chainName: string, contractAddress: string) {
@@ -48,6 +67,14 @@ export class CollectionApiService {
         rarity?: string[],
         marketplaceState?: string
     ): Promise<PaginatedCollectionItemsResponse> {
+        if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME.toLowerCase()) {
+            chainName = SharedLibraryService.CRONOS_CHAIN_NAME;
+        } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME.toLowerCase()) {
+            chainName = SharedLibraryService.VENOM_CHAIN_NAME;
+        } else {
+            throw new BadRequestException();
+        }
+
         let userProfile = undefined;
         if (authToken) {
             userProfile = await this.authService.checkTokenAndGetProfile(authToken);
@@ -105,27 +132,27 @@ export class CollectionApiService {
         const notListedResult = [];
 
         if (marketplaceState) {
-            if (marketplaceState == 'listed') {
+            if (marketplaceState == MarketplaceState.LISTED) {
                 loadNotListed = false;
             }
-            if (marketplaceState == 'none') {
+            if (marketplaceState == MarketplaceState.NONE) {
                 loadListed = false;
             }
         }
 
         if (loadListed) {
-            listedCount = await this.collectionItemModel.count(listedQuery);
             listedResult.push(...await this.collectionItemModel.find(listedQuery)
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
                 .skip((page - 1) * pageSize)
                 .limit(pageSize));
+            listedCount = listedResult.length;
         }
         if (loadNotListed) {
-            notListedCount = await this.collectionItemModel.count(notListedQuery);
             notListedResult.push(...await this.collectionItemModel.find(notListedQuery)
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
                 .skip((page - 1) * pageSize)
-                .limit(pageSize - listedResult.length));
+                .limit(pageSize - listedCount));
+            notListedCount = notListedResult.length;
         }
 
         const totalCount = listedCount + notListedCount;
@@ -170,7 +197,7 @@ export class CollectionApiService {
         if (pages > 1) {
             const getUrl = (p: number) => {
                 let url = '';
-                url = `https://navy.online/marketplace/collection/${contractAddress}/items?page=${p}`;
+                url = `https://navy-metaverse.online/marketplace/collection/${chainName}/${contractAddress}/items?page=${p}`;
                 if (size) {
                     url += '&size=' + size;
                 }
@@ -187,12 +214,18 @@ export class CollectionApiService {
             prev = page > 1 ? getUrl(page - 1) : null;
         }
 
+        // console.log(totalResult);
+
+        const dummyCollectionName = totalResult[0].collectionName;
+
         const response: PaginatedCollectionItemsResponse = {
             info: {
                 count: totalCount,
                 pages,
                 next,
-                prev
+                prev,
+                collectionName: this.collectionDisplayingNameByName.get(dummyCollectionName),
+                collectionDescription: this.collectionDisplayingDescriptionByName.get(dummyCollectionName)
             },
             result: resultItems
         };

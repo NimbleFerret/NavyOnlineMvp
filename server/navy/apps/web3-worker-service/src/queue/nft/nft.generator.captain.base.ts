@@ -142,7 +142,7 @@ export abstract class NftGeneratorCaptainBase extends NftGenerator {
         this.metadataObject = {
             name: `Captain (${index}/${maxIndex})`,
             index,
-            description: 'Navy.online Gen1 captains collection',
+            description: 'Navy metaverse Gen1 captains collection',
             image: imagePathOnMoralis,
             attributes
         };

@@ -20,14 +20,16 @@ export interface CollectionItemResponseObject {
     favourite: boolean
 }
 
-export interface Pagination {
+export interface CollectionPaginationInfo {
     count: number;
     pages: number;
     next: string;
     prev: string;
+    collectionName: string;
+    collectionDescription: string;
 }
 
 export interface PaginatedCollectionItemsResponse {
-    info: Pagination;
+    info: CollectionPaginationInfo;
     result: CollectionItemResponseObject[];
 }

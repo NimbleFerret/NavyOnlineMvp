@@ -9,12 +9,16 @@ export interface SelectPercentageOptions<T> {
 @Injectable()
 export class SharedLibraryService {
 
+    public static readonly CAPTAINS_COLLECTION_NAME = 'Captains';
+    public static readonly SHIPS_COLLECTION_NAME = 'Ships';
+    public static readonly ISLANDS_COLLECTION_NAME = 'Islands';
+
     public static readonly VENOM_CHAIN_ID = '1002';
-    public static readonly VENOM_CHAIN_NAME = 'venom';
+    public static readonly VENOM_CHAIN_NAME = 'Venom';
     public static readonly VENOM_TOKEN_SYMBOL = 'V';
 
     public static readonly CRONOS_CHAIN_ID = '338';
-    public static readonly CRONOS_CHAIN_NAME = 'cronos';
+    public static readonly CRONOS_CHAIN_NAME = 'Cronos';
     public static readonly CRONOS_TOKEN_SYMBOL = 'CRO';
 
     public static readonly GENERAL_ERROR = 1;

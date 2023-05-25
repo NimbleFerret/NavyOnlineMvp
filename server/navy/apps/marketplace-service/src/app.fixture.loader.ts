@@ -39,11 +39,11 @@ export class FixtureLoader {
                 }
             });
 
-            await this.loadTopSales('ships', CronosConstants.ShipContractAddress, SharedLibraryService.CRONOS_CHAIN_NAME);
-            await this.loadTopSales('islands', CronosConstants.IslandContractAddress, SharedLibraryService.CRONOS_CHAIN_NAME);
+            await this.loadTopSales(SharedLibraryService.SHIPS_COLLECTION_NAME, CronosConstants.ShipContractAddress, SharedLibraryService.CRONOS_CHAIN_NAME);
+            await this.loadTopSales(SharedLibraryService.ISLANDS_COLLECTION_NAME, CronosConstants.IslandContractAddress, SharedLibraryService.CRONOS_CHAIN_NAME);
 
-            await this.loadTopSales('ships', VenomConstants.ShipsCollectionContractAddress, SharedLibraryService.VENOM_CHAIN_NAME);
-            await this.loadTopSales('islands', VenomConstants.IslandsCollectionContractAddress, SharedLibraryService.VENOM_CHAIN_NAME);
+            await this.loadTopSales(SharedLibraryService.SHIPS_COLLECTION_NAME, VenomConstants.ShipsCollectionContractAddress, SharedLibraryService.VENOM_CHAIN_NAME);
+            await this.loadTopSales(SharedLibraryService.ISLANDS_COLLECTION_NAME, VenomConstants.IslandsCollectionContractAddress, SharedLibraryService.VENOM_CHAIN_NAME);
         }
     }
 
@@ -128,6 +128,8 @@ export class FixtureLoader {
     }
 
     private async loadTopSales(collectionName: string, contractAddress: string, chainName: string) {
+        const self = this;
+
         const tokenSymbol = chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
             SharedLibraryService.VENOM_TOKEN_SYMBOL : SharedLibraryService.CRONOS_TOKEN_SYMBOL;
         const chainId = chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
@@ -152,7 +154,7 @@ export class FixtureLoader {
             seller,
             owner,
             price: 10,
-            image: "https://navy.online/api/marketplace/static/assets/captain/captain" + imageIndex + ".png",
+            image: "https://navy-metaverse.online/api/marketplace/static/assets/captain/captain" + imageIndex + ".png",
             rarity: "Common",
             lastUpdated: 0,
             visuals: [],
@@ -165,79 +167,42 @@ export class FixtureLoader {
             chainId
         };
 
-        function generateCaptainVisuals() {
-            return [
-                {
-                    trait_type: 'Accessories',
-                    value: 'Scarf'
-                },
-                {
-                    trait_type: 'Background',
-                    value: 'Purple'
-                },
-                {
-                    trait_type: 'Body',
-                    value: 'Body 1'
-                },
-                {
-                    trait_type: 'Clothes',
-                    value: 'Jacket'
-                },
-                {
-                    trait_type: 'Head',
-                    value: 'Hair 1'
-                },
-                {
-                    trait_type: 'Face',
-                    value: 'Upset'
-                }
-            ]
-        }
-
-        function generateCaptainTraits() {
-            return [
-                {
-                    description: 'Bonus 1',
-                    shipStatsAffected: ['Everything is better']
-                }
-            ]
-        }
-
-        function newCollectionItem() {
+        function newCollectionItem(collectionName: string) {
             defaultCollectionItem.id = itemIdPrefix + nextId;
             defaultCollectionItem.tokenId = nextId;
             defaultCollectionItem.lastUpdated = nextTimeSeconds;
-            defaultCollectionItem.visuals = generateCaptainVisuals();
-            defaultCollectionItem.traits = generateCaptainTraits();
+            defaultCollectionItem.visuals = self.generateVisualsByNftType(collectionName);
+            defaultCollectionItem.traits = self.generateTraitsByNftType(collectionName);
 
-            if (collectionName == 'captains') {
-                defaultCollectionItem.image = "https://navy.online/api/marketplace/static/assets/captain/captain" + imageIndex + ".png";
-            }
-            if (collectionName == 'ships') {
-                defaultCollectionItem.image = "https://navy.online/api/marketplace/static/assets/ship/ship" + imageIndex + ".png";
+            switch (collectionName) {
+                case SharedLibraryService.CAPTAINS_COLLECTION_NAME:
+                    defaultCollectionItem.image = "https://navy-metaverse.online/api/marketplace/static/assets/captain/captain" + imageIndex + ".png";
+                    break;
+                case SharedLibraryService.SHIPS_COLLECTION_NAME:
+                    defaultCollectionItem.image = "https://navy-metaverse.online/api/marketplace/static/assets/ship/ship" + imageIndex + ".png";
+                    if (imageIndex == 1) {
+                        defaultCollectionItem.rarity = 'Epic';
+                    }
+                    if (imageIndex == 2) {
+                        defaultCollectionItem.rarity = 'Rare';
+                    }
+                    if (imageIndex == 3) {
+                        defaultCollectionItem.rarity = 'Common';
+                    }
+                    break;
+                case SharedLibraryService.ISLANDS_COLLECTION_NAME:
+                    defaultCollectionItem.image = "https://navy-metaverse.online/api/marketplace/static/assets/island/island" + imageIndex + ".png";
+                    if (imageIndex == 1) {
+                        defaultCollectionItem.rarity = 'Legendary';
+                    } else if (imageIndex == 2) {
+                        defaultCollectionItem.rarity = 'Epic';
+                    } else if (imageIndex == 3 || imageIndex == 6) {
+                        defaultCollectionItem.rarity = 'Rare';
+                    } else if (imageIndex == 1) {
+                        defaultCollectionItem.rarity = 'Common';
+                    }
+                    break;
 
-                if (imageIndex == 1) {
-                    defaultCollectionItem.rarity = 'Epic';
-                }
-                if (imageIndex == 2) {
-                    defaultCollectionItem.rarity = 'Rare';
-                }
-                if (imageIndex == 3) {
-                    defaultCollectionItem.rarity = 'Common';
-                }
-            }
-            if (collectionName == 'islands') {
-                defaultCollectionItem.image = "https://navy.online/api/marketplace/static/assets/island/island" + imageIndex + ".png";
-
-                if (imageIndex == 1) {
-                    defaultCollectionItem.rarity = 'Legendary';
-                } else if (imageIndex == 2) {
-                    defaultCollectionItem.rarity = 'Epic';
-                } else if (imageIndex == 3 || imageIndex == 6) {
-                    defaultCollectionItem.rarity = 'Rare';
-                } else if (imageIndex == 1) {
-                    defaultCollectionItem.rarity = 'Common';
-                }
             }
 
             let price = SharedLibraryService.GetRandomIntInRange(1, 1000);
@@ -253,16 +218,17 @@ export class FixtureLoader {
 
         // Today sells
         for (let i = 0; i < 10; i++) {
-            const soldCollectionItem = newCollectionItem();
+            const soldCollectionItem = newCollectionItem(collectionName);
             soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
             await new this.collectionItemModel(soldCollectionItem).save();
 
-            const ownedCollectionItem = newCollectionItem();
+            const ownedCollectionItem = newCollectionItem(collectionName);
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
             imageIndex++;
-            if (imageIndex == 4 && collectionName == 'ships' || imageIndex == 7 && collectionName == 'islands') {
+            if (imageIndex == 4 && collectionName == SharedLibraryService.SHIPS_COLLECTION_NAME
+                || imageIndex == 7 && collectionName == SharedLibraryService.ISLANDS_COLLECTION_NAME) {
                 imageIndex = 1;
             }
             nextId++;
@@ -272,16 +238,17 @@ export class FixtureLoader {
 
         // 7d
         for (let i = 0; i < 10; i++) {
-            const soldCollectionItem = newCollectionItem();
+            const soldCollectionItem = newCollectionItem(collectionName);
             soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
             await new this.collectionItemModel(soldCollectionItem).save();
 
-            const ownedCollectionItem = newCollectionItem();
+            const ownedCollectionItem = newCollectionItem(collectionName);
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
             imageIndex++;
-            if (imageIndex == 4 && collectionName == 'ships' || imageIndex == 7 && collectionName == 'islands') {
+            if (imageIndex == 4 && collectionName == SharedLibraryService.SHIPS_COLLECTION_NAME ||
+                imageIndex == 7 && collectionName == SharedLibraryService.ISLANDS_COLLECTION_NAME) {
                 imageIndex = 1;
             }
             nextId++;
@@ -291,16 +258,17 @@ export class FixtureLoader {
 
         // 30d 
         for (let i = 0; i < 10; i++) {
-            const soldCollectionItem = newCollectionItem();
+            const soldCollectionItem = newCollectionItem(collectionName);
             soldCollectionItem.marketplaceState = MarketplaceState.SOLD;
             await new this.collectionItemModel(soldCollectionItem).save();
 
-            const ownedCollectionItem = newCollectionItem();
+            const ownedCollectionItem = newCollectionItem(collectionName);
             ownedCollectionItem.marketplaceState = MarketplaceState.NONE;
             await new this.collectionItemModel(ownedCollectionItem).save();
 
             imageIndex++;
-            if (imageIndex == 4 && collectionName == 'ships' || imageIndex == 7 && collectionName == 'islands') {
+            if (imageIndex == 4 && collectionName == SharedLibraryService.SHIPS_COLLECTION_NAME ||
+                imageIndex == 7 && collectionName == SharedLibraryService.ISLANDS_COLLECTION_NAME) {
                 imageIndex = 1;
             }
             nextId++;
@@ -324,5 +292,66 @@ export class FixtureLoader {
     }
 
 
+    private generateVisualsByNftType(collectionName: string) {
+        switch (collectionName) {
+            case SharedLibraryService.CAPTAINS_COLLECTION_NAME:
+                return [
+                    {
+                        trait_type: 'Accessories',
+                        value: 'Scarf'
+                    },
+                    {
+                        trait_type: 'Background',
+                        value: 'Purple'
+                    },
+                    {
+                        trait_type: 'Body',
+                        value: 'Body 1'
+                    },
+                    {
+                        trait_type: 'Clothes',
+                        value: 'Jacket'
+                    },
+                    {
+                        trait_type: 'Head',
+                        value: 'Hair 1'
+                    },
+                    {
+                        trait_type: 'Face',
+                        value: 'Upset'
+                    }
+                ]
+            case SharedLibraryService.SHIPS_COLLECTION_NAME:
+                return [];
+            case SharedLibraryService.ISLANDS_COLLECTION_NAME:
+                return [];
+        }
+    }
+
+    private generateTraitsByNftType(collectionName: string) {
+        switch (collectionName) {
+            case SharedLibraryService.CAPTAINS_COLLECTION_NAME:
+                return [
+                    {
+                        description: 'Bonus 1',
+                        shipStatsAffected: ['Everything is better']
+                    }
+                ]
+            case SharedLibraryService.SHIPS_COLLECTION_NAME:
+                return [
+                    {
+                        description: 'Bonus 1',
+                        shipStatsAffected: ['Everything is better']
+                    }
+                ]
+            case SharedLibraryService.ISLANDS_COLLECTION_NAME:
+                return [
+                    {
+                        description: 'Bonus 1',
+                        shipStatsAffected: ['Everything is better']
+                    }
+                ]
+        }
+    }
 
 }
