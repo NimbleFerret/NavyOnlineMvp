@@ -322,9 +322,59 @@ export class FixtureLoader {
                     }
                 ]
             case SharedLibraryService.SHIPS_COLLECTION_NAME:
-                return [];
+                return [
+                    {
+                        trait_type: 'Anchor',
+                        value: 'Golden'
+                    },
+                    {
+                        trait_type: 'Mast',
+                        value: 'Pink'
+                    },
+                    {
+                        trait_type: 'Size',
+                        value: 'Medium'
+                    },
+                    {
+                        trait_type: 'Hull',
+                        value: 'Wood'
+                    },
+                    {
+                        trait_type: 'Cannons',
+                        value: 4
+                    },
+                    {
+                        trait_type: 'Windows',
+                        value: 2
+                    }
+                ];
             case SharedLibraryService.ISLANDS_COLLECTION_NAME:
-                return [];
+                return [
+                    {
+                        trait_type: 'Size',
+                        value: 'Small'
+                    },
+                    {
+                        trait_type: 'Terrain',
+                        value: 'Volcanic'
+                    },
+                    {
+                        trait_type: 'Golden mine',
+                        value: true
+                    },
+                    {
+                        trait_type: 'Shipyard',
+                        value: true
+                    },
+                    {
+                        trait_type: 'Points of interest',
+                        value: 4
+                    },
+                    {
+                        trait_type: 'Marketplace',
+                        value: true
+                    }
+                ];
         }
     }
 
@@ -333,24 +383,32 @@ export class FixtureLoader {
             case SharedLibraryService.CAPTAINS_COLLECTION_NAME:
                 return [
                     {
-                        description: 'Bonus 1',
-                        shipStatsAffected: ['Everything is better']
+                        description: 'Maneuverability 1',
+                        shipStatsAffected: ['+20% ship top speed']
                     }
-                ]
+                ];
             case SharedLibraryService.SHIPS_COLLECTION_NAME:
                 return [
                     {
-                        description: 'Bonus 1',
-                        shipStatsAffected: ['Everything is better']
+                        description: 'Damage bonus 1',
+                        shipStatsAffected: ['+10% critical chance']
+                    },
+                    {
+                        description: 'Damage bonus 2',
+                        shipStatsAffected: ['+35% critical damage']
                     }
-                ]
+                ];
             case SharedLibraryService.ISLANDS_COLLECTION_NAME:
                 return [
                     {
-                        description: 'Bonus 1',
-                        shipStatsAffected: ['Everything is better']
+                        description: 'Mining',
+                        shipStatsAffected: ['30 NVY/day']
+                    },
+                    {
+                        description: 'Shipyard',
+                        shipStatsAffected: ['Ship crafting']
                     }
-                ]
+                ];
         }
     }
 
