@@ -35,18 +35,20 @@ export class CollectionApiService implements OnModuleInit {
 
     // TODO need better loading order, it failes on fresh
     async onModuleInit() {
-        const captainsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.CaptainContractAddress);
-        const shipsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.ShipContractAddress);
-        const islandsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.IslandContractAddress);
+        setTimeout(async () => {
+            const captainsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.CaptainContractAddress);
+            const shipsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.ShipContractAddress);
+            const islandsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.IslandContractAddress);
 
-        this.collectionDisplayingNameByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.name);
-        this.collectionDisplayingDescriptionByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.description);
+            this.collectionDisplayingNameByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.name);
+            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.description);
 
-        this.collectionDisplayingNameByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.name);
-        this.collectionDisplayingDescriptionByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.description);
+            this.collectionDisplayingNameByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.name);
+            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.description);
 
-        this.collectionDisplayingNameByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.name);
-        this.collectionDisplayingDescriptionByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.description);
+            this.collectionDisplayingNameByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.name);
+            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.description);
+        }, 2500);
     }
 
     async getCollection(chainName: string, contractAddress: string) {
