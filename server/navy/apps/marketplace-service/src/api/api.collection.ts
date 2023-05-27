@@ -7,7 +7,7 @@ import { Mint, MintDocument } from "@app/shared-library/schemas/marketplace/sche
 import { UserProfile } from "@app/shared-library/schemas/schema.user.profile";
 import { Converter } from "@app/shared-library/shared-library.converter";
 import { Utils } from "@app/shared-library/utils";
-import { BadGatewayException, BadRequestException, Injectable, OnModuleInit } from "@nestjs/common";
+import { BadGatewayException, BadRequestException, Injectable, NotFoundException, OnModuleInit } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Document } from "mongoose";
 import { AppService } from "../app.service";
@@ -395,14 +395,27 @@ export class CollectionApiService implements OnModuleInit {
         return result;
     }
 
-    async getCollectionItem(authToken: string | undefined, address: string, tokenId: string) {
+    async getCollectionItem(authToken: string | undefined, chainName: string, address: string, tokenId: string) {
+        if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME.toLowerCase()) {
+            chainName = SharedLibraryService.CRONOS_CHAIN_NAME;
+        } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME.toLowerCase()) {
+            chainName = SharedLibraryService.VENOM_CHAIN_NAME;
+        } else {
+            throw new BadRequestException();
+        }
+
         const collectionItems = await this.collectionItemModel.find({
             contractAddress: address,
             tokenId,
+            chainName,
             marketplaceState: {
                 "$ne": MarketplaceState.SOLD
             }
         }).select(['-_id', '-__v', '-needUpdate']);
+
+        if (collectionItems.length == 0) {
+            throw new NotFoundException();
+        }
 
         let collectionItem = collectionItems[0];
         if (collectionItems.length == 2) {

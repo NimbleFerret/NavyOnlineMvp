@@ -81,7 +81,7 @@ export class AppController {
     @Param('chainName') chainName: string,
     @Param('collectionAddress') collectionAddress: string,
     @Param('tokenId') tokenId: string) {
-    return this.collectionService.getCollectionItem(Utils.GetBearerTokenFromRequest(request), collectionAddress.toLowerCase(), tokenId);
+    return this.collectionService.getCollectionItem(Utils.GetBearerTokenFromRequest(request), chainName, collectionAddress.toLowerCase(), tokenId);
   }
 
   @Get('mint/:chainName/:collectionAddress')
