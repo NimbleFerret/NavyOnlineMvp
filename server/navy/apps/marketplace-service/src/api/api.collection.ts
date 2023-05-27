@@ -132,10 +132,10 @@ export class CollectionApiService implements OnModuleInit {
         const notListedResult = [];
 
         if (marketplaceState) {
-            if (marketplaceState == MarketplaceState.LISTED) {
+            if (marketplaceState.toLowerCase() == MarketplaceState.LISTED.toLowerCase()) {
                 loadNotListed = false;
             }
-            if (marketplaceState == MarketplaceState.NONE) {
+            if (marketplaceState.toLowerCase() == MarketplaceState.NONE.toLowerCase()) {
                 loadListed = false;
             }
         }
