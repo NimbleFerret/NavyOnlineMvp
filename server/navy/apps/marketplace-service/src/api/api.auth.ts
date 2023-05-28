@@ -19,8 +19,20 @@ import { Model } from "mongoose";
 import { AttachEmailDto, AttachWalletDto, UpdatePasswordDto } from "apps/gateway-service/src/dto/app.dto";
 import * as EmailValidator from 'email-validator';
 import { Utils } from "@app/shared-library/utils";
+import { EverWalletAccount } from "everscale-standalone-client";
+import { VenomProvider } from "@app/shared-library/blockchain/venom/venom.provider";
 
 const jwt = require('jsonwebtoken');
+
+interface SignUpInternalResponse {
+    success: boolean;
+    token?: string;
+    ethAddress?: string;
+    venomAddress?: string;
+    email?: string;
+    reason?: string;
+    httpStatus?: number;
+}
 
 @Injectable()
 export class AuthApiService {
@@ -43,70 +55,26 @@ export class AuthApiService {
         let reason = undefined;
         let httpStatus = undefined;
 
-        if (request.ethAddress && request.signedMessage) {
-            await this.checkEthersAuthSignature(request.ethAddress, request.signedMessage);
-            request.ethAddress = request.ethAddress.toLowerCase();
-            if (signIn) {
-                const userProfile = await this.userProfileModel.findOne({ ethAddress: request.ethAddress });
-                if (userProfile) {
-                    const issueTokenResult = await this.issueToken(userProfile.id);
-                    response.success = true;
-                    response['token'] = issueTokenResult.token;
-                    response['ethAddress'] = request.ethAddress;
-                    if (userProfile.email) {
-                        response['email'] = userProfile.email;
-                    }
+        if ((request.ethAddress && request.ethSignedMessage) || (request.venomPublicKey && request.venomDataHash && request.venomSignedMessage)) {
+            if (request.ethAddress) {
+                request.ethAddress = request.ethAddress.toLowerCase();
+                if (signIn) {
+                    await this.ethSignIn(request);
                 } else {
-                    response.success = false;
-                    reason = Utils.ERROR_WALLET_NOT_FOUND;
-                    httpStatus = HttpStatus.BAD_REQUEST;
+                    await this.ethSignUp(request);
                 }
             } else {
-                const signUpResult = await this.trySignUp(request);
-                if (!signUpResult.success) {
-                    response.success = false;
-                    response['ethAddress'] = request.ethAddress;
-                    reason = signUpResult.reason;
-                    httpStatus = HttpStatus.BAD_REQUEST;
+                if (signIn) {
+                    await this.venomSignIn(request);
                 } else {
-                    const issueTokenResult = await this.issueToken(signUpResult.userId);
-                    response['token'] = issueTokenResult.token;
-                    response['ethAddress'] = request.ethAddress;
+                    await this.venomSignUp(request);
                 }
             }
         } else if (request.email && request.password) {
             if (signIn) {
-                const userProfile = await this.userProfileModel.findOne({ email: request.email });
-                if (userProfile) {
-                    if (userProfile.password == request.password) {
-                        const issueTokenResult = await this.issueToken(userProfile.id);
-                        response.success = true;
-                        response['token'] = issueTokenResult.token;
-                        response['email'] = request.email;
-                        if (userProfile.email) {
-                            response['ethAddress'] = userProfile.ethAddress;
-                        }
-                    } else {
-                        response.success = false;
-                        reason = Utils.ERROR_BAD_EMAIL_OR_PASSWORD;
-                        httpStatus = HttpStatus.BAD_REQUEST;
-                    }
-                } else {
-                    response.success = false;
-                    reason = Utils.ERROR_EMAIL_NOT_FOUND;
-                    httpStatus = HttpStatus.BAD_REQUEST;
-                }
+                await this.emailSignIn(request);
             } else {
-                const signUpResult = await this.trySignUp(request);
-                if (!signUpResult.success) {
-                    response.success = false;
-                    reason = signUpResult.reason;
-                    httpStatus = HttpStatus.BAD_REQUEST;
-                } else {
-                    const issueTokenResult = await this.issueToken(signUpResult.userId);
-                    response['token'] = issueTokenResult.token;
-                    response['email'] = request.email;
-                }
+                await this.emailSignUp(request);
             }
         } else {
             response.success = false;
@@ -119,6 +87,161 @@ export class AuthApiService {
                 success: false,
                 reason
             }, httpStatus);
+        }
+
+        return response;
+    }
+
+    private async ethSignUp(request: SignUpRequest) {
+        await this.checkEthersAuthSignature(request.ethAddress, request.ethSignedMessage);
+
+        const response: SignUpInternalResponse = {
+            success: false
+        };
+
+        const signUpResult = await this.trySignUp(request);
+
+        if (!signUpResult.success) {
+            response.success = false;
+            response.ethAddress = request.ethAddress;
+            response.reason = signUpResult.reason;
+            response.httpStatus = HttpStatus.BAD_REQUEST;
+        } else {
+            const issueTokenResult = await this.issueToken(signUpResult.userId);
+            response.token = issueTokenResult.token;
+            response.ethAddress = request.ethAddress;
+        }
+
+        return response;
+    }
+
+    private async ethSignIn(request: SignUpRequest) {
+        await this.checkEthersAuthSignature(request.ethAddress, request.ethSignedMessage);
+
+        const response: SignUpInternalResponse = {
+            success: false
+        };
+
+        const userProfile = await this.userProfileModel.findOne({ ethAddress: request.ethAddress });
+        if (userProfile) {
+            const issueTokenResult = await this.issueToken(userProfile.id);
+            response.success = true;
+            response.token = issueTokenResult.token;
+            response.ethAddress = request.ethAddress;
+            if (userProfile.email) {
+                response.email = userProfile.email;
+            }
+            if (userProfile.venomAddress) {
+                response.venomAddress = userProfile.venomAddress;
+            }
+        } else {
+            response.success = false;
+            response.reason = Utils.ERROR_WALLET_NOT_FOUND;
+            response.httpStatus = HttpStatus.BAD_REQUEST;
+        }
+
+        return response;
+    }
+
+    private async venomSignUp(request: SignUpRequest) {
+        const venomAddress = await this.getVenomAddressFromPublicKey(request.venomPublicKey);
+        await this.checkVenomAuthSignature(venomAddress, request.venomPublicKey, request.venomDataHash, request.venomSignedMessage);
+
+        const response: SignUpInternalResponse = {
+            success: false
+        };
+
+        const signUpResult = await this.trySignUp(request);
+
+        if (!signUpResult.success) {
+            response.success = false;
+            response.reason = signUpResult.reason;
+            response.httpStatus = HttpStatus.BAD_REQUEST;
+        } else {
+            const issueTokenResult = await this.issueToken(signUpResult.userId);
+            response.token = issueTokenResult.token;
+        }
+
+        response.venomAddress = venomAddress;
+
+        return response;
+    }
+
+    private async venomSignIn(request: SignUpRequest) {
+        const venomAddress = await this.getVenomAddressFromPublicKey(request.venomPublicKey);
+        await this.checkVenomAuthSignature(venomAddress, request.venomPublicKey, request.venomDataHash, request.venomSignedMessage);
+
+        const response: SignUpInternalResponse = {
+            success: false
+        };
+
+        const userProfile = await this.userProfileModel.findOne({ venomAddress });
+        if (userProfile) {
+            const issueTokenResult = await this.issueToken(userProfile.id);
+            response.success = true;
+            response.token = issueTokenResult.token;
+            response.venomAddress = venomAddress;
+            if (userProfile.email) {
+                response.email = userProfile.email;
+            }
+            if (userProfile.ethAddress) {
+                response.ethAddress = userProfile.ethAddress;
+            }
+        } else {
+            response.success = false;
+            response.reason = Utils.ERROR_WALLET_NOT_FOUND;
+            response.httpStatus = HttpStatus.BAD_REQUEST;
+        }
+
+        return response;
+    }
+
+    private async emailSignUp(request: SignUpRequest) {
+        const response: SignUpInternalResponse = {
+            success: false
+        };
+
+        const signUpResult = await this.trySignUp(request);
+        if (!signUpResult.success) {
+            response.success = false;
+            response.reason = signUpResult.reason;
+            response.httpStatus = HttpStatus.BAD_REQUEST;
+        } else {
+            const issueTokenResult = await this.issueToken(signUpResult.userId);
+            response.token = issueTokenResult.token;
+            response.email = request.email;
+        }
+
+        return response;
+    }
+
+    private async emailSignIn(request: SignUpRequest) {
+        const response: SignUpInternalResponse = {
+            success: false
+        };
+
+        const userProfile = await this.userProfileModel.findOne({ email: request.email });
+        if (userProfile) {
+            if (userProfile.password == request.password) {
+                const issueTokenResult = await this.issueToken(userProfile.id);
+                response.success = true;
+                response.token = issueTokenResult.token;
+                response.email = request.email;
+                if (userProfile.email) {
+                    response.ethAddress = userProfile.ethAddress;
+                }
+                if (userProfile.venomAddress) {
+                    response.venomAddress = userProfile.venomAddress;
+                }
+            } else {
+                response.success = false;
+                response.reason = Utils.ERROR_BAD_EMAIL_OR_PASSWORD;
+                response.httpStatus = HttpStatus.BAD_REQUEST;
+            }
+        } else {
+            response.success = false;
+            response.reason = Utils.ERROR_EMAIL_NOT_FOUND;
+            response.httpStatus = HttpStatus.BAD_REQUEST;
         }
 
         return response;
@@ -250,6 +373,27 @@ export class AuthApiService {
         }
     }
 
+    private async checkVenomAuthSignature(userAddress: string, publicKey: string, dataHash: string, signature: string) {
+        let result = false;
+        try {
+            result = await VenomProvider.VerifySignature(
+                Constants.AuthSignatureTemplate.replace('@', userAddress),
+                publicKey,
+                dataHash,
+                signature
+            );
+        } catch (error) {
+            Logger.error(error);
+        } finally {
+            if (!result) {
+                throw new HttpException({
+                    success: false,
+                    reason: Utils.ERROR_BAD_SIGNATURE
+                }, HttpStatus.BAD_REQUEST);
+            }
+        }
+    }
+
     private async trySignUp(request: SignUpRequest) {
         const response = {
             success: false,
@@ -257,22 +401,32 @@ export class AuthApiService {
             userId: ''
         }
 
-        if (request.email && request.ethAddress) {
+        let authMethodsCount = 0;
+        if (request.email)
+            authMethodsCount++;
+        if (request.ethAddress)
+            authMethodsCount++;
+        if (request.venomPublicKey)
+            authMethodsCount++;
+
+        if (authMethodsCount != 1) {
             this.logger.error(`signUp failed for ${request.email} / ${request.ethAddress}, impossible to signUp by both identifiers!`);
             response.reason = Utils.ERROR_BAD_PARAMS;
         } else {
-            if (request.ethAddress) {
-                const user = await this.userProfileModel.findOne({
-                    ethAddress: request.ethAddress
-                });
+            if (request.ethAddress || request.venomPublicKey) {
+                let chainParams = {};
+                if (request.ethAddress) {
+                    chainParams['ethAddress'] = request.ethAddress;
+                } else {
+                    chainParams['venomAddress'] = await this.getVenomAddressFromPublicKey(request.venomPublicKey);
+                }
+
+                const user = await this.userProfileModel.findOne(chainParams);
                 if (user) {
                     this.logger.error(`signUp failed for ${request.ethAddress}, user already exists!`);
                     response.reason = Utils.ERROR_WALLET_EXISTS;
                 } else {
-                    const userModel = new this.userProfileModel({
-                        ethAddress: request.ethAddress,
-                        emailState: EmailState.CONFIRMED
-                    });
+                    const userModel = new this.userProfileModel(chainParams);
                     await userModel.save();
                     response.success = true;
                     response.userId = userModel.id;
@@ -290,8 +444,7 @@ export class AuthApiService {
                 } else {
                     const userModel = new this.userProfileModel({
                         email: request.email,
-                        password: request.password,
-                        emailState: EmailState.CONFIRMED
+                        password: request.password
                     });
 
                     await userModel.save();
@@ -355,6 +508,10 @@ export class AuthApiService {
             ethAddress
         });
         return profiles > 0;
+    }
+
+    private async getVenomAddressFromPublicKey(venomPublicKey: string) {
+        return (await EverWalletAccount.fromPubkey({ publicKey: venomPublicKey, workchain: 0 })).address.toString();
     }
 
 }

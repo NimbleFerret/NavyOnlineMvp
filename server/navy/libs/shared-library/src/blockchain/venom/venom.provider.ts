@@ -20,60 +20,61 @@ export class VenomProvider {
     public static readonly EventNftSold = 'NftSold';
     public static readonly EventNftSalePriceSet = 'NftSalePriceSet';
 
+    private static readonly Provider = new ProviderRpcClient({
+        fallback: () =>
+            EverscaleStandaloneClient.create({
+                connection: {
+                    id: 0,
+                    type: 'graphql',
+                    data: {
+                        endpoints: ['localhost'],
+                    },
+                },
+                keystore: VenomProvider.KeyStore,
+                accountsStorage: VenomProvider.AccountStorage
+            }),
+    });
+
+    private static readonly AccountStorage = new SimpleAccountsStorage();
+    private static readonly KeyStore = new SimpleKeystore();
+
     private captainsCollectionContract: Contract<typeof CollectionContractArtifact.ABI>;
     private captainsMarketplaceContract: Contract<typeof MarketplaceContractArtifact.ABI>;
 
-    private readonly accountStorage = new SimpleAccountsStorage();
-    private readonly keyStore = new SimpleKeystore();
-    private readonly provider: ProviderRpcClient;
+
     private ownerAccount: EverWalletAccount;
 
-    constructor(
-        private nftMintedCallback: Function,
-        private nftGeneratedCallback: Function,
-        private nftListedCallback: Function,
-        private nftDelistedCallback: Function,
-        private nftPriceSetCallback: Function,
-        private nftSoldCallback: Function
+    async initContracts(
+        contractsOwnerPublicKey: string,
+        contractsOwnerSecretKey: string,
+        nftMintedCallback: Function,
+        nftGeneratedCallback: Function,
+        nftListedCallback: Function,
+        nftDelistedCallback: Function,
+        nftPriceSetCallback: Function,
+        nftSoldCallback: Function
     ) {
-        this.provider = new ProviderRpcClient({
-            fallback: () =>
-                EverscaleStandaloneClient.create({
-                    connection: {
-                        id: 0,
-                        type: 'graphql',
-                        data: {
-                            endpoints: ['localhost'],
-                        },
-                    },
-                    keystore: this.keyStore,
-                    accountsStorage: this.accountStorage
-                }),
-        });
-    }
-
-    async init(contractsOwnerPublicKey: string, contractsOwnerSecretKey: string) {
         const publicKey = contractsOwnerPublicKey;
         const secretKey = contractsOwnerSecretKey;
 
         this.ownerAccount = await EverWalletAccount.fromPubkey({ publicKey, workchain: 0 });
-        this.accountStorage.addAccount(this.ownerAccount);
+        VenomProvider.AccountStorage.addAccount(this.ownerAccount);
 
-        this.keyStore.addKeyPair('owner', {
+        VenomProvider.KeyStore.addKeyPair('owner', {
             publicKey,
             secretKey
         });
 
         // Initialize contracts and setup event listeners
-        this.captainsCollectionContract = new this.provider.Contract(CollectionContractArtifact.ABI, new Address(VenomConstants.CaptainsCollectionContractAddress));
-        this.captainsMarketplaceContract = new this.provider.Contract(MarketplaceContractArtifact.ABI, new Address(VenomConstants.CaptainsMarketplaceContractAddress));
+        this.captainsCollectionContract = new VenomProvider.Provider.Contract(CollectionContractArtifact.ABI, new Address(VenomConstants.CaptainsCollectionContractAddress));
+        this.captainsMarketplaceContract = new VenomProvider.Provider.Contract(MarketplaceContractArtifact.ABI, new Address(VenomConstants.CaptainsMarketplaceContractAddress));
 
-        const captainsCollectionEvents = this.captainsCollectionContract.events(new this.provider.Subscriber());
+        const captainsCollectionEvents = this.captainsCollectionContract.events(new VenomProvider.Provider.Subscriber());
         captainsCollectionEvents.on(async (contractEvent: any) => {
             const eventName = 'Captains ' + contractEvent.event;
             if (contractEvent.event == VenomProvider.EventNftMinted) {
                 if (this.checkEventEmitted(contractEvent, eventName)) {
-                    this.nftMintedCallback({
+                    nftMintedCallback({
                         nftType: NftType.CAPTAIN,
                         id: contractEvent.data.id,
                         owner: contractEvent.data.owner
@@ -81,7 +82,7 @@ export class VenomProvider {
                 }
             } else if (contractEvent.event == VenomProvider.EventNftGenerated) {
                 if (this.checkEventEmitted(contractEvent, eventName)) {
-                    this.nftGeneratedCallback({
+                    nftGeneratedCallback({
                         nftType: NftType.CAPTAIN,
                         id: contractEvent.data.id,
                         owner: contractEvent.data.owner
@@ -90,33 +91,52 @@ export class VenomProvider {
             }
         });
 
-        const captainsMarketplaceEvents = this.captainsMarketplaceContract.events(new this.provider.Subscriber());
+        const captainsMarketplaceEvents = this.captainsMarketplaceContract.events(new VenomProvider.Provider.Subscriber());
         captainsMarketplaceEvents.on(async (contractEvent: any) => {
             const eventName = 'Captains ' + contractEvent.event;
             switch (contractEvent.event) {
                 case VenomProvider.EventNftListed:
                     if (this.checkEventEmitted(contractEvent, eventName)) {
-                        this.nftListedCallback();
+                        nftListedCallback();
                     }
                     break;
                 case VenomProvider.EventNftDelisted:
                     if (this.checkEventEmitted(contractEvent, eventName)) {
-                        this.nftDelistedCallback();
+                        nftDelistedCallback();
                     }
                     break;
                 case VenomProvider.EventNftSalePriceSet:
                     if (this.checkEventEmitted(contractEvent, eventName)) {
-                        this.nftPriceSetCallback();
+                        nftPriceSetCallback();
                     }
                     break;
                 case VenomProvider.EventNftSold:
                     if (this.checkEventEmitted(contractEvent, eventName)) {
-                        this.nftSoldCallback();
+                        nftSoldCallback();
                     }
                     break;
             }
         });
 
+    }
+
+    public static async VerifySignature(messageToSign: string, publicKey: string, dataHash: string, signature: string) {
+        let result = false;
+
+        const backEndSignature = await VenomProvider.Provider.signData({
+            data: Buffer.from(messageToSign).toString('base64'),
+            publicKey: publicKey
+        });
+
+        if (signature == backEndSignature.signature) {
+            result = (await VenomProvider.Provider.verifySignature({
+                publicKey,
+                dataHash,
+                signature
+            })).isValid;
+        }
+
+        return result;
     }
 
     private checkEventEmitted(contractEvent: any, eventName: string) {

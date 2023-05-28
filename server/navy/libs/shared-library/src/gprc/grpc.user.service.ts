@@ -18,8 +18,13 @@ export interface SignUpRequest {
     password: string;
     password2: string;
     confirmationCode: string;
+
     ethAddress: string;
-    signedMessage: string;
+    ethSignedMessage: string;
+
+    venomPublicKey: string;
+    venomDataHash: string;
+    venomSignedMessage: string;
 }
 
 export interface SignUpResponse {
