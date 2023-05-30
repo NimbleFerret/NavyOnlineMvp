@@ -20,20 +20,21 @@ export class VenomProvider {
     public static readonly EventNftSold = 'NftSold';
     public static readonly EventNftSalePriceSet = 'NftSalePriceSet';
 
-    private static readonly Provider = new ProviderRpcClient({
-        fallback: () =>
-            EverscaleStandaloneClient.create({
-                connection: {
-                    id: 0,
-                    type: 'graphql',
-                    data: {
-                        endpoints: ['localhost'],
-                    },
-                },
-                keystore: VenomProvider.KeyStore,
-                accountsStorage: VenomProvider.AccountStorage
-            }),
-    });
+    private static readonly Provider: ProviderRpcClient;
+
+    // private static readonly Provider = new ProviderRpcClient({
+    //     fallback: () =>
+    //         EverscaleStandaloneClient.create({
+    //             connection: {
+    //                 id: 0,
+    //                 group: "Local Node (GQL)",
+    //                 type: "graphql",
+    //                 data: {
+    //                     endpoints: ["localhost"],
+    //                 },
+    //             }
+    //         }),
+    // });
 
     private static readonly AccountStorage = new SimpleAccountsStorage();
     private static readonly KeyStore = new SimpleKeystore();
@@ -43,6 +44,28 @@ export class VenomProvider {
 
 
     private ownerAccount: EverWalletAccount;
+
+    // constructor() {
+    // Not a static test
+    // const accountStorage = new SimpleAccountsStorage();
+    // const keyStore = new SimpleKeystore();
+
+    // const provider = new ProviderRpcClient({
+    //     fallback: () =>
+    //         EverscaleStandaloneClient.create({
+    //             connection: {
+    //                 id: 0,
+    //                 group: "Local Node (GQL)",
+    //                 type: "graphql",
+    //                 data: {
+    //                     endpoints: ["localhost"],
+    //                 },
+    //             },
+    //             keystore: keyStore,
+    //             accountsStorage: accountStorage
+    //         }),
+    // });
+    // }
 
     async initContracts(
         contractsOwnerPublicKey: string,
