@@ -6,11 +6,11 @@ import { Collection } from './schema.collection';
 export type ProjectDocument = Project & Document;
 
 export enum ProjectState {
-    DISABLED = 1,
-    ANNOUNCEMENT = 2,
-    MINTING = 3,
-    MINTING_AND_SALE = 4,
-    SALE = 5
+    DISABLED = 'Disabled',
+    ANNOUNCEMENT = 'Annoucement',
+    MINTING = 'Minting',
+    MINTING_AND_SALE = 'Minting_and_sale',
+    SALE = 'Sale'
 }
 
 @Schema()
@@ -23,7 +23,7 @@ export class Project {
     name: string;
 
     @Prop({
-        type: Number,
+        type: String,
         required: true,
         enum: [
             ProjectState.DISABLED,

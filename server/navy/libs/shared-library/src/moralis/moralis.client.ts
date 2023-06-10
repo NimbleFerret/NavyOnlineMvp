@@ -1,15 +1,19 @@
-import { EvmChain } from "@moralisweb3/common-evm-utils";
 import Moralis from "moralis";
 
 export class MoralisClient {
 
-    private readonly chain = EvmChain.CRONOS_TESTNET;
+    private static instance: MoralisClient
+
     private readonly apiKey = "aQrAItXuznpPv1pEXAgPIIwcVqwaehaPHpB9WmGo0eP1dGUdmzyt5SYfmstQslBF";
 
-    async init() {
-        await Moralis.start({
-            apiKey: this.apiKey
-        });
+    private constructor() { }
+
+    public static getInstance(): MoralisClient {
+        if (!MoralisClient.instance) {
+            MoralisClient.instance = new MoralisClient();
+            MoralisClient.instance.init().then();
+        }
+        return MoralisClient.instance;
     }
 
     public async uploadFile(path: string, content: string) {
@@ -21,6 +25,12 @@ export class MoralisClient {
         ];
         return await Moralis.EvmApi.ipfs.uploadFolder({
             abi
+        });
+    }
+
+    private async init() {
+        await Moralis.start({
+            apiKey: this.apiKey
         });
     }
 }

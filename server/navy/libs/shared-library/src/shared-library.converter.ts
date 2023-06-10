@@ -1,10 +1,11 @@
 import { CollectionItem } from "./schemas/marketplace/schema.collection.item";
 import { Document } from "mongoose";
+import { CollectionItemResponseObject } from "apps/marketplace-service/src/dto/dto.collection";
 
 export class Converter {
 
     public static ConvertCollectionItem(collectionItem: CollectionItem & Document, favourite: boolean) {
-        return {
+        const item: CollectionItemResponseObject = {
             tokenId: collectionItem.tokenId,
             tokenUri: collectionItem.tokenUri,
             seller: collectionItem.seller,
@@ -19,10 +20,11 @@ export class Converter {
             chainId: collectionItem.chainId,
             marketplaceState: collectionItem.marketplaceState,
             lastUpdated: collectionItem.lastUpdated,
-            chainName: 'Cronos',
-            coinSymbol: 'CRO',
+            chainName: collectionItem.chainName,
+            tokenSymbol: collectionItem.tokenSymbol,
             favourite
-        }
+        };
+        return item;
     }
 
 }

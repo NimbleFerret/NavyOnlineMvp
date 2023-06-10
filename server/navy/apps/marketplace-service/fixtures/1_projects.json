@@ -2,9 +2,10 @@
     {
         "name": "Navy.online",
         "active": true,
-        "state": 4,
+        "state": "Minting_and_sale",
         "supportedChains": [
-            "Cronos"
+            "cronos",
+            "venom"
         ]
     }
 ]

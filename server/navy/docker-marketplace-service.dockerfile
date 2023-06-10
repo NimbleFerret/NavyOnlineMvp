@@ -2,7 +2,7 @@ FROM node:lts-bullseye-slim as builder
 
 WORKDIR /app
 
-COPY .env ./
+COPY .test.env ./
 COPY tsconfig.json ./
 COPY nest-cli.json ./
 COPY package.json ./

@@ -35,6 +35,9 @@ export class UserProfile {
     ethAddress: string;
 
     @Prop({ index: true })
+    venomAddress: string;
+
+    @Prop({ index: true })
     nickname: string;
 
     @Prop({ default: false })

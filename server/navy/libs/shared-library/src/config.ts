@@ -15,21 +15,21 @@ export class Config {
     public static readonly GAMEPLAY_SERVICE_DEFAULT_PORT = 4020;
     public static readonly GAMEPLAY_SERVICE_DEFAULT_REGION = 'EU';
 
-    // TODO get from env ?
     public static readonly TestEnv = false;
 
-    private static remoteRedis = true;
-    private static dockerRedis = true;
+    private static RemoteRedis = false;
+    private static DockerRedis = true;
+    private static SecureRedis = true;
 
     public static GetRedisHost() {
         return {
-            host: Config.dockerRedis ? 'navy-redis' : (Config.remoteRedis ? '23.111.202.19' : 'localhost'),
+            host: Config.DockerRedis ? 'navy-redis' : (Config.RemoteRedis ? '23.111.202.19' : 'localhost'),
             port: 6379,
-            password: Config.remoteRedis ? 'khbadchgba6576tgfyuv' : ''
+            password: Config.SecureRedis ? 'khbadchgba6576tgfyuv' : ''
         }
     }
 
-    public static MongoDBName = 'navy_test';
+    public static MongoDBName = 'navy';
 
     public static GetMongoHost() {
         return `mongodb://${Config.TestEnv ? 'localhost' : 'navyuser:jhassct872hbJGFJgkcva2s@navy-mongodb'}`;

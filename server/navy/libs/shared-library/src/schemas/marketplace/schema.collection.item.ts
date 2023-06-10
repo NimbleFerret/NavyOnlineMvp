@@ -5,9 +5,9 @@ import { Document } from 'mongoose';
 export type CollectionItemDocument = CollectionItem & Document;
 
 export enum MarketplaceState {
-    LISTED,
-    SOLD,
-    NONE,
+    LISTED = 'Listed',
+    SOLD = 'Sold',
+    NONE = 'None',
 }
 
 @Schema()
@@ -19,56 +19,56 @@ export class CollectionItem {
     })
     id: string;
 
-    @Prop()
+    @Prop({ required: true })
     tokenId: number;
 
-    @Prop()
+    @Prop({ required: true })
     tokenUri: string;
 
     @Prop()
     seller: string;
 
-    @Prop()
+    @Prop({ required: true })
     owner: string;
 
-    @Prop()
+    @Prop({ required: true, default: 0 })
     price: number;
 
-    @Prop()
+    @Prop({ required: true })
     image: string;
 
-    @Prop({ type: Object })
+    @Prop({ required: true, type: Object })
     visuals: object;
 
-    @Prop({ type: Object })
+    @Prop({ required: true, type: Object })
     traits: object;
 
-    @Prop()
+    @Prop({ required: true })
     rarity: string;
 
-    @Prop()
+    @Prop({ required: true })
     lastUpdated: number;
 
-    @Prop({ default: false })
+    @Prop({ required: true, default: false })
     needUpdate: boolean;
 
-    @Prop()
+    @Prop({ required: true })
     contractAddress: string;
 
-    @Prop()
+    @Prop({ required: true })
     collectionName: string;
 
-    @Prop()
+    @Prop({ required: true })
     chainId: string;
 
-    @Prop()
+    @Prop({ required: true })
     chainName: string;
 
-    @Prop()
-    coinSymbol: string;
+    @Prop({ required: true })
+    tokenSymbol: string;
 
     @Prop({
-        type: Number,
+        type: String,
         required: true,
         enum: [
             MarketplaceState.LISTED,

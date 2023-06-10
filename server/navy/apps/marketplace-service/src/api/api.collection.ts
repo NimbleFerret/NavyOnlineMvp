@@ -1,20 +1,27 @@
-import { EthersConstants } from "@app/shared-library/ethers/ethers.constants";
+import { SharedLibraryService } from "@app/shared-library";
+import { CronosConstants } from "@app/shared-library/blockchain/cronos/cronos.constants";
+import { VenomConstants } from "@app/shared-library/blockchain/venom/venom.constants";
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItem, CollectionItemDocument, MarketplaceState } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { Mint, MintDocument } from "@app/shared-library/schemas/marketplace/schema.mint";
 import { UserProfile } from "@app/shared-library/schemas/schema.user.profile";
 import { Converter } from "@app/shared-library/shared-library.converter";
 import { Utils } from "@app/shared-library/utils";
-import { BadGatewayException, Injectable } from "@nestjs/common";
+import { BadGatewayException, BadRequestException, Injectable, NotFoundException, OnModuleInit } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Document } from "mongoose";
 import { AppService } from "../app.service";
+import { CollectionItemResponseObject, PaginatedCollectionItemsResponse } from "../dto/dto.collection";
+import { TopSalesDto } from "../dto/dto.topSales";
 import { AuthApiService } from "./api.auth";
 import { FavouriteApiService } from "./api.favourite";
 import { GeneralApiService } from "./api.general";
 
 @Injectable()
-export class CollectionApiService {
+export class CollectionApiService implements OnModuleInit {
+
+    private collectionDisplayingNameByName = new Map<string, string>();
+    private collectionDisplayingDescriptionByName = new Map<string, string>();
 
     constructor(
         private readonly generalApiService: GeneralApiService,
@@ -26,8 +33,25 @@ export class CollectionApiService {
     ) {
     }
 
-    async getCollection(contractAddress: string) {
-        const collection = await this.collectionModel.findOne({ contractAddress }).select(['-_id', '-__v']);
+    async onModuleInit() {
+        setTimeout(async () => {
+            const captainsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.CaptainContractAddress);
+            const shipsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.ShipContractAddress);
+            const islandsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.IslandContractAddress);
+
+            this.collectionDisplayingNameByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.name);
+            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.description);
+
+            this.collectionDisplayingNameByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.name);
+            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.description);
+
+            this.collectionDisplayingNameByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.name);
+            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.description);
+        }, 2500);
+    }
+
+    async getCollection(chainName: string, contractAddress: string) {
+        const collection = await this.collectionModel.findOne({ chainName, contractAddress }).select(['-_id', '-__v']);
         if (!collection) {
             throw new BadGatewayException();
         }
@@ -36,111 +60,22 @@ export class CollectionApiService {
 
     async getCollectionItems(
         authToken: string | undefined,
+        chainName: string,
         contractAddress: string,
         page?: number,
         size?: number,
-        rarity?: string
-    ) {
-        let userProfile = undefined;
-        if (authToken) {
-            userProfile = await this.authService.checkTokenAndGetProfile(authToken);
-        }
-
-        let initialPage = page;
-        if (!page) {
-            page = 1;
-            initialPage = 1;
-        }
-        const pageSize = size ? size : AppService.DefaultPaginationSize;
-
-        // ----------------------------------
-        // Query collection items count
-        // ----------------------------------
-
-        const query = {
-            contractAddress: contractAddress.toLowerCase(),
-            marketplaceState: {
-                "$ne": MarketplaceState.SOLD
-            }
-        };
-
-        const rarityCheck = rarity && (rarity == 'Legendary' || rarity == 'Epic' || rarity == 'Rare' || rarity == 'Common');
-        if (rarityCheck) {
-            query['rarity'] = rarity;
-        }
-
-        const count = await this.collectionItemModel.countDocuments(query);
-
-        // ----------------------------------
-        // Query collection items
-        // ----------------------------------
-
-        const result = await this.collectionItemModel.find(query)
-            .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
-            .skip((page - 1) * pageSize)
-            .limit(pageSize)
-            .sort([['marketplaceState', 1], ['tokenId', -1]]);
-
-        // ----------------------------------
-        // Prepare paginated response
-        // ----------------------------------
-
-        const resultItems = this.convertCollectionItems(result, true);
-
-        let pages = Math.ceil(count / pageSize);
-        let next = null;
-        let prev = null;
-
-        if (pages < 1) {
-            pages = 1;
-        }
-        if (pages > 1) {
-            const getUrl = (p: number) => {
-                let url = '';
-                url = `https://navy.online/marketplace/collection/${contractAddress}/all?page=${p}`;
-                if (size) {
-                    url += '&size=' + size;
-                }
-                if (rarity) {
-                    url += '&rarity=' + size;
-                }
-                return url;
-            };
-
-            next = ((page - 1) * pageSize) + result.length < (count) ? getUrl(Number(initialPage) + 1) : null;
-            prev = page > 1 ? getUrl(page - 1) : null;
-        }
-
-        const response = {
-            info: {
-                count,
-                pages,
-                next,
-                prev
-            },
-            result: resultItems
-        };
-
-        // ----------------------------------
-        // Fill user favourite items 
-        // ----------------------------------
-
-        if (userProfile) {
-            await this.fillCollectionItemsFavourites(response.result, userProfile);
-        }
-
-        return response;
-    }
-
-    async getCollectionItemsV2(
-        authToken: string | undefined,
-        contractAddress: string,
-        page?: number,
-        size?: number,
-        price?: string,
+        priceOrder?: string,
         rarity?: string[],
         marketplaceState?: string
-    ) {
+    ): Promise<PaginatedCollectionItemsResponse> {
+        if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME.toLowerCase()) {
+            chainName = SharedLibraryService.CRONOS_CHAIN_NAME;
+        } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME.toLowerCase()) {
+            chainName = SharedLibraryService.VENOM_CHAIN_NAME;
+        } else {
+            throw new BadRequestException();
+        }
+
         let userProfile = undefined;
         if (authToken) {
             userProfile = await this.authService.checkTokenAndGetProfile(authToken);
@@ -158,10 +93,12 @@ export class CollectionApiService {
         // ----------------------------------
 
         const listedQuery = {
+            chainName,
             contractAddress: contractAddress.toLowerCase(),
             marketplaceState: MarketplaceState.LISTED
         };
         const notListedQuery = {
+            chainName,
             contractAddress: contractAddress.toLowerCase(),
             marketplaceState: MarketplaceState.NONE
         };
@@ -190,14 +127,16 @@ export class CollectionApiService {
 
         let loadListed = true;
         let loadNotListed = true;
-        const listedResult = []
+        let listedCount = 0;
+        let notListedCount = 0;
+        const listedResult = [];
         const notListedResult = [];
 
         if (marketplaceState) {
-            if (marketplaceState == 'listed') {
+            if (marketplaceState.toLowerCase() == MarketplaceState.LISTED.toLowerCase()) {
                 loadNotListed = false;
             }
-            if (marketplaceState == 'none') {
+            if (marketplaceState.toLowerCase() == MarketplaceState.NONE.toLowerCase()) {
                 loadListed = false;
             }
         }
@@ -207,15 +146,17 @@ export class CollectionApiService {
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
                 .skip((page - 1) * pageSize)
                 .limit(pageSize));
+            listedCount = listedResult.length;
         }
         if (loadNotListed) {
             notListedResult.push(...await this.collectionItemModel.find(notListedQuery)
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
                 .skip((page - 1) * pageSize)
-                .limit(pageSize - listedResult.length));
+                .limit(pageSize - listedCount));
+            notListedCount = notListedResult.length;
         }
 
-        const totalCount = listedResult.length + notListedResult.length;
+        const totalCount = listedCount + notListedCount;
 
         // ----------------------------------
         // Query collection items
@@ -223,10 +164,21 @@ export class CollectionApiService {
 
         const totalResult = [...listedResult, ...notListedResult]
             .sort(function (a, b) {
-                return a.marketplaceState - b.marketplaceState || a.tokenId - b.tokenId;
+                const marketplaceStateCondition = a.marketplaceState.localeCompare(b.marketplaceState);
+                let sortCondition = marketplaceStateCondition || b.tokenId - a.tokenId;
+
+                if (priceOrder) {
+                    if (priceOrder == 'asc') {
+                        sortCondition = marketplaceStateCondition || b.price - a.price;
+                    } else if (priceOrder == 'desc') {
+                        sortCondition = marketplaceStateCondition || a.price - b.price;
+                    }
+                }
+
+                return sortCondition;
             });
 
-        const resultItems = this.convertCollectionItems(totalResult, false);
+        const resultItems = this.convertCollectionItems(totalResult);
 
         if (userProfile) {
             await this.fillCollectionItemsFavourites(resultItems, userProfile);
@@ -246,15 +198,15 @@ export class CollectionApiService {
         if (pages > 1) {
             const getUrl = (p: number) => {
                 let url = '';
-                url = `https://navy.online/marketplace/collection/${contractAddress}/items?page=${p}`;
+                url = `https://navy-metaverse.online/marketplace/collection/${chainName}/${contractAddress}/items?page=${p}`;
                 if (size) {
                     url += '&size=' + size;
                 }
                 if (rarity) {
                     url += '&rarity=' + rarity;
                 }
-                if (price) {
-                    url += '&price=' + price;
+                if (priceOrder) {
+                    url += '&priceOrder=' + priceOrder;
                 }
                 return url;
             };
@@ -263,12 +215,18 @@ export class CollectionApiService {
             prev = page > 1 ? getUrl(page - 1) : null;
         }
 
-        const response = {
+        // console.log(totalResult);
+
+        const dummyCollectionName = totalResult[0].collectionName;
+
+        const response: PaginatedCollectionItemsResponse = {
             info: {
                 count: totalCount,
                 pages,
                 next,
-                prev
+                prev,
+                collectionName: this.collectionDisplayingNameByName.get(dummyCollectionName),
+                collectionDescription: this.collectionDisplayingDescriptionByName.get(dummyCollectionName)
             },
             result: resultItems
         };
@@ -294,8 +252,8 @@ export class CollectionApiService {
         }
     }
 
-    async tokensPerformance(days?: string) {
-        const response = [];
+    async getLastCollectionItemsSold(days?: string) {
+        const response: CollectionItemResponseObject[] = [];
         const projects = await this.generalApiService.getProjects();
         if (projects) {
             const query = {
@@ -320,24 +278,39 @@ export class CollectionApiService {
     }
 
     async topSales(authToken?: string, days?: string) {
-        const response = [];
+        const response: TopSalesDto = {
+            venomTopSales: [],
+            cronosTopSales: []
+        };
+
+        const topSalesCount = 9;
+
         const projects = await this.generalApiService.getProjects();
         if (projects) {
-            const query = {
-                contractAddress: [],
-                marketplaceState: MarketplaceState.SOLD,
-                lastUpdated: { $gte: Utils.GetDaysSeconds(days) }
-            };
+            const self = this;
+            async function getTopSalesByChainName(chainName: string) {
+                const query = {
+                    chainName,
+                    contractAddress: [],
+                    marketplaceState: MarketplaceState.SOLD,
+                    lastUpdated: { $gte: Utils.GetDaysSeconds(days) }
+                };
 
-            projects[0].collections.forEach(collection => {
-                query.contractAddress.push(collection.contractAddress);
-            });
+                projects[0].collections.forEach(collection => {
+                    query.contractAddress.push(collection.contractAddress);
+                });
 
-            const topSaleResult = await this.collectionItemModel
-                .find(query)
-                .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
-                .limit(9)
-                .sort([['price', -1], ['lastUpdated', 1]]);
+                const topSaleResult = await self.collectionItemModel
+                    .find(query)
+                    .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
+                    .limit(topSalesCount)
+                    .sort([['price', -1], ['lastUpdated', 1]]);
+
+                return topSaleResult;
+            }
+
+            const venomTopSales = await getTopSalesByChainName(SharedLibraryService.VENOM_CHAIN_NAME);
+            const cronosTopSales = await getTopSalesByChainName(SharedLibraryService.CRONOS_CHAIN_NAME);
 
             const favourites = [];
             if (authToken) {
@@ -348,8 +321,11 @@ export class CollectionApiService {
                 });
             }
 
-            topSaleResult.forEach(f => {
-                response.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+            venomTopSales.forEach(f => {
+                response.venomTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+            });
+            cronosTopSales.forEach(f => {
+                response.cronosTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
             });
         }
         return response;
@@ -380,7 +356,7 @@ export class CollectionApiService {
             collectionItems.push(...(await this.collectionItemModel
                 .find({
                     marketplaceState: MarketplaceState.LISTED,
-                    seller: owner
+                    owner: owner
                 })
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])));
 
@@ -391,20 +367,23 @@ export class CollectionApiService {
                 })
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits']));
 
-            const resultItems = this.convertCollectionItems(collectionItems.sort(function (a, b) { return b.collectionAddress - a.collectionAddress }), false);
+            const resultItems = this.convertCollectionItems(collectionItems.sort(function (a, b) { return b.collectionAddress - a.collectionAddress }));
             await this.fillCollectionItemsFavourites(resultItems, userProfile);
 
             resultItems.forEach(f => {
                 switch (f.contractAddress) {
-                    case EthersConstants.CaptainContractAddress:
+                    case VenomConstants.CaptainsCollectionContractAddress:
+                    case CronosConstants.CaptainContractAddress:
                         result.captains.total++;
                         result.captains.items.push(f);
                         break;
-                    case EthersConstants.ShipContractAddress:
+                    case VenomConstants.ShipsCollectionContractAddress:
+                    case CronosConstants.ShipContractAddress:
                         result.ships.total++;
                         result.ships.items.push(f);
                         break;
-                    case EthersConstants.IslandContractAddress:
+                    case VenomConstants.IslandsCollectionContractAddress:
+                    case CronosConstants.IslandContractAddress:
                         result.islands.total++;
                         result.islands.items.push(f);
                         break;
@@ -415,14 +394,27 @@ export class CollectionApiService {
         return result;
     }
 
-    async getCollectionItem(authToken: string | undefined, address: string, tokenId: string) {
+    async getCollectionItem(authToken: string | undefined, chainName: string, address: string, tokenId: string) {
+        if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME.toLowerCase()) {
+            chainName = SharedLibraryService.CRONOS_CHAIN_NAME;
+        } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME.toLowerCase()) {
+            chainName = SharedLibraryService.VENOM_CHAIN_NAME;
+        } else {
+            throw new BadRequestException();
+        }
+
         const collectionItems = await this.collectionItemModel.find({
             contractAddress: address,
             tokenId,
+            chainName,
             marketplaceState: {
                 "$ne": MarketplaceState.SOLD
             }
         }).select(['-_id', '-__v', '-needUpdate']);
+
+        if (collectionItems.length == 0) {
+            throw new NotFoundException();
+        }
 
         let collectionItem = collectionItems[0];
         if (collectionItems.length == 2) {
@@ -442,8 +434,9 @@ export class CollectionApiService {
         return Converter.ConvertCollectionItem(collectionItem, favourite);
     }
 
-    async getMintByCollection(collectionAddress: string) {
-        const collection = await this.getCollection(collectionAddress);
+    async getMintByCollection(chainName: string, collectionAddress: string) {
+        chainName = chainName.charAt(0).toUpperCase() + chainName.slice(1);
+        const collection = await this.getCollection(chainName, collectionAddress);
         if (!collection) {
             throw new BadGatewayException();
         }
@@ -469,16 +462,13 @@ export class CollectionApiService {
         });
     }
 
-    private convertCollectionItems(collectionItems: any, swapSeller = false) {
+    private convertCollectionItems(collectionItems: any) {
         const resultItems = [];
         const resultIds = new Set<number>();
 
         collectionItems.forEach(r => {
             if (!resultIds.has(r.tokenId)) {
                 const resultItem = Converter.ConvertCollectionItem(r, false);
-                if (r.seller && swapSeller) {
-                    resultItem.owner = r.seller;
-                }
                 resultItems.push(resultItem);
                 resultIds.add(r.tokenId);
             } else {

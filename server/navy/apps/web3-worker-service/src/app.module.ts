@@ -12,25 +12,44 @@ import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { QueueMarketplaceUpdateProcessor } from './queue/queue.marketplace.update.processor';
-import { QueueMarketplaceListingProcessor } from './queue/queue.marketplace.listing.processor';
-import { QueueMintProcessor } from './queue/queue.mint.processor';
 import { CaptainSettings, CaptainSettingsSchema } from '@app/shared-library/schemas/entity/schema.captain.settings';
 import { CaptainTrait, CaptainTraitSchema } from '@app/shared-library/schemas/entity/schema.captain.trait';
+import { QueueMintCronosProcessor } from './queue/queue.mint.cronos.processor';
+import { QueueMintVenomProcessor } from './queue/queue.mint.venom.processor';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     BullModule.forRoot({
       redis: Config.GetRedisHost(),
     }),
     BullModule.registerQueue({
-      name: WorkersMarketplace.MarketplaceUpdateQueue
+      name: WorkersMarketplace.CronosMarketplaceUpdateQueue
     }),
     BullModule.registerQueue({
-      name: WorkersMarketplace.MarketplaceListingQueue
+      name: WorkersMarketplace.CronosMarketplaceListingQueue
     }),
     BullModule.registerQueue({
-      name: WorkersMint.MintQueue
+      name: WorkersMarketplace.CronosMarketplaceSoldQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMint.CronosMintQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMarketplace.VenomMarketplaceUpdateQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMarketplace.VenomMarketplaceListingQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMarketplace.VenomMarketplaceSoldQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMarketplace.VenomMarketplaceSetSalePriceQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMint.VenomMintQueue
     }),
     MongooseModule.forRoot(Config.GetMongoHost(), {
       dbName: Config.MongoDBName
@@ -54,10 +73,9 @@ import { CaptainTrait, CaptainTraitSchema } from '@app/shared-library/schemas/en
     AppController
   ],
   providers: [
-    QueueMarketplaceUpdateProcessor,
-    QueueMarketplaceListingProcessor,
-    QueueMintProcessor,
-    AppService
+    AppService,
+    QueueMintCronosProcessor,
+    QueueMintVenomProcessor
   ],
 })
 export class AppModule { }

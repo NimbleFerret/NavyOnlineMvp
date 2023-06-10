@@ -12,7 +12,6 @@ import { ClientGrpc } from "@nestjs/microservices";
 import { InjectModel } from "@nestjs/mongoose";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { Model } from "mongoose";
-import { lastValueFrom } from "rxjs";
 import { FeedbackDto } from "../dto/dto.feedback";
 import { ProjectDto, ProjectCollection } from "../dto/dto.projects";
 
@@ -57,9 +56,10 @@ export class GeneralApiService implements OnModuleInit {
         // }));
     }
 
-    getCronosUsdPrice() {
+    getTokensUsdPrice() {
         return {
-            usd: this.cronosTokenUsdPrice
+            venomUsdPrice: 0,
+            cronosUsdPrice: this.cronosTokenUsdPrice
         };
     }
 
@@ -85,7 +85,7 @@ export class GeneralApiService implements OnModuleInit {
                 project.collections.push({
                     name: collection.name,
                     contractAddress: collection.contractAddress,
-                    chainId: collection.chainId,
+                    chainName: collection.chainName,
                 } as ProjectCollection);
             }
 

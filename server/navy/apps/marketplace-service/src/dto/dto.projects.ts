@@ -1,12 +1,12 @@
 export interface ProjectCollection {
     contractAddress: string;
-    chainId: string;
+    chainName: string;
     name: string;
 }
 
 export interface ProjectDto {
     name: string;
     active: boolean;
-    state: number;
+    state: string;
     collections: ProjectCollection[];
 }

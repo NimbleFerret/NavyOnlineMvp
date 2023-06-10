@@ -2,11 +2,12 @@ import { NftType } from "../shared-library.main";
 
 export interface MintJob {
     nftType: NftType;
-    sender: string;
-    contractAddress: string;
+    owner: string;
+    chainName: string;
     tokenId?: number;
 }
 
 export class WorkersMint {
-    public static readonly MintQueue = 'MintQueue';
+    public static readonly CronosMintQueue = 'CronosMintQueue';
+    public static readonly VenomMintQueue = 'VenomMintQueue';
 }
