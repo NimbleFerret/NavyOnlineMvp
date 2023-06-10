@@ -435,6 +435,7 @@ export class CollectionApiService implements OnModuleInit {
     }
 
     async getMintByCollection(chainName: string, collectionAddress: string) {
+        chainName = chainName.charAt(0).toUpperCase() + chainName.slice(1);
         const collection = await this.getCollection(chainName, collectionAddress);
         if (!collection) {
             throw new BadGatewayException();
