@@ -16,6 +16,7 @@ export enum GenerateNftBehaviour {
 
 export abstract class NftGenerator {
 
+    currentIndex: number;
     metadata: string;
     rarity: Rarity;
 

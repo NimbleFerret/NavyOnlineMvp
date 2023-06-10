@@ -188,11 +188,11 @@ export class BlockchainBaseProcessor {
     public static NftTypeToString(nftType: NftType) {
         switch (nftType) {
             case NftType.CAPTAIN:
-                return 'Captain';
+                return 'Captains';
             case NftType.SHIP:
-                return 'Ship';
+                return 'Ships';
             case NftType.ISLAND:
-                return 'Island';
+                return 'Islands';
         }
     }
 

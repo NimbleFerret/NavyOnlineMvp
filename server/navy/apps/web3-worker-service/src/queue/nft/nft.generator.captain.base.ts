@@ -114,6 +114,8 @@ export abstract class NftGeneratorCaptainBase extends NftGenerator {
     }
 
     async generateNftMetadata(index: number, maxIndex: number, imagePathOnMoralis: string, nftPartsToDraw: NftSubPartDetails[]) {
+        this.currentIndex = index;
+
         const captainStats = {
             currentLevel: 0,
             maxLevel: 10,

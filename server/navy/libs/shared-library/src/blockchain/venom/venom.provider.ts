@@ -26,8 +26,8 @@ export class VenomProvider {
     private static Provider: ProviderRpcClient;
     private static OwnerAccount: EverWalletAccount;
 
-    private captainsCollectionContract: Contract<typeof CollectionContractArtifact.ABI>;
-    private captainsMarketplaceContract: Contract<typeof MarketplaceContractArtifact.ABI>;
+    private static CaptainsCollectionContract: Contract<typeof CollectionContractArtifact.ABI>;
+    private static CaptainsMarketplaceContract: Contract<typeof MarketplaceContractArtifact.ABI>;
 
     constructor(private configService: ConfigService) {
         VenomProvider.Provider = new ProviderRpcClient({
@@ -46,14 +46,7 @@ export class VenomProvider {
         });
     }
 
-    async init(
-        nftMintedCallback: Function,
-        nftGeneratedCallback: Function,
-        nftListedCallback: Function,
-        nftDelistedCallback: Function,
-        nftPriceSetCallback: Function,
-        nftSoldCallback: Function
-    ) {
+    async init() {
         const publicKey = this.configService.get<string>('VENOM_OWNER_PUBLIC_KEY');
         const secretKey = this.configService.get<string>('VENOM_OWNER_SECRET_KEY');
         const collectionContractAddress = this.configService.get<string>('VENOM_COLLECTION_CONTRACT_ADDRESS');
@@ -67,11 +60,30 @@ export class VenomProvider {
             secretKey
         });
 
-        // // Initialize contracts and setup event listeners
-        this.captainsCollectionContract = new VenomProvider.Provider.Contract(CollectionContractArtifact.ABI, new Address(collectionContractAddress));
-        this.captainsMarketplaceContract = new VenomProvider.Provider.Contract(MarketplaceContractArtifact.ABI, new Address(marketplaceContractAddress));
+        // Initialize contracts and setup event listeners
+        VenomProvider.CaptainsCollectionContract = new VenomProvider.Provider.Contract(CollectionContractArtifact.ABI, new Address(collectionContractAddress));
+        VenomProvider.CaptainsMarketplaceContract = new VenomProvider.Provider.Contract(MarketplaceContractArtifact.ABI, new Address(marketplaceContractAddress));
+    }
 
-        const captainsCollectionEvents = this.captainsCollectionContract.events(new VenomProvider.Provider.Subscriber());
+    async getCaptainsTotalSupply() {
+        const result: any = await VenomProvider.CaptainsCollectionContract.methods.totalSupply({ answerId: 0 } as never).call();
+        return result.count;
+    }
+
+    async getCaptainsCollectionSize() {
+        const result: any = await VenomProvider.CaptainsCollectionContract.methods.collectionSize({} as never).call();
+        return result.collectionSize;
+    }
+
+    async initCallbacks(
+        nftMintedCallback: Function,
+        nftGeneratedCallback: Function,
+        nftListedCallback: Function,
+        nftDelistedCallback: Function,
+        nftPriceSetCallback: Function,
+        nftSoldCallback: Function
+    ) {
+        const captainsCollectionEvents = VenomProvider.CaptainsCollectionContract.events(new VenomProvider.Provider.Subscriber());
         captainsCollectionEvents.on(async (contractEvent: any) => {
             const eventName = 'Captains ' + contractEvent.event;
             if (contractEvent.event == VenomProvider.EventNftMinted) {
@@ -93,7 +105,7 @@ export class VenomProvider {
             }
         });
 
-        const captainsMarketplaceEvents = this.captainsMarketplaceContract.events(new VenomProvider.Provider.Subscriber());
+        const captainsMarketplaceEvents = VenomProvider.CaptainsMarketplaceContract.events(new VenomProvider.Provider.Subscriber());
         captainsMarketplaceEvents.on(async (contractEvent: any) => {
             const eventName = 'Captains ' + contractEvent.event;
             switch (contractEvent.event) {
@@ -119,7 +131,18 @@ export class VenomProvider {
                     break;
             }
         });
+    }
 
+    // Shit code, refactor it
+    public static async GrantCaptain(id: number, json: string, minter: any) {
+        try {
+            const tx = await VenomProvider.CaptainsCollectionContract.methods.generateNft({ id, json, minter } as never).send({
+                from: VenomProvider.OwnerAccount.address,
+                amount: "1000000000"
+            });
+        } catch (ex) {
+            Logger.error(ex);
+        }
     }
 
     public static async VerifySignature(messageToSign: string, publicKey: string, dataHash: string, signature: string) {
