@@ -51,6 +51,8 @@ export class CollectionApiService implements OnModuleInit {
     }
 
     async getCollection(chainName: string, contractAddress: string) {
+        chainName = chainName.charAt(0).toUpperCase() + chainName.slice(1);
+
         const collection = await this.collectionModel.findOne({ chainName, contractAddress }).select(['-_id', '-__v']);
         if (!collection) {
             throw new BadGatewayException();
@@ -215,9 +217,13 @@ export class CollectionApiService implements OnModuleInit {
             prev = page > 1 ? getUrl(page - 1) : null;
         }
 
-        // console.log(totalResult);
+        let collectionName = '';
+        let collectionDescription = '';
 
-        const dummyCollectionName = totalResult[0].collectionName;
+        if (totalResult.length > 0) {
+            collectionName = this.collectionDisplayingNameByName.get(totalResult[0].collectionName);
+            collectionDescription = this.collectionDisplayingDescriptionByName.get(totalResult[0].collectionName);
+        }
 
         const response: PaginatedCollectionItemsResponse = {
             info: {
@@ -225,8 +231,8 @@ export class CollectionApiService implements OnModuleInit {
                 pages,
                 next,
                 prev,
-                collectionName: this.collectionDisplayingNameByName.get(dummyCollectionName),
-                collectionDescription: this.collectionDisplayingDescriptionByName.get(dummyCollectionName)
+                collectionName,
+                collectionDescription
             },
             result: resultItems
         };
@@ -395,6 +401,8 @@ export class CollectionApiService implements OnModuleInit {
     }
 
     async getCollectionItem(authToken: string | undefined, chainName: string, address: string, tokenId: string) {
+        chainName = chainName.charAt(0).toUpperCase() + chainName.slice(1);
+
         if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME.toLowerCase()) {
             chainName = SharedLibraryService.CRONOS_CHAIN_NAME;
         } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME.toLowerCase()) {
