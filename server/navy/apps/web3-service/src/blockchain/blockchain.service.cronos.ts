@@ -37,7 +37,6 @@ export class BlockchainServiceCronos implements OnModuleInit {
         @InjectQueue(WorkersMarketplace.CronosMarketplaceListingQueue) marketplaceListingQueue: Queue,
         @InjectQueue(WorkersMarketplace.CronosMarketplaceSoldQueue) marketplaceSoldQueue: Queue
     ) {
-        Logger.log('BlockchainServiceCronos constructor 1');
         this.blockchainBaseProcessor = new BlockchainBaseProcessor(
             SharedLibraryService.CRONOS_CHAIN_NAME,
             mintQueue,
@@ -45,17 +44,14 @@ export class BlockchainServiceCronos implements OnModuleInit {
             marketplaceListingQueue,
             marketplaceSoldQueue
         );
-        Logger.log('BlockchainServiceCronos constructor 2');
     }
 
     async onModuleInit() {
-        Logger.log('BlockchainServiceCronos onModuleInit 1');
         await this.cronosProvider.init(
             NftContractAbi,
             CollectionContractAbi,
             MarketplaceContractAbi
         );
-        Logger.log('BlockchainServiceCronos onModuleInit 2');
         // await this.blockchainBaseProcessor.syncMarketplaceState(MarketplaceState.LISTED);
         // await this.blockchainBaseProcessor.syncMarketplaceState(MarketplaceState.SOLD);
         this.cronosProvider.captainCollectionContract.on(CronosProvider.EventNftMinted, async (
@@ -117,8 +113,6 @@ export class BlockchainServiceCronos implements OnModuleInit {
             //     price
             // });
         });
-
-        Logger.log('BlockchainServiceCronos onModuleInit 3');
     }
 
     checkEthersAuthSignature(request: CheckEthersAuthSignatureRequest) {

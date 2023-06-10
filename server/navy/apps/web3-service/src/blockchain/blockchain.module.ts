@@ -7,9 +7,11 @@ import { WorkersMint } from '@app/shared-library/workers/workers.mint';
 import { Collection, CollectionSchema } from '@app/shared-library/schemas/marketplace/schema.collection';
 import { Mint, MintSchema } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
     imports: [
+        ConfigModule.forRoot(),
         BullModule.registerQueue({
             name: WorkersMarketplace.CronosMarketplaceUpdateQueue
         }),
@@ -44,11 +46,11 @@ import { MongooseModule } from '@nestjs/mongoose';
     ],
     providers: [
         BlockchainServiceCronos,
-        // BlockchainServiceVenom
+        BlockchainServiceVenom
     ],
     exports: [
         BlockchainServiceCronos,
-        // BlockchainServiceVenom
+        BlockchainServiceVenom
     ]
 })
 export class BlockchainModule { }
