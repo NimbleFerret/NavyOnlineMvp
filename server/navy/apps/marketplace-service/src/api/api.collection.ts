@@ -33,7 +33,6 @@ export class CollectionApiService implements OnModuleInit {
     ) {
     }
 
-    // TODO need better loading order, it failes on fresh
     async onModuleInit() {
         setTimeout(async () => {
             const captainsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.CaptainContractAddress);

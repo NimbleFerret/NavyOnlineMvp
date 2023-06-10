@@ -76,12 +76,12 @@ export class BlockchainServiceCronos implements OnModuleInit {
             Logger.log('Captains lising occured:');
             Logger.log({ nftId: nftId.toNumber(), seller, owner, price: price.toNumber() });
 
-            // await this.blockchainBaseProcessor.processNftListedEvent(NftType.CAPTAIN, {
-            //     nftId,
-            //     owner,
-            //     seller,
-            //     price
-            // });
+            await this.blockchainBaseProcessor.processNftListedEvent(NftType.CAPTAIN, {
+                nftId,
+                owner,
+                seller,
+                price
+            });
         });
 
         this.cronosProvider.captainMarketplaceContract.on(CronosProvider.EventNftDelisted, async (
@@ -91,10 +91,10 @@ export class BlockchainServiceCronos implements OnModuleInit {
             Logger.log('Captains delisting occured:');
             Logger.log({ nftId: nftId.toNumber(), seller });
 
-            // await this.blockchainBaseProcessor.processNftDelistedEvent(NftType.CAPTAIN, {
-            //     nftId,
-            //     seller
-            // });
+            await this.blockchainBaseProcessor.processNftDelistedEvent(NftType.CAPTAIN, {
+                nftId,
+                seller
+            });
         });
 
         this.cronosProvider.captainMarketplaceContract.on(CronosProvider.EventNftSold, async (
@@ -106,12 +106,12 @@ export class BlockchainServiceCronos implements OnModuleInit {
             Logger.log('Captain sold occured:');
             Logger.log({ nftId: nftId.toNumber(), seller, owner, price: price.toNumber() });
 
-            // await this.blockchainBaseProcessor.processNftSoldEvent(NftType.CAPTAIN, {
-            //     nftId,
-            //     seller,
-            //     owner,
-            //     price
-            // });
+            await this.blockchainBaseProcessor.processNftSoldEvent(NftType.CAPTAIN, {
+                nftId,
+                seller,
+                owner,
+                price
+            });
         });
     }
 

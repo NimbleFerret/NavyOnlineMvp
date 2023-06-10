@@ -12,11 +12,12 @@ import { ClientsModule } from '@nestjs/microservices';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { QueueMarketplaceUpdateProcessor } from './queue/queue.marketplace.update.processor';
-import { QueueMarketplaceListingProcessor } from './queue/queue.marketplace.listing.processor';
-import { QueueMintProcessor } from './queue/queue.mint.processor';
+// import { QueueMarketplaceUpdateProcessor } from './queue/queue.marketplace.update.processor';
+// import { QueueMarketplaceListingProcessor } from './queue/queue.marketplace.listing.processor';
+// import { QueueMintProcessor } from './queue/queue.mint.processor';
 import { CaptainSettings, CaptainSettingsSchema } from '@app/shared-library/schemas/entity/schema.captain.settings';
 import { CaptainTrait, CaptainTraitSchema } from '@app/shared-library/schemas/entity/schema.captain.trait';
+import { QueueMintCronosProcessor } from './queue/queue.mint.cronos.processor';
 
 @Module({
   imports: [
@@ -72,10 +73,12 @@ import { CaptainTrait, CaptainTraitSchema } from '@app/shared-library/schemas/en
     AppController
   ],
   providers: [
-    QueueMarketplaceUpdateProcessor,
-    QueueMarketplaceListingProcessor,
-    QueueMintProcessor,
-    AppService
+    // QueueMarketplaceUpdateProcessor,
+    // QueueMarketplaceListingProcessor,
+    // QueueMintProcessor,
+    // QueueMintProcessor,
+    AppService,
+    QueueMintCronosProcessor
   ],
 })
 export class AppModule { }

@@ -3,9 +3,9 @@ export class CronosConstants {
     public static readonly AksContractAddress = '';
     public static readonly NvyContractAddress = '';
 
-    public static readonly CaptainContractAddress = '0xcefd45799326f48a4d23222bb8fa15b49baf28ec'.toLowerCase();
-    public static readonly ShipContractAddress = '0xcefd45799326f48a4d23222bb8fa15b49baf28ed'.toLowerCase();
-    public static readonly IslandContractAddress = '0xcefd45799326f48a4d23222bb8fa15b49baf28ee'.toLowerCase();
+    public static readonly CaptainContractAddress = '0x2f79860E2a2829AF3C135880da1e8fC3fD9AE398'.toLowerCase();
+    public static readonly ShipContractAddress = '0x2f79860E2a2829AF3C135880da1e8fC3fD9AE399'.toLowerCase();
+    public static readonly IslandContractAddress = '0x2f79860E2a2829AF3C135880da1e8fC3fD9AE310'.toLowerCase();
 
     public static readonly ShipTemplateContractAddress = '';
 

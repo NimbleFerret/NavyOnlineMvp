@@ -109,6 +109,8 @@ export abstract class NftGeneratorCaptainBase extends NftGenerator {
         this.rareCaptainTraits = captainSettings.rareCaptainDefaultTraits;
         this.epicCaptainTraits = captainSettings.epicCaptainDefaultTraits;
         this.legendaryCaptainTraits = captainSettings.legendaryCaptainDefaultTraits;
+
+        this.initiateVisualParts();
     }
 
     async generateNftMetadata(index: number, maxIndex: number, imagePathOnMoralis: string, nftPartsToDraw: NftSubPartDetails[]) {

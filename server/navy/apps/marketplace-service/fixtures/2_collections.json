@@ -3,7 +3,7 @@
                 "name": "Captains",
                 "description": "Cronos captains collection",
                 "chainName": "Cronos",
-                "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ec",
+                "contractAddress": "0x2f79860e2a2829af3c135880da1e8fc3fd9ae398",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
                 "preview": [
@@ -18,7 +18,7 @@
                 "name": "Captains",
                 "description": "Venom captains collection",
                 "chainName": "Venom",
-                "contractAddress": "0:dbcdf5d43044c8039fc34fcf8e695f10774ef942b10f93bd9c78513761c518de",
+                "contractAddress": "0:7a455539ac137875536cd2938e9645e3b0c312856bd86ab06f59dafa6a11f9ed",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
                 "preview": [
@@ -33,7 +33,7 @@
                 "name": "Ships",
                 "description": "Cronos ships collection",
                 "chainName": "Cronos",
-                "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ed",
+                "contractAddress": "0x2f79860e2a2829af3c135880da1e8fc3fd9ae399",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
                 "preview": [
@@ -44,7 +44,7 @@
                 "name": "Ships",
                 "description": "Venom ships collection",
                 "chainName": "Venom",
-                "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ed",
+                "contractAddress": "0:7a455539ac137875536cd2938e9645e3b0c312856bd86ab06f59dafa6a11f9ee",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
                 "preview": [
@@ -55,7 +55,7 @@
                 "name": "Islands",
                 "description": "Cronos islands collection",
                 "chainName": "Cronos",
-                "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ee",
+                "contractAddress": "0x2f79860e2a2829af3c135880da1e8fc3fd9ae310",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
                 "preview": [
@@ -66,7 +66,7 @@
                 "name": "Islands",
                 "description": "Venom islands collection",
                 "chainName": "Venom",
-                "contractAddress": "0xcefd45799326f48a4d23222bb8fa15b49baf28ee",
+                "contractAddress": "0:7a455539ac137875536cd2938e9645e3b0c312856bd86ab06f59dafa6a11f9ef",
                 "collectionSize": 200,
                 "collectionItemsLeft": 200,
                 "preview": [

@@ -25,6 +25,8 @@ export class NftGeneratorCaptainCronos extends NftGeneratorCaptainBase {
             captainSettingsModel,
             collectionItemModel
         );
+
+        this.init().then();
     }
 
     async mintNft(owner: string, metadataUrl: string) {

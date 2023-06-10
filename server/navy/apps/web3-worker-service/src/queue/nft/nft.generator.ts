@@ -24,59 +24,7 @@ export abstract class NftGenerator {
     private nftPartsToDraw: NftSubPartDetails[] = [];
     private nftTypeName: string;
 
-    constructor(public nftType: NftType, collection: Collection) {
-        this.init().then(f => {
-            // Convert initial data
-            this.nftPartDetails = collection.mint.nftPartsItems.map(nftPartsItem => {
-                const nftPartDetails = {
-                    resPlural: nftPartsItem.categoryPlural,
-                    resSingle: nftPartsItem.categorySingle,
-                    subParts: []
-                } as NftPartDetails;
-
-                nftPartDetails.subParts = nftPartsItem.categoryDetails.map(categoryDetails => {
-                    let rarity = Rarity.COMMON;
-                    switch (categoryDetails.rarity) {
-                        case 'Rare':
-                            rarity = Rarity.RARE;
-                            break;
-                        case 'Epic':
-                            rarity = Rarity.EPIC;
-                            break;
-                        case 'Legendary':
-                            rarity = Rarity.LEGENDARY;
-                            break;
-                        case 'All':
-                            rarity = Rarity.ALL;
-                            break;
-                    }
-                    return {
-                        chance: categoryDetails.chancePercent,
-                        rarity
-                    } as NftSubPartDetails;
-                });
-                return nftPartDetails;
-            });
-
-            // Load image paths
-            switch (nftType) {
-                case NftType.CAPTAIN:
-                    this.nftTypeName = 'captain';
-                    break;
-                case NftType.SHIP:
-                    this.nftTypeName = 'ship';
-                    break;
-                case NftType.ISLAND:
-                    this.nftTypeName = 'island';
-                    break;
-            }
-            this.initiateNftPartsImagePath();
-
-            // Sort nft parts by rarity
-            this.nftPartDetails.forEach(nftPart => {
-                nftPart.subParts = nftPart.subParts.sort(function (a, b) { return b.rarity - a.rarity });
-            });
-        });
+    constructor(private nftType: NftType, private collection: Collection) {
     }
 
     public async generateNftAndUpload(index: number, maxIndex: number, saveBahaviour: GenerateNftBehaviour = GenerateNftBehaviour.MORALIS_UPLOAD, predefinedNftParts?: NftPart[]) {
@@ -174,6 +122,59 @@ export abstract class NftGenerator {
     protected abstract generateNftMetadata(index: number, maxIndex: number, imagePathOnMoralis: string, nftPartsToDraw: NftSubPartDetails[]);
 
     // -------------------------------
+
+    protected initiateVisualParts() {
+        // Convert initial data
+        this.nftPartDetails = this.collection.mint.nftPartsItems.map(nftPartsItem => {
+            const nftPartDetails = {
+                resPlural: nftPartsItem.categoryPlural,
+                resSingle: nftPartsItem.categorySingle,
+                subParts: []
+            } as NftPartDetails;
+
+            nftPartDetails.subParts = nftPartsItem.categoryDetails.map(categoryDetails => {
+                let rarity = Rarity.COMMON;
+                switch (categoryDetails.rarity) {
+                    case 'Rare':
+                        rarity = Rarity.RARE;
+                        break;
+                    case 'Epic':
+                        rarity = Rarity.EPIC;
+                        break;
+                    case 'Legendary':
+                        rarity = Rarity.LEGENDARY;
+                        break;
+                    case 'All':
+                        rarity = Rarity.ALL;
+                        break;
+                }
+                return {
+                    chance: categoryDetails.chancePercent,
+                    rarity
+                } as NftSubPartDetails;
+            });
+            return nftPartDetails;
+        });
+
+        // Load image paths
+        switch (this.nftType) {
+            case NftType.CAPTAIN:
+                this.nftTypeName = 'captain';
+                break;
+            case NftType.SHIP:
+                this.nftTypeName = 'ship';
+                break;
+            case NftType.ISLAND:
+                this.nftTypeName = 'island';
+                break;
+        }
+        this.initiateNftPartsImagePath();
+
+        // Sort nft parts by rarity
+        this.nftPartDetails.forEach(nftPart => {
+            nftPart.subParts = nftPart.subParts.sort(function (a, b) { return b.rarity - a.rarity });
+        });
+    }
 
     private initiateNftPartsImagePath() {
         this.nftPartDetails.forEach(nftPart => {

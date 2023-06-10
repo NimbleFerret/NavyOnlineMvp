@@ -145,7 +145,7 @@
 //                             model.marketplaceState = MarketplaceState.NONE;
 //                             model.lastUpdated = Number((Date.now() / 1000).toFixed(0));
 //                             model.collectionName = 'captains';
-//                             model.coinSymbol = 'CRO';
+//                             model.tokenSymbol = 'CRO';
 //                             model.chainName = 'Cronos';
 //                             model.chainId = '338';
 //                             await model.save();
@@ -244,7 +244,7 @@
 //                     model.rarity = nft.rarity;
 //                     model.marketplaceState = marketplaceState == MarketplaceState.LISTED ? MarketplaceState.LISTED : MarketplaceState.SOLD;
 //                     model.collectionName = 'captains';
-//                     model.coinSymbol = 'CRO';
+//                     model.tokenSymbol = 'CRO';
 //                     model.chainName = 'Cronos';
 //                     model.chainId = '338';
 //                     console.log('getMarketplaceNfts. Saved.');
