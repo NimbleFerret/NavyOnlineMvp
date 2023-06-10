@@ -1,33 +1,23 @@
 
 import { NftType } from "@app/shared-library/shared-library.main";
-import { MintJob, WorkersMint } from "@app/shared-library/workers/workers.mint";
+import { MintJob } from "@app/shared-library/workers/workers.mint";
 import {
     OnQueueActive,
     OnQueueCompleted,
     OnQueueError,
     OnQueueFailed,
-    Process,
-    Processor
+    Process
 } from "@nestjs/bull";
-import { Logger, OnModuleInit } from "@nestjs/common";
+import { Logger } from "@nestjs/common";
 import { NftGenerator } from "./nft/nft.generator";
 import { Job } from "bull";
-import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
-import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-// import { NftCaptainGenerator } from "./nft/nft.generator.captain.base";
-import { CronosProvider } from "@app/shared-library/blockchain/cronos/cronos.provider";
-import { Contract } from 'ethers';
 import {
-    BlockchainTransaction,
     BlockchainTransactionDocument,
     TransactionStatus,
     BlockchainTransactionDto,
     TransactionType
 } from '@app/shared-library/schemas/blockchain/schema.blockchain.transaction';
-import { CollectionItem, CollectionItemDocument } from '@app/shared-library/schemas/marketplace/schema.collection.item';
-import { CaptainSettings, CaptainSettingsDocument } from '@app/shared-library/schemas/entity/schema.captain.settings';
-import { CaptainTrait, CaptainTraitDocument } from '@app/shared-library/schemas/entity/schema.captain.trait';
 import { CronosConstants } from "@app/shared-library/blockchain/cronos/cronos.constants";
 
 export abstract class QueueMintBaseProcessor {
@@ -73,11 +63,7 @@ export abstract class QueueMintBaseProcessor {
 
         const metadataUrl = await this.nftCaptainGenerator.generateNftAndUpload(tokenIndex, totalSupply);
 
-        console.log('metadataUrl: ' + metadataUrl);
-
         await this.nftCaptainGenerator.mintAndSaveNft(job.data.owner, metadataUrl, CronosConstants.CaptainContractAddress);
-
-        console.log('ok ?');
     }
 
     @OnQueueError()

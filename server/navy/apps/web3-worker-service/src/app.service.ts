@@ -1,3 +1,4 @@
+import { SharedLibraryService } from "@app/shared-library";
 import { MoralisClient } from "@app/shared-library/moralis/moralis.client";
 import { NftType } from "@app/shared-library/shared-library.main";
 import { WorkersMint, MintJob } from "@app/shared-library/workers/workers.mint";
@@ -13,8 +14,9 @@ export class AppService implements OnModuleInit {
 
     private nftCaptainGenerator: NftGenerator;
 
-    constructor() {
-        // @InjectQueue(WorkersMint.MintQueue) private readonly mintQueue: Queue) {
+    constructor(
+        @InjectQueue(WorkersMint.CronosMintQueue) private readonly cronosMintQueue: Queue,
+        @InjectQueue(WorkersMint.VenomMintQueue) private readonly venomMintQueue: Queue) {
     }
 
     async onModuleInit() {
@@ -33,14 +35,24 @@ export class AppService implements OnModuleInit {
     //     }
     // }
 
-    // async mintCaptain(dto: MintCaptainDto) {
-    //     this.mintQueue.add({
-    //         nftType: NftType.CAPTAIN,
-    //         sender: dto.owner.toLowerCase(),
-    //         contractAddress: EthersConstants.CaptainContractAddress,
-    //         tokenId: dto.tokenId
-    //     } as MintJob);
-    // }
+    async mintCaptain(dto: MintCaptainDto) {
+        if (dto.chainName == SharedLibraryService.VENOM_CHAIN_NAME) {
+            this.venomMintQueue.add({
+                nftType: NftType.CAPTAIN,
+                owner: dto.owner.toLowerCase(),
+                chainName: dto.chainName,
+                tokenId: dto.tokenId
+            } as MintJob);
+        } else if (dto.chainName == SharedLibraryService.CRONOS_CHAIN_NAME) {
+            this.cronosMintQueue.add({
+                nftType: NftType.CAPTAIN,
+                owner: dto.owner.toLowerCase(),
+                chainName: dto.chainName,
+                tokenId: dto.tokenId
+            } as MintJob);
+        }
+
+    }
 
     // TODO move to the queue 
     // async generateCaptainImages() {

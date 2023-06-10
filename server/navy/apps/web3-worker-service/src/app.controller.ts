@@ -15,7 +15,7 @@ export class AppController {
 
     @Post('mintCaptain')
     mintCaptain(@Body() request: MintCaptainDto) {
-        // this.appSerivce.mintCaptain(request);
+        this.appSerivce.mintCaptain(request);
     }
 
 }

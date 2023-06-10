@@ -61,10 +61,9 @@ export class BlockchainServiceCronos implements OnModuleInit {
             Logger.log('Captains mint occured:');
             Logger.log({ id, owner });
 
-            await this.blockchainBaseProcessor.processNftListedEvent(NftType.CAPTAIN, {
-                nftId: id.toNumber(),
+            await this.blockchainBaseProcessor.processNftMintedEvent(NftType.CAPTAIN, {
+                nftId: id,
                 owner: CronosConstants.CaptainMarketplaceContractAddress,
-                seller: owner
             });
         });
 

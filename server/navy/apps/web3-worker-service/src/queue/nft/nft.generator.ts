@@ -64,7 +64,6 @@ export abstract class NftGenerator {
         if (!predefinedNftParts) {
             for (const nftPart of this.nftPartDetails) {
                 const selectPercentageOptions: SelectPercentageOptions<NftSubPartDetails>[] = [];
-
                 for (let index = 0; index < nftPart.subParts.length; index++) {
                     if (nftPart.subParts[index].rarity === this.rarity || nftPart.subParts[index].rarity == Rarity.ALL) {
                         const value = nftPart.subParts[index];
@@ -74,7 +73,6 @@ export abstract class NftGenerator {
                 }
 
                 const nftPartToDraw = SharedLibraryService.SelectItemByPercentage(selectPercentageOptions);
-
                 if (nftPartToDraw) {
                     this.nftPartsToDraw.push(nftPartToDraw);
                     await drawScaledImage(nftPartToDraw.filePath);
@@ -98,6 +96,8 @@ export abstract class NftGenerator {
             await this.generateNftMetadata(index, maxIndex, imagePathOnMoralis, this.nftPartsToDraw);
 
             // Upload metadata to the ipfs
+            await new Promise((resolve) => setTimeout(resolve, 1.5 * 1000));
+
             const uploadedMetadataFile = await MoralisClient.getInstance().uploadFile('nvy/' + entityName + '.json', Buffer.from(this.metadata).toString('base64')) as any;
             const metadataPathOnMoralis = uploadedMetadataFile.toJSON()[0].path;
             return metadataPathOnMoralis;

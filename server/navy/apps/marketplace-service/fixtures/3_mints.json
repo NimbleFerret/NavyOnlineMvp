@@ -447,7 +447,12 @@
         "collectionSize": 200,
         "collectionItemsLeft": 200,
         "collectionPreview": [
-            "https://navy-metaverse.online/marketplace/static/assets/ship/preview_1.png"
+            "https://navy-metaverse.online/marketplace/static/assets/island/island1.png",
+            "https://navy-metaverse.online/marketplace/static/assets/island/island2.png",
+            "https://navy-metaverse.online/marketplace/static/assets/island/island3.png",
+            "https://navy-metaverse.online/marketplace/static/assets/island/island4.png",
+            "https://navy-metaverse.online/marketplace/static/assets/island/island5.png",
+            "https://navy-metaverse.online/marketplace/static/assets/island/island6.png"
         ],
         "descriptionTitle": "Description",
         "descriptionDescription": "This is our very fisrt collection. In general captains has two use case scenarios:\n1) You can assign it to your current ship and it would became your in game avatar, each captain gives passive and active bonuses to the controlled ship.\n2) You may stake it in order to have a passive income.\nCaptains are also upgradable, every few levels new random trait will be generated.",
@@ -578,8 +583,8 @@
             "chainName": "Venom",
             "tokenSymbol": "V",
             "mintPriceNativeCoin": 5,
-            "saleContractAddress": "0:79cd290c8c33cc3ff40b9d476a23d579d3a571fc26e7a4a156e254a1b37f8e4a",
-            "tokenContractAddress": "0:7a455539ac137875536cd2938e9645e3b0c312856bd86ab06f59dafa6a11f9ed"
+            "saleContractAddress": "0:cbbf186d81f7acda4180f1e0e3d4b163ea0b5b1c6246d8c74a4332436316034a",
+            "tokenContractAddress": "0:dbcdf5d43044c8039fc34fcf8e695f10774ef942b10f93bd9c78513761c518de"
         },
         "collectionSize": 200,
         "collectionItemsLeft": 200,
@@ -874,8 +879,8 @@
             "chainName": "Venom",
             "tokenSymbol": "V",
             "mintPriceNativeCoin": 5,
-            "saleContractAddress": "0:79cd290c8c33cc3ff40b9d476a23d579d3a571fc26e7a4a156e254a1b37f8e4a",
-            "tokenContractAddress": "0:7a455539ac137875536cd2938e9645e3b0c312856bd86ab06f59dafa6a11f9ed"
+            "saleContractAddress": "0:cbbf186d81f7acda4180f1e0e3d4b163ea0b5b1c6246d8c74a4332436316034a",
+            "tokenContractAddress": "0:dbcdf5d43044c8039fc34fcf8e695f10774ef942b10f93bd9c78513761c518df"
         },
         "collectionSize": 200,
         "collectionItemsLeft": 200,
@@ -1011,13 +1016,18 @@
             "chainName": "Venom",
             "tokenSymbol": "V",
             "mintPriceNativeCoin": 5,
-            "saleContractAddress": "0:79cd290c8c33cc3ff40b9d476a23d579d3a571fc26e7a4a156e254a1b37f8e4a",
-            "tokenContractAddress": "0:7a455539ac137875536cd2938e9645e3b0c312856bd86ab06f59dafa6a11f9ed"
+            "saleContractAddress": "0:cbbf186d81f7acda4180f1e0e3d4b163ea0b5b1c6246d8c74a4332436316034a",
+            "tokenContractAddress": "0:dbcdf5d43044c8039fc34fcf8e695f10774ef942b10f93bd9c78513761c518dg"
         },
         "collectionSize": 200,
         "collectionItemsLeft": 200,
         "collectionPreview": [
-            "https://navy-metaverse.online/marketplace/static/assets/ship/preview_1.png"
+            "https://navy-metaverse.online/marketplace/static/assets/island/island1.png",
+            "https://navy-metaverse.online/marketplace/static/assets/island/island2.png",
+            "https://navy-metaverse.online/marketplace/static/assets/island/island3.png",
+            "https://navy-metaverse.online/marketplace/static/assets/island/island4.png",
+            "https://navy-metaverse.online/marketplace/static/assets/island/island5.png",
+            "https://navy-metaverse.online/marketplace/static/assets/island/island6.png"
         ],
         "descriptionTitle": "Description",
         "descriptionDescription": "This is our very fisrt collection. In general captains has two use case scenarios:\n1) You can assign it to your current ship and it would became your in game avatar, each captain gives passive and active bonuses to the controlled ship.\n2) You may stake it in order to have a passive income.\nCaptains are also upgradable, every few levels new random trait will be generated.",

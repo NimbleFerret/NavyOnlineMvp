@@ -7,6 +7,7 @@ import { MarketplaceListingJob, MarketplaceSetSalePriceJob, MarketplaceSoldJob, 
 import { MintJob } from "../workers/workers.mint";
 
 export interface NftMintedEventParams {
+    nftId: string;
     owner: string;
 }
 
@@ -56,7 +57,7 @@ export class BlockchainBaseProcessor {
     }
 
     async processNftMintedEvent(nftType: NftType, event: NftMintedEventParams) {
-        event.owner.toLowerCase();
+        event.owner = event.owner.toLowerCase();
 
         Logger.log(`${BlockchainBaseProcessor.NftTypeToString(nftType)} mint occured on ${this.chainName} chain! Owner: ${event.owner}`);
 
@@ -72,8 +73,8 @@ export class BlockchainBaseProcessor {
     }
 
     async processNftListedEvent(nftType: NftType, event: NftListedEventParams) {
-        event.owner.toLowerCase();
-        event.seller.toLowerCase();
+        event.owner = event.owner.toLowerCase();
+        event.seller = event.seller.toLowerCase();
 
         const nftString = 'nft: ' + this.chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
             event.nftAddress : event.nftId;
