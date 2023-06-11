@@ -59,22 +59,22 @@ export class AuthApiService {
             if (request.ethAddress) {
                 request.ethAddress = request.ethAddress.toLowerCase();
                 if (signIn) {
-                    await this.ethSignIn(request);
+                    return await this.ethSignIn(request);
                 } else {
-                    await this.ethSignUp(request);
+                    return await this.ethSignUp(request);
                 }
             } else {
                 if (signIn) {
-                    await this.venomSignIn(request);
+                    return await this.venomSignIn(request);
                 } else {
-                    await this.venomSignUp(request);
+                    return await this.venomSignUp(request);
                 }
             }
         } else if (request.email && request.password) {
             if (signIn) {
-                await this.emailSignIn(request);
+                return await this.emailSignIn(request);
             } else {
-                await this.emailSignUp(request);
+                return await this.emailSignUp(request);
             }
         } else {
             response.success = false;
