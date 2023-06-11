@@ -50,7 +50,12 @@ export class AppController {
 
   @Get('topSales/:days')
   topSales(@Req() request: Request, @Param('days') days?: string) {
-    return this.collectionService.topSales(Utils.GetBearerTokenFromRequest(request), days);
+    return this.collectionService.topSales('all', Utils.GetBearerTokenFromRequest(request), days);
+  }
+
+  @Get('topSales/:chainName/:days')
+  topSalesByChain(@Req() request: Request, @Param('chainName') chainName: string, @Param('days') days?: string) {
+    return this.collectionService.topSales(chainName, Utils.GetBearerTokenFromRequest(request), days);
   }
 
   // --------------------------------

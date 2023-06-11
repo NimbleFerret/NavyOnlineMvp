@@ -283,11 +283,17 @@ export class CollectionApiService implements OnModuleInit {
         return response;
     }
 
-    async topSales(authToken?: string, days?: string) {
-        const response: TopSalesDto = {
-            venomTopSales: [],
-            cronosTopSales: []
-        };
+    async topSales(chainName: string, authToken?: string, days?: string) {
+        const response: TopSalesDto = {};
+
+        if (chainName == 'all') {
+            response.cronosTopSales = [];
+            response.venomTopSales = [];
+        } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME.toLowerCase()) {
+            response.venomTopSales = [];
+        } else if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME.toLowerCase()) {
+            response.cronosTopSales = [];
+        }
 
         const topSalesCount = 9;
 
@@ -315,9 +321,6 @@ export class CollectionApiService implements OnModuleInit {
                 return topSaleResult;
             }
 
-            const venomTopSales = await getTopSalesByChainName(SharedLibraryService.VENOM_CHAIN_NAME);
-            const cronosTopSales = await getTopSalesByChainName(SharedLibraryService.CRONOS_CHAIN_NAME);
-
             const favourites = [];
             if (authToken) {
                 const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
@@ -327,12 +330,32 @@ export class CollectionApiService implements OnModuleInit {
                 });
             }
 
-            venomTopSales.forEach(f => {
-                response.venomTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
-            });
-            cronosTopSales.forEach(f => {
-                response.cronosTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
-            });
+            let venomTopSales = [];
+            let cronosTopSales = [];
+
+            if (chainName == 'all') {
+                venomTopSales = await getTopSalesByChainName(SharedLibraryService.VENOM_CHAIN_NAME);
+                cronosTopSales = await getTopSalesByChainName(SharedLibraryService.CRONOS_CHAIN_NAME);
+
+                venomTopSales.forEach(f => {
+                    response.venomTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+                });
+                cronosTopSales.forEach(f => {
+                    response.cronosTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+                });
+            } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME.toLowerCase()) {
+                venomTopSales = await getTopSalesByChainName(SharedLibraryService.VENOM_CHAIN_NAME);
+
+                venomTopSales.forEach(f => {
+                    response.venomTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+                });
+            } else if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME.toLowerCase()) {
+                cronosTopSales = await getTopSalesByChainName(SharedLibraryService.CRONOS_CHAIN_NAME);
+
+                cronosTopSales.forEach(f => {
+                    response.cronosTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+                });
+            }
         }
         return response;
     }
