@@ -148,14 +148,14 @@ export class CollectionApiService implements OnModuleInit {
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
                 .skip((page - 1) * pageSize)
                 .limit(pageSize));
-            listedCount = listedResult.length;
+            listedCount = await this.collectionItemModel.count(listedQuery);
         }
         if (loadNotListed) {
             notListedResult.push(...await this.collectionItemModel.find(notListedQuery)
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
                 .skip((page - 1) * pageSize)
                 .limit(pageSize - listedCount));
-            notListedCount = notListedResult.length;
+            notListedCount = await this.collectionItemModel.count(notListedQuery);;
         }
 
         const totalCount = listedCount + notListedCount;
