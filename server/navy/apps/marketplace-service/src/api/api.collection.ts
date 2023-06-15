@@ -424,8 +424,6 @@ export class CollectionApiService implements OnModuleInit {
     }
 
     async getCollectionItem(authToken: string | undefined, chainName: string, address: string, tokenId: string) {
-        chainName = chainName.charAt(0).toUpperCase() + chainName.slice(1);
-
         if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME.toLowerCase()) {
             chainName = SharedLibraryService.CRONOS_CHAIN_NAME;
         } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME.toLowerCase()) {
