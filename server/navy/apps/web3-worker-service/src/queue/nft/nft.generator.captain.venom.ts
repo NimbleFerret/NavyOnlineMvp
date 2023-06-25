@@ -4,7 +4,6 @@ import { CaptainSettingsDocument } from "@app/shared-library/schemas/entity/sche
 import { CaptainTraitDocument } from "@app/shared-library/schemas/entity/schema.captain.trait";
 import { Collection } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
-import { Contract } from "ethers";
 import { Model } from "mongoose";
 import { NftGeneratorCaptainBase } from "./nft.generator.captain.base";
 

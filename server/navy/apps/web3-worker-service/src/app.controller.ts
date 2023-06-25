@@ -10,7 +10,7 @@ export class AppController {
 
     @Post('generateNftImage')
     generateNftImage(@Body() request: GenerateNftImageDto) {
-        // this.appSerivce.generateNftImage(request);
+        this.appSerivce.generateNftImage(request);
     }
 
     @Post('mintCaptain')

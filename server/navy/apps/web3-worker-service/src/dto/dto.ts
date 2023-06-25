@@ -4,6 +4,7 @@ export interface NftPart {
 }
 
 export interface GenerateNftImageDto {
+    chainName: string;
     collectionName: string,
     amount: number,
     nftParts?: NftPart[]

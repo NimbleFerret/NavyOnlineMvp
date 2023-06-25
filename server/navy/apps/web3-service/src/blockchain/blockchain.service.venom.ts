@@ -68,16 +68,16 @@ export class BlockchainServiceVenom implements OnModuleInit {
         });
     }
 
-    private async nftGeneratedCallback(nftId: any, seller: string, owner: string, price: any) {
-        Logger.log('Captains lising occured:');
-        Logger.log({ nftId, seller, owner, price });
+    private async nftGeneratedCallback(nftId: any, owner: string, nftAddress: string) {
+        Logger.log('Captains genererated occured:');
+        Logger.log({ nftId, owner, nftAddress });
 
-        await BlockchainServiceVenom.Context.blockchainBaseProcessor.processNftListedEvent(NftType.CAPTAIN, {
-            nftId,
-            owner,
-            seller,
-            price
-        });
+        // await BlockchainServiceVenom.Context.blockchainBaseProcessor.processNftGeneratedEvent(NftType.CAPTAIN, {
+        //     nftId,
+        //     owner,
+        //     seller,
+        //     price
+        // });
     }
 
     private async nftListedCallback(nftId: any, seller: string) {

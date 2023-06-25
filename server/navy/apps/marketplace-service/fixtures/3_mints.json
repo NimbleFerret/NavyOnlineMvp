@@ -14,11 +14,11 @@
         "collectionSize": 200,
         "collectionItemsLeft": 200,
         "collectionPreview": [
-            "https://navy-metaverse.online/marketplace/static/assets/captain/preview_1.png",
-            "https://navy-metaverse.online/marketplace/static/assets/captain/preview_2.png",
-            "https://navy-metaverse.online/marketplace/static/assets/captain/preview_3.png",
-            "https://navy-metaverse.online/marketplace/static/assets/captain/preview_4.png",
-            "https://navy-metaverse.online/marketplace/static/assets/captain/preview_5.png"
+            "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/preview_1.png",
+            "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/preview_2.png",
+            "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/preview_3.png",
+            "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/preview_4.png",
+            "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/preview_5.png"
         ],
         "descriptionTitle": "Description",
         "descriptionDescription": "This is our very fisrt collection. In general captains has two use case scenarios:\n1) You can assign it to your current ship and it would became your in game avatar, each captain gives passive and active bonuses to the controlled ship.\n2) You may stake it in order to have a passive income.\nCaptains are also upgradable, every few levels new random trait will be generated.",
@@ -57,62 +57,62 @@
                 "categorySingle": "bg",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_1.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_1.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_2.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_2.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_3.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_3.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_4.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_4.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_5.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_5.png",
                         "chancePercent": 40,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_6.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_6.png",
                         "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_7.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_7.png",
                         "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_8.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_8.png",
                         "chancePercent": 40,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_9.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_9.png",
                         "chancePercent": 30,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_10.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_10.png",
                         "chancePercent": 30,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_11.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_11.png",
                         "chancePercent": 50,
                         "rarity": "Legendary"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_12.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/backgrounds/bg_12.png",
                         "chancePercent": 50,
                         "rarity": "Legendary"
                     }
@@ -124,7 +124,7 @@
                 "categorySingle": "body",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/body/body_1.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/body/body_1.png",
                         "chancePercent": 100,
                         "rarity": "All"
                     }
@@ -136,32 +136,32 @@
                 "categorySingle": "clothes",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_1.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/clothes/clothes_1.png",
                         "chancePercent": 100,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_2.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/clothes/clothes_2.png",
                         "chancePercent": 100,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_3.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/clothes/clothes_3.png",
                         "chancePercent": 60,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_4.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/clothes/clothes_4.png",
                         "chancePercent": 40,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_5.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/clothes/clothes_5.png",
                         "chancePercent": 60,
                         "rarity": "Legendary"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_6.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/clothes/clothes_6.png",
                         "chancePercent": 40,
                         "rarity": "Legendary"
                     }
@@ -173,22 +173,22 @@
                 "categorySingle": "face",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/faces/face_1.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/faces/face_1.png",
                         "chancePercent": 40,
                         "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/faces/face_2.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/faces/face_2.png",
                         "chancePercent": 25,
                         "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/faces/face_3.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/faces/face_3.png",
                         "chancePercent": 20,
                         "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/faces/face_4.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/faces/face_4.png",
                         "chancePercent": 15,
                         "rarity": "All"
                     }
@@ -200,42 +200,37 @@
                 "categorySingle": "acc",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_1.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/accessories/acc_1.png",
                         "chancePercent": 30,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_2.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/accessories/acc_2.png",
                         "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_3.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/accessories/acc_3.png",
                         "chancePercent": 20,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_4.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/accessories/acc_4.png",
                         "chancePercent": 30,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_5.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/accessories/acc_5.png",
                         "chancePercent": 20,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_6.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/accessories/acc_6.png",
                         "chancePercent": 20,
                         "rarity": "Legendary"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_6.png",
-                        "chancePercent": 20,
-                        "rarity": "Legendary"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_7.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/accessories/acc_7.png",
                         "chancePercent": 20,
                         "rarity": "Legendary"
                     }
@@ -247,47 +242,47 @@
                 "categorySingle": "headgear",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_1.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/headgears/headgear_1.png",
                         "chancePercent": 50,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_2.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/headgears/headgear_2.png",
                         "chancePercent": 30,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_3.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/headgears/headgear_3.png",
                         "chancePercent": 20,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_4.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/headgears/headgear_4.png",
                         "chancePercent": 70,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_5.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/headgears/headgear_5.png",
                         "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_6.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/headgears/headgear_6.png",
                         "chancePercent": 20,
                         "rarity": "Legendary"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_7.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/headgears/headgear_7.png",
                         "chancePercent": 30,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_8.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/headgears/headgear_8.png",
                         "chancePercent": 70,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_9.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/sloth/headgears/headgear_9.png",
                         "chancePercent": 80,
                         "rarity": "Legendary"
                     }
@@ -589,11 +584,11 @@
         "collectionSize": 200,
         "collectionItemsLeft": 200,
         "collectionPreview": [
-            "https://navy-metaverse.online/marketplace/static/assets/captain/preview_1.png",
-            "https://navy-metaverse.online/marketplace/static/assets/captain/preview_2.png",
-            "https://navy-metaverse.online/marketplace/static/assets/captain/preview_3.png",
-            "https://navy-metaverse.online/marketplace/static/assets/captain/preview_4.png",
-            "https://navy-metaverse.online/marketplace/static/assets/captain/preview_5.png"
+            "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/preview_1.png",
+            "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/preview_2.png",
+            "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/preview_3.png",
+            "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/preview_4.png",
+            "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/preview_5.png"
         ],
         "descriptionTitle": "Description",
         "descriptionDescription": "This is our very fisrt collection. In general captains has two use case scenarios:\n1) You can assign it to your current ship and it would became your in game avatar, each captain gives passive and active bonuses to the controlled ship.\n2) You may stake it in order to have a passive income.\nCaptains are also upgradable, every few levels new random trait will be generated.",
@@ -632,76 +627,64 @@
                 "categorySingle": "bg",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_1.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_1.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_2.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_2.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_3.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_3.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_4.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_4.png",
                         "chancePercent": 25,
                         "rarity": "Common"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_5.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_5.png",
                         "chancePercent": 40,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_6.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_6.png",
                         "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_7.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_7.png",
                         "chancePercent": 30,
                         "rarity": "Rare"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_8.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_8.png",
                         "chancePercent": 40,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_9.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_9.png",
                         "chancePercent": 30,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_10.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_10.png",
                         "chancePercent": 30,
                         "rarity": "Epic"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_11.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_11.png",
                         "chancePercent": 50,
                         "rarity": "Legendary"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/backgrounds/bg_12.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/backgrounds/bg_12.png",
                         "chancePercent": 50,
                         "rarity": "Legendary"
-                    }
-                ]
-            },
-            {
-                "categoryTitle": "Body",
-                "categoryPlural": "body",
-                "categorySingle": "body",
-                "categoryDetails": [
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/body/body_1.png",
-                        "chancePercent": 100,
-                        "rarity": "All"
                     }
                 ]
             },
@@ -711,34 +694,29 @@
                 "categorySingle": "clothes",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_1.png",
-                        "chancePercent": 100,
-                        "rarity": "Common"
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/clothes/clothes_1.png",
+                        "chancePercent": 20,
+                        "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_2.png",
-                        "chancePercent": 100,
-                        "rarity": "Rare"
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/clothes/clothes_2.png",
+                        "chancePercent": 20,
+                        "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_3.png",
-                        "chancePercent": 60,
-                        "rarity": "Epic"
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/clothes/clothes_3.png",
+                        "chancePercent": 20,
+                        "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_4.png",
-                        "chancePercent": 40,
-                        "rarity": "Epic"
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/clothes/clothes_4.png",
+                        "chancePercent": 20,
+                        "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_5.png",
-                        "chancePercent": 60,
-                        "rarity": "Legendary"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/clothes/clothes_6.png",
-                        "chancePercent": 40,
-                        "rarity": "Legendary"
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/clothes/clothes_5.png",
+                        "chancePercent": 20,
+                        "rarity": "All"
                     }
                 ]
             },
@@ -748,123 +726,85 @@
                 "categorySingle": "face",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/faces/face_1.png",
-                        "chancePercent": 40,
-                        "rarity": "All"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/faces/face_2.png",
-                        "chancePercent": 25,
-                        "rarity": "All"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/faces/face_3.png",
-                        "chancePercent": 20,
-                        "rarity": "All"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/faces/face_4.png",
-                        "chancePercent": 15,
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/faces/face_1.png",
+                        "chancePercent": 100,
                         "rarity": "All"
                     }
                 ]
             },
             {
-                "categoryTitle": "Accessories",
-                "categoryPlural": "accessories",
-                "categorySingle": "acc",
+                "categoryTitle": "Accessories 1",
+                "categoryPlural": "accessories1",
+                "categorySingle": "acc1",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_1.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories1/acc_1.png",
                         "chancePercent": 30,
-                        "rarity": "Common"
+                        "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_2.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories1/acc_2.png",
                         "chancePercent": 30,
-                        "rarity": "Rare"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_3.png",
-                        "chancePercent": 20,
-                        "rarity": "Rare"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_4.png",
-                        "chancePercent": 30,
-                        "rarity": "Epic"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_5.png",
-                        "chancePercent": 20,
-                        "rarity": "Epic"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_6.png",
-                        "chancePercent": 20,
-                        "rarity": "Legendary"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_6.png",
-                        "chancePercent": 20,
-                        "rarity": "Legendary"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/accessories/acc_7.png",
-                        "chancePercent": 20,
-                        "rarity": "Legendary"
+                        "rarity": "All"
                     }
                 ]
             },
             {
-                "categoryTitle": "Headgears",
-                "categoryPlural": "headgears",
-                "categorySingle": "headgear",
+                "categoryTitle": "Accessories 2",
+                "categoryPlural": "accessories2",
+                "categorySingle": "acc2",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_1.png",
-                        "chancePercent": 50,
-                        "rarity": "Common"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_2.png",
-                        "chancePercent": 30,
-                        "rarity": "Common"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_3.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc_1.png",
                         "chancePercent": 20,
-                        "rarity": "Common"
+                        "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_4.png",
-                        "chancePercent": 70,
-                        "rarity": "Rare"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_5.png",
-                        "chancePercent": 30,
-                        "rarity": "Rare"
-                    },
-                    {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_6.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc_2.png",
                         "chancePercent": 20,
-                        "rarity": "Legendary"
+                        "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_7.png",
-                        "chancePercent": 30,
-                        "rarity": "Epic"
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc_3.png",
+                        "chancePercent": 20,
+                        "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_8.png",
-                        "chancePercent": 70,
-                        "rarity": "Epic"
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc_4.png",
+                        "chancePercent": 20,
+                        "rarity": "All"
+                    }
+                ]
+            },
+            {
+                "categoryTitle": "Hats",
+                "categoryPlural": "hats",
+                "categorySingle": "hat",
+                "categoryDetails": [
+                    {
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/hats/hat_1.png",
+                        "chancePercent": 20,
+                        "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/headgears/headgear_9.png",
-                        "chancePercent": 80,
-                        "rarity": "Legendary"
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/hats/hat_2.png",
+                        "chancePercent": 20,
+                        "rarity": "All"
+                    },
+                    {
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/hats/hat_3.png",
+                        "chancePercent": 20,
+                        "rarity": "All"
+                    },
+                    {
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/hats/hat_4.png",
+                        "chancePercent": 10,
+                        "rarity": "All"
+                    },
+                    {
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/hats/hat_5.png",
+                        "chancePercent": 10,
+                        "rarity": "All"
                     }
                 ]
             }

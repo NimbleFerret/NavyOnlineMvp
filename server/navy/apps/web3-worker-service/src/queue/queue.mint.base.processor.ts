@@ -19,6 +19,8 @@ import {
     TransactionType
 } from '@app/shared-library/schemas/blockchain/schema.blockchain.transaction';
 import { CronosConstants } from "@app/shared-library/blockchain/cronos/cronos.constants";
+import { SharedLibraryService } from "@app/shared-library";
+import { VenomConstants } from "@app/shared-library/blockchain/venom/venom.constants";
 
 export abstract class QueueMintBaseProcessor {
 
@@ -63,7 +65,7 @@ export abstract class QueueMintBaseProcessor {
 
         const metadataUrl = await this.nftCaptainGenerator.generateNftAndUpload(tokenIndex, totalSupply);
 
-        await this.nftCaptainGenerator.mintAndSaveNft(job.data.owner, metadataUrl, CronosConstants.CaptainContractAddress);
+        await this.nftCaptainGenerator.mintAndSaveNft(job.data.owner, metadataUrl, job.data.chainName == SharedLibraryService.VENOM_CHAIN_NAME ? VenomConstants.CaptainsCollectionContractAddress : CronosConstants.CaptainContractAddress);
     }
 
     @OnQueueError()

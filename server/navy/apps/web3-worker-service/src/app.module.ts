@@ -75,7 +75,7 @@ import { ConfigModule } from '@nestjs/config';
   providers: [
     AppService,
     QueueMintCronosProcessor,
-    QueueMintVenomProcessor
+    // QueueMintVenomProcessor
   ],
 })
 export class AppModule { }

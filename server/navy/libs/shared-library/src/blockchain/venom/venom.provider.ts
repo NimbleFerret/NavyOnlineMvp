@@ -99,7 +99,8 @@ export class VenomProvider {
                     nftGeneratedCallback({
                         nftType: NftType.CAPTAIN,
                         id: contractEvent.data.id,
-                        owner: contractEvent.data.owner
+                        owner: contractEvent.data.owner,
+                        nftAddress: contractEvent.data.nftAddress
                     });
                 }
             }
@@ -136,6 +137,7 @@ export class VenomProvider {
     // Shit code, refactor it
     public static async GrantCaptain(id: number, json: string, minter: any) {
         try {
+            Logger.log(`GrantCaptain: id: ${id}, json: ${json}, minter: ${minter}`);
             const tx = await VenomProvider.CaptainsCollectionContract.methods.generateNft({ id, json, minter } as never).send({
                 from: VenomProvider.OwnerAccount.address,
                 amount: "1000000000"
