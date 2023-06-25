@@ -32,14 +32,14 @@ export abstract class NftGeneratorCaptainBase extends NftGenerator {
     private epicCaptainTraits = 0;
     private legendaryCaptainTraits = 0;
 
-    private readonly backgroundVisualsMap = new Map<number, string>();
-    private readonly bodyVisualsMap = new Map<number, string>();
-    private readonly clothesVisualsMap = new Map<number, string>();
-    private readonly faceVisualsMap = new Map<number, string>();
-    private readonly accessory1VisualsMap = new Map<number, string>();
-    private readonly accessory2VisualsMap = new Map<number, string>();
-    private readonly headgearVisualsMap = new Map<number, string>();
-    private readonly beardVisualsMap = new Map<number, string>();
+    private static readonly BackgroundVisualsMap = new Map<number, string>();
+    private static readonly BodyVisualsMap = new Map<number, string>();
+    private static readonly ClothesVisualsMap = new Map<number, string>();
+    private static readonly FaceVisualsMap = new Map<number, string>();
+    private static readonly Accessory1VisualsMap = new Map<number, string>();
+    private static readonly Accessory2VisualsMap = new Map<number, string>();
+    private static readonly HeadgearVisualsMap = new Map<number, string>();
+    private static readonly BeardVisualsMap = new Map<number, string>();
 
     constructor(
         collection: Collection,
@@ -52,76 +52,76 @@ export abstract class NftGeneratorCaptainBase extends NftGenerator {
     ) {
         super(chainName, NftType.CAPTAIN, collection);
 
-        this.backgroundVisualsMap.set(0, 'Bg 1');
-        this.backgroundVisualsMap.set(1, 'Bg 2');
-        this.backgroundVisualsMap.set(2, 'Bg 3');
-        this.backgroundVisualsMap.set(3, 'Bg 4');
-        this.backgroundVisualsMap.set(4, 'Bg 5');
-        this.backgroundVisualsMap.set(5, 'Bg 6');
-        this.backgroundVisualsMap.set(6, 'Bg 7');
-        this.backgroundVisualsMap.set(7, 'Bg 8');
-        this.backgroundVisualsMap.set(8, 'Bg 9');
-        this.backgroundVisualsMap.set(9, 'Bg 10');
-        this.backgroundVisualsMap.set(10, 'Bg 11');
-        this.backgroundVisualsMap.set(11, 'Bg 12');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(0, 'Bg 1');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(1, 'Bg 2');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(2, 'Bg 3');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(3, 'Bg 4');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(4, 'Bg 5');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(5, 'Bg 6');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(6, 'Bg 7');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(7, 'Bg 8');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(8, 'Bg 9');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(9, 'Bg 10');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(10, 'Bg 11');
+        NftGeneratorCaptainBase.BackgroundVisualsMap.set(11, 'Bg 12');
 
         if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME) {
-            this.bodyVisualsMap.set(0, 'Sloth');
+            NftGeneratorCaptainBase.BodyVisualsMap.set(0, 'Sloth');
 
-            this.clothesVisualsMap.set(0, 'Jacket 1');
-            this.clothesVisualsMap.set(1, 'Jacket 2');
-            this.clothesVisualsMap.set(2, 'Jacket 3');
-            this.clothesVisualsMap.set(3, 'Jacket 4');
-            this.clothesVisualsMap.set(4, 'Jacket 5');
-            this.clothesVisualsMap.set(5, 'Jacket 6');
+            NftGeneratorCaptainBase.ClothesVisualsMap.set(0, 'Jacket 1');
+            NftGeneratorCaptainBase.ClothesVisualsMap.set(1, 'Jacket 2');
+            NftGeneratorCaptainBase.ClothesVisualsMap.set(2, 'Jacket 3');
+            NftGeneratorCaptainBase.ClothesVisualsMap.set(3, 'Jacket 4');
+            NftGeneratorCaptainBase.ClothesVisualsMap.set(4, 'Jacket 5');
+            NftGeneratorCaptainBase.ClothesVisualsMap.set(5, 'Jacket 6');
 
-            this.faceVisualsMap.set(0, 'Upset');
-            this.faceVisualsMap.set(1, 'Funny');
-            this.faceVisualsMap.set(2, 'Mysterious');
-            this.faceVisualsMap.set(3, 'Surprized');
+            NftGeneratorCaptainBase.FaceVisualsMap.set(0, 'Upset');
+            NftGeneratorCaptainBase.FaceVisualsMap.set(1, 'Funny');
+            NftGeneratorCaptainBase.FaceVisualsMap.set(2, 'Mysterious');
+            NftGeneratorCaptainBase.FaceVisualsMap.set(3, 'Surprized');
 
-            this.accessory1VisualsMap.set(0, 'Scarf');
-            this.accessory1VisualsMap.set(1, 'Monocle');
-            this.accessory1VisualsMap.set(2, 'Sunglasses');
-            this.accessory1VisualsMap.set(3, 'Sigar');
-            this.accessory1VisualsMap.set(4, 'Pirate band');
-            this.accessory1VisualsMap.set(5, 'Pirate band');
-            this.accessory1VisualsMap.set(6, 'Pirate band');
+            NftGeneratorCaptainBase.Accessory1VisualsMap.set(0, 'Scarf');
+            NftGeneratorCaptainBase.Accessory1VisualsMap.set(1, 'Monocle');
+            NftGeneratorCaptainBase.Accessory1VisualsMap.set(2, 'Sunglasses');
+            NftGeneratorCaptainBase.Accessory1VisualsMap.set(3, 'Sigar');
+            NftGeneratorCaptainBase.Accessory1VisualsMap.set(4, 'Pirate band');
+            NftGeneratorCaptainBase.Accessory1VisualsMap.set(5, 'Pirate band');
+            NftGeneratorCaptainBase.Accessory1VisualsMap.set(6, 'Pirate band');
 
-            this.headgearVisualsMap.set(1, 'Hair 1');
-            this.headgearVisualsMap.set(2, 'Hair 2');
-            this.headgearVisualsMap.set(3, 'Hair 3');
-            this.headgearVisualsMap.set(4, 'Hair 4');
-            this.headgearVisualsMap.set(5, 'Pirate hat');
-            this.headgearVisualsMap.set(6, 'Crown');
-            this.headgearVisualsMap.set(7, 'Bandana');
-            this.headgearVisualsMap.set(8, 'Hat');
-            this.headgearVisualsMap.set(9, 'Captain cap');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(1, 'Hair 1');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(2, 'Hair 2');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(3, 'Hair 3');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(4, 'Hair 4');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(5, 'Pirate hat');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(6, 'Crown');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(7, 'Bandana');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(8, 'Hat');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(9, 'Captain cap');
         } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME) {
-            this.clothesVisualsMap.set(0, 'Jacket 1');
-            this.clothesVisualsMap.set(1, 'Jacket 2');
-            this.clothesVisualsMap.set(2, 'Jacket 3');
-            this.clothesVisualsMap.set(3, 'Jacket 4');
-            this.clothesVisualsMap.set(4, 'Jacket 5');
+            NftGeneratorCaptainBase.ClothesVisualsMap.set(0, 'Jacket 1');
+            NftGeneratorCaptainBase.ClothesVisualsMap.set(1, 'Jacket 2');
+            NftGeneratorCaptainBase.ClothesVisualsMap.set(2, 'Jacket 3');
+            NftGeneratorCaptainBase.ClothesVisualsMap.set(3, 'Jacket 4');
+            NftGeneratorCaptainBase.ClothesVisualsMap.set(4, 'Jacket 5');
 
-            this.accessory1VisualsMap.set(0, 'Scar');
-            this.accessory1VisualsMap.set(1, 'Moustache');
+            NftGeneratorCaptainBase.Accessory1VisualsMap.set(0, 'Scar');
+            NftGeneratorCaptainBase.Accessory1VisualsMap.set(1, 'Moustache');
 
-            this.accessory2VisualsMap.set(0, 'Monocle 1');
-            this.accessory2VisualsMap.set(1, 'Pirate band');
-            this.accessory2VisualsMap.set(2, 'Bond');
-            this.accessory2VisualsMap.set(3, 'Monocle 2');
+            NftGeneratorCaptainBase.Accessory2VisualsMap.set(0, 'Monocle 1');
+            NftGeneratorCaptainBase.Accessory2VisualsMap.set(1, 'Pirate band');
+            NftGeneratorCaptainBase.Accessory2VisualsMap.set(2, 'Bond');
+            NftGeneratorCaptainBase.Accessory2VisualsMap.set(3, 'Monocle 2');
 
-            this.beardVisualsMap.set(0, 'Beard 1');
-            this.beardVisualsMap.set(1, 'Beard 2');
+            NftGeneratorCaptainBase.BeardVisualsMap.set(0, 'Beard 1');
+            NftGeneratorCaptainBase.BeardVisualsMap.set(1, 'Beard 2');
 
-            this.faceVisualsMap.set(0, 'Normal');
+            NftGeneratorCaptainBase.FaceVisualsMap.set(0, 'Normal');
 
-            this.headgearVisualsMap.set(1, 'Hat 1');
-            this.headgearVisualsMap.set(2, 'Hat 2');
-            this.headgearVisualsMap.set(3, 'Hat 3');
-            this.headgearVisualsMap.set(4, 'Hat 4');
-            this.headgearVisualsMap.set(5, 'Hat 5');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(1, 'Hat 1');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(2, 'Hat 2');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(3, 'Hat 3');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(4, 'Hat 4');
+            NftGeneratorCaptainBase.HeadgearVisualsMap.set(5, 'Hat 5');
         }
     }
 
@@ -213,7 +213,7 @@ export abstract class NftGeneratorCaptainBase extends NftGenerator {
         newCollectionModel.image = this.metadataObject.image;
         newCollectionModel.owner = owner.toLowerCase();
         newCollectionModel.traits = this.metadataObject.attributes[0].traits;
-        newCollectionModel.visuals = this.generateVisuals(this.metadataObject);
+        newCollectionModel.visuals = NftGeneratorCaptainBase.GenerateVisuals(this.chainName, this.metadataObject);
         newCollectionModel.rarity = rarity;
         newCollectionModel.contractAddress = nftContractAddress;
         newCollectionModel.collectionName = BlockchainBaseProcessor.NftTypeToString(NftType.CAPTAIN);
@@ -273,29 +273,29 @@ export abstract class NftGeneratorCaptainBase extends NftGenerator {
         });
     }
 
-    private generateVisuals(metadata: any) {
+    public static GenerateVisuals(chainName: string, metadata: any) {
         const visuals = [];
         const attributes = metadata.attributes;
 
-        if (this.chainName == SharedLibraryService.CRONOS_CHAIN_NAME) {
-            visuals.push({ trait_type: 'Background', value: this.backgroundVisualsMap.get(attributes[4].background) });
-            visuals.push({ trait_type: 'Body', value: this.bodyVisualsMap.get(attributes[5].body) });
-            visuals.push({ trait_type: 'Clothes', value: this.clothesVisualsMap.get(attributes[6].clothes) });
-            visuals.push({ trait_type: 'Face', value: this.faceVisualsMap.get(attributes[7].face) });
+        if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME) {
+            visuals.push({ trait_type: 'Background', value: NftGeneratorCaptainBase.BackgroundVisualsMap.get(attributes[4].background) });
+            visuals.push({ trait_type: 'Body', value: NftGeneratorCaptainBase.BodyVisualsMap.get(attributes[5].body) });
+            visuals.push({ trait_type: 'Clothes', value: NftGeneratorCaptainBase.ClothesVisualsMap.get(attributes[6].clothes) });
+            visuals.push({ trait_type: 'Face', value: NftGeneratorCaptainBase.FaceVisualsMap.get(attributes[7].face) });
 
             if (attributes.length == 10) {
-                visuals.push({ trait_type: 'Accessory', value: this.accessory1VisualsMap.get(attributes[8].accessory) });
-                visuals.push({ trait_type: 'Headgear', value: this.headgearVisualsMap.get(attributes[9].headgear) });
+                visuals.push({ trait_type: 'Accessory', value: NftGeneratorCaptainBase.Accessory1VisualsMap.get(attributes[8].accessory) });
+                visuals.push({ trait_type: 'Headgear', value: NftGeneratorCaptainBase.HeadgearVisualsMap.get(attributes[9].headgear) });
             } else {
-                visuals.push({ trait_type: 'Headgear', value: this.headgearVisualsMap.get(attributes[8].headgear) });
+                visuals.push({ trait_type: 'Headgear', value: NftGeneratorCaptainBase.HeadgearVisualsMap.get(attributes[8].headgear) });
             }
-        } else if (this.chainName == SharedLibraryService.VENOM_CHAIN_NAME) {
-            visuals.push({ trait_type: 'Background', value: this.backgroundVisualsMap.get(attributes[4].background) });
-            visuals.push({ trait_type: 'Clothes', value: this.clothesVisualsMap.get(attributes[5].clothes) });
-            visuals.push({ trait_type: 'Face', value: this.faceVisualsMap.get(attributes[6].face) });
-            visuals.push({ trait_type: 'Accessory 1', value: this.accessory1VisualsMap.get(attributes[7].accessory) });
-            visuals.push({ trait_type: 'Accessory 2', value: this.accessory2VisualsMap.get(attributes[8].accessory) });
-            visuals.push({ trait_type: 'Hat', value: this.headgearVisualsMap.get(attributes[9].accessory) });
+        } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME) {
+            visuals.push({ trait_type: 'Background', value: NftGeneratorCaptainBase.BackgroundVisualsMap.get(attributes[4].background) });
+            visuals.push({ trait_type: 'Clothes', value: NftGeneratorCaptainBase.ClothesVisualsMap.get(attributes[5].clothes) });
+            visuals.push({ trait_type: 'Face', value: NftGeneratorCaptainBase.FaceVisualsMap.get(attributes[6].face) });
+            visuals.push({ trait_type: 'Accessory 1', value: NftGeneratorCaptainBase.Accessory1VisualsMap.get(attributes[7].accessory) });
+            visuals.push({ trait_type: 'Accessory 2', value: NftGeneratorCaptainBase.Accessory2VisualsMap.get(attributes[8].accessory) });
+            visuals.push({ trait_type: 'Hat', value: NftGeneratorCaptainBase.HeadgearVisualsMap.get(attributes[9].accessory) });
         }
 
         return visuals;

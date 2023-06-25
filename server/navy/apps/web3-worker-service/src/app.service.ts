@@ -6,7 +6,7 @@ import { CaptainTrait, CaptainTraitDocument } from "@app/shared-library/schemas/
 import { Collection, CollectionDocument } from "@app/shared-library/schemas/marketplace/schema.collection";
 import { CollectionItem, CollectionItemDocument } from "@app/shared-library/schemas/marketplace/schema.collection.item";
 import { NftType } from "@app/shared-library/shared-library.main";
-import { WorkersMint, MintJob } from "@app/shared-library/workers/workers.mint";
+import { MintJob, WorkersMarketplace } from "@app/shared-library/workers/workers.marketplace";
 import { InjectQueue } from "@nestjs/bull";
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { Logger } from "@nestjs/common/services";
@@ -29,8 +29,8 @@ export class AppService implements OnModuleInit {
         @InjectModel(CollectionItem.name) private readonly collectionItemModel: Model<CollectionItemDocument>,
         @InjectModel(CaptainTrait.name) private readonly captainTraitModel: Model<CaptainTraitDocument>,
         @InjectModel(CaptainSettings.name) private readonly captainSettingsModel: Model<CaptainSettingsDocument>,
-        @InjectQueue(WorkersMint.CronosMintQueue) private readonly cronosMintQueue: Queue,
-        @InjectQueue(WorkersMint.VenomMintQueue) private readonly venomMintQueue: Queue) {
+        @InjectQueue(WorkersMarketplace.CronosMintQueue) private readonly cronosMintQueue: Queue,
+        @InjectQueue(WorkersMarketplace.VenomMintQueue) private readonly venomMintQueue: Queue) {
     }
 
     async onModuleInit() {

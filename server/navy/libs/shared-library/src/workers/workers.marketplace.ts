@@ -2,7 +2,7 @@ import { MarketplaceState } from "../schemas/marketplace/schema.collection.item"
 import { NftType, Rarity } from "../shared-library.main";
 
 export interface NftSubPartDetails {
-    index: number;
+    index?: number;
     chance: number;
     rarity: Rarity;
     filePath?: string;
@@ -49,6 +49,13 @@ export interface MarketplaceSetSalePriceJob {
     seller: string;
 }
 
+export interface MintJob {
+    nftType: NftType;
+    owner: string;
+    chainName: string;
+    tokenId?: number;
+}
+
 export class WorkersMarketplace {
 
     public static readonly CronosMarketplaceUpdateQueue = 'CronosMarketplaceUpdateQueue';
@@ -59,5 +66,8 @@ export class WorkersMarketplace {
     public static readonly VenomMarketplaceListingQueue = 'VenomMarketplaceListingQueue';
     public static readonly VenomMarketplaceSoldQueue = 'VenomMarketplaceSoldQueue';
     public static readonly VenomMarketplaceSetSalePriceQueue = 'VenomMarketplaceSetSalePriceQueue';
+
+    public static readonly CronosMintQueue = 'CronosMintQueue';
+    public static readonly VenomMintQueue = 'VenomMintQueue';
 
 }

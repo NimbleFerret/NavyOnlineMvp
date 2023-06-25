@@ -1,6 +1,5 @@
 
 import { NftType } from "@app/shared-library/shared-library.main";
-import { MintJob } from "@app/shared-library/workers/workers.mint";
 import {
     OnQueueActive,
     OnQueueCompleted,
@@ -9,7 +8,7 @@ import {
     Process
 } from "@nestjs/bull";
 import { Logger } from "@nestjs/common";
-import { NftGenerator } from "./nft/nft.generator";
+import { NftGenerator } from "../../nft/nft.generator";
 import { Job } from "bull";
 import { Model } from "mongoose";
 import {
@@ -21,6 +20,7 @@ import {
 import { CronosConstants } from "@app/shared-library/blockchain/cronos/cronos.constants";
 import { SharedLibraryService } from "@app/shared-library";
 import { VenomConstants } from "@app/shared-library/blockchain/venom/venom.constants";
+import { MintJob } from "@app/shared-library/workers/workers.marketplace";
 
 export abstract class QueueMintBaseProcessor {
 

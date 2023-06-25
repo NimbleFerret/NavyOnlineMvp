@@ -3,8 +3,7 @@ import { Queue } from "bull";
 import { MarketplaceState } from "../schemas/marketplace/schema.collection.item";
 import { NftType } from "../shared-library.main";
 import { SharedLibraryService } from "../shared-library.service";
-import { MarketplaceListingJob, MarketplaceSetSalePriceJob, MarketplaceSoldJob, MarketplaceUpdateJob } from "../workers/workers.marketplace";
-import { MintJob } from "../workers/workers.mint";
+import { MarketplaceListingJob, MarketplaceSetSalePriceJob, MarketplaceSoldJob, MarketplaceUpdateJob, MintJob } from "../workers/workers.marketplace";
 
 export interface NftMintedEventParams {
     nftId: string;
@@ -184,6 +183,8 @@ export class BlockchainBaseProcessor {
             marketplaceState,
             nftType: NftType.CAPTAIN
         } as MarketplaceUpdateJob);
+
+        console.log('syncMarketplaceState JOB posted');
     }
 
     public static NftTypeToString(nftType: NftType) {

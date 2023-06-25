@@ -6,7 +6,6 @@ import {
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { VenomProvider } from '@app/shared-library/blockchain/venom/venom.provider';
-import { WorkersMint } from '@app/shared-library/workers/workers.mint';
 import {
     WorkersMarketplace,
 } from '@app/shared-library/workers/workers.marketplace';
@@ -25,7 +24,7 @@ export class BlockchainServiceVenom implements OnModuleInit {
 
     constructor(
         configService: ConfigService,
-        @InjectQueue(WorkersMint.VenomMintQueue) mintQueue: Queue,
+        @InjectQueue(WorkersMarketplace.VenomMintQueue) mintQueue: Queue,
         @InjectQueue(WorkersMarketplace.VenomMarketplaceUpdateQueue) marketplaceUpdateQueue: Queue,
         @InjectQueue(WorkersMarketplace.VenomMarketplaceListingQueue) marketplaceListingQueue: Queue,
         @InjectQueue(WorkersMarketplace.VenomMarketplaceSoldQueue) marketplaceSoldQueue: Queue,

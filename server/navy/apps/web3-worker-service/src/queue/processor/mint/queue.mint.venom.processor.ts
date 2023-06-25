@@ -1,75 +1,72 @@
 
-import * as CaptainAbi from '../abi/Captain.json';
-import * as CollectionAbi from '../abi/CollectionSale.json';
-import * as MarketplaceAbi from '../abi/Marketplace.json';
 import { SharedLibraryService } from '@app/shared-library';
-import { CronosProvider } from '@app/shared-library/blockchain/cronos/cronos.provider';
 import { BlockchainTransaction, BlockchainTransactionDocument } from '@app/shared-library/schemas/blockchain/schema.blockchain.transaction';
 import { CaptainSettings, CaptainSettingsDocument } from '@app/shared-library/schemas/entity/schema.captain.settings';
 import { CaptainTrait, CaptainTraitDocument } from '@app/shared-library/schemas/entity/schema.captain.trait';
 import { Collection, CollectionDocument } from '@app/shared-library/schemas/marketplace/schema.collection';
 import { CollectionItem, CollectionItemDocument } from '@app/shared-library/schemas/marketplace/schema.collection.item';
-import { WorkersMint } from '@app/shared-library/workers/workers.mint';
+import { WorkersMarketplace } from '@app/shared-library/workers/workers.marketplace';
 import { Processor } from '@nestjs/bull';
 import { OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { NftGeneratorCaptainCronos } from './nft/nft.generator.captain.cronos';
 import { QueueMintBaseProcessor } from './queue.mint.base.processor';
 import { NftType } from '@app/shared-library/shared-library.main';
 import { BlockchainBaseProcessor } from '@app/shared-library/blockchain/blockchain.base.provider';
+import { NftGeneratorCaptainVenom } from '../../nft/nft.generator.captain.venom';
+import { VenomProvider } from '@app/shared-library/blockchain/venom/venom.provider';
+import { ConfigService } from '@nestjs/config';
 
-@Processor(WorkersMint.CronosMintQueue)
-export class QueueMintCronosProcessor extends QueueMintBaseProcessor implements OnModuleInit {
+@Processor(WorkersMarketplace.VenomMintQueue)
+export class QueueMintVenomProcessor extends QueueMintBaseProcessor implements OnModuleInit {
 
-    private readonly cronosProvider = new CronosProvider();
+    private readonly venomProvider: VenomProvider;
 
     constructor(
+        configService: ConfigService,
         @InjectModel(Collection.name) private collectionModel: Model<CollectionDocument>,
         @InjectModel(CollectionItem.name) private collectionItemModel: Model<CollectionItemDocument>,
         @InjectModel(CaptainTrait.name) private captainTraitModel: Model<CaptainTraitDocument>,
         @InjectModel(CaptainSettings.name) private captainSettingsModel: Model<CaptainSettingsDocument>,
         @InjectModel(BlockchainTransaction.name) blockchainTransactionModel: Model<BlockchainTransactionDocument>
     ) {
-        super(SharedLibraryService.CRONOS_CHAIN_NAME, blockchainTransactionModel);
+        super(SharedLibraryService.VENOM_CHAIN_NAME, blockchainTransactionModel);
+        this.venomProvider = new VenomProvider(configService);
     }
 
     async onModuleInit() {
-        await this.cronosProvider.init(CaptainAbi, CollectionAbi, MarketplaceAbi);
+        await this.venomProvider.init();
 
         const captainsCollection = await this.collectionModel.findOne({
-            chainName: SharedLibraryService.CRONOS_CHAIN_NAME,
+            chainName: SharedLibraryService.VENOM_CHAIN_NAME,
             name: BlockchainBaseProcessor.NftTypeToString(NftType.CAPTAIN)
         }).populate('mint');
 
-        this.nftCaptainGenerator = new NftGeneratorCaptainCronos(
+        this.nftCaptainGenerator = new NftGeneratorCaptainVenom(
             captainsCollection,
             this.captainTraitModel,
             this.captainSettingsModel,
-            this.collectionItemModel,
-            this.cronosProvider.captainContract
+            this.collectionItemModel
         );
     }
 
     async getCollectionTotalSupply(nftType: NftType): Promise<number> {
         switch (nftType) {
             case NftType.CAPTAIN:
-                return await (this.cronosProvider.captainCollectionContract.totalSupply()).toNumber();
+                return await this.venomProvider.getCaptainsCollectionSize();
             case NftType.SHIP:
-                return await (this.cronosProvider.shipCollectionContract.totalSupply()).toNumber();
             case NftType.ISLAND:
-                return await (this.cronosProvider.islandCollectionContract.totalSupply()).toNumber();
+                return 0;
         }
     }
 
     async getCollectionCurrentSupply(nftType: NftType): Promise<number> {
         switch (nftType) {
             case NftType.CAPTAIN:
-                return await (this.cronosProvider.captainCollectionContract.currentSupply()).toNumber();
+                return await this.venomProvider.getCaptainsTotalSupply();
             case NftType.SHIP:
-                return await (this.cronosProvider.shipCollectionContract.currentSupply()).toNumber();
             case NftType.ISLAND:
-                return await (this.cronosProvider.islandCollectionContract.currentSupply()).toNumber();
+                return 0;
         }
     }
 

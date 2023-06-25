@@ -79,7 +79,7 @@ export abstract class NftGenerator {
                 }
 
                 const nftPartToDraw: NftSubPartDetails = SharedLibraryService.SelectItemByPercentage(selectPercentageOptions);
-                if (nftPartToDraw && !nftPartToDraw.empty) {
+                if (nftPartToDraw) {
                     this.nftPartsToDraw.push(nftPartToDraw);
                     await drawScaledImage(nftPartToDraw.filePath);
                 }
