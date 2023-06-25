@@ -57,7 +57,6 @@ export class AuthApiService {
 
         if ((request.ethAddress && request.ethSignedMessage) || (request.venomPublicKey && request.venomDataHash && request.venomSignedMessage)) {
             if (request.ethAddress) {
-                request.ethAddress = request.ethAddress.toLowerCase();
                 if (signIn) {
                     return await this.ethSignIn(request);
                 } else {
@@ -94,9 +93,8 @@ export class AuthApiService {
 
     private async ethSignUp(request: SignUpRequest) {
         await this.checkEthersAuthSignature(request.ethAddress, request.ethSignedMessage);
-
         const response: SignUpInternalResponse = {
-            success: false
+            success: true
         };
 
         const signUpResult = await this.trySignUp(request);
