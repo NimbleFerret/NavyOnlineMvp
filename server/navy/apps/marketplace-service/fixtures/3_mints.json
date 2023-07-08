@@ -738,12 +738,12 @@
                 "categorySingle": "acc1",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories1/acc_1.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories1/acc1_1.png",
                         "chancePercent": 30,
                         "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories1/acc_2.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories1/acc1_2.png",
                         "chancePercent": 30,
                         "rarity": "All"
                     }
@@ -755,22 +755,22 @@
                 "categorySingle": "acc2",
                 "categoryDetails": [
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc_1.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc2_1.png",
                         "chancePercent": 20,
                         "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc_2.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc2_2.png",
                         "chancePercent": 20,
                         "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc_3.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc2_3.png",
                         "chancePercent": 20,
                         "rarity": "All"
                     },
                     {
-                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc_4.png",
+                        "imageUrl": "https://navy-metaverse.online/marketplace/static/assets/captain/shiba/accessories2/acc2_4.png",
                         "chancePercent": 20,
                         "rarity": "All"
                     }

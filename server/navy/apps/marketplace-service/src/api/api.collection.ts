@@ -20,8 +20,8 @@ import { GeneralApiService } from "./api.general";
 @Injectable()
 export class CollectionApiService implements OnModuleInit {
 
-    private collectionDisplayingNameByName = new Map<string, string>();
-    private collectionDisplayingDescriptionByName = new Map<string, string>();
+    private collectionDisplayingNameByChainAndName = new Map<string, string>();
+    private collectionDisplayingDescriptionByChainAndName = new Map<string, string>();
 
     constructor(
         private readonly generalApiService: GeneralApiService,
@@ -35,18 +35,41 @@ export class CollectionApiService implements OnModuleInit {
 
     async onModuleInit() {
         setTimeout(async () => {
-            const captainsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.CaptainContractAddress);
-            const shipsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.ShipContractAddress);
-            const islandsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.IslandContractAddress);
+            const cronosCaptainsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.CaptainContractAddress);
+            const cronosShipsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.ShipContractAddress);
+            const cronosIslandsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.IslandContractAddress);
 
-            this.collectionDisplayingNameByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.name);
-            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.description);
+            const venomCaptainsCollection = await this.getCollection(SharedLibraryService.VENOM_CHAIN_NAME, CronosConstants.CaptainContractAddress);
+            const venomShipsCollection = await this.getCollection(SharedLibraryService.VENOM_CHAIN_NAME, CronosConstants.ShipContractAddress);
+            const venomIslandsCollection = await this.getCollection(SharedLibraryService.VENOM_CHAIN_NAME, CronosConstants.IslandContractAddress);
 
-            this.collectionDisplayingNameByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.name);
-            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.description);
+            const cronosCaptainsKey = SharedLibraryService.CRONOS_CHAIN_NAME + '_' + SharedLibraryService.CAPTAINS_COLLECTION_NAME;
+            const cronosShipsKey = SharedLibraryService.CRONOS_CHAIN_NAME + '_' + SharedLibraryService.SHIPS_COLLECTION_NAME;
+            const cronosIslandsKey = SharedLibraryService.CRONOS_CHAIN_NAME + '_' + SharedLibraryService.ISLANDS_COLLECTION_NAME;
 
-            this.collectionDisplayingNameByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.name);
-            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.description);
+            const venomCaptainsKey = SharedLibraryService.VENOM_CHAIN_NAME + '_' + SharedLibraryService.CAPTAINS_COLLECTION_NAME;
+            const venomShipsKey = SharedLibraryService.VENOM_CHAIN_NAME + '_' + SharedLibraryService.SHIPS_COLLECTION_NAME;
+            const venomIslandsKey = SharedLibraryService.VENOM_CHAIN_NAME + '_' + SharedLibraryService.ISLANDS_COLLECTION_NAME;
+
+            // Cronos
+            this.collectionDisplayingNameByChainAndName.set(cronosCaptainsKey, cronosCaptainsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(cronosCaptainsKey, cronosCaptainsCollection.description);
+
+            this.collectionDisplayingNameByChainAndName.set(cronosShipsKey, cronosShipsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(cronosShipsKey, cronosShipsCollection.description);
+
+            this.collectionDisplayingNameByChainAndName.set(cronosIslandsKey, cronosIslandsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(cronosIslandsKey, cronosIslandsCollection.description);
+
+            // Venom
+            this.collectionDisplayingNameByChainAndName.set(venomCaptainsKey, venomCaptainsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(venomCaptainsKey, venomCaptainsCollection.description);
+
+            this.collectionDisplayingNameByChainAndName.set(venomShipsKey, venomShipsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(venomShipsKey, venomShipsCollection.description);
+
+            this.collectionDisplayingNameByChainAndName.set(venomIslandsKey, venomIslandsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(venomIslandsKey, venomIslandsCollection.description);
         }, 2500);
     }
 
@@ -221,8 +244,8 @@ export class CollectionApiService implements OnModuleInit {
         let collectionDescription = '';
 
         if (totalResult.length > 0) {
-            collectionName = this.collectionDisplayingNameByName.get(totalResult[0].collectionName);
-            collectionDescription = this.collectionDisplayingDescriptionByName.get(totalResult[0].collectionName);
+            collectionName = this.collectionDisplayingNameByChainAndName.get(chainName + '_' + totalResult[0].collectionName);
+            collectionDescription = this.collectionDisplayingDescriptionByChainAndName.get(chainName + '_' + totalResult[0].collectionName);
         }
 
         const response: PaginatedCollectionItemsResponse = {
