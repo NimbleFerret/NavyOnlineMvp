@@ -57,24 +57,23 @@ export class AuthApiService {
 
         if ((request.ethAddress && request.ethSignedMessage) || (request.venomPublicKey && request.venomDataHash && request.venomSignedMessage)) {
             if (request.ethAddress) {
-                request.ethAddress = request.ethAddress.toLowerCase();
                 if (signIn) {
-                    await this.ethSignIn(request);
+                    return await this.ethSignIn(request);
                 } else {
-                    await this.ethSignUp(request);
+                    return await this.ethSignUp(request);
                 }
             } else {
                 if (signIn) {
-                    await this.venomSignIn(request);
+                    return await this.venomSignIn(request);
                 } else {
-                    await this.venomSignUp(request);
+                    return await this.venomSignUp(request);
                 }
             }
         } else if (request.email && request.password) {
             if (signIn) {
-                await this.emailSignIn(request);
+                return await this.emailSignIn(request);
             } else {
-                await this.emailSignUp(request);
+                return await this.emailSignUp(request);
             }
         } else {
             response.success = false;
@@ -94,9 +93,8 @@ export class AuthApiService {
 
     private async ethSignUp(request: SignUpRequest) {
         await this.checkEthersAuthSignature(request.ethAddress, request.ethSignedMessage);
-
         const response: SignUpInternalResponse = {
-            success: false
+            success: true
         };
 
         const signUpResult = await this.trySignUp(request);

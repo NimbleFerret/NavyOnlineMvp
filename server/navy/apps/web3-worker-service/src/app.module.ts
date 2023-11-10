@@ -5,7 +5,6 @@ import { Collection, CollectionSchema } from '@app/shared-library/schemas/market
 import { CollectionItem, CollectionItemSchema } from '@app/shared-library/schemas/marketplace/schema.collection.item';
 import { Mint, MintSchema } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { WorkersMarketplace } from '@app/shared-library/workers/workers.marketplace';
-import { WorkersMint } from '@app/shared-library/workers/workers.mint';
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { ClientsModule } from '@nestjs/microservices';
@@ -14,9 +13,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CaptainSettings, CaptainSettingsSchema } from '@app/shared-library/schemas/entity/schema.captain.settings';
 import { CaptainTrait, CaptainTraitSchema } from '@app/shared-library/schemas/entity/schema.captain.trait';
-import { QueueMintCronosProcessor } from './queue/queue.mint.cronos.processor';
-import { QueueMintVenomProcessor } from './queue/queue.mint.venom.processor';
 import { ConfigModule } from '@nestjs/config';
+import { QueueMintCronosProcessor } from './queue/processor/mint/queue.mint.cronos.processor';
+import { QueueUpdateCronosProcessor } from './queue/processor/update/queue.updade.cronos.processor';
 
 @Module({
   imports: [
@@ -34,7 +33,10 @@ import { ConfigModule } from '@nestjs/config';
       name: WorkersMarketplace.CronosMarketplaceSoldQueue
     }),
     BullModule.registerQueue({
-      name: WorkersMint.CronosMintQueue
+      name: WorkersMarketplace.CronosMintQueue
+    }),
+    BullModule.registerQueue({
+      name: WorkersMarketplace.CronosMarketplaceUpdateQueue
     }),
     BullModule.registerQueue({
       name: WorkersMarketplace.VenomMarketplaceUpdateQueue
@@ -49,7 +51,7 @@ import { ConfigModule } from '@nestjs/config';
       name: WorkersMarketplace.VenomMarketplaceSetSalePriceQueue
     }),
     BullModule.registerQueue({
-      name: WorkersMint.VenomMintQueue
+      name: WorkersMarketplace.VenomMintQueue
     }),
     MongooseModule.forRoot(Config.GetMongoHost(), {
       dbName: Config.MongoDBName
@@ -75,7 +77,8 @@ import { ConfigModule } from '@nestjs/config';
   providers: [
     AppService,
     QueueMintCronosProcessor,
-    QueueMintVenomProcessor
+    QueueUpdateCronosProcessor
+    // QueueMintVenomProcessor
   ],
 })
 export class AppModule { }

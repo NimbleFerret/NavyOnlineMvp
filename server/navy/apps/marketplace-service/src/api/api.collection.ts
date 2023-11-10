@@ -20,8 +20,8 @@ import { GeneralApiService } from "./api.general";
 @Injectable()
 export class CollectionApiService implements OnModuleInit {
 
-    private collectionDisplayingNameByName = new Map<string, string>();
-    private collectionDisplayingDescriptionByName = new Map<string, string>();
+    private collectionDisplayingNameByChainAndName = new Map<string, string>();
+    private collectionDisplayingDescriptionByChainAndName = new Map<string, string>();
 
     constructor(
         private readonly generalApiService: GeneralApiService,
@@ -35,22 +35,47 @@ export class CollectionApiService implements OnModuleInit {
 
     async onModuleInit() {
         setTimeout(async () => {
-            const captainsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.CaptainContractAddress);
-            const shipsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.ShipContractAddress);
-            const islandsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.IslandContractAddress);
+            const cronosCaptainsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.CaptainContractAddress);
+            const cronosShipsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.ShipContractAddress);
+            const cronosIslandsCollection = await this.getCollection(SharedLibraryService.CRONOS_CHAIN_NAME, CronosConstants.IslandContractAddress);
 
-            this.collectionDisplayingNameByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.name);
-            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.CAPTAINS_COLLECTION_NAME, captainsCollection.description);
+            const venomCaptainsCollection = await this.getCollection(SharedLibraryService.VENOM_CHAIN_NAME, CronosConstants.CaptainContractAddress);
+            const venomShipsCollection = await this.getCollection(SharedLibraryService.VENOM_CHAIN_NAME, CronosConstants.ShipContractAddress);
+            const venomIslandsCollection = await this.getCollection(SharedLibraryService.VENOM_CHAIN_NAME, CronosConstants.IslandContractAddress);
 
-            this.collectionDisplayingNameByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.name);
-            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.SHIPS_COLLECTION_NAME, shipsCollection.description);
+            const cronosCaptainsKey = SharedLibraryService.CRONOS_CHAIN_NAME + '_' + SharedLibraryService.CAPTAINS_COLLECTION_NAME;
+            const cronosShipsKey = SharedLibraryService.CRONOS_CHAIN_NAME + '_' + SharedLibraryService.SHIPS_COLLECTION_NAME;
+            const cronosIslandsKey = SharedLibraryService.CRONOS_CHAIN_NAME + '_' + SharedLibraryService.ISLANDS_COLLECTION_NAME;
 
-            this.collectionDisplayingNameByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.name);
-            this.collectionDisplayingDescriptionByName.set(SharedLibraryService.ISLANDS_COLLECTION_NAME, islandsCollection.description);
+            const venomCaptainsKey = SharedLibraryService.VENOM_CHAIN_NAME + '_' + SharedLibraryService.CAPTAINS_COLLECTION_NAME;
+            const venomShipsKey = SharedLibraryService.VENOM_CHAIN_NAME + '_' + SharedLibraryService.SHIPS_COLLECTION_NAME;
+            const venomIslandsKey = SharedLibraryService.VENOM_CHAIN_NAME + '_' + SharedLibraryService.ISLANDS_COLLECTION_NAME;
+
+            // Cronos
+            this.collectionDisplayingNameByChainAndName.set(cronosCaptainsKey, cronosCaptainsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(cronosCaptainsKey, cronosCaptainsCollection.description);
+
+            this.collectionDisplayingNameByChainAndName.set(cronosShipsKey, cronosShipsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(cronosShipsKey, cronosShipsCollection.description);
+
+            this.collectionDisplayingNameByChainAndName.set(cronosIslandsKey, cronosIslandsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(cronosIslandsKey, cronosIslandsCollection.description);
+
+            // Venom
+            this.collectionDisplayingNameByChainAndName.set(venomCaptainsKey, venomCaptainsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(venomCaptainsKey, venomCaptainsCollection.description);
+
+            this.collectionDisplayingNameByChainAndName.set(venomShipsKey, venomShipsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(venomShipsKey, venomShipsCollection.description);
+
+            this.collectionDisplayingNameByChainAndName.set(venomIslandsKey, venomIslandsCollection.name);
+            this.collectionDisplayingDescriptionByChainAndName.set(venomIslandsKey, venomIslandsCollection.description);
         }, 2500);
     }
 
     async getCollection(chainName: string, contractAddress: string) {
+        chainName = chainName.charAt(0).toUpperCase() + chainName.slice(1);
+
         const collection = await this.collectionModel.findOne({ chainName, contractAddress }).select(['-_id', '-__v']);
         if (!collection) {
             throw new BadGatewayException();
@@ -146,14 +171,14 @@ export class CollectionApiService implements OnModuleInit {
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
                 .skip((page - 1) * pageSize)
                 .limit(pageSize));
-            listedCount = listedResult.length;
+            listedCount = await this.collectionItemModel.count(listedQuery);
         }
         if (loadNotListed) {
             notListedResult.push(...await this.collectionItemModel.find(notListedQuery)
                 .select(['-_id', '-__v', '-id', '-needUpdate', '-visuals', '-traits'])
                 .skip((page - 1) * pageSize)
                 .limit(pageSize - listedCount));
-            notListedCount = notListedResult.length;
+            notListedCount = await this.collectionItemModel.count(notListedQuery);;
         }
 
         const totalCount = listedCount + notListedCount;
@@ -215,9 +240,13 @@ export class CollectionApiService implements OnModuleInit {
             prev = page > 1 ? getUrl(page - 1) : null;
         }
 
-        // console.log(totalResult);
+        let collectionName = '';
+        let collectionDescription = '';
 
-        const dummyCollectionName = totalResult[0].collectionName;
+        if (totalResult.length > 0) {
+            collectionName = this.collectionDisplayingNameByChainAndName.get(chainName + '_' + totalResult[0].collectionName);
+            collectionDescription = this.collectionDisplayingDescriptionByChainAndName.get(chainName + '_' + totalResult[0].collectionName);
+        }
 
         const response: PaginatedCollectionItemsResponse = {
             info: {
@@ -225,8 +254,8 @@ export class CollectionApiService implements OnModuleInit {
                 pages,
                 next,
                 prev,
-                collectionName: this.collectionDisplayingNameByName.get(dummyCollectionName),
-                collectionDescription: this.collectionDisplayingDescriptionByName.get(dummyCollectionName)
+                collectionName,
+                collectionDescription
             },
             result: resultItems
         };
@@ -277,11 +306,17 @@ export class CollectionApiService implements OnModuleInit {
         return response;
     }
 
-    async topSales(authToken?: string, days?: string) {
-        const response: TopSalesDto = {
-            venomTopSales: [],
-            cronosTopSales: []
-        };
+    async topSales(chainName: string, authToken?: string, days?: string) {
+        const response: TopSalesDto = {};
+
+        if (chainName == 'all') {
+            response.cronosTopSales = [];
+            response.venomTopSales = [];
+        } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME.toLowerCase()) {
+            response.venomTopSales = [];
+        } else if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME.toLowerCase()) {
+            response.cronosTopSales = [];
+        }
 
         const topSalesCount = 9;
 
@@ -309,9 +344,6 @@ export class CollectionApiService implements OnModuleInit {
                 return topSaleResult;
             }
 
-            const venomTopSales = await getTopSalesByChainName(SharedLibraryService.VENOM_CHAIN_NAME);
-            const cronosTopSales = await getTopSalesByChainName(SharedLibraryService.CRONOS_CHAIN_NAME);
-
             const favourites = [];
             if (authToken) {
                 const userProfile = await this.authService.checkTokenAndGetProfile(authToken);
@@ -321,12 +353,32 @@ export class CollectionApiService implements OnModuleInit {
                 });
             }
 
-            venomTopSales.forEach(f => {
-                response.venomTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
-            });
-            cronosTopSales.forEach(f => {
-                response.cronosTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
-            });
+            let venomTopSales = [];
+            let cronosTopSales = [];
+
+            if (chainName == 'all') {
+                venomTopSales = await getTopSalesByChainName(SharedLibraryService.VENOM_CHAIN_NAME);
+                cronosTopSales = await getTopSalesByChainName(SharedLibraryService.CRONOS_CHAIN_NAME);
+
+                venomTopSales.forEach(f => {
+                    response.venomTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+                });
+                cronosTopSales.forEach(f => {
+                    response.cronosTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+                });
+            } else if (chainName == SharedLibraryService.VENOM_CHAIN_NAME.toLowerCase()) {
+                venomTopSales = await getTopSalesByChainName(SharedLibraryService.VENOM_CHAIN_NAME);
+
+                venomTopSales.forEach(f => {
+                    response.venomTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+                });
+            } else if (chainName == SharedLibraryService.CRONOS_CHAIN_NAME.toLowerCase()) {
+                cronosTopSales = await getTopSalesByChainName(SharedLibraryService.CRONOS_CHAIN_NAME);
+
+                cronosTopSales.forEach(f => {
+                    response.cronosTopSales.push(Converter.ConvertCollectionItem(f, favourites.includes(f.contractAddress + '_' + f.tokenId)));
+                });
+            }
         }
         return response;
     }

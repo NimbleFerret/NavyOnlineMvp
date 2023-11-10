@@ -3,10 +3,10 @@ import { Queue } from "bull";
 import { MarketplaceState } from "../schemas/marketplace/schema.collection.item";
 import { NftType } from "../shared-library.main";
 import { SharedLibraryService } from "../shared-library.service";
-import { MarketplaceListingJob, MarketplaceSetSalePriceJob, MarketplaceSoldJob, MarketplaceUpdateJob } from "../workers/workers.marketplace";
-import { MintJob } from "../workers/workers.mint";
+import { MarketplaceListingJob, MarketplaceSetSalePriceJob, MarketplaceSoldJob, MarketplaceUpdateJob, MintJob } from "../workers/workers.marketplace";
 
 export interface NftMintedEventParams {
+    nftId: string;
     owner: string;
 }
 
@@ -56,7 +56,7 @@ export class BlockchainBaseProcessor {
     }
 
     async processNftMintedEvent(nftType: NftType, event: NftMintedEventParams) {
-        event.owner.toLowerCase();
+        event.owner = event.owner.toLowerCase();
 
         Logger.log(`${BlockchainBaseProcessor.NftTypeToString(nftType)} mint occured on ${this.chainName} chain! Owner: ${event.owner}`);
 
@@ -72,8 +72,8 @@ export class BlockchainBaseProcessor {
     }
 
     async processNftListedEvent(nftType: NftType, event: NftListedEventParams) {
-        event.owner.toLowerCase();
-        event.seller.toLowerCase();
+        event.owner = event.owner.toLowerCase();
+        event.seller = event.seller.toLowerCase();
 
         const nftString = 'nft: ' + this.chainName == SharedLibraryService.VENOM_CHAIN_NAME ?
             event.nftAddress : event.nftId;
@@ -183,6 +183,8 @@ export class BlockchainBaseProcessor {
             marketplaceState,
             nftType: NftType.CAPTAIN
         } as MarketplaceUpdateJob);
+
+        console.log('syncMarketplaceState JOB posted');
     }
 
     public static NftTypeToString(nftType: NftType) {

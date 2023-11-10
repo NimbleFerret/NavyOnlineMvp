@@ -1,9 +1,7 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { BlockchainServiceCronos } from './blockchain.service.cronos';
-import { BlockchainServiceVenom } from './blockchain.service.venom';
 import { WorkersMarketplace } from '@app/shared-library/workers/workers.marketplace';
-import { WorkersMint } from '@app/shared-library/workers/workers.mint';
 import { Collection, CollectionSchema } from '@app/shared-library/schemas/marketplace/schema.collection';
 import { Mint, MintSchema } from '@app/shared-library/schemas/marketplace/schema.mint';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -34,10 +32,10 @@ import { ConfigModule } from '@nestjs/config';
             name: WorkersMarketplace.VenomMarketplaceSetSalePriceQueue
         }),
         BullModule.registerQueue({
-            name: WorkersMint.CronosMintQueue
+            name: WorkersMarketplace.CronosMintQueue
         }),
         BullModule.registerQueue({
-            name: WorkersMint.VenomMintQueue
+            name: WorkersMarketplace.VenomMintQueue
         }),
         MongooseModule.forFeature([
             { name: Mint.name, schema: MintSchema },
@@ -46,11 +44,11 @@ import { ConfigModule } from '@nestjs/config';
     ],
     providers: [
         BlockchainServiceCronos,
-        BlockchainServiceVenom
+        // BlockchainServiceVenom
     ],
     exports: [
         BlockchainServiceCronos,
-        BlockchainServiceVenom
+        // BlockchainServiceVenom
     ]
 })
 export class BlockchainModule { }

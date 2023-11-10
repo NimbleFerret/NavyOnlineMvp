@@ -13,7 +13,6 @@ import {
     CheckEthersAuthSignatureResponse,
 } from '@app/shared-library/gprc/grpc.web3.service';
 import { CronosProvider } from '@app/shared-library/blockchain/cronos/cronos.provider';
-import { WorkersMint } from '@app/shared-library/workers/workers.mint';
 import { WorkersMarketplace } from '@app/shared-library/workers/workers.marketplace';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { MarketplaceState } from '@app/shared-library/schemas/marketplace/schema.collection.item';
@@ -32,7 +31,7 @@ export class BlockchainServiceCronos implements OnModuleInit {
     private readonly blockchainBaseProcessor: BlockchainBaseProcessor;
 
     constructor(
-        @InjectQueue(WorkersMint.CronosMintQueue) mintQueue: Queue,
+        @InjectQueue(WorkersMarketplace.CronosMintQueue) mintQueue: Queue,
         @InjectQueue(WorkersMarketplace.CronosMarketplaceUpdateQueue) marketplaceUpdateQueue: Queue,
         @InjectQueue(WorkersMarketplace.CronosMarketplaceListingQueue) marketplaceListingQueue: Queue,
         @InjectQueue(WorkersMarketplace.CronosMarketplaceSoldQueue) marketplaceSoldQueue: Queue
@@ -52,8 +51,10 @@ export class BlockchainServiceCronos implements OnModuleInit {
             CollectionContractAbi,
             MarketplaceContractAbi
         );
-        // await this.blockchainBaseProcessor.syncMarketplaceState(MarketplaceState.LISTED);
+
+        await this.blockchainBaseProcessor.syncMarketplaceState(MarketplaceState.NONE);
         // await this.blockchainBaseProcessor.syncMarketplaceState(MarketplaceState.SOLD);
+
         this.cronosProvider.captainCollectionContract.on(CronosProvider.EventNftMinted, async (
             id: any,
             owner: string
@@ -61,10 +62,9 @@ export class BlockchainServiceCronos implements OnModuleInit {
             Logger.log('Captains mint occured:');
             Logger.log({ id, owner });
 
-            await this.blockchainBaseProcessor.processNftListedEvent(NftType.CAPTAIN, {
-                nftId: id.toNumber(),
+            await this.blockchainBaseProcessor.processNftMintedEvent(NftType.CAPTAIN, {
+                nftId: id,
                 owner: CronosConstants.CaptainMarketplaceContractAddress,
-                seller: owner
             });
         });
 

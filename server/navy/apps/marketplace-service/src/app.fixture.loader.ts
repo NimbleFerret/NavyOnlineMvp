@@ -11,7 +11,7 @@ import { Model } from "mongoose";
 
 export class FixtureLoader {
 
-    private readonly reloadCollectionItems = true;
+    private readonly reloadCollectionItems = false;
 
     constructor(
         private projectModel: Model<ProjectDocument>,
@@ -154,7 +154,7 @@ export class FixtureLoader {
             seller,
             owner,
             price: 10,
-            image: "https://navy-metaverse.online/api/marketplace/static/assets/captain/captain" + imageIndex + ".png",
+            image: "https://navy-metaverse.online/marketplace/static/assets/captain/captain" + imageIndex + ".png",
             rarity: "Common",
             lastUpdated: 0,
             visuals: [],
@@ -176,10 +176,11 @@ export class FixtureLoader {
 
             switch (collectionName) {
                 case SharedLibraryService.CAPTAINS_COLLECTION_NAME:
-                    defaultCollectionItem.image = "https://navy-metaverse.online/api/marketplace/static/assets/captain/captain" + imageIndex + ".png";
+                    const captainImageType = chainName == SharedLibraryService.VENOM_CHAIN_NAME ? 'shiba' : 'sloth';
+                    defaultCollectionItem.image = `https://navy-metaverse.online/marketplace/static/assets/captain/${captainImageType}/${imageIndex}.png`;
                     break;
                 case SharedLibraryService.SHIPS_COLLECTION_NAME:
-                    defaultCollectionItem.image = "https://navy-metaverse.online/api/marketplace/static/assets/ship/ship" + imageIndex + ".png";
+                    defaultCollectionItem.image = "https://navy-metaverse.online/marketplace/static/assets/ship/ship" + imageIndex + ".png";
                     if (imageIndex == 1) {
                         defaultCollectionItem.rarity = 'Epic';
                     }
@@ -191,7 +192,7 @@ export class FixtureLoader {
                     }
                     break;
                 case SharedLibraryService.ISLANDS_COLLECTION_NAME:
-                    defaultCollectionItem.image = "https://navy-metaverse.online/api/marketplace/static/assets/island/island" + imageIndex + ".png";
+                    defaultCollectionItem.image = "https://navy-metaverse.online/marketplace/static/assets/island/island" + imageIndex + ".png";
                     if (imageIndex == 1) {
                         defaultCollectionItem.rarity = 'Legendary';
                     } else if (imageIndex == 2) {
@@ -202,7 +203,6 @@ export class FixtureLoader {
                         defaultCollectionItem.rarity = 'Common';
                     }
                     break;
-
             }
 
             let price = SharedLibraryService.GetRandomIntInRange(1, 1000);

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Logger } from '@nestjs/common/services';
 import { Rarity } from './shared-library.main';
 
 export interface SelectPercentageOptions<T> {
@@ -59,15 +60,21 @@ export class SharedLibraryService {
         options = options.sort((a, b) => a.percentage - b.percentage);
 
         let random = Math.floor(Math.random() * 100);
+        let result: any;
 
-        for (const option of options) {
-            if (random <= option.percentage) {
-                return option.value;
+        try {
+            for (const option of options) {
+                if (random <= option.percentage) {
+                    result = option.value;
+                }
+                random -= option.percentage;
             }
-            random -= option.percentage;
+        } catch (ex) {
+            Logger.error(ex);
+            result = options[0].value;
         }
 
-        return null;
+        return result;
     }
 
     public static Probability(chance: number) {

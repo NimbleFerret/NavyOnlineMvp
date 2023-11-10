@@ -25,28 +25,34 @@ export abstract class NftGenerator {
     private nftPartsToDraw: NftSubPartDetails[] = [];
     private nftTypeName: string;
 
-    constructor(private nftType: NftType, private collection: Collection) {
+    constructor(protected chainName: string, private nftType: NftType, private collection: Collection) {
     }
 
     public async generateNftAndUpload(index: number, maxIndex: number, saveBahaviour: GenerateNftBehaviour = GenerateNftBehaviour.MORALIS_UPLOAD, predefinedNftParts?: NftPart[]) {
-        const basicCanvas = createCanvas(72, 72);
+
+        const canvasWidth = this.chainName == SharedLibraryService.VENOM_CHAIN_NAME ? 79 : 72;
+        const canvasHeight = this.chainName == SharedLibraryService.VENOM_CHAIN_NAME ? 87 : 72;
+
+        const basicCanvas = createCanvas(canvasWidth, canvasHeight);
         const basicContext = basicCanvas.getContext('2d');
-        const resultCanvas = createCanvas(72 * 2, 72 * 2);
+        const resultCanvas = createCanvas(canvasWidth * 2, canvasHeight * 2);
         const resultContext = resultCanvas.getContext('2d');
         this.rarity = SharedLibraryService.GenerateRarity();
 
+        console.log('this.rarity: ' + this.rarity);
+
         async function drawScaledImage(imagePartPath: string) {
             const image = await loadImage(imagePartPath);
-            basicContext.drawImage(image, 0, 0, 72, 72);
+            basicContext.drawImage(image, 0, 0, canvasWidth, canvasHeight);
 
             let tX = 0;
             let tY = 0;
 
-            for (let x = 0; x < 72; x++) {
+            for (let x = 0; x < canvasWidth; x++) {
                 if (x > 0) {
                     tX += 2;
                 }
-                for (let y = 0; y < 72; y++) {
+                for (let y = 0; y < canvasHeight; y++) {
                     const pixelData = basicContext.getImageData(x, y, 1, 1);
 
                     if (y > 0) {
@@ -64,7 +70,6 @@ export abstract class NftGenerator {
         if (!predefinedNftParts) {
             for (const nftPart of this.nftPartDetails) {
                 const selectPercentageOptions: SelectPercentageOptions<NftSubPartDetails>[] = [];
-
                 for (let index = 0; index < nftPart.subParts.length; index++) {
                     if (nftPart.subParts[index].rarity === this.rarity || nftPart.subParts[index].rarity == Rarity.ALL) {
                         const value = nftPart.subParts[index];
@@ -73,8 +78,7 @@ export abstract class NftGenerator {
                     }
                 }
 
-                const nftPartToDraw = SharedLibraryService.SelectItemByPercentage(selectPercentageOptions);
-
+                const nftPartToDraw: NftSubPartDetails = SharedLibraryService.SelectItemByPercentage(selectPercentageOptions);
                 if (nftPartToDraw) {
                     this.nftPartsToDraw.push(nftPartToDraw);
                     await drawScaledImage(nftPartToDraw.filePath);
@@ -98,6 +102,8 @@ export abstract class NftGenerator {
             await this.generateNftMetadata(index, maxIndex, imagePathOnMoralis, this.nftPartsToDraw);
 
             // Upload metadata to the ipfs
+            await new Promise((resolve) => setTimeout(resolve, 1.5 * 1000));
+
             const uploadedMetadataFile = await MoralisClient.getInstance().uploadFile('nvy/' + entityName + '.json', Buffer.from(this.metadata).toString('base64')) as any;
             const metadataPathOnMoralis = uploadedMetadataFile.toJSON()[0].path;
             return metadataPathOnMoralis;
@@ -132,7 +138,6 @@ export abstract class NftGenerator {
                 resSingle: nftPartsItem.categorySingle,
                 subParts: []
             } as NftPartDetails;
-
             nftPartDetails.subParts = nftPartsItem.categoryDetails.map(categoryDetails => {
                 let rarity = Rarity.COMMON;
                 switch (categoryDetails.rarity) {
@@ -149,9 +154,11 @@ export abstract class NftGenerator {
                         rarity = Rarity.ALL;
                         break;
                 }
+
                 return {
                     chance: categoryDetails.chancePercent,
-                    rarity
+                    rarity,
+                    empty: categoryDetails.imageUrl ? false : true
                 } as NftSubPartDetails;
             });
             return nftPartDetails;
@@ -178,9 +185,10 @@ export abstract class NftGenerator {
     }
 
     private initiateNftPartsImagePath() {
+        const captainType = this.chainName == SharedLibraryService.VENOM_CHAIN_NAME ? 'shiba' : 'sloth';
         this.nftPartDetails.forEach(nftPart => {
             for (let i = 0; i < nftPart.subParts.length; i++) {
-                const nftPartFilePath = __dirname + `/assets/${this.nftTypeName}/${nftPart.resPlural}/${nftPart.resSingle}_${i + 1}.png`;
+                const nftPartFilePath = __dirname + `/assets/${this.nftTypeName}/${captainType}/${nftPart.resPlural}/${nftPart.resSingle}_${i + 1}.png`;
 
                 nftPart.subParts[i].filePath = nftPartFilePath;
                 nftPart.subParts[i].index = i;
